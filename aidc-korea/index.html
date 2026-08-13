@@ -1,0 +1,468 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>국내 AIDC 추정: 테넌트 수요 — AIDC Deep Research 1장</title>
+<style>/* ============================================================
+   design-skill tokens.css  v1.0
+   올리브 팔레트 IB 보고서 디자인 시스템 — HTML용 디자인 토큰
+   출처: assets/tokens.json 과 항상 동기화할 것
+   ============================================================ */
+
+:root {
+  /* ---- brand (olive) ---- */
+  --brand-primary:      #4A5228;  /* 섹션 밴드, 배너바, 차트 주색, 표 헤더 */
+  --brand-primary-deep: #3E461F;  /* 어두운 변형(그라데이션 끝, 커버) */
+  --brand-heading:      #5F6C2C;  /* 페이지 타이틀, 소제목 텍스트 */
+  --brand-bright:       #819434;  /* 스트라이프 모티프, 그래디언트 중간 */
+  --brand-vivid:        #A2B84A;  /* 그래디언트 밝은 끝, 하이라이트 */
+  --brand-mid:          #8F9678;  /* 보조 막대, 비활성 브랜드 요소 */
+  --brand-soft:         #BDC0B0;  /* 연한 보조 */
+  --brand-fill-light:   #E3E6D2;  /* 표 서브행, 연한 채움 */
+  --brand-bg-tint:      #F3F4EA;  /* 콜아웃/박스 배경 틴트 */
+
+  /* ---- accent (기능색) ---- */
+  --accent-teal:      #2E97A7;  /* 긍정, 지지 근거, 성공 */
+  --accent-teal-light:#81C0CB;
+  --accent-teal-bg:   #E6F2F4;
+  --accent-blue:      #4587B2;  /* 찬성(FOR), 제3자/중립 기관 */
+  --accent-blue-light:#A8CBE0;
+  --accent-blue-bg:   #E3EEF5;
+  --accent-red:       #B7332B;  /* 부정, 반대(AGAINST), 리스크 — 남용 금지 */
+  --accent-red-icon:  #D64541;
+  --accent-red-bg:    #FBEDEA;
+  --accent-gold:      #D9A62E;  /* 주의, 전환 마커(▼) */
+  --accent-gold-bg:   #FAF3E0;
+
+  /* ---- neutral ---- */
+  --text:         #3A3A3A;
+  --muted:        #6E6E6E;
+  --faint:        #9B9B9B;
+  --hairline:     #D8D8D8;
+  --band-gray:    #E6E6E6;  /* 서브섹션 밴드 */
+  --chart-gray:   #C9C9C9;
+  --compare-gray: #ABABAB;  /* peer/비교대상 */
+  --quote-mark:   #CFCFCF;
+  --paper:        #FFFFFF;
+
+  /* ---- typography ---- */
+  --font-sans: "Pretendard", "Pretendard Variable", "Noto Sans KR",
+               "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
+  /* pt→px ≈ ×1.33 (슬라이드 1280px 기준) */
+  --fs-cover-title: 40px;
+  --fs-section-band: 24px;
+  --fs-page-title: 27px;
+  --fs-lead: 15px;
+  --fs-banner: 14px;
+  --fs-sublabel: 12.5px;
+  --fs-body: 13.5px;
+  --fs-small: 12px;
+  --fs-table: 12px;
+  --fs-quote: 12.5px;
+  --fs-kpi: 38px;
+  --fs-footnote: 9px;
+  --fs-kicker: 11px;
+}
+
+/* ============ 기본 골격 ============ */
+body.report {
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: var(--paper);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* 슬라이드형 페이지 (16:9 한 장) */
+.slide {
+  aspect-ratio: 16 / 9;
+  max-width: 1280px;
+  margin: 24px auto;
+  background: var(--paper);
+  position: relative;
+  padding: 34px 40px 30px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 8px rgba(0,0,0,.10);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============ 헤더존 ============ */
+.page-title {
+  color: var(--brand-heading);
+  font-size: var(--fs-page-title);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+}
+.title-rule {
+  border: 0;
+  border-top: 1.5px solid var(--brand-heading);
+  margin: 0 0 12px;
+}
+.lead {
+  color: var(--muted);
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+.kicker {           /* 페이지 상단 컨텍스트 스트립(브레드크럼/아이템 라벨) */
+  font-size: var(--fs-kicker);
+  font-weight: 700;
+  color: var(--brand-primary);
+  margin-bottom: 10px;
+}
+
+/* ============ 배너바 (박스/차트 타이틀) ============ */
+.banner {
+  background: var(--brand-primary);
+  color: #fff;
+  font-size: var(--fs-banner);
+  font-weight: 700;
+  padding: 5px 12px;
+  margin: 0 0 10px;
+  display: block;
+}
+.banner.gray { background: var(--compare-gray); }
+.banner.teal { background: var(--accent-teal); }
+
+/* 아웃라인 서브라벨 박스 */
+.sublabel {
+  border: 1px solid var(--muted);
+  border-radius: 6px;
+  text-align: center;
+  font-size: var(--fs-sublabel);
+  font-weight: 700;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+}
+
+/* ============ 섹션 구분 ============ */
+.section-divider {
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 44px 48px;
+  margin: 24px 0;
+  box-shadow: 6px 6px 0 rgba(74,82,40,.18);
+  display: flex; align-items: center; gap: 22px;
+}
+.section-divider h2 { font-size: var(--fs-section-band); font-weight: 800; margin: 0; }
+.section-divider.sub { background: var(--band-gray); color: #111; box-shadow: none; }
+
+/* 스트라이프 모티프 (///) */
+.stripes { display: inline-flex; gap: 6px; }
+.stripes i {
+  width: 7px; height: 44px; background: currentColor;
+  transform: skewX(-18deg); display: block; border-radius: 1px;
+}
+.stripes i:nth-child(2) { height: 34px; margin-top: 10px; }
+.stripes i:nth-child(3) { height: 24px; margin-top: 20px; }
+
+/* ============ 강조/평결 ============ */
+.for      { color: var(--accent-blue);  font-weight: 800; }
+.against  { color: var(--accent-red);   font-weight: 800; }
+.pos      { color: var(--accent-teal);  font-weight: 700; }
+.neg      { color: var(--accent-red);   font-weight: 700; }
+.hl       { color: var(--brand-heading); font-weight: 700; }
+.chip {
+  display: inline-block; font-size: 11px; font-weight: 800;
+  padding: 2px 10px; border-radius: 3px; color: #fff;
+}
+.chip.for     { background: var(--accent-blue); }
+.chip.against { background: var(--accent-red); }
+.chip.off     { background: var(--compare-gray); }
+
+/* ============ 카드/인용 ============ */
+.card {
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.quote-card { position: relative; padding: 18px 20px 30px; }
+.quote-card::before {
+  content: "\201C";
+  position: absolute; top: 2px; left: 10px;
+  font-size: 34px; color: var(--quote-mark); font-family: Georgia, serif;
+}
+.quote-card .q-text { font-style: italic; font-size: var(--fs-quote); text-align: center; line-height: 1.55; }
+.quote-card .q-src { position: absolute; left: 14px; bottom: 8px; font-size: 10px; color: var(--muted); }
+.quote-card .q-logo { position: absolute; right: 14px; top: 10px; font-weight: 800; font-size: 12px; color: var(--muted); }
+
+/* 성공 리본(귀도장) */
+.ribbon {
+  position: absolute; top: -6px; right: -6px;
+  background: var(--accent-teal); color: #fff;
+  font-size: 10px; font-weight: 800; padding: 3px 12px;
+  transform: rotate(18deg);
+}
+
+/* ============ 콜아웃 밴드 ============ */
+.callout      { padding: 10px 16px; font-weight: 700; font-size: var(--fs-small); }
+.callout.red  { background: var(--accent-red-bg);  color: var(--accent-red); text-align: center; }
+.callout.teal { background: var(--accent-teal-bg); color: var(--accent-teal); }
+.callout.olive{ background: var(--brand-bg-tint);  color: var(--brand-heading); }
+
+/* ============ 표 ============ */
+table.data {
+  width: 100%; border-collapse: collapse;
+  font-size: var(--fs-table);
+}
+table.data thead th {
+  background: var(--brand-primary); color: #fff;
+  font-weight: 700; padding: 5px 8px; text-align: left;
+}
+table.data td { padding: 5px 8px; border-bottom: 1px solid #EFEFEF; }
+table.data tr.sub td { background: var(--brand-fill-light); }
+table.data tr.total td { font-weight: 800; border-top: 1.5px solid var(--text); }
+table.data td.num { text-align: right; }
+.row-flag { outline: 1.5px solid var(--accent-red); outline-offset: -1.5px; }
+
+/* ============ 스코어카드 항목 ============ */
+.score-item { display: flex; gap: 10px; margin-bottom: 14px; }
+.score-item .x { color: var(--accent-red-icon); font-weight: 900; font-size: 16px; line-height: 1.1; }
+.score-item .check { color: var(--accent-teal); font-weight: 900; font-size: 15px; line-height: 1.2; }
+.score-item b { color: var(--brand-heading); display: block; margin-bottom: 2px; }
+.score-item p { margin: 0; font-size: var(--fs-small); color: var(--text); line-height: 1.45; }
+
+/* ============ 타임라인 ============ */
+.timeline { position: relative; padding: 26px 0; }
+.timeline .axis { position: absolute; left: 0; right: 0; top: 50%; border-top: 1.5px solid var(--brand-primary); }
+.tl-node { position: relative; text-align: left; }
+.tl-node .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--brand-primary); }
+.tl-node .dot.teal { background: var(--accent-teal); }
+.tl-node .date { font-weight: 800; font-size: 12px; color: var(--brand-heading); }
+.tl-node .desc { font-size: 11.5px; color: var(--text); line-height: 1.4; }
+
+/* ============ KPI ============ */
+.kpi { text-align: center; padding: 22px 8px; }
+.kpi .num { font-size: var(--fs-kpi); font-weight: 800; color: var(--brand-heading); }
+.kpi .cap { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+/* ============ 푸터 ============ */
+.slide-footer {
+  margin-top: auto;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  font-size: var(--fs-footnote); color: var(--faint); line-height: 1.45;
+}
+.slide-footer .pageno { font-size: 12px; color: var(--muted); }
+
+/* ============ 레이아웃 유틸 ============ */
+.cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+.col-64 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 22px; }
+.logo-slot { position: absolute; top: 26px; right: 40px; font-weight: 800; color: var(--brand-primary); font-size: 13px; letter-spacing: .04em; }
+
+.doc{max-width:920px;margin:0 auto;padding:40px 34px 60px;background:var(--paper)}
+body.report{background:#EDEDE8}
+.doc-header{border-bottom:2px solid var(--brand-primary);padding-bottom:20px;margin-bottom:26px}
+.doc h2.sec{color:var(--brand-heading);font-size:19px;font-weight:800;margin:40px 0 4px;letter-spacing:-.01em}
+.doc h2.sec .no{color:var(--brand-primary);margin-right:8px}
+.sec-rule{border:0;border-top:1.5px solid var(--brand-heading);margin:0 0 12px}
+.doc p{font-size:var(--fs-body);line-height:1.62;margin:8px 0}
+.doc ul{margin:8px 0;padding-left:19px}
+.doc li{font-size:var(--fs-body);line-height:1.58;margin:4px 0}
+table.data{margin:10px 0}
+table.data td{font-size:var(--fs-table);line-height:1.5;vertical-align:top}
+.brow{display:flex;align-items:center;gap:10px;margin:6px 0}
+.blab{flex:0 0 150px;font-size:11.5px;color:var(--muted);text-align:right;line-height:1.3}
+.btrack{flex:1;display:flex;align-items:center;gap:8px;border-left:1.5px solid var(--text)}
+.bar{height:15px;background:var(--compare-gray);min-width:2px}
+.bar.hero{background:var(--brand-primary)}
+.bval{font-size:11.5px;font-weight:600;white-space:nowrap;color:var(--text)}
+.bval .u{color:var(--faint);font-weight:400}
+.stack{height:17px;display:flex;gap:2px;flex:1}
+.seg{height:100%;min-width:1px}
+.chartbox{border:1px solid var(--hairline);border-radius:8px;padding:14px 16px 10px;margin:14px 0;background:var(--paper)}
+.note{font-size:10px;color:var(--faint);margin-top:8px;border-top:1px solid var(--hairline);padding-top:6px;line-height:1.5}
+.src{font-size:var(--fs-footnote);color:var(--faint);line-height:1.5;margin-top:10px}
+.kpi3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:16px 0}
+@media(max-width:700px){.kpi3{grid-template-columns:1fr}.cols-2{grid-template-columns:1fr}.blab{flex-basis:95px}}
+.legend{display:flex;gap:16px;margin:2px 0 10px;font-size:11px;color:var(--muted)}
+.legend .k{display:inline-flex;align-items:center;gap:5px}
+.legend .sw{width:9px;height:9px;display:inline-block}
+@media print{.doc{max-width:none}}
+</style></head>
+<body class="report"><div class="doc">
+
+<div class="doc-header">
+<div style="display:flex;justify-content:space-between;align-items:flex-start">
+<div>
+<div class="kicker">AIDC DEEP RESEARCH · 1장</div>
+<h1 class="page-title" style="font-size:30px;margin:2px 0 6px">국내 AIDC 추정: 테넌트 수요</h1>
+<p class="lead" style="margin:0">발표 규모가 아니라 실현 가능 규모. 글로벌 테넌트의 실제 계약에서 출발해 한국 몫을 역산한다.</p>
+</div>
+<span class="stripes" style="color:var(--brand-primary)"><i></i><i></i><i></i></span>
+</div>
+<div style="font-size:11px;color:var(--faint);margin-top:10px">기준일 2026.08.12 · 1장 = 수요 추정, 전력 확보 속도는 2장</div>
+</div>
+
+<div class="kpi3">
+<div><div class="banner">정부 로드맵</div><div class="card kpi"><div class="num" style="font-size:28px">8.4 → 18.4<span style="font-size:14px"> GW</span></div><div class="cap">1단계 29년(SK 5·GS 2.4·네이버 1) → 2단계 35년</div></div></div>
+<div><div class="banner gray">구속력 계약·착공</div><div class="card kpi"><div class="num" style="font-size:28px;color:var(--text)">~0.4<span style="font-size:14px"> GW</span></div><div class="cap">울산 103 · 해남 40 · 포항 40 · 파주 200급</div></div></div>
+<div><div class="banner" style="background:var(--accent-gold)">격차</div><div class="card kpi"><div class="num" style="font-size:28px;color:var(--accent-gold)">1/21</div><div class="cap">나머지 8GW는 전부 MOU·LOI·목표 단계</div></div></div>
+</div>
+<p>사슬은 <b class="hl">테넌트 → 자금 → 전력·부지 → 착공</b>. 테넌트가 최상류.</p>
+
+<h2 class="sec"><span class="no">1.1</span>추론 수요 증가</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:8px">이동 가능한 수요는 추론. 2030년 전체 DC 수요의 42.6%로 최대 항목이 된다.</p>
+<div class="chartbox">
+<div class="banner">데이터센터 수요 구성 변화 (GW)</div>
+<div class="legend"><span class="k"><span class="sw" style="background:var(--brand-primary)"></span><b>AI 추론</b></span><span class="k"><span class="sw" style="background:var(--brand-mid)"></span>AI 학습</span><span class="k"><span class="sw" style="background:var(--chart-gray)"></span>비AI</span></div>
+<div class="brow"><div class="blab">2025년 · 82.3GW</div><div class="btrack">
+<div class="stack" style="max-width:37.6%"><div class="seg" style="width:25.4%;background:var(--brand-primary)"></div><div class="seg" style="width:28.1%;background:var(--brand-mid)"></div><div class="seg" style="width:46.5%;background:var(--chart-gray)"></div></div>
+<div class="bval">20.9 / 23.1 / 38.3</div></div></div>
+<div class="brow"><div class="blab"><b>2030년 · 219.0GW</b></div><div class="btrack">
+<div class="stack" style="max-width:100%"><div class="seg" style="width:42.6%;background:var(--brand-primary)"></div><div class="seg" style="width:28.4%;background:var(--brand-mid)"></div><div class="seg" style="width:29.0%;background:var(--chart-gray)"></div></div>
+<div class="bval"><b>93.3</b> / 62.2 / 63.5</div></div></div>
+<div class="note">Source: McKinsey 데이터센터 수요 모델. Note: 추론:학습 = 47.5:52.5(2025) → 60:40(2030)</div>
+</div>
+<ul>
+<li>추론 <b>20.9 → 93.3GW, 4.46배</b>. 학습(62.2GW)·비AI(63.5GW)를 제치고 최대 항목</li>
+<li>학습 = 대규모 GPU 집적이 유리 → 미국·중동 집중. 추론 = 이용자·규제 따라 리전 분산 → <span class="hl">한국이 겨냥할 시장은 추론</span></li>
+<li>“학습은 미국에 둬야 한다”는 법 규정 없음. AI Diffusion Rule 25.05 폐지. Anthropic “신규 컴퓨트 대부분 미국”(26.04.06)도 자발적 선언 — 강제가 아니라 선택</li>
+</ul>
+
+<h2 class="sec"><span class="no">1.2</span>미국 외 연산기지 필요성</h2><hr class="sec-rule">
+<table class="data">
+<thead><tr><th style="width:150px">논거</th><th>내용</th><th style="width:100px">성격</th></tr></thead>
+<tbody>
+<tr><td><b>① 데이터 주권</b></td><td>개인정보·금융·의료가 국경 못 넘음. 한국은 전자금융감독규정 §14조의2⑧(국내 설치 의무)·공공 CSAP 상·중등급</td><td><span class="pos">가장 단단</span></td></tr>
+<tr><td><b>② 미국 전력 병목의 차선책</b></td><td>미국에서 계통연계를 제때 못 받아 대체 입지 물색</td><td style="color:var(--accent-gold);font-weight:700">조건부</td></tr>
+<tr><td><b>③ 소버린 AI</b></td><td>정부의 안보·산업정책 수요. 드라이버가 정치</td><td style="color:var(--muted);font-weight:700">캐파≠가동률</td></tr>
+</tbody></table>
+<ul>
+<li>레이턴시는 약한 논거. 서울→미국서부 126ms = 챗봇 체감의 2~4%. 음성·에이전트도 서울→도쿄 34ms로 해소 → ‘아시아’ 논거일 뿐 ‘한국’ 논거 아님</li>
+<li>미국·EU 수요의 한국 원격처리는 기본 시나리오 제외. 미국 병목 장기화 시 옵션</li>
+</ul>
+
+<h2 class="sec"><span class="no">1.3</span>AIDC의 수익성</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:8px">1GW가 버는 돈이 크고, 그래서 지연이 요금보다 비싸다.</p>
+<div class="chartbox">
+<div class="banner">1GW 연매출 — 사업모델 3단계 (연간, USD)</div>
+<div class="brow"><div class="blab">부동산형 (건물·전력 임대)</div><div class="btrack"><div class="bar" style="width:1.5%;min-width:12px"></div><div class="bval">$1.5B <span class="u">≈ 2.1조원</span></div></div></div>
+<div class="brow"><div class="blab">네오클라우드 (GPU 임대)</div><div class="btrack"><div class="bar" style="width:12%"></div><div class="bval">$12B <span class="u">≈ 16.8조원 · GPU당 $3/hr</span></div></div></div>
+<div class="brow"><div class="blab"><b style="color:var(--brand-heading)">모델사 (API 서빙)</b></div><div class="btrack"><div class="bar hero" style="width:100%"></div><div class="bval"><b>$100B</b> <span class="u">≈ 140조원</span></div></div></div>
+<div class="note">Source: SemiAnalysis (26.08.10), 환율 1,400원/$. Note: 미래 전망 아님 — Anthropic 런레이트 $470억(26.05), 서빙 ~0.5GW 가정 시 실제 $94B/GW로 추정치와 일치</div>
+</div>
+<ul>
+<li>층이 올라갈 때마다 8배. 부동산형 대비 모델사 <b>67배</b></li>
+<li>CoreWeave 2Q26(26.08.11): 수주잔고 $1,040억 — 연매출의 10년치. Nebius 2Q26: 매출 +454% YoY</li>
+</ul>
+<div class="callout olive" style="margin:10px 0">CoreWeave 가동 전력 1.5GW vs 계약 전력 3.7GW — 팔 곳은 계약됐는데 2.2GW를 못 지음. 수요가 아니라 공급이 병목</div>
+<div class="cols-2" style="margin:14px 0">
+<div class="card"><div class="sublabel">비용에서 전력의 몫 (1GW 연간화)</div>
+<p style="margin:4px 0;font-size:12.5px">서버·GPU 상각 <b>60%</b> · 시설 건설 ~26%<br><b>에너지 ~7%</b> <span style="color:var(--faint)">(한국 요금 시 ~11%)</span> · 기타 ~7%</p>
+<div class="src">Source: Epoch AI (26.05.14)</div></div>
+<div class="card"><div class="sublabel">가동 1개월 지연의 기회비용 (원)</div>
+<table class="data" style="margin:4px 0"><thead><tr><th>용량</th><th style="text-align:right">부동산형</th><th style="text-align:right">네오클라우드</th><th style="text-align:right">API 서빙</th></tr></thead>
+<tbody><tr><td>100MW</td><td class="num">175억</td><td class="num">1,400억</td><td class="num">1.17조</td></tr>
+<tr><td>1GW</td><td class="num">1,750억</td><td class="num">1.4조</td><td class="num">11.7조</td></tr></tbody></table></div>
+</div>
+<ul>
+<li>100MW 기준 한·텍사스 연간 전기요금 격차 ~$0.78억 vs 가동 1년 지연 손실 $13.3억. <b>지연 1년 = 전기요금 격차 11~18년치</b></li>
+<li><span class="hl">의사결정 기준은 “어디가 싼가”가 아니라 “어디가 지금 지을 수 있는가”</span>. 미국이 가스터빈 납기(2030년 전후)를 못 기다리고 선박용 엔진·이동식 터빈까지 동원하는 이유</li>
+<li>한국 함의: 전기요금 열위는 결정적 약점 아님. 결정적인 건 <b>부지별 계통 접속 시점</b> (2장)</li>
+</ul>
+
+<h2 class="sec"><span class="no">1.4</span>실제 계약 — 수요지가 막히면 전력 가능지로 이동</h2><hr class="sec-rule">
+<p>아시아 최대 수요지 싱가포르 = 토지·전력 제약으로 신규 DC 총량 통제.<br>→ 테넌트·네오클라우드는 <b>인접한 전력 가능지</b>로 이동. 조호르·바탐이 수혜지. 최근 계약이 전부 이 패턴:</p>
+<table class="data">
+<thead><tr><th>사례</th><th style="width:125px">규모</th><th style="width:100px">시점</th><th>구조</th></tr></thead>
+<tbody>
+<tr><td><b>CoreWeave 인도네시아</b></td><td>360MW·3개 시설</td><td>26.08.04</td><td>싱가포르 대신 인니. 직접 소유·운영, 28년 가동</td></tr>
+<tr><td>AWS–SK 울산</td><td>103MW (1GW 옵션)</td><td>25.08.29 착공</td><td>현지가 짓고 글로벌이 장기 임차</td></tr>
+<tr><td>Meta–Reliance 인도</td><td>168MW</td><td>26.06.10</td><td>현지 파트너 부지·전력 + 임차</td></tr>
+<tr><td>OpenAI–Tata 인도</td><td>100MW</td><td>26.02.19</td><td>직접 건설 대신 현지 컴퓨트 구매</td></tr>
+</tbody></table>
+<p><span class="hl">입지는 수요 중심지와의 거리가 아니라 “수백 MW를 언제 공급할 수 있는가”가 결정</span>.<br>서울도 같은 구도 — 수도권이 막히면 물량은 전력 가능지(비수도권)로 감.</p>
+
+<h2 class="sec"><span class="no">1.5</span>국가별 추론 수요 — 한국은 상위권</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:8px">각국 추론 수요가 리전 배치의 근거라면, 한국의 위치 확인 필요. 실사용 데이터 기준.</p>
+<div class="chartbox">
+<div class="banner">APAC 국가별 전 세계 Claude 사용 비중 (%, 26년 5월)</div>
+<div class="brow"><div class="blab">인도</div><div class="btrack"><div class="bar" style="width:100.0%"></div><div class="bval">7.12%</div></div></div>
+<div class="brow"><div class="blab">일본</div><div class="btrack"><div class="bar" style="width:46.1%"></div><div class="bval">3.28%</div></div></div>
+<div class="brow"><div class="blab"><b style='color:var(--brand-heading)'>한국</b></div><div class="btrack"><div class="bar hero" style="width:45.5%"></div><div class="bval"><b>3.24%</b></div></div></div>
+<div class="brow"><div class="blab">호주</div><div class="btrack"><div class="bar" style="width:37.2%"></div><div class="bval">2.65%</div></div></div>
+<div class="brow"><div class="blab">인도네시아</div><div class="btrack"><div class="bar" style="width:29.2%"></div><div class="bval">2.08%</div></div></div>
+<div class="brow"><div class="blab">파키스탄</div><div class="btrack"><div class="bar" style="width:15.2%"></div><div class="bval">1.08%</div></div></div>
+<div class="brow"><div class="blab">태국</div><div class="btrack"><div class="bar" style="width:12.1%"></div><div class="bval">0.86%</div></div></div>
+<div class="brow"><div class="blab">베트남</div><div class="btrack"><div class="bar" style="width:11.9%"></div><div class="bval">0.85%</div></div></div>
+<div class="brow"><div class="blab">필리핀</div><div class="btrack"><div class="bar" style="width:11.2%"></div><div class="bval">0.80%</div></div></div>
+<div class="brow"><div class="blab">대만</div><div class="btrack"><div class="bar" style="width:11.1%"></div><div class="bval">0.79%</div></div></div>
+<div class="brow"><div class="blab">싱가포르</div><div class="btrack"><div class="bar" style="width:8.7%"></div><div class="bval">0.62%</div></div></div>
+<div class="brow"><div class="blab">말레이시아</div><div class="btrack"><div class="bar" style="width:7.2%"></div><div class="bval">0.51%</div></div></div>
+<div class="brow"><div class="blab">뉴질랜드</div><div class="btrack"><div class="bar" style="width:5.5%"></div><div class="bval">0.39%</div></div></div>
+<div class="brow"><div class="blab">방글라데시</div><div class="btrack"><div class="bar" style="width:4.4%"></div><div class="bval">0.31%</div></div></div>
+<div class="note">Source: Anthropic Economic Index (26.05 집계). Note: 중국은 서비스 대상 아님</div>
+</div>
+<ul>
+<li>한국 3.24% — <b>일본(3.28%)과 동률</b>, APAC 3위</li>
+<li>인구당 강도(AUI) 한국 3.78 vs 일본 1.91 — <b>일본의 2배</b> (생산연령인구가 절반이므로)</li>
+<li>생성형 AI 이용률 한국 37.1% &gt; 미국 31.3% (MS, 26.03)</li>
+<li>환산 시 한국 귀속 추론 부하: 현재 <b>~100~250MW</b> → 2030년 <b>0.5~1.7GW</b> <span style="color:var(--faint);font-size:11px">(McKinsey 추론 성장 4.46배 × 아시아 비중 상승 1.2~1.5배)</span></li>
+<li><span class="hl">수요 부족은 한국의 문제가 아님. 문제는 이 수요를 국내 서빙으로 가져오는 것</span></li>
+</ul>
+
+<h2 class="sec"><span class="no">1.6</span>국가별 전력 확보 경쟁 ★</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:8px">테넌트의 실질 비교 항목 = “몇 년 안에 전력을 실제 공급받을 수 있는가”.</p>
+<table class="data">
+<thead><tr><th></th><th>전력 확보 속도</th><th style="text-align:right">건설비($/W)</th><th>규제 강제 수요</th><th>GPU 접근성</th><th style="text-align:right">CSP 투자(24~26)</th></tr></thead>
+<tbody>
+<tr><td>일본</td><td>도쿄 계통 8~10년 <span style="color:var(--faint)">규슈로 이동 중</span></td><td class="num">16.0</td><td>중</td><td>○</td><td class="num">$370억</td></tr>
+<tr><td>인도</td><td>주별 편차, 대체로 양호</td><td class="num">낮음</td><td>중</td><td>○</td><td class="num">$450억</td></tr>
+<tr><td>호주</td><td>접속 규칙 형성기</td><td class="num">중</td><td>중</td><td>○</td><td class="num">$290억</td></tr>
+<tr><td>조호르</td><td>Green Lane 12개월</td><td class="num">낮음</td><td>낮음</td><td>△ <span style="color:var(--faint)">중국계 이슈</span></td><td class="num">—</td></tr>
+<tr><td>인도네시아</td><td>대규모 확보 가능</td><td class="num">낮음</td><td>중</td><td>○</td><td class="num">—</td></tr>
+<tr class="sub"><td><b>한국</b></td><td><b>부지별 편차 극심</b> <span style="color:var(--faint)">울산형만 빠름</span></td><td class="num"><b>10.6</b> <span style="color:var(--faint)">도쿄 -34%</span></td><td><b>높음</b></td><td><b>○ Tier1</b></td><td class="num"><b>$90억</b></td></tr>
+</tbody></table>
+
+<p style="font-weight:700;color:var(--brand-heading);margin-top:18px">국가별 상세 — 수요 · 확보 속도 · 확충 계획</p>
+<table class="data"><thead><tr><th colspan="2">1) 일본</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>정체 → 증가 전환. <b>DC+반도체가 FY2034까지 +7GW</b> (OCCTO 10개년 전망). DC 전력수요 2034년까지 3배 전망(Wood Mackenzie)</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>도쿄권 계통 접속 <b>8~10년</b> → 파이프라인 규슈 이동(계획 ~3GW). PUE 1.4 규제(26.04). 빠른 실현은 기존 공장 전환(KDDI 사카이 9개월)</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>7차 에너지기본계획(25.02): 2040년 재생 <b>4~5할</b>·원전 <b>~2할</b>(재가동 확대 전제). 광역 HVDC 보강은 2030년대</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>투자 발표 아시아 최상위($370억), 실현은 계통에 막힘 — <b>연 +0.2GW</b></td></tr></tbody></table>
+<table class="data"><thead><tr><th colspan="2">2) 인도</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>급증. 총 설비 <b>500GW 돌파</b>(25년, 비화석 50%+). 2030년 777GW로 피크 대응 계획</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>주정부 전용 전력·부지 인센티브 경쟁(Google 비사카파트남 1GW, 26.04 착공). 양호하나 주별 편차. 24/7 무탄소 조달은 난제</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>2030 비화석 <b>500GW</b> 목표(24년 재생 +30GW, 세계 최속급). 900GW 연계 국가송전계획 <b>$850억</b>(~35-36년)</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>전력보다 <b>공급망·안정성</b>이 병목. 2030 DC 전망 편차 큼(3~3.5GW 캡 vs 12GW)</td></tr></tbody></table>
+<table class="data"><thead><tr><th colspan="2">3) 호주</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>AEMO 집계 DC 파이프라인 <b>5.4GW</b>(26.06). NEM 수요 장기 2배 전망</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td><b>규칙 형성기</b> — AEMC가 DC 접속 표준 신설 중, NSW는 계통 접근 통제 움직임</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>2030 재생 <b>82%</b> 목표. CIS(용량투자제도)로 <b>32GW</b> 정부 언더라이팅. Rewiring the Nation 송전 확충. 석탄 폐지는 일정 연장(AEMO 초안 26 ISP). 원전 없음</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>Anthropic 채용 집중지. 단 접속 제도가 지금 만들어지는 중 — “양호” 단정 불가</td></tr></tbody></table>
+<table class="data"><thead><tr><th colspan="2">4) 조호르 (말레이시아)</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>DC 전력계약(ESA) 누적 <b>~5.9GW</b> vs 실부하 <b>0.4GW</b>(24.12) — 여기도 발표 인플레</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td><b>Green Lane 12개월</b>(종전 36~48개월). TNB 원스톱, 실계약 다수(TM Nxera 280MW 등). 신청 30% 반려 — 선별 강화</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>TNB 계통 투자 확대(RP4, DC 대응 연 +RM10~20억 증액 전망). 가스 증설 병행. 25.07 요금 인상 +10~15%, 물 부족 이슈</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>비중국 아시아 실현 속도 1위의 원형 — 5년 +0.9GW</td></tr></tbody></table>
+<table class="data"><thead><tr><th colspan="2">5) 인도네시아</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>AI 투자 유입 개시 — CoreWeave 360MW(26.08.04)가 대표</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>자바 PLN 과잉설비(take-or-pay IPP 유산) + <b>캡티브(자가) 발전 허용</b> → 빠름. 단 26년 자바 정전·석탄 수급 이슈 병존</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>RUPTL 2025-34: 10년간 <b>+69.5GW</b>(재생 ~60%, 석탄 병행)</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>싱가포르 인접 + 대규모 전력·부지 = 바탐·리아우가 조호르의 다음 버전</td></tr></tbody></table>
+<table class="data"><thead><tr><th colspan="2">6) 싱가포르</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>아시아 클라우드 허브 — 수요는 최다, 공급은 봉쇄</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>신규 총량 통제. 그린 DC 로드맵(24.05)으로 <b>+300MW</b>만 조건부 할당</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>자체 증설 대신 <b>저탄소 전력 수입 6GW</b>(2035 목표) — 말레이·인니 해저망</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>수요 최대 허브의 셀프 캡 → 물량이 조호르·바탐으로 넘치는 구조의 원인</td></tr></tbody></table>
+<table class="data"><thead><tr><th colspan="2">7) 한국</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>AIDC <b>18.4GW</b>(1단계 8.4/29년 + 2단계 10/35년) · 용인 반도체 <b>14GW+</b>(32~41년) · 호남 반도체 <b>6.4GW</b>(29년~). 12차 전기본 목표수요 <b>131.8~138.2GW</b>(26.04 전망, 11차 129.3 대비 상향)</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>부지별 편차 극심. 수도권은 계통영향평가로 사실상 봉쇄. <b>울산형(발전 인접)만 ~2.5년</b>. 신규 원전 10년+</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>K-GX: 재생 <b>100GW</b> 조기 + 서해안 HVDC. 해상풍력 입찰 <b>55GW</b>(~35년, 보급 목표 25GW). 12차 전기본 지연 중(→10월). AIDC 특별법 27.02(타임아웃 인허가·직접 PPA 특례). AIDC 전용 요금제 설계 중</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>호남 잉여(출력제어)·동해안 감발 = 지역 잉여 실재. 단 <b>부지 단위로 묶어 파는 상품이 없음</b> — 상세 2장</td></tr></tbody></table>
+
+<div class="cols-2" style="margin:16px 0">
+<div class="card"><div class="sublabel" style="border-color:var(--accent-teal);color:var(--accent-teal)">한국의 강점</div>
+<ul style="margin:4px 0;font-size:12.5px">
+<li>세계 최상위 AI 이용 강도</li><li>삼성전자·SK하이닉스 메모리 공급망 지렛대</li>
+<li>대중 수출통제에서 자유로운 동맹국</li><li>금융·공공·소버린 규제 수요</li>
+<li>일본 대비 34% 낮은 건설비</li><li>호남·동해안 등 비수도권 발전설비</li></ul></div>
+<div class="card"><div class="sublabel" style="border-color:var(--accent-red);color:var(--accent-red)">한국의 약점</div>
+<ul style="margin:4px 0;font-size:12.5px">
+<li>인구·클라우드 시장 규모가 일본·인도보다 작음</li><li>글로벌 CSP 투자 우선순위 후순위($90억 vs 일본 $370억)</li>
+<li>일반 서비스 지연은 일본 리전으로 대체 가능</li><li>전기요금 아시아 최저 아님($0.132/kWh)</li>
+<li><b>발전량과 별개로 부지별 계통 접속 시점 불확실</b></li></ul></div>
+</div>
+<div class="callout olive">한국은 “전기가 남아서” 선택되지 않음. 테넌트가 원하는 시점에 부지·전력·인허가·자금을 묶어 제시해야 선택됨 — 상세 검증은 2장</div>
+
+<h2 class="sec"><span class="no">1.7</span>수요 시나리오 (2030)</h2><hr class="sec-rule">
+<p>아래는 <b>수요</b>. 계약·자금·전력·공기 할인 후의 <b>실현</b> 규모는 3~6장.</p>
+<table class="data">
+<thead><tr><th>수요 항목 (GW)</th><th style="text-align:right">Bear</th><th style="text-align:right">Base</th><th style="text-align:right">Bull</th><th>비고</th></tr></thead>
+<tbody>
+<tr><td>프론티어 추론 (국내 서빙분)</td><td class="num">0.10</td><td class="num">0.30</td><td class="num">0.80</td><td>인리전 개설 수에 연동</td></tr>
+<tr><td>국내 기업 자체 AI</td><td class="num">0.40</td><td class="num">0.70</td><td class="num">1.20</td><td>금융·통신·제조, 규제 코어 포함</td></tr>
+<tr><td>공공·소버린</td><td class="num">0.30</td><td class="num">0.45</td><td class="num">0.70</td><td>국가AI컴퓨팅센터·GPU사업</td></tr>
+<tr><td>캡티브 (그룹 내부)</td><td class="num">0.20</td><td class="num">0.40</td><td class="num">0.70</td><td>현대차 새만금·삼성SDS 등</td></tr>
+<tr><td>수출형 (아시아 허브·미국 이전)</td><td class="num">0.00</td><td class="num">0.20</td><td class="num">1.50</td><td>Bull에서만 유의미</td></tr>
+<tr><td>일반 IDC 증설 (비AI)</td><td class="num">0.40</td><td class="num">0.55</td><td class="num">0.70</td><td>기존 1.5GW 기반</td></tr>
+<tr class="total"><td>합계</td><td class="num">1.4</td><td class="num">2.6</td><td class="num">5.6</td><td></td></tr>
+</tbody></table>
+<ul>
+<li>참조: 11차 전기본 2030 신규 DC 3.3GW · 하나증권 실질수요 Base 3~4.2 / Bull 5.1~7GW. 위 Base 2.6은 보수적</li>
+<li><span class="hl">수요는 수 GW까지 열려 있음. 병목은 수요가 아니라 전력 확보 속도 — 2장</span></li>
+</ul>
+
+<div class="src" style="border-top:1px solid var(--hairline);padding-top:12px;margin-top:30px">
+Source: McKinsey 데이터센터 수요 모델 · SemiAnalysis(26.08.10) · CoreWeave·Nebius 2Q26 실적 · Epoch AI(26.05.14) · Anthropic Economic Index(26.05) · OCCTO 10개년 전망 · 일본 7차 에너지기본계획 · AEMO 초안 2026 ISP · TNB · RUPTL 2025-34 · 11·12차 전기본 관련 보도 · 각 사 공시·컨콜.<br>
+본 자료는 정보 제공용이며 투자 권유가 아닙니다. 수치는 작성일 기준 공개 자료의 정리이며 오류가 있을 수 있습니다.
+</div>
+
+</div></body></html>
