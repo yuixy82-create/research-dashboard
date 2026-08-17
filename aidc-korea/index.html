@@ -1,9 +1,9 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>국내 AIDC 추정: 테넌트 수요 — AIDC Deep Research 1장</title>
+<title>국내 AIDC 추정: 테넌트 수요: AIDC Deep Research 1장</title>
 <style>/* ============================================================
    design-skill tokens.css  v1.0
-   올리브 팔레트 IB 보고서 디자인 시스템 — HTML용 디자인 토큰
+   올리브 팔레트 IB 보고서 디자인 시스템: HTML용 디자인 토큰
    출처: assets/tokens.json 과 항상 동기화할 것
    ============================================================ */
 
@@ -26,7 +26,7 @@
   --accent-blue:      #4587B2;  /* 찬성(FOR), 제3자/중립 기관 */
   --accent-blue-light:#A8CBE0;
   --accent-blue-bg:   #E3EEF5;
-  --accent-red:       #B7332B;  /* 부정, 반대(AGAINST), 리스크 — 남용 금지 */
+  --accent-red:       #B7332B;  /* 부정, 반대(AGAINST), 리스크: 남용 금지 */
   --accent-red-icon:  #D64541;
   --accent-red-bg:    #FBEDEA;
   --accent-gold:      #D9A62E;  /* 주의, 전환 마커(▼) */
@@ -257,24 +257,33 @@ table.data td.num { text-align: right; }
 .doc{max-width:920px;margin:0 auto;padding:40px 34px 60px;background:var(--paper)}
 body.report{background:#EDEDE8}
 .doc-header{border-bottom:2px solid var(--brand-primary);padding-bottom:20px;margin-bottom:26px}
-.doc h2.sec{color:var(--brand-heading);font-size:19px;font-weight:800;margin:40px 0 4px;letter-spacing:-.01em}
+.doc h2.sec{color:var(--brand-heading);font-size:23px;font-weight:800;margin:156px 0 8px;letter-spacing:-.01em}
 .doc h2.sec .no{color:var(--brand-primary);margin-right:8px}
 .sec-rule{border:0;border-top:1.5px solid var(--brand-heading);margin:0 0 12px}
-.doc p{font-size:var(--fs-body);line-height:1.62;margin:8px 0}
+.doc p{font-size:14px;line-height:1.68;margin:10px 0}
 .doc ul{margin:8px 0;padding-left:19px}
-.doc li{font-size:var(--fs-body);line-height:1.58;margin:4px 0}
+.doc li{font-size:14px;line-height:1.68;margin:7px 0}
 table.data{margin:10px 0}
-table.data td{font-size:var(--fs-table);line-height:1.5;vertical-align:top}
+table.data td{font-size:13.5px;line-height:1.6;vertical-align:top;padding:8px 10px;color:var(--text)}
+table.data thead th{font-size:12.5px;padding:7px 9px}
+.country-head{display:block;font-size:16px;font-weight:800;color:#35688C;background:var(--accent-blue-bg);padding:9px 14px;border-left:5px solid var(--accent-blue);margin:48px 0 10px}
+.mark{background:var(--accent-gold-bg);padding:1px 4px;font-weight:800;border-radius:2px}
+.country-head.hero{border-left-color:var(--accent-gold);background:var(--accent-gold-bg);color:var(--brand-primary-deep)}
+.doc table.data+ul,.doc .chartbox+ul,.doc p.src+ul,.doc .note+ul,.doc .card+ul{margin-top:46px}
+.doc table.data+p:not(.src),.doc .chartbox+p:not(.src),.doc p.src+p:not(.src){margin-top:46px}
 .brow{display:flex;align-items:center;gap:10px;margin:6px 0}
 .blab{flex:0 0 150px;font-size:11.5px;color:var(--muted);text-align:right;line-height:1.3}
 .btrack{flex:1;display:flex;align-items:center;gap:8px;border-left:1.5px solid var(--text)}
 .bar{height:15px;background:var(--compare-gray);min-width:2px}
 .bar.hero{background:var(--brand-primary)}
+.bstack{display:flex;height:15px;flex-shrink:0}
+.bar.ncsp{box-sizing:border-box;border:1.5px dashed #98A19E;background:rgba(152,161,158,.14)}
+.bar.ncsp.heron{border-color:var(--brand-primary);background:var(--accent-gold-bg)}
 .bval{font-size:11.5px;font-weight:600;white-space:nowrap;color:var(--text)}
 .bval .u{color:var(--faint);font-weight:400}
 .stack{height:17px;display:flex;gap:2px;flex:1}
 .seg{height:100%;min-width:1px}
-.chartbox{border:1px solid var(--hairline);border-radius:8px;padding:14px 16px 10px;margin:14px 0;background:var(--paper)}
+.chartbox{border:1px solid var(--hairline);border-radius:8px;padding:16px 18px 12px;margin:24px 0;background:var(--paper)}
 .note{font-size:10px;color:var(--faint);margin-top:8px;border-top:1px solid var(--hairline);padding-top:6px;line-height:1.5}
 .src{font-size:var(--fs-footnote);color:var(--faint);line-height:1.5;margin-top:10px}
 .kpi3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:16px 0}
@@ -289,102 +298,145 @@ table.data td{font-size:var(--fs-table);line-height:1.5;vertical-align:top}
 <div class="doc-header">
 <div style="display:flex;justify-content:space-between;align-items:flex-start">
 <div>
-<div class="kicker">AIDC DEEP RESEARCH · 1장</div>
-<h1 class="page-title" style="font-size:30px;margin:2px 0 6px">국내 AIDC 추정: 테넌트 수요</h1>
-<p class="lead" style="margin:0">발표 규모가 아니라 실현 가능 규모. 글로벌 테넌트의 실제 계약에서 출발해 한국 몫을 역산한다.</p>
+<div class="kicker">AIDC DEEP RESEARCH · 1~4장 통합</div>
+<h1 class="page-title" style="font-size:30px;margin:2px 0 8px">국내 AIDC 추정: 발표가 아니라 실현 가능 규모</h1>
+<div style="font-size:12px;margin-top:8px;color:var(--muted)"><b>1장: 테넌트 수요</b> · <a href="#ch2" style="color:var(--brand-heading)">2장: 전력 확보 경쟁</a> · <a href="#ch3" style="color:var(--brand-heading)">3장: 프로젝트 검증</a> · <a href="#ch4" style="color:var(--brand-heading)">4장: 종목</a> · <a href="scenario.html" style="color:var(--brand-heading)">부록 A: 시나리오 산출</a></div>
 </div>
 <span class="stripes" style="color:var(--brand-primary)"><i></i><i></i><i></i></span>
 </div>
-<div style="font-size:11px;color:var(--faint);margin-top:10px">기준일 2026.08.12 · 1장 = 수요 추정, 전력 확보 속도는 2장</div>
 </div>
 
-<div class="kpi3">
-<div><div class="banner">정부 로드맵</div><div class="card kpi"><div class="num" style="font-size:28px">8.4 → 18.4<span style="font-size:14px"> GW</span></div><div class="cap">1단계 29년(SK 5·GS 2.4·네이버 1) → 2단계 35년</div></div></div>
-<div><div class="banner gray">구속력 계약·착공</div><div class="card kpi"><div class="num" style="font-size:28px;color:var(--text)">~0.4<span style="font-size:14px"> GW</span></div><div class="cap">울산 103 · 해남 40 · 포항 40 · 파주 200급</div></div></div>
-<div><div class="banner" style="background:var(--accent-gold)">격차</div><div class="card kpi"><div class="num" style="font-size:28px;color:var(--accent-gold)">1/21</div><div class="cap">나머지 8GW는 전부 MOU·LOI·목표 단계</div></div></div>
+<p style="font-weight:800;font-size:15px;margin-top:26px">목차</p>
+<div style="font-size:13.5px;line-height:2.2">
+<a href="#ch1" style="color:var(--brand-heading);font-weight:700">1장 테넌트 수요</a>: 누가, 왜 한국에 오는가: 수요의 실체와 유치 경쟁 구도<br>
+<a href="#ch2" style="color:var(--brand-heading);font-weight:700">2장 전력 확보 경쟁</a>: 실계약·실측으로 검증한 국가별 전력 공급 속도<br>
+<a href="#ch3" style="color:var(--brand-heading);font-weight:700">3장 프로젝트 검증</a>: 발표 전수를 채점해 "결국 몇 GW가 지어지는가"를 역산<br>
+<a href="#ch4" style="color:var(--brand-heading);font-weight:700">4장 종목</a>: 대장주 + 에너지(다음 후보)<br>
+<a href="scenario.html" style="color:var(--brand-heading);font-weight:700">부록 A</a>: 수요 시나리오 산출 노트
 </div>
-<p>사슬은 <b class="hl">테넌트 → 자금 → 전력·부지 → 착공</b>. 테넌트가 최상류.</p>
 
-<h2 class="sec"><span class="no">1.1</span>추론 수요 증가</h2><hr class="sec-rule">
-<p class="lead" style="margin-bottom:8px">이동 가능한 수요는 추론. 2030년 전체 DC 수요의 42.6%로 최대 항목이 된다.</p>
-<div class="chartbox">
-<div class="banner">데이터센터 수요 구성 변화 (GW)</div>
-<div class="legend"><span class="k"><span class="sw" style="background:var(--brand-primary)"></span><b>AI 추론</b></span><span class="k"><span class="sw" style="background:var(--brand-mid)"></span>AI 학습</span><span class="k"><span class="sw" style="background:var(--chart-gray)"></span>비AI</span></div>
-<div class="brow"><div class="blab">2025년 · 82.3GW</div><div class="btrack">
-<div class="stack" style="max-width:37.6%"><div class="seg" style="width:25.4%;background:var(--brand-primary)"></div><div class="seg" style="width:28.1%;background:var(--brand-mid)"></div><div class="seg" style="width:46.5%;background:var(--chart-gray)"></div></div>
-<div class="bval">20.9 / 23.1 / 38.3</div></div></div>
-<div class="brow"><div class="blab"><b>2030년 · 219.0GW</b></div><div class="btrack">
-<div class="stack" style="max-width:100%"><div class="seg" style="width:42.6%;background:var(--brand-primary)"></div><div class="seg" style="width:28.4%;background:var(--brand-mid)"></div><div class="seg" style="width:29.0%;background:var(--chart-gray)"></div></div>
-<div class="bval"><b>93.3</b> / 62.2 / 63.5</div></div></div>
-<div class="note">Source: McKinsey 데이터센터 수요 모델. Note: 추론:학습 = 47.5:52.5(2025) → 60:40(2030)</div>
+<p style="font-weight:800;font-size:15px;margin-top:44px">1~4장 요약</p>
+<div class="callout olive" style="line-height:2.05;font-size:13.5px;font-weight:400">
+① 정부 로드맵 8.4~18.4GW vs 착공 ~0.5GW·협상 파이프라인 ~1.5GW: 이 갭이 얼마나 메워질지를 역산 (1장)<br>
+② 수요는 제약이 아님: 아시아 추론 수요에서 한국은 상위권: <b>테넌트 유치의 핵심은 국가별 전력 공급 속도</b> (1장)<br>
+③ 초도 수백MW까지 한국은 경쟁력 있음: <b>GW급은 전력 증설 속도 = 정부 의지가 결정 → 에너지가 다음 테마</b> (2장)<br>
+④ 발표 물량의 8할이 테넌트 대기: <b>내추정) 30년 착공 Base 2.5~3 / Bull 6~8GW · 2035년 가동 Base 4~6GW</b> (3장)<br>
+⑤ 4Q에 판정 이벤트가 몰려 있음: 동해 전계평·착공 · 브룩필드 본계약 · Anthropic 입찰 · 12차 전기본 (3장)<br>
+⑥ 종목: 대장주(지엔씨에너지·자이에스앤디·GS건설·SGC에너지) + 2막 에너지(두산에너빌리티·비에이치아이·현대건설·GS글로벌 등) (4장)
 </div>
-<ul>
-<li>추론 <b>20.9 → 93.3GW, 4.46배</b>. 학습(62.2GW)·비AI(63.5GW)를 제치고 최대 항목</li>
-<li>학습 = 대규모 GPU 집적이 유리 → 미국·중동 집중. 추론 = 이용자·규제 따라 리전 분산 → <span class="hl">한국이 겨냥할 시장은 추론</span></li>
-<li>“학습은 미국에 둬야 한다”는 법 규정 없음. AI Diffusion Rule 25.05 폐지. Anthropic “신규 컴퓨트 대부분 미국”(26.04.06)도 자발적 선언 — 강제가 아니라 선택</li>
-</ul>
 
-<h2 class="sec"><span class="no">1.2</span>미국 외 연산기지 필요성</h2><hr class="sec-rule">
+<div class="section-divider" id="ch1" style="margin-top:130px"><span class="stripes"><i></i><i></i><i></i></span><h2>1장. 테넌트 수요</h2></div>
+
+<p style="font-weight:800;font-size:15px;margin-top:26px">1장 요약</p>
+<div class="callout olive" style="line-height:2.05;font-size:13.5px;font-weight:400">
+① 정부 로드맵 8.4~18.4GW vs 착공 ~0.5GW·협상 파이프라인 ~1.5GW: 이 갭이 얼마나 메워질지를 역산함<br>
+② AIDC는 돈이 됨(1GW당 연 $100B): 전기요금이 비싸도, 빨리 지을 수 있는 곳이면 지어짐<br>
+③ 수요의 본체는 추론(2030년 93.3GW, 학습 추월): 아시아에서 한국은 상위권, 인구당 최상위<br>
+④ 테넌트는 짓지 않고 빌림. 가는 곳은 전력이 빠른 곳: <b>승부는 국가별 전력 공급 속도(1.6장·2장)</b><br>
+⑤ 리스크는 프론티어의 실행이 타국에 먼저 가 있다는 것(1.7장). 수요 상한 추정은 3.6장, 실현 판정은 3.4장
+</div>
+
+<div class="kpi3" style="margin-top:76px;grid-template-columns:repeat(4,1fr)">
+<div><div class="banner">정부 로드맵</div><div class="card kpi"><div class="num" style="font-size:23px">8.4 → 18.4<span style="font-size:13px"> GW</span></div><div class="cap">1단계 26~29년 구축 → 2단계 ~35년</div></div></div>
+<div><div class="banner gray">구속력 계약·착공</div><div class="card kpi"><div class="num" style="font-size:23px;color:var(--text)">~0.5<span style="font-size:13px"> GW</span></div><div class="cap">울산 103 · 해남 80 · 파주 200급 · 포항 40 · 군산 60</div></div></div>
+<div><div class="banner" style="background:var(--brand-mid)">협상·실행 파이프라인</div><div class="card kpi"><div class="num" style="font-size:23px;color:var(--text)">~1.5<span style="font-size:13px"> GW</span></div><div class="cap">네이버·동해 초도·울산 확장 등: 전부 비구속 (1.7장 현황판)</div></div></div>
+<div><div class="banner" style="background:var(--accent-gold)">격차</div><div class="card kpi"><div class="num" style="font-size:23px;color:var(--accent-gold)">1/4 · 1/9</div><div class="cap">착공+파이프라인 ~2.0GW가 전부 진행돼도: 1단계 8.4의 1/4 · 전체 18.4의 1/9</div></div></div>
+</div>
+<p style="font-size:14.5px">사슬은 <b class="hl">테넌트 → 자금 → 전력·부지 → 착공</b>.<br>테넌트 확보가 선결조건.</p>
+
+
+<h2 class="sec"><span class="no">1.1</span>미국 외 연산기지 필요성</h2><hr class="sec-rule">
 <table class="data">
-<thead><tr><th style="width:150px">논거</th><th>내용</th><th style="width:100px">성격</th></tr></thead>
+<thead><tr><th style="width:170px">논거</th><th>내용</th><th style="width:100px">성격</th></tr></thead>
 <tbody>
-<tr><td><b>① 데이터 주권</b></td><td>개인정보·금융·의료가 국경 못 넘음. 한국은 전자금융감독규정 §14조의2⑧(국내 설치 의무)·공공 CSAP 상·중등급</td><td><span class="pos">가장 단단</span></td></tr>
-<tr><td><b>② 미국 전력 병목의 차선책</b></td><td>미국에서 계통연계를 제때 못 받아 대체 입지 물색</td><td style="color:var(--accent-gold);font-weight:700">조건부</td></tr>
-<tr><td><b>③ 소버린 AI</b></td><td>정부의 안보·산업정책 수요. 드라이버가 정치</td><td style="color:var(--muted);font-weight:700">캐파≠가동률</td></tr>
+<tr><td><b>① 데이터 주권</b></td><td>개인정보·금융·의료가 국경 못 넘음. 한국은 전자금융감독규정 14조의2⑧(국내 설치 의무)·공공 CSAP 상·중등급</td><td><span class="pos">가장 단단</span></td></tr>
+<tr><td><b>② 아시아 지역 추론 수요</b></td><td>아시아 자체 AI 이용량 급증: 이용자 옆에서 서빙할 리전 필요. 규모는 1.3장, 국가별 분포는 1.4장</td><td><span class="pos">구조적 성장</span></td></tr>
+<tr><td><b>③ 미국 전력 병목의 차선책</b></td><td>미국에서 계통연계를 제때 못 받아 대체 입지 물색</td><td style="color:var(--accent-gold);font-weight:700">조건부</td></tr>
+<tr><td><b>④ 소버린 AI</b></td><td>정부의 안보·산업정책 수요. 드라이버가 정치</td><td style="color:var(--muted);font-weight:700">캐파≠가동률</td></tr>
 </tbody></table>
 <ul>
 <li>레이턴시는 약한 논거. 서울→미국서부 126ms = 챗봇 체감의 2~4%. 음성·에이전트도 서울→도쿄 34ms로 해소 → ‘아시아’ 논거일 뿐 ‘한국’ 논거 아님</li>
 <li>미국·EU 수요의 한국 원격처리는 기본 시나리오 제외. 미국 병목 장기화 시 옵션</li>
 </ul>
 
-<h2 class="sec"><span class="no">1.3</span>AIDC의 수익성</h2><hr class="sec-rule">
-<p class="lead" style="margin-bottom:8px">1GW가 버는 돈이 크고, 그래서 지연이 요금보다 비싸다.</p>
+<p style="font-weight:700;margin-top:14px"><span class="mark">그럼 어디에 지어지나: 돈이 되고(1.2장), 빨리 지을 수 있는 곳(1.5장·1.6장)</span></p>
+
+<h2 class="sec"><span class="no">1.2</span>AIDC의 수익성: 클라우드는 돈이 된다</h2><hr class="sec-rule">
+<p style="font-size:15.5px;font-weight:800;line-height:1.85;margin:12px 0 18px;color:var(--text)">
+1GW당 $100B(140조원) 수익.<br>
+전력 비용은 7~11%.<br>
+1개월 착공 지연 시 기회비용 11.7조원 <span style="font-weight:400;font-size:12px;color:var(--muted)">(1GW·AI 모델 판매 기준)</span></p>
 <div class="chartbox">
-<div class="banner">1GW 연매출 — 사업모델 3단계 (연간, USD)</div>
+<div class="banner">1GW 연매출: 사업모델 3단계 (연간, USD)</div>
 <div class="brow"><div class="blab">부동산형 (건물·전력 임대)</div><div class="btrack"><div class="bar" style="width:1.5%;min-width:12px"></div><div class="bval">$1.5B <span class="u">≈ 2.1조원</span></div></div></div>
 <div class="brow"><div class="blab">네오클라우드 (GPU 임대)</div><div class="btrack"><div class="bar" style="width:12%"></div><div class="bval">$12B <span class="u">≈ 16.8조원 · GPU당 $3/hr</span></div></div></div>
-<div class="brow"><div class="blab"><b style="color:var(--brand-heading)">모델사 (API 서빙)</b></div><div class="btrack"><div class="bar hero" style="width:100%"></div><div class="bval"><b>$100B</b> <span class="u">≈ 140조원</span></div></div></div>
-<div class="note">Source: SemiAnalysis (26.08.10), 환율 1,400원/$. Note: 미래 전망 아님 — Anthropic 런레이트 $470억(26.05), 서빙 ~0.5GW 가정 시 실제 $94B/GW로 추정치와 일치</div>
+<div class="brow"><div class="blab"><b style="color:var(--brand-heading)">모델사 (AI 모델 판매)</b></div><div class="btrack"><div class="bar hero" style="width:100%"></div><div class="bval"><b style="font-size:14px">$100B</b> <span class="u">≈ 140조원</span></div></div></div>
+<div class="note">Source: SemiAnalysis (26.08.10), 환율 1,400원/$. Note: 미래 전망 아님: Anthropic 런레이트 $470억(26.05), 서빙 ~0.5GW 가정 시 실제 $94B/GW로 추정치와 일치</div>
 </div>
 <ul>
-<li>층이 올라갈 때마다 8배. 부동산형 대비 모델사 <b>67배</b></li>
-<li>CoreWeave 2Q26(26.08.11): 수주잔고 $1,040억 — 연매출의 10년치. Nebius 2Q26: 매출 +454% YoY</li>
+<li><b>단순 임대모델 대비 AI 모델 수익성 67배</b> (층이 올라갈 때마다 8배)</li>
+<li><b>CoreWeave 2Q26 컨콜 (26.08.11):</b><br>
+수주잔고 $1,040억: 연매출의 10년치<br>
+<span class="mark">가동 전력 1.5GW vs 계약 전력 3.7GW: <b>팔 곳은 계약됐는데 2.2GW를 못 지음</b></span><br>
+<b>→ 수요가 아니라 공급이 병목</b></li>
+<li>Nebius 2Q26: 매출 +454% YoY</li>
 </ul>
-<div class="callout olive" style="margin:10px 0">CoreWeave 가동 전력 1.5GW vs 계약 전력 3.7GW — 팔 곳은 계약됐는데 2.2GW를 못 지음. 수요가 아니라 공급이 병목</div>
-<div class="cols-2" style="margin:14px 0">
-<div class="card"><div class="sublabel">비용에서 전력의 몫 (1GW 연간화)</div>
-<p style="margin:4px 0;font-size:12.5px">서버·GPU 상각 <b>60%</b> · 시설 건설 ~26%<br><b>에너지 ~7%</b> <span style="color:var(--faint)">(한국 요금 시 ~11%)</span> · 기타 ~7%</p>
-<div class="src">Source: Epoch AI (26.05.14)</div></div>
-<div class="card"><div class="sublabel">가동 1개월 지연의 기회비용 (원)</div>
-<table class="data" style="margin:4px 0"><thead><tr><th>용량</th><th style="text-align:right">부동산형</th><th style="text-align:right">네오클라우드</th><th style="text-align:right">API 서빙</th></tr></thead>
-<tbody><tr><td>100MW</td><td class="num">175억</td><td class="num">1,400억</td><td class="num">1.17조</td></tr>
-<tr><td>1GW</td><td class="num">1,750억</td><td class="num">1.4조</td><td class="num">11.7조</td></tr></tbody></table></div>
+
+<div class="card" style="margin:26px 0">
+<div class="banner" style="margin:-14px -16px 12px;width:auto">비용에서 전력의 몫 (1GW 연간화)</div>
+<table class="data" style="margin:0">
+<tbody>
+<tr><td>서버·GPU 상각</td><td class="num"><b>60%</b></td></tr>
+<tr><td>시설 건설</td><td class="num">~26%</td></tr>
+<tr class="sub"><td><b>에너지</b></td><td class="num"><b>~7%</b> <span style="color:var(--muted)">(한국 요금 시 ~11%)</span></td></tr>
+<tr><td>기타 운영</td><td class="num">~7%</td></tr>
+</tbody></table>
+<div class="src">Source: Epoch AI (26.05.14)</div>
 </div>
+
+<div class="card" style="margin:26px 0">
+<div class="banner" style="margin:-14px -16px 12px;width:auto">가동 1개월 지연의 기회비용 (원)</div>
+<table class="data" style="margin:0">
+<thead><tr><th>용량</th><th style="text-align:right">네오클라우드 (GPU 임대)</th><th style="text-align:right">AI 모델 판매</th></tr></thead>
+<tbody><tr><td>100MW</td><td class="num">1,400억</td><td class="num"><b>1.17조</b></td></tr>
+<tr><td>1GW</td><td class="num">1.4조</td><td class="num"><b>11.7조</b></td></tr></tbody></table>
+<div class="src">Note: 환율 1,400원/$ 가정</div>
+</div>
+
 <ul>
-<li>100MW 기준 한·텍사스 연간 전기요금 격차 ~$0.78억 vs 가동 1년 지연 손실 $13.3억. <b>지연 1년 = 전기요금 격차 11~18년치</b></li>
-<li><span class="hl">의사결정 기준은 “어디가 싼가”가 아니라 “어디가 지금 지을 수 있는가”</span>. 미국이 가스터빈 납기(2030년 전후)를 못 기다리고 선박용 엔진·이동식 터빈까지 동원하는 이유</li>
+<li>100MW 기준 한·텍사스 연간 전기요금 격차 ~$0.78억 vs 가동 1년 지연 손실 $13.3억.<br>
+<span class="mark">지연 1년 = 전기요금 격차 11~18년치</span></li>
+<li><span class="mark">의사결정 기준은 “어디가 싼가”가 아니라 “어디가 지금 지을 수 있는가”</span>.<br>
+미국이 가스터빈 납기(2030년 전후)를 못 기다리고 선박용 엔진·이동식 터빈까지 동원하는 이유</li>
 <li>한국 함의: 전기요금 열위는 결정적 약점 아님. 결정적인 건 <b>부지별 계통 접속 시점</b> (2장)</li>
 </ul>
 
-<h2 class="sec"><span class="no">1.4</span>실제 계약 — 수요지가 막히면 전력 가능지로 이동</h2><hr class="sec-rule">
-<p>아시아 최대 수요지 싱가포르 = 토지·전력 제약으로 신규 DC 총량 통제.<br>→ 테넌트·네오클라우드는 <b>인접한 전력 가능지</b>로 이동. 조호르·바탐이 수혜지. 최근 계약이 전부 이 패턴:</p>
-<table class="data">
-<thead><tr><th>사례</th><th style="width:125px">규모</th><th style="width:100px">시점</th><th>구조</th></tr></thead>
-<tbody>
-<tr><td><b>CoreWeave 인도네시아</b></td><td>360MW·3개 시설</td><td>26.08.04</td><td>싱가포르 대신 인니. 직접 소유·운영, 28년 가동</td></tr>
-<tr><td>AWS–SK 울산</td><td>103MW (1GW 옵션)</td><td>25.08.29 착공</td><td>현지가 짓고 글로벌이 장기 임차</td></tr>
-<tr><td>Meta–Reliance 인도</td><td>168MW</td><td>26.06.10</td><td>현지 파트너 부지·전력 + 임차</td></tr>
-<tr><td>OpenAI–Tata 인도</td><td>100MW</td><td>26.02.19</td><td>직접 건설 대신 현지 컴퓨트 구매</td></tr>
-</tbody></table>
-<p><span class="hl">입지는 수요 중심지와의 거리가 아니라 “수백 MW를 언제 공급할 수 있는가”가 결정</span>.<br>서울도 같은 구도 — 수도권이 막히면 물량은 전력 가능지(비수도권)로 감.</p>
+<h2 class="sec"><span class="no">1.3</span>추론 수요 증가</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">그 수요의 본체는 추론: 추론 &gt; 학습 갭이 벌어져 간다.<br>2030년 전체 DC 수요의 42.6%로 최대 항목.</p>
+<div class="chartbox">
+<div class="banner">데이터센터 수요 구성 변화 (GW)</div>
+<div class="legend"><span class="k"><span class="sw" style="background:var(--brand-primary);outline:2px solid var(--accent-gold);outline-offset:1px"></span><b>AI 추론</b></span><span class="k"><span class="sw" style="background:var(--brand-mid)"></span>AI 학습</span><span class="k"><span class="sw" style="background:var(--chart-gray)"></span>비AI</span></div>
+<div class="brow" style="margin:10px 0"><div class="blab">2025년 · 82.3GW</div><div class="btrack">
+<div class="stack" style="max-width:37.6%"><div class="seg" style="width:25.4%;background:var(--brand-primary);outline:2.5px solid var(--accent-gold);outline-offset:2px"></div><div class="seg" style="width:28.1%;background:var(--brand-mid)"></div><div class="seg" style="width:46.5%;background:var(--chart-gray)"></div></div>
+<div class="bval"><b style="color:var(--brand-heading);font-size:14px">20.9</b> / 23.1 / 38.3</div></div></div>
+<div class="brow" style="margin:10px 0"><div class="blab"><b>2030년 · 219.0GW</b></div><div class="btrack">
+<div class="stack" style="max-width:100%"><div class="seg" style="width:42.6%;background:var(--brand-primary);outline:2.5px solid var(--accent-gold);outline-offset:2px"></div><div class="seg" style="width:28.4%;background:var(--brand-mid)"></div><div class="seg" style="width:29.0%;background:var(--chart-gray)"></div></div>
+<div class="bval"><b style="color:var(--brand-heading);font-size:14px">93.3</b> / 62.2 / 63.5</div></div></div>
+<div class="note">Source: McKinsey 데이터센터 수요 모델. Note: 금색 테두리 = AI 추론. 추론:학습 = 47.5:52.5(2025) → 60:40(2030)</div>
+</div>
+<ul>
+<li><b style="color:var(--brand-heading)">추론 20.9 → 93.3GW, 4.46배</b>. 학습(62.2GW)·비AI(63.5GW)를 제치고 최대 항목</li>
+<li>학습 = 대규모 GPU 집적이 유리 → 모델사가 미국·중동에 집중.<br>법적 강제는 아니나(AI Diffusion Rule 25.05 폐지) 자발적 선택(Anthropic “신규 컴퓨트 대부분 미국”, 26.04.06): 해외 GW급 학습 캠퍼스는 UAE·인도 등 예외뿐</li>
+<li>추론 = 이용자·규제 따라 리전 분산이 필수: 학습과 달리 옮겨 다니는 수요</li>
+</ul>
 
-<h2 class="sec"><span class="no">1.5</span>국가별 추론 수요 — 한국은 상위권</h2><hr class="sec-rule">
-<p class="lead" style="margin-bottom:8px">각국 추론 수요가 리전 배치의 근거라면, 한국의 위치 확인 필요. 실사용 데이터 기준.</p>
+<h2 class="sec"><span class="no">1.4</span>아시아 국가별 추론 수요</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">아시아에서 한국은 상위권: 인구당은 최상위권. 실사용 데이터 기준.</p>
 <div class="chartbox">
 <div class="banner">APAC 국가별 전 세계 Claude 사용 비중 (%, 26년 5월)</div>
 <div class="brow"><div class="blab">인도</div><div class="btrack"><div class="bar" style="width:100.0%"></div><div class="bval">7.12%</div></div></div>
 <div class="brow"><div class="blab">일본</div><div class="btrack"><div class="bar" style="width:46.1%"></div><div class="bval">3.28%</div></div></div>
-<div class="brow"><div class="blab"><b style='color:var(--brand-heading)'>한국</b></div><div class="btrack"><div class="bar hero" style="width:45.5%"></div><div class="bval"><b>3.24%</b></div></div></div>
+<div class="brow" style="outline:2px solid var(--accent-gold);outline-offset:3px;background:var(--accent-gold-bg);border-radius:2px"><div class="blab"><b style='color:var(--brand-heading)'>한국</b></div><div class="btrack"><div class="bar hero" style="width:45.5%"></div><div class="bval"><b>3.24%</b></div></div></div>
 <div class="brow"><div class="blab">호주</div><div class="btrack"><div class="bar" style="width:37.2%"></div><div class="bval">2.65%</div></div></div>
 <div class="brow"><div class="blab">인도네시아</div><div class="btrack"><div class="bar" style="width:29.2%"></div><div class="bval">2.08%</div></div></div>
 <div class="brow"><div class="blab">파키스탄</div><div class="btrack"><div class="bar" style="width:15.2%"></div><div class="bval">1.08%</div></div></div>
@@ -399,70 +451,679 @@ table.data td{font-size:var(--fs-table);line-height:1.5;vertical-align:top}
 <div class="note">Source: Anthropic Economic Index (26.05 집계). Note: 중국은 서비스 대상 아님</div>
 </div>
 <ul>
-<li>한국 3.24% — <b>일본(3.28%)과 동률</b>, APAC 3위</li>
-<li>인구당 강도(AUI) 한국 3.78 vs 일본 1.91 — <b>일본의 2배</b> (생산연령인구가 절반이므로)</li>
+<li><b>한국 3.24%: 일본(3.28%)과 동률, APAC 3위</b></li>
+<li><b>인구당 강도(AUI) 한국 3.78 vs 일본 1.91: 일본의 2배</b></li>
 <li>생성형 AI 이용률 한국 37.1% &gt; 미국 31.3% (MS, 26.03)</li>
-<li>환산 시 한국 귀속 추론 부하: 현재 <b>~100~250MW</b> → 2030년 <b>0.5~1.7GW</b> <span style="color:var(--faint);font-size:11px">(McKinsey 추론 성장 4.46배 × 아시아 비중 상승 1.2~1.5배)</span></li>
-<li><span class="hl">수요 부족은 한국의 문제가 아님. 문제는 이 수요를 국내 서빙으로 가져오는 것</span></li>
+<li>환산 시 한국 자족 수요(한국 사용자 귀속 추론 부하):<br>
+<b>현재 ~100~250MW → 2030년 0.5~1.7GW</b> <span style="color:var(--faint);font-size:11px">(McKinsey 추론 성장 4.46배 × 아시아 비중 상승 1.2~1.5배)</span></li>
+<li style="list-style:none">
+<table class="data" style="margin:0;max-width:420px">
+<thead><tr><th style="font-size:14.5px">한국이 노리는 시장: 두 층</th><th style="width:130px;text-align:right;font-size:14.5px">규모 (2030)</th></tr></thead>
+<tbody>
+<tr><td><b>① 자족 수요</b><br><span style="color:var(--muted);font-size:11.5px">한국 사용자 귀속</span></td><td class="num">0.5~1.7GW</td></tr>
+<tr><td><b>② 아시아 리전 시장</b><br><span style="color:var(--muted);font-size:11.5px">역내 서빙분: 타국과 경쟁해 따오는 몫</span></td><td class="num">7~14GW<br><span style="color:var(--faint);font-size:11px">부록 A 경로 B</span></td></tr>
+</tbody></table></li>
+<li><span class="hl">① 국내 수요만으로도 수백MW~GW급 착공은 가능성 높음.<br>정부·기업 목표(8.4~18.4GW)급이 되려면: ② 아시아 리전 시장을 경쟁 우위로 가져와야 함(1.6장·2장)</span></li>
+<li style="list-style:none"><span class="mark">한국이 겨냥할 시장은 아시아 리전 추론</span></li>
 </ul>
 
+<h2 class="sec"><span class="no">1.5</span>테넌트 사례: 전력이 빠른 곳으로 간다</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">최근 아시아 실계약에서 확인되는 패턴은 두 개.</p>
+
+<p style="font-weight:800;font-size:15px;margin-top:20px">패턴 ①: 직접 짓지 않는다. 현지가 지은 것을 빌리거나 산다</p>
+<table class="data">
+<thead><tr><th>사례</th><th style="width:125px">규모</th><th style="width:100px">시점</th><th>구조</th></tr></thead>
+<tbody>
+<tr><td>AWS–SK 울산</td><td>103MW (1GW 옵션)</td><td>25.08.29 착공</td><td>현지(SK)가 짓고 AWS가 장기 임차</td></tr>
+<tr><td>Meta–Reliance 인도</td><td>168MW</td><td>26.06.10</td><td>현지 파트너의 부지·전력 + 임차</td></tr>
+<tr><td>OpenAI–Tata 인도</td><td>100MW</td><td>26.02.19</td><td>건설 없이 현지 컴퓨트 구매</td></tr>
+</tbody></table>
+<ul>
+<li>글로벌 테넌트는 아시아에서 건설 주체가 아니라 <b>임차인</b> (일본 사카이 매입도 현지 자본 소프트뱅크: 상세 1.7장)</li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:48px">패턴 ②: 수요지가 막히면 옆의 전력 가능지로 간다</p>
+<ul>
+<li>아시아 최대 수요지 싱가포르가 총량 통제 → <b>CoreWeave 첫 APAC 거점은 인니 360MW(26.08.04)</b></li>
+<li>물량의 행선지 = 싱가포르 인접 전력 가능지: 조호르(말레이 최남단)·바탐(인니, 싱가포르 앞바다 섬)</li>
+</ul>
+<p style="margin-top:34px"><span class="mark">테넌트의 선택 기준: 수백 MW를 언제 공급할 수 있는가</span></p>
+
 <h2 class="sec"><span class="no">1.6</span>국가별 전력 확보 경쟁 ★</h2><hr class="sec-rule">
-<p class="lead" style="margin-bottom:8px">테넌트의 실질 비교 항목 = “몇 년 안에 전력을 실제 공급받을 수 있는가”.</p>
+<p class="lead" style="margin-bottom:10px">그럼 전력 공급 우위는 어디인가: 실질 비교 항목 = “몇 년 안에 전력을 실제 공급받을 수 있는가”.</p>
 <table class="data">
 <thead><tr><th></th><th>전력 확보 속도</th><th style="text-align:right">건설비($/W)</th><th>규제 강제 수요</th><th>GPU 접근성</th><th style="text-align:right">CSP 투자(24~26)</th></tr></thead>
 <tbody>
-<tr><td>일본</td><td>도쿄 계통 8~10년 <span style="color:var(--faint)">규슈로 이동 중</span></td><td class="num">16.0</td><td>중</td><td>○</td><td class="num">$370억</td></tr>
+<tr class="sub"><td><b>한국</b></td><td><b>부지별 편차 극심</b></td><td class="num"><b>10.6</b></td><td><b>높음</b></td><td><b>○ Tier1</b></td><td class="num"><b>$90억</b></td></tr>
+<tr><td>일본</td><td>도쿄 계통 8~10년 → 규슈로 이동 중</td><td class="num">16.0</td><td>중</td><td>○</td><td class="num">$370억</td></tr>
+<tr><td>인도네시아</td><td>초도 빠름(잉여·캡티브): 단 26년 자바 정전으로 신뢰도 단서(바탐은 별도 계통). 증설은 최하위(2.5장)</td><td class="num">낮음</td><td>중</td><td>○</td><td class="num">—</td></tr>
+<tr><td>조호르</td><td>Green Lane 12개월</td><td class="num">낮음</td><td>낮음</td><td>△ 중국계 이슈</td><td class="num">—</td></tr>
 <tr><td>인도</td><td>주별 편차, 대체로 양호</td><td class="num">낮음</td><td>중</td><td>○</td><td class="num">$450억</td></tr>
 <tr><td>호주</td><td>접속 규칙 형성기</td><td class="num">중</td><td>중</td><td>○</td><td class="num">$290억</td></tr>
-<tr><td>조호르</td><td>Green Lane 12개월</td><td class="num">낮음</td><td>낮음</td><td>△ <span style="color:var(--faint)">중국계 이슈</span></td><td class="num">—</td></tr>
-<tr><td>인도네시아</td><td>대규모 확보 가능</td><td class="num">낮음</td><td>중</td><td>○</td><td class="num">—</td></tr>
-<tr class="sub"><td><b>한국</b></td><td><b>부지별 편차 극심</b> <span style="color:var(--faint)">울산형만 빠름</span></td><td class="num"><b>10.6</b> <span style="color:var(--faint)">도쿄 -34%</span></td><td><b>높음</b></td><td><b>○ Tier1</b></td><td class="num"><b>$90억</b></td></tr>
 </tbody></table>
+<p class="src">Note: 규제 강제 수요:<br>
+한국 = 금융(전자금융감독규정 국내설치 의무) + 공공(CSAP 물리분리)의 법령 명문 강제<br>
+일본 = 명문 강제보다 정부·기업의 선호 수준<br>
+인도 = 결제데이터(RBI)만 강제, 일반 데이터는 완화(DPDP)<br>
+정밀 검증은 2장</p>
 
-<p style="font-weight:700;color:var(--brand-heading);margin-top:18px">국가별 상세 — 수요 · 확보 속도 · 확충 계획</p>
-<table class="data"><thead><tr><th colspan="2">1) 일본</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>정체 → 증가 전환. <b>DC+반도체가 FY2034까지 +7GW</b> (OCCTO 10개년 전망). DC 전력수요 2034년까지 3배 전망(Wood Mackenzie)</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>도쿄권 계통 접속 <b>8~10년</b> → 파이프라인 규슈 이동(계획 ~3GW). PUE 1.4 규제(26.04). 빠른 실현은 기존 공장 전환(KDDI 사카이 9개월)</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>7차 에너지기본계획(25.02): 2040년 재생 <b>4~5할</b>·원전 <b>~2할</b>(재가동 확대 전제). 광역 HVDC 보강은 2030년대</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>투자 발표 아시아 최상위($370억), 실현은 계통에 막힘 — <b>연 +0.2GW</b></td></tr></tbody></table>
-<table class="data"><thead><tr><th colspan="2">2) 인도</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>급증. 총 설비 <b>500GW 돌파</b>(25년, 비화석 50%+). 2030년 777GW로 피크 대응 계획</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>주정부 전용 전력·부지 인센티브 경쟁(Google 비사카파트남 1GW, 26.04 착공). 양호하나 주별 편차. 24/7 무탄소 조달은 난제</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>2030 비화석 <b>500GW</b> 목표(24년 재생 +30GW, 세계 최속급). 900GW 연계 국가송전계획 <b>$850억</b>(~35-36년)</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>전력보다 <b>공급망·안정성</b>이 병목. 2030 DC 전망 편차 큼(3~3.5GW 캡 vs 12GW)</td></tr></tbody></table>
-<table class="data"><thead><tr><th colspan="2">3) 호주</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>AEMO 집계 DC 파이프라인 <b>5.4GW</b>(26.06). NEM 수요 장기 2배 전망</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td><b>규칙 형성기</b> — AEMC가 DC 접속 표준 신설 중, NSW는 계통 접근 통제 움직임</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>2030 재생 <b>82%</b> 목표. CIS(용량투자제도)로 <b>32GW</b> 정부 언더라이팅. Rewiring the Nation 송전 확충. 석탄 폐지는 일정 연장(AEMO 초안 26 ISP). 원전 없음</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>Anthropic 채용 집중지. 단 접속 제도가 지금 만들어지는 중 — “양호” 단정 불가</td></tr></tbody></table>
-<table class="data"><thead><tr><th colspan="2">4) 조호르 (말레이시아)</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>DC 전력계약(ESA) 누적 <b>~5.9GW</b> vs 실부하 <b>0.4GW</b>(24.12) — 여기도 발표 인플레</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td><b>Green Lane 12개월</b>(종전 36~48개월). TNB 원스톱, 실계약 다수(TM Nxera 280MW 등). 신청 30% 반려 — 선별 강화</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>TNB 계통 투자 확대(RP4, DC 대응 연 +RM10~20억 증액 전망). 가스 증설 병행. 25.07 요금 인상 +10~15%, 물 부족 이슈</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>비중국 아시아 실현 속도 1위의 원형 — 5년 +0.9GW</td></tr></tbody></table>
-<table class="data"><thead><tr><th colspan="2">5) 인도네시아</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>AI 투자 유입 개시 — CoreWeave 360MW(26.08.04)가 대표</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>자바 PLN 과잉설비(take-or-pay IPP 유산) + <b>캡티브(자가) 발전 허용</b> → 빠름. 단 26년 자바 정전·석탄 수급 이슈 병존</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>RUPTL 2025-34: 10년간 <b>+69.5GW</b>(재생 ~60%, 석탄 병행)</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>싱가포르 인접 + 대규모 전력·부지 = 바탐·리아우가 조호르의 다음 버전</td></tr></tbody></table>
-<table class="data"><thead><tr><th colspan="2">6) 싱가포르</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>아시아 클라우드 허브 — 수요는 최다, 공급은 봉쇄</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>신규 총량 통제. 그린 DC 로드맵(24.05)으로 <b>+300MW</b>만 조건부 할당</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>자체 증설 대신 <b>저탄소 전력 수입 6GW</b>(2035 목표) — 말레이·인니 해저망</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>수요 최대 허브의 셀프 캡 → 물량이 조호르·바탐으로 넘치는 구조의 원인</td></tr></tbody></table>
-<table class="data"><thead><tr><th colspan="2">7) 한국</th></tr></thead><tbody><tr><td style="width:104px"><b>전력 수요</b></td><td>AIDC <b>18.4GW</b>(1단계 8.4/29년 + 2단계 10/35년) · 용인 반도체 <b>14GW+</b>(32~41년) · 호남 반도체 <b>6.4GW</b>(29년~). 12차 전기본 목표수요 <b>131.8~138.2GW</b>(26.04 전망, 11차 129.3 대비 상향)</td></tr><tr><td style="width:104px"><b>확보 속도</b></td><td>부지별 편차 극심. 수도권은 계통영향평가로 사실상 봉쇄. <b>울산형(발전 인접)만 ~2.5년</b>. 신규 원전 10년+</td></tr><tr><td style="width:104px"><b>공급 확충</b></td><td>K-GX: 재생 <b>100GW</b> 조기 + 서해안 HVDC. 해상풍력 입찰 <b>55GW</b>(~35년, 보급 목표 25GW). 12차 전기본 지연 중(→10월). AIDC 특별법 27.02(타임아웃 인허가·직접 PPA 특례). AIDC 전용 요금제 설계 중</td></tr><tr class="sub"><td style="width:104px"><b>평가</b></td><td>호남 잉여(출력제어)·동해안 감발 = 지역 잉여 실재. 단 <b>부지 단위로 묶어 파는 상품이 없음</b> — 상세 2장</td></tr></tbody></table>
 
-<div class="cols-2" style="margin:16px 0">
-<div class="card"><div class="sublabel" style="border-color:var(--accent-teal);color:var(--accent-teal)">한국의 강점</div>
-<ul style="margin:4px 0;font-size:12.5px">
-<li>세계 최상위 AI 이용 강도</li><li>삼성전자·SK하이닉스 메모리 공급망 지렛대</li>
-<li>대중 수출통제에서 자유로운 동맹국</li><li>금융·공공·소버린 규제 수요</li>
-<li>일본 대비 34% 낮은 건설비</li><li>호남·동해안 등 비수도권 발전설비</li></ul></div>
-<div class="card"><div class="sublabel" style="border-color:var(--accent-red);color:var(--accent-red)">한국의 약점</div>
-<ul style="margin:4px 0;font-size:12.5px">
-<li>인구·클라우드 시장 규모가 일본·인도보다 작음</li><li>글로벌 CSP 투자 우선순위 후순위($90억 vs 일본 $370억)</li>
-<li>일반 서비스 지연은 일본 리전으로 대체 가능</li><li>전기요금 아시아 최저 아님($0.132/kWh)</li>
-<li><b>발전량과 별개로 부지별 계통 접속 시점 불확실</b></li></ul></div>
-</div>
-<div class="callout olive">한국은 “전기가 남아서” 선택되지 않음. 테넌트가 원하는 시점에 부지·전력·인허가·자금을 묶어 제시해야 선택됨 — 상세 검증은 2장</div>
-
-<h2 class="sec"><span class="no">1.7</span>수요 시나리오 (2030)</h2><hr class="sec-rule">
-<p>아래는 <b>수요</b>. 계약·자금·전력·공기 할인 후의 <b>실현</b> 규모는 3~6장.</p>
+<p style="font-weight:800;color:var(--brand-heading);margin-top:52px;font-size:16px">국가 비교 매트릭스 (잠정 관찰: 판정은 2장에서)</p>
 <table class="data">
-<thead><tr><th>수요 항목 (GW)</th><th style="text-align:right">Bear</th><th style="text-align:right">Base</th><th style="text-align:right">Bull</th><th>비고</th></tr></thead>
+<thead><tr><th></th><th>전력 확보 속도</th><th>GW 확장 여지</th><th>요금·RE100 예측성</th><th>부지·용수</th><th>규제 강제 수요</th><th>GPU 접근성</th><th>비고</th></tr></thead>
 <tbody>
-<tr><td>프론티어 추론 (국내 서빙분)</td><td class="num">0.10</td><td class="num">0.30</td><td class="num">0.80</td><td>인리전 개설 수에 연동</td></tr>
-<tr><td>국내 기업 자체 AI</td><td class="num">0.40</td><td class="num">0.70</td><td class="num">1.20</td><td>금융·통신·제조, 규제 코어 포함</td></tr>
-<tr><td>공공·소버린</td><td class="num">0.30</td><td class="num">0.45</td><td class="num">0.70</td><td>국가AI컴퓨팅센터·GPU사업</td></tr>
-<tr><td>캡티브 (그룹 내부)</td><td class="num">0.20</td><td class="num">0.40</td><td class="num">0.70</td><td>현대차 새만금·삼성SDS 등</td></tr>
-<tr><td>수출형 (아시아 허브·미국 이전)</td><td class="num">0.00</td><td class="num">0.20</td><td class="num">1.50</td><td>Bull에서만 유의미</td></tr>
-<tr><td>일반 IDC 증설 (비AI)</td><td class="num">0.40</td><td class="num">0.55</td><td class="num">0.70</td><td>기존 1.5GW 기반</td></tr>
-<tr class="total"><td>합계</td><td class="num">1.4</td><td class="num">2.6</td><td class="num">5.6</td><td></td></tr>
+<tr class="sub"><td><b>한국</b></td><td>△ 수전 병목</td><td><b>○</b> <span style="color:var(--muted);font-size:11px">울산 1GW·동해 2.4</span></td><td>△ 요금제 설계 중</td><td><b>○</b> 온대·용수 양호</td><td><b>○</b> 법령 강제</td><td><b>○</b> +메모리 지렛대</td><td>수전 속도가 최대 변수</td></tr>
+<tr><td>일본</td><td>△ 도쿄 계통 8~10년 → 규슈로 이동 중</td><td>○ <span style="color:var(--muted);font-size:11px">규슈·자본 대기</span></td><td>△ 고비용</td><td>△ 부지난·지진</td><td>△ 선호 수준</td><td>○</td><td>DC 시장 규모 아시아(비중국) 최대<br>프론티어 채용 실증.<br>부지난·지진은 리스크 변수</td></tr>
+<tr><td>인도네시아</td><td>○ 캡티브·PLN 계약 6~20개월</td><td>○</td><td>○ 저요금</td><td>△</td><td>△</td><td>○</td><td>신흥 선두: CoreWeave가 실증.<br>단 26년 자바 순환정전(신뢰도 변수)</td></tr>
+<tr><td>조호르</td><td>○ 12개월</td><td>△</td><td>△ 요금·물요금 인상</td><td>✗ 물 위기: 승인 중단</td><td>✗ 낮음</td><td>△ 중국계 이슈</td><td>실측 실현 1위(운영 897MW). 물이 새 변수로 등장</td></tr>
+<tr><td>인도</td><td>△~○</td><td>○</td><td>○</td><td>△</td><td>△ 결제데이터만</td><td>○</td><td>자체 수요 중심.<br>증설 실행은 아시아 최고 속도(25년 재생 +44.5GW)</td></tr>
+<tr><td>호주</td><td>△ 규칙 형성기</td><td>○</td><td>△</td><td>○</td><td>△</td><td>○</td><td>프론티어 선호 실증(Anthropic 채용)</td></tr>
 </tbody></table>
+<table class="data" style="margin-top:40px">
+<thead><tr><th style="width:210px">무엇을 놓고 경쟁하나</th><th style="width:160px">현재 앞서 있는 곳</th><th>근거</th></tr></thead>
+<tbody>
+<tr><td><b>CSP 리전 투자 유치</b></td><td>일본 · 인도 · 호주</td><td>투자 발표 누계 기준으로 이 3국이 우위. 시장의 통상 비교 대상</td></tr>
+<tr><td><b>신규 대규모 AI 캠퍼스 유치</b></td><td>인도네시아 · 조호르</td><td>실계약 실적 기준으로 이 2곳이 우위: CoreWeave 인니 360MW(26.08.04) · 바이트댄스 조호르 앵커(운영 897MW의 최대 흡수원)</td></tr>
+</tbody></table>
+<p class="src">Note: 행 정렬은 한국과 경쟁할 유력도 순(투자액 순 아님). 프론티어 채용의 의미는 1.7장, 실측 기반 판정은 2장.</p>
+
+
+
+
+<p style="font-weight:800;color:var(--brand-heading);margin-top:56px;font-size:16px">국내 파이프라인 현황판 (26.08.16)</p>
+<table class="data">
+<thead><tr><th style="width:170px">층</th><th style="width:90px;text-align:right">물량</th><th>구성</th></tr></thead>
+<tbody>
+<tr class="sub"><td><b>구속력 계약·착공</b></td><td class="num"><b>~0.5GW</b></td><td>울산 103 (AWS·25.08.29 착공) · 해남 80 (26.08.03 착공) · 파주 200급 (1동 완판·공사 중) · 포항 40 (26.07.20 착공) · 군산 60 (실행 진입)</td></tr>
+<tr><td><b>협상·실행 파이프라인</b><br><span style="color:var(--muted);font-size:11.5px">이름·금액·상대방 확인, 전부 비구속</span></td><td class="num"><b>~1.5GW</b></td><td>네이버 세종 200 (NVIDIA $10억+브룩필드 $90억 배타협상 ~10월 말)<br>울산 확장 100~200 (KKR·IMM 3조 우협) · 동해 초도 100~120 (착공설 10~11월)<br>군산 확장 240 (KT·미래에셋) · 삼성SDS +120 (캐펙스 집행 중)<br>새만금 ~100 (9조 MOU) · 신세계 250 (연내 JV) · SKT 울산 1호+카카오 ~150</td></tr>
+<tr><td>비전·목표 (비구속)</td><td class="num">~16GW</td><td>SKT 5 · GS 동해 잔여 2.2 · KT 1 · 정부 2단계 10 등</td></tr>
+</tbody></table>
+<p class="src">Note: 프로젝트 전수의 4관문 채점은 3.2장 마스터 보드.</p>
+
+<h2 class="sec"><span class="no">1.7</span>리스크: <span class="mark">프론티어의 실행이 타국에 먼저 가 있다</span></h2><hr class="sec-rule">
+
+<p style="font-weight:800;font-size:15px">테넌트들의 "실행 단계" 움직임 (최근 확인분)</p>
+<table class="data">
+<thead><tr><th style="width:150px">테넌트</th><th style="width:90px">어디서</th><th>무엇을</th><th style="width:90px">시점</th></tr></thead>
+<tbody>
+<tr><td><b>Anthropic</b></td><td>일본</td><td><span class="mark">부지·계약 발굴 인력 채용</span></td><td>26.06.25</td></tr>
+<tr><td>Anthropic</td><td>호주</td><td>DC 엔지니어·운영 6건 채용: 임차 시설 안에서 자사 클러스터를 돌릴 인력</td><td>26.06.25</td></tr>
+<tr><td><b>OpenAI × 소프트뱅크</b></td><td>일본 오사카</td><td><b>샤프 사카이 LCD 공장 $6.76억 인수 → AI DC 전환</b>. SB OpenAI Japan 합작과 연동</td><td>25.03~</td></tr>
+<tr><td>OpenAI</td><td>인도</td><td>Tata 100MW 스타게이트 오프테이크 + OpenAI for India</td><td>26.02.19</td></tr>
+<tr><td>CoreWeave</td><td>인도네시아</td><td>360MW·3개 시설 + <b>현지 운영 인력 직접 채용·교육</b></td><td>26.08.04</td></tr>
+<tr class="sub"><td><b>한국</b></td><td></td><td><b>직접 실행(채용·부지 발굴)은 아직 없음.</b><br>대신 LOI·MOU 급증:<br>SKT–NVIDIA 2GW LOI<br>SKT–Anthropic GW급 MOU(26.07.24)<br>OpenAI 스타게이트 LOI<br>구속력 전환은 미완: 포항·전남 20MW "3월 착공" 무산 (3.2장)</td><td></td></tr>
+</tbody></table>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">왜 실행이 늦나 (판단)</p>
 <ul>
-<li>참조: 11차 전기본 2030 신규 DC 3.3GW · 하나증권 실질수요 Base 3~4.2 / Bull 5.1~7GW. 위 Base 2.6은 보수적</li>
-<li><span class="hl">수요는 수 GW까지 열려 있음. 병목은 수요가 아니라 전력 확보 속도 — 2장</span></li>
+<li>① <b>지금 빌릴 수 있는 상품이 부족</b>:<br>프론티어는 완공 임박한 임차 상품에 들어오는데,<br>국내 상업용 착공 물량은 이제 생기는 중(최초 가동 전망 28년 상반기 포항)</li>
+<li>② <b>CSP 채널 기준 투자 후순위</b>:<br>프론티어의 발판인 CSP 투자에서 한국이 밀림 (아래 차트).<br>단 25.10 이후 비CSP 채널 유입 개시: 합산해도 격차 자체는 유지 (차트 아래)</li>
+<li>③ <b>로컬 스폰서 격차</b>:<br>일본은 소프트뱅크가 실행 중, 한국(SKT 하이퍼·네이버)은 시작 단계</li>
 </ul>
 
-<div class="src" style="border-top:1px solid var(--hairline);padding-top:12px;margin-top:30px">
+<div class="chartbox" style="margin-top:34px">
+<div class="banner">국가별 AIDC 투자 발표 누계: CSP + 비CSP (24~26년, USD)</div>
+<div class="legend"><span class="k"><span class="sw" style="background:var(--compare-gray)"></span>CSP(클라우드 4사) 발표</span><span class="k"><span class="sw" style="border:1.5px dashed #98A19E;box-sizing:border-box;background:rgba(152,161,158,.14)"></span>비CSP(인프라 자본·칩 벤더: 협상·계획 포함)</span></div>
+<div class="brow"><div class="blab">일본</div><div class="btrack"><div class="bstack" style="width:70%"><div class="bar" style="width:49.3%"></div><div class="bar ncsp" style="width:50.7%"></div></div><div class="bval"><b>~$750억</b> <span class="u">CSP 370 + 비CSP ~380</span></div></div></div>
+<div class="brow"><div class="blab">인도</div><div class="btrack"><div class="bstack" style="width:42%"><div class="bar" style="width:100%"></div></div><div class="bval">$450억 <span class="u">비CSP 미집계</span></div></div></div>
+<div class="brow"><div class="blab">호주</div><div class="btrack"><div class="bstack" style="width:27.1%"><div class="bar" style="width:100%"></div></div><div class="bval">$290억 <span class="u">비CSP 미집계</span></div></div></div>
+<div class="brow" style="outline:2px solid var(--accent-gold);outline-offset:3px;background:var(--accent-gold-bg);border-radius:2px"><div class="blab"><b style="color:var(--brand-heading)">한국</b></div><div class="btrack"><div class="bstack" style="width:19.6%"><div class="bar hero" style="width:42.9%"></div><div class="bar ncsp heron" style="width:57.1%"></div></div><div class="bval"><b>~$210억</b> <span class="u">CSP 90 + 비CSP 최대 120(비구속 포함)</span></div></div></div>
+<div class="note">Source: 각 사·투자사 공식 발표 종합, 24~26년 발표 누계. Note: 일본 CSP $370억 = AWS 152·MS 129·Oracle 80 / 한국 CSP $90억은 사실상 AWS뿐(누적 12.6조원): MS "한국 정부와의 협력 발표는 없다" 자인(26.04.28) · Google·Oracle은 한국 신규 투자 발표 자체가 없음 / 한국 비CSP: NVIDIA $10억 확정 + 브룩필드 SPV 최대 $90억 배타협상 + KKR·IMM ~$21억 우협 / 일본 비CSP: 블랙스톤 $300억(26.06.25) + 에어트렁크 $80억(25.12.17) / 인도·호주 비CSP는 미집계</div>
+</div>
+
+<ul>
+<li><b>비CSP(칩 벤더·인프라 자본)까지 합산해도 순위는 그대로임</b>:<br>NVIDIA·브룩필드·KKR의 돈도 결국 AIDC 착공 가능성을 높이는 같은 돈이라 합산이 맞음<br>한국(25.10~): 최대 ~$120억 → 합산 <b>~$210억</b><br>일본: 비CSP만 ~$380억 → 합산 <b>~$750억</b></li>
+<li><b>판정: 비CSP 합산의 의미는 "격차 축소"가 아니라 "한국에도 글로벌 자본 유입이 시작됐다"는 신호</b><br>단서: 브룩필드·KKR은 협상 단계(비구속) · 인도·호주의 비CSP는 미집계: 추적 변수</li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px"><span class="mark">타파하려는 움직임 (25.10 이후 급증)</span></p>
+<table class="data">
+<thead><tr><th style="width:95px">시점</th><th>내용</th></tr></thead>
+<tbody>
+<tr><td>25.10.31</td><td><b>NVIDIA GPU 26만장 공급 약정</b>: 공공 5만 + 삼성·SK·현대차·네이버 21만 (~2030)</td></tr>
+<tr><td>26.05.06</td><td>울산 AIDC 소수지분에 KKR·IMM 약 3조원 우선협상: 글로벌 인프라 자본의 첫 대형 유입</td></tr>
+<tr><td>26.07.24</td><td>K-AI Summit: <b>SKT–NVIDIA 2GW AI 팩토리 LOI · SKT–Anthropic 국내 GW급 MOU</b></td></tr>
+<tr><td>26.08.03</td><td>네이버: NVIDIA $10억 지분 + 브룩필드 SPV 최대 $90억 구조 공개</td></tr>
+<tr><td>정부</td><td>1,000조 로드맵(26.06.29) · 특별법 27.02 시행 · 전용요금제 연내 · 차등요금 공청회 8월</td></tr>
+</tbody></table>
+<ul><li>단 전부 LOI·MOU·우선협상 단계: <b>구속력 전환(계약·착공)이 남은 관문</b>: 확인 캘린더는 3.5장</li></ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">테넌트 유치 경쟁 구도 (채널체크)</p>
+<ul>
+<li><b>일본·인도·동남아·호주 등과의 경쟁 구도</b> (1.6장 비교)</li>
+<li><span class="mark">앵커 테넌트 물량은 소수 국가에 쏠리는 경향</span></li>
+<li>Anthropic 동아시아 입찰설(GS·SK 응찰 추정, 결과 26년 말, 공개 미확인): 전언대로 "동아시아" 한정 공고라면 그 딜 안에서는 한·일이 직접 경쟁</li>
+<li>준비 속도는 일본(소프트뱅크·OpenAI 실행 중)이 가장 앞서 있음</li>
+</ul>
+
+
+
+<div class="src" style="border-top:1px solid var(--hairline);padding-top:12px;margin-top:36px">
 Source: McKinsey 데이터센터 수요 모델 · SemiAnalysis(26.08.10) · CoreWeave·Nebius 2Q26 실적 · Epoch AI(26.05.14) · Anthropic Economic Index(26.05) · OCCTO 10개년 전망 · 일본 7차 에너지기본계획 · AEMO 초안 2026 ISP · TNB · RUPTL 2025-34 · 11·12차 전기본 관련 보도 · 각 사 공시·컨콜.<br>
 본 자료는 정보 제공용이며 투자 권유가 아닙니다. 수치는 작성일 기준 공개 자료의 정리이며 오류가 있을 수 있습니다.
+</div>
+
+
+<div class="section-divider" id="ch2" style="margin-top:150px"><span class="stripes"><i></i><i></i><i></i></span><h2>2장. 전력 확보 경쟁: 한국은 몇 번째 선택지인가</h2></div>
+<p style="font-weight:800;font-size:15px;margin-top:26px">2장 요약</p>
+<div class="callout olive" style="line-height:2.05;font-size:13.5px;font-weight:400">
+① <b>1장의 결론 검증: 승부는 전력 공급 속도</b><br>
+② 실계약 6건 역추출: <b>테넌트의 요구는 수전 12개월 내외.</b> 늦으면 계통 대신 발전소 옆으로 감<br>
+③ 실측: 건설(착공→가동)은 만국 공통 10~30개월로 변별력 없음. 차이는 수전 단계에서만 남<br>
+④ 실측이 존재하는 건 초도 40~150MW급뿐. <b>100MW+·GW급은 어느 나라도 미실증: 제도·정부 추진력의 영역</b><br>
+⑤ <span class="mark">판정(잠정): 초도 수백MW까지 한국은 경쟁력 있음. GW급은 각국의 전력 증설 속도가 결정:<br>
+정부의 의지·투자 결정에 달림 → 에너지(원전+신재생)가 AIDC의 다음 테마가 되는 구조</span>
+</div>
+
+<p style="font-size:13px;color:var(--muted);margin-top:14px">방법: 부지별 공급량 추산(비공개 데이터 없인 허위 정밀도)이 아니라 상대 비교 70 / 정량 앵커 30.<br>기준: 테넌트가 실제 서명한 계약과 실측 기간만 사용. 최종 판정은 12차 전기본·특별법 시행령 이후 확정.</p>
+
+<h2 class="sec"><span class="no">2.1</span>테넌트의 결정 체크리스트: 실계약 6건에서 역추출</h2><hr class="sec-rule">
+
+<table class="data">
+<thead><tr><th style="width:150px">딜</th><th style="width:120px">구조</th><th>타임라인 (실측)</th><th>전력 조달</th></tr></thead>
+<tbody>
+<tr><td><b>AWS–SK 울산</b><br><span style="color:var(--muted);font-size:11.5px">103MW·1GW 옵션</span></td><td>SK가 짓고 AWS 15년 파트너십</td><td>발표(25.06.16)→착공(25.08.29) <b>2.5개월</b><br>41MW 27.11 → 103MW 29.02 예정</td><td><b>계통 우회</b>: 인접 SK LNG 열병합이 공급</td></tr>
+<tr><td><b>CoreWeave 인니</b><br><span style="color:var(--muted);font-size:11.5px">360MW·3개 시설</span></td><td>현지 콜로 임차<br>(파트너 비공개)</td><td>발표(26.08.04)→가동 2028 목표</td><td>미공개</td></tr>
+<tr><td><b>AirTrunk 조호르</b><br><span style="color:var(--muted);font-size:11.5px">JHB1~4 누적 700MW+</span></td><td>콜로 임대<br>(ByteDance 등 앵커)</td><td>JHB1 발표(23.01)→가동(24.07) <b>18.5개월</b></td><td>TNB 계통 + Green Lane(수전 패스트트랙) 12개월</td></tr>
+<tr><td><b>TM Nxera 조호르</b><br><span style="color:var(--muted);font-size:11.5px">280MW ESA</span></td><td>TM·Singtel 합작</td><td>착공(24.07)→ESA(26.01.12)→1단계 64MW 26년 내</td><td><b>ESA(전력공급계약)로 용량 사전 확정</b></td></tr>
+<tr><td><b>Meta–Reliance 인도</b><br><span style="color:var(--muted);font-size:11.5px">168MW+확장 옵션</span></td><td>Reliance가 짓고 Meta 임차</td><td>발표(26.06.10)→가동 ~2028 목표</td><td>신규 재생 ~1GW 계약(CleanMax 837MW 등)</td></tr>
+<tr><td><b>OpenAI–Tata 인도</b><br><span style="color:var(--muted);font-size:11.5px">100MW→1GW 목표</span></td><td>오프테이크(사용 확약 구매)</td><td>발표(26.02.19). 부지·착공 미공개</td><td>미공개</td></tr>
+</tbody></table>
+
+<p style="font-weight:800;font-size:15px;margin-top:56px">역추출된 요구 조건</p>
+<table class="data">
+<thead><tr><th style="width:280px">조건</th><th>근거</th></tr></thead>
+<tbody>
+<tr><td><b>① 수전 12개월 내외, 안 되면 계통 우회</b></td><td>TNB Green Lane 36~48개월→12개월 / 울산은 LNG 인접으로 대기열 자체를 우회</td></tr>
+<tr><td><b>② 전력계약의 사전 확정</b></td><td>TM Nxera 280MW·Bridge 400MW ESA / CoreWeave도 "contracted power"로만 발표</td></tr>
+<tr><td><b>③ 소규모 착수 → GW급 확장 옵션</b></td><td>울산 41→103MW→1GW / Tata 100MW→1GW / Meta 168MW+옵션</td></tr>
+<tr><td><b>④ 자산 경량: 짓지 않고 빌림</b></td><td>6건 전부. 건설·전력·인허가 리스크는 현지 파트너 몫</td></tr>
+<tr><td><b>⑤ 전력·부지·인허가를 스스로 푸는 현지 대기업</b></td><td>SK(가스·건설) / Reliance(에너지) / Tata / TM+Singtel</td></tr>
+<tr><td><b>⑥ 재생에너지 조달 경로</b></td><td>Meta 신규 재생 ~1GW / 조호르 CGPP·CRESS(재생 조달 제도)</td></tr>
+<tr><td><b>⑦ 해저케이블·네트워크 인접</b></td><td>울산(해저케이블 환경 공식 언급) / 잠나가르(랜딩 스테이션)</td></tr>
+</tbody></table>
+<p style="margin-top:34px"><span class="mark">성공 사례의 공통분모는 계통 신설 회피: 패스트트랙, 기존 설비 재활용, 발전소 인접</span></p>
+
+<h2 class="sec"><span class="no">2.2</span>실측 time-to-power: 구간을 나눠야 보임</h2><hr class="sec-rule">
+
+<p style="font-weight:800;font-size:15px;margin-top:20px">구간 1: 건설(착공→가동): 만국 공통 10~30개월, 변별력 없음</p>
+<table class="data" style="max-width:640px">
+<thead><tr><th>사례 (초도 규모)</th><th style="width:150px;text-align:right">실측</th></tr></thead>
+<tbody>
+<tr><td>KDDI 사카이 (일본, 공장 개조)</td><td class="num">인수→가동 <b>9개월</b></td></tr>
+<tr><td>Bridge MY06 (조호르, ByteDance향)</td><td class="num">착공→가동 <b>10.3개월</b></td></tr>
+<tr><td>해남 국가AI센터 40MW (예정)</td><td class="num">착공→가동 ~24개월</td></tr>
+<tr><td>AWS–SK 울산 41MW (예정)</td><td class="num">착공→가동 ~27개월</td></tr>
+<tr><td>네이버 각 세종 (실측)</td><td class="num">착공→가동 <b>30개월</b></td></tr>
+</tbody></table>
+
+<p style="font-weight:800;font-size:15px;margin-top:56px">구간 2: 수전(신청→전력 확보): 여기서 갈림</p>
+<table class="data">
+<thead><tr><th style="width:110px">국가</th><th>실측·제도</th></tr></thead>
+<tbody>
+<tr><td><b>조호르</b></td><td>Green Lane <b>12개월 확약</b>(종전 36~48개월) + ESA(전력공급계약)로 용량 사전 확정</td></tr>
+<tr><td><b>인니</b></td><td>PLN 계약 후 6~20개월 단계 수전(바탐 450MW) + 캡티브(자가발전) 허용</td></tr>
+<tr><td><b>인도</b></td><td>캡티브로 계통 자체를 우회(잠나가르 태양광 100%). 계통 의존 시 주별 편차</td></tr>
+<tr class="sub"><td><b>한국</b></td><td>평가(법정 90일) + 한전 접속 협의. 비수도권 통과율 87~90%.<br>단 <b>초도 40MW 안팎 관행</b> + 신규 신청 몰린 지역 적체(경북 대기 59%)</td></tr>
+<tr><td><b>일본</b></td><td>지방은 사례별(공장 전환 9개월). 도쿄(8~10년 지연) → 규슈 이동</td></tr>
+<tr><td><b>호주</b></td><td>신규 대형부하 3~5년. 시드니 서부 2033년 포화 전망</td></tr>
+</tbody></table>
+<ul style="margin-top:22px">
+<li><b>규모 주의: 위 실측은 전부 초도 40~150MW급.</b><br>100MW+ 단일 사이트 수전·GW급 캠퍼스는 어느 나라도 실증 없음: 계획·제도의 영역</li>
+<li><span class="mark"><b>결론: 건설은 변별력 없음. 초도 구간의 경쟁은 수전 제도에서 갈리고,</b></span><br><span class="mark"><b>GW급은 각국의 전력 증설 속도 경쟁으로 넘어감 (2.4장·2.5장)</b></span></li>
+<li>참고선(미국): 버지니아 대기 ~7년·전국 평균 ~4년: 아시아 전체가 상대적으로 빠른 시장</li>
+</ul>
+
+<h2 class="sec"><span class="no">2.3</span>한국 딥다이브: 병목은 수전 행정</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">발전량은 문제가 아님. 문제는 전력을 "받는" 절차.</p>
+
+<p style="font-weight:800;font-size:15px;margin-top:20px">1) 전력계통영향평가: 실프로젝트의 첫 관문</p>
+<p style="font-size:13.5px;margin:6px 0 12px">전력계통영향평가(전계평): 10MW 이상 DC가 전기를 받으려면 통과해야 하는 정부 사전 심사 필요.</p>
+<ul>
+<li>현재 신청 누계 63.8GW는 무의미한 숫자 (중복 알박기 신청)</li>
+<li><b>진짜 프로젝트는 뚫리는 중</b>: 울산 발표→착공 2.5개월 · 해남·포항 착공이 실증</li>
+<li>단 실증은 초도 40MW급까지: <b>GW급은 동해 전계평(8~9월)이 첫 시험대</b></li>
+<li>(교보 박희철 애널) "사이트당 초도 60·80MW 제한" 한계 언급 → 정부 의지로 변화 가능성</li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">2) 초도 수전 제한: 규정이 아니라 운영 재량</p>
+<ul>
+<li><b>현황: 초도 수전이 40MW 안팎으로 제한되고 있음</b><br>울산 41MW → 해남 40MW → 포항 40MW<br>계통 여유·접속공사 일정에 맞춘 계약상 단계 공급</li>
+<li>다만 명문화된 규정은 아님: 한전 약관·이용규정에 상한 조문 없음 → <b>정부 의지로 완화 가능</b>: 갱신 트리거 (2.6장)</li>
+<li>"초도 60·80MW 제한"은 교보 박희철 애널 언급(26.08.11): 명문 규정으로는 미확인</li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">3) 국내 프로젝트 실측</p>
+<table class="data">
+<thead><tr><th style="width:130px">프로젝트</th><th>수전·용량</th><th>실측 타임라인</th></tr></thead>
+<tbody>
+<tr><td><b>AWS–SK 울산</b></td><td>41MW(27.11)→103MW(29.02)<br>1GW 목표<br>인접 SK LNG 복합 연계</td><td>발표→착공 2.5개월(실측)<br>착공→1단계 27개월(예정)</td></tr>
+<tr><td>네이버 각 세종</td><td>최종 설계 270MW</td><td>착공(21.02)→가동(23.11) <b>30개월 실측</b></td></tr>
+<tr><td>해남 국가AI센터</td><td>40→80MW, 2.4조원</td><td>착공(26.08.03)→28년 가동 목표(~24개월)</td></tr>
+<tr><td>포항 (네오AI·현대건설)</td><td>1단계 40MW, 2단계 ~260MW 검토</td><td>착공(26.07.20)→28년 상반기 상업운전 목표</td></tr>
+<tr><td>GS 동해</td><td>1.2GW(28년)→2.4GW(29년) 목표</td><td>전력계통영향평가 단계 미공개. 전력공급 계약 미체결</td></tr>
+</tbody></table>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">4) 제도 촉매: <span class="mark">27년 상반기에 몰려 있음</span></p>
+<table class="data">
+<thead><tr><th style="width:180px">제도</th><th>내용</th><th style="width:110px">시점</th></tr></thead>
+<tbody>
+<tr><td><b>AIDC 특별법</b><br><span style="color:var(--muted);font-size:11.5px">인공지능 데이터센터 산업 진흥에 관한 특별법</span></td><td>특별법 18조: 인허가 타임아웃(기한 내 미거부 시 완료 간주)<br>특별법 19조: <b>비수도권 신·증설 계통영향평가 면제</b><br>특별법 20조: 직접 PPA는 <b>재생에너지 한정</b> (LNG 포함안은 법사위에서 제외)</td><td>27.02 시행<br>시행령 연구반 26.06.18 착수</td></tr>
+<tr><td><b>AIDC 전용 요금제</b></td><td>"연내 도입" (기후부 업무보고 26.08.04). 구조(고정가·장기계약 여부) 미공개</td><td>26년 내</td></tr>
+<tr><td><b>지역별 차등 요금제</b></td><td>비수도권 유도 설계. 공청회 후 확정 예정</td><td>26.08~</td></tr>
+<tr><td><b>12차 전기본</b></td><td>메가프로젝트(AIDC 18.4GW+반도체) 반영해 수요 재추계 중<br>2040년 최대수요 131.8~138.2GW → ~160GW 검토<br>11차 전기본 기준 추가 필요 신규설비 10.6GW 추산 → 12차에서 상향 전망</td><td>12월 초안·연내 확정 목표 (지연 리스크)</td></tr>
+</tbody></table>
+
+<h2 class="sec"><span class="no">2.4</span>호남권 잉여전력 실체</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">남는 건 사실. 그런데 얼마나, 언제까지, DC가 쓸 수 있는 형태로 남는가.</p>
+
+<p style="font-weight:800;font-size:15px;margin-top:20px">1) 현황: 전기가 남아서 발전소를 끄는 중</p>
+<ul>
+<li><b>호남 발전 설비 23.3GW vs 지역 수요 ~5GW: 4배 이상</b></li>
+<li>남는 전기를 못 써서 끄는 중: 태양광 출력제어 25년 171회(83,944MWh), 한빛원전도 봄철 감발</li>
+<li>밖으로 보내지도 못함: 호남 345kV 송전선 13곳 중 12곳이 26~30년 포화 예상</li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">2) "쓸 수 있는 잉여"로 환산: 상한 ~5GW, 현실은 ~2~3GW 미만</p>
+<table class="data" style="max-width:680px">
+<thead><tr><th>설비 23.3GW의 구성</th><th style="text-align:right">명판</th><th style="text-align:right">상시 공급가능 환산</th></tr></thead>
+<tbody>
+<tr><td>한빛원전 6기</td><td class="num">5.9GW</td><td class="num">~5.9GW</td></tr>
+<tr><td>태양광</td><td class="num">9~10GW</td><td class="num">~1.3GW <span class="mark" style="font-size:11px">(ESS 풀결합 가정)</span></td></tr>
+<tr><td>LNG·가스</td><td class="num">3GW</td><td class="num">~3GW <span class="mark" style="font-size:11px">(풀가동 가정: 현재 0.9GW만 가동)</span></td></tr>
+<tr><td>풍력·바이오</td><td class="num">4.9GW</td><td class="num">0.5~0.8GW</td></tr>
+<tr><td>소계: 공급 가능</td><td class="num"></td><td class="num">~10.6~11GW</td></tr>
+<tr><td>(–) 지역 수요</td><td class="num"></td><td class="num">~5GW <span style="color:var(--muted);font-size:11px">(원전이 담당한다고 놓음: 잔여 ~0.9GW는 정비·예비력으로 제외)</span></td></tr>
+<tr class="total"><td>실잉여 (낙관 가정의 상한)</td><td class="num"></td><td class="num"><b>~4.9~5.1GW</b></td></tr>
+</tbody></table>
+<ul>
+<li><b>잉여 ~5GW 추산은 낙관 가정 3개가 동시에 성립할 때의 상한</b>:<br>태양광 ESS 풀결합 + LNG 풀가동 + 풍력 정상 가동</li>
+<li><b><span class="mark">현실 반영 시 잉여 ~2~3GW</span>: <span class="mark">전국 ESS는 0.1GW뿐(25년) → 태양광 몫은 사실상 0</span></b><br>남는 건 LNG 재가동 ~2.1GW + 풍력 0.5~0.8GW. <b>그마저 대부분 LNG라 RE100 요구와 상충</b></li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">3) 그 2~3GW조차 바로 못 꽂는 이유: 발전 여력 ≠ 수전</p>
+<ul>
+<li><b>남는 전기를 DC 부지까지 잇는 변전·송전 접속은 별개 관문</b>(2.3장):<br>초도 40MW 관행이 여기서 나옴. 그래서 실전 우회로가 "발전소 옆 직결"(울산형)</li>
+<li>결론: 호남 잉여로 지금 가능한 건 <b>초도 수백MW 단위</b>. GW급은 ESS·수전 인프라·신규 증설이 전제</li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">4) 게다가 이 잉여는 시한부</p>
+<ul>
+<li>석탄 36년까지 28기 폐쇄 확정(현 정부는 40년 전면 퇴출 목표): 2030년대엔 기저가 빠짐</li>
+<li>호남 반도체 산단(공급 필요 7.5GW)·HVDC 수도권 송전분과 경합</li>
+<li><span class="mark">"지금 남는 전기"로 되는 건 초도 수백MW까지. GW급의 승부는 새 공급을 얼마나 빨리 짓는가</span><br>그 속도의 국가 비교가 2.5장, 타국도 같은 게임(인니 +69.5GW·인도 500GW 증설 경쟁)</li>
+</ul>
+<p class="src">Note: 호남 구성·실잉여 환산은 GS글로벌/풍력 정리(26.06.02) 기준. 브리지 전력(엔진·열병합) 가능량은 지엔씨에너지 채널 재확인 후 갱신 예정.</p>
+
+<h2 class="sec"><span class="no">2.5</span>국가별 증설 프로필: 계획 vs 실행 vs 재원</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">계획은 모두가 큼. 국가를 가르는 건 "작년에 실제로 몇 GW를 붙였는가"와 "정부 돈이 실제로 집행되는가".</p>
+
+<table class="data">
+<thead><tr><th style="width:100px">국가</th><th>연간 실제 증설 (실적)</th><th style="width:150px">계획이 요구하는 속도</th><th style="width:120px;text-align:right">실행률</th><th>재원의 성격</th></tr></thead>
+<tbody>
+<tr><td><b>인도</b></td><td>재생 24년 +30GW<br>→ <b>25년 +44.5GW</b></td><td>연 +45~50GW<br><span style="color:var(--muted);font-size:11px">(2030 비화석 500GW 목표 역산: 잔여 200GW ÷ 4.4년)</span></td><td class="num"><b>~100%</b><br><span style="color:var(--muted);font-size:11px">44.5 vs 45~50</span></td><td>송전 ~$1,100억 계획: 실행 80%. 보조금 집행은 지연</td></tr>
+<tr><td><b>말레이시아</b></td><td>태양광 입찰 연 ~2GW<br>가스 6.3GW 낙찰(26.02)</td><td>연 +1GW<br><span style="color:var(--muted);font-size:11px">(TNB 계획)</span></td><td class="num">이행 궤도</td><td>정부 재정 아닌 요금 전가: 25.07 +14.2% 인상</td></tr>
+<tr><td><b>일본</b></td><td>태양광 연 +5.5~6GW<br>원전 재가동 연 1~2기</td><td>연 +9GW<br><span style="color:var(--muted);font-size:11px">(2030 재생 목표 역산)</span></td><td class="num">~60%<br><span style="color:var(--muted);font-size:11px">6 vs 9</span></td><td>GX 국채 20조엔: 단 재생 몫 미미</td></tr>
+<tr class="sub"><td><b>한국</b></td><td>태양광 24년 +3.2GW<br>→ 25년 +3.7GW<br>해상풍력 누계 0.35GW</td><td>연 +10GW<br><span style="color:var(--muted);font-size:11px">(2030 재생 100GW 목표 역산)</span><br><b><span class="mark">태양광 2030 누적 87GW</span></b><br><b><span class="mark">해상풍력 ~35년 입찰 55GW(연 4GW+)</span></b></td><td class="num"><b>~1/3</b><br><span style="color:var(--muted);font-size:11px">3.7 vs 10</span></td><td>정책금융+세액공제 중심</td></tr>
+<tr><td><b>인도네시아</b></td><td>재생 25년 +1.3GW<br>석탄(캡티브)만 초과 실행</td><td>연 +7GW<br><span style="color:var(--muted);font-size:11px">(RUPTL 역산)</span></td><td class="num">&lt;1/5<br><span style="color:var(--muted);font-size:11px">1.3 vs 7</span></td><td>PLN 보조금 의존·JETP 지연</td></tr>
+</tbody></table>
+<p class="src">Note:<br>실적은 재생에너지 기준(각국 증설 계획의 주력이라 비교 가능), 실행률 = 최근 연간 실적 ÷ 계획 요구 속도.</p>
+
+<div class="country-head hero">1) 한국</div>
+<table class="data" style="margin:0 0 6px"><tbody>
+<tr><td style="width:104px"><b>수요</b></td><td>AIDC 목표 18.4GW + 용인 반도체 14GW+ + 호남 반도체 산단(공급 필요 7.5GW, 26.08.04 업무보고)</td></tr>
+<tr><td><b>증설 계획</b></td><td>재생 2030년 100GW 조기(제1차 재생E 기본계획 26.05.19):<br><b><span class="mark">태양광 누적 87GW 필요(신규 56.2GW 계획: GW급 단지 12 + 정책입지 44.2)</span></b><br><b><span class="mark">해상풍력 10년 입찰 55GW(연 4GW+)·2035 보급 25GW(26.06.30 이행안)</span></b><br><b><span class="mark">원전 영덕 대형 2기(~12조)+기장 SMR 1기, 추가 기수는 공론화 중</span></b><br>12차 전기본 확정 대기(시점 미정: 연내 목표였으나 지연 이력)</td></tr>
+<tr><td><b>실행 실적 ★</b></td><td><b>태양광 연 +3.2(24년)~3.7GW(25년): 필요 연 10GW의 1/3</b><br>해상풍력 누계 0.35GW: 2035 목표의 1.4% (제주한림 100·전남1 96MW가 25년의 전부)<br>육상풍력 3년 연속 입찰 미달<br><b>26년 상반기 해상풍력 입찰 1.8GW 선정은 재개 신호</b></td></tr>
+<tr><td><b>정부 재원</b></td><td>한전 송변전 72.8조원(~38년) + 서해안 HVDC 9.6조(1단계 30년 준공 목표)<br>국민성장펀드 150조: 실집행 1호가 에너지(신안우이 해상풍력 7,500억, 26.01.29)<br>미래에너지펀드 9조<br>국내생산세액공제(태양광·풍력 포함, 27~36년)<br>K-GX 3Q26 발표 예정<br>AIDC 1,000조원은 민간투자 중심 + 세제·펀드 지원 구조</td></tr>
+<tr class="sub"><td><b>평가</b></td><td>계획 10 · 재원 설계 5 · 실물 실행 3의 초기 국면:<br><b>실행 변곡점 = 12차 전기본·K-GX(3Q)·차등요금 공청회(8월 3주)·전용요금제</b></td></tr>
+</tbody></table>
+
+<div class="country-head">2) 일본</div>
+<table class="data" style="margin:0 0 6px"><tbody>
+<tr><td style="width:104px"><b>수요</b></td><td>DC+반도체 FY2035까지 <b>+7.6GW</b>(DC 단독 6.6GW, OCCTO 26.01)</td></tr>
+<tr><td><b>증설 계획</b></td><td>2040 재생 4~5할·원전 ~2할(7차 에기본 25.02) / 광역 계통 6~7조엔: 홋카이도 HVDC 1.5~1.8조엔·공기 6~10년</td></tr>
+<tr><td><b>실행 실적 ★</b></td><td>태양광 연 +5.5~6GW 증설 중 (필요 9GW+의 ~60%)<br>풍력 누계 5.8GW: 2030 목표의 25%<br>미쓰비시 해상풍력 1.7GW 전면 철수(25.08)<br>원전 재가동 연 1~2기(가시와자키가리와6 26.02 기동)</td></tr>
+<tr><td><b>정부 재원</b></td><td>GX 국채 20조엔: 3년 집행 4.2조엔인데 <b>재생 몫은 1,208억엔뿐</b>(축전지·반도체 편중)<br>AI·반도체 공적지원 10조엔+ / DC 지방분산 기금 720억엔(도마코마이 최대 300억엔)</td></tr>
+<tr class="sub"><td><b>평가</b></td><td><b>수요·자본 확보는 최상위(1.7장 합산 ~$750억), 증설 실행률은 ~60%로 중위</b><br>단 정부 재원(GX 국채)의 재생 몫은 미미: 증설의 병목은 한국과 같은 구조<br>정부 대응: 전력이 남는 지역(규슈 등)으로 DC 입지를 유도하는 매칭 정책("와트비트 연계")과<br>계통 접속 절차 간소화를 26년부터 시행</td></tr>
+</tbody></table>
+
+<div class="country-head">3) 인도네시아</div>
+<table class="data" style="margin:0 0 6px"><tbody>
+<tr><td style="width:104px"><b>수요</b></td><td>CoreWeave 360MW(26.08.04) 등 AI 투자 유입 개시</td></tr>
+<tr><td><b>증설 계획</b></td><td>정부 10개년 전력계획(RUPTL 2025-34): +69.5GW·$1,826억, 신규의 73%는 민간 발전사(IPP) 몫<br>단 앞순서(~30년)는 가스 9.9GW 등 화석연료 위주 배치: 재생 확대는 뒤로 밀려 있음</td></tr>
+<tr><td><b>실행 실적 ★</b></td><td><b>재생 목표 달성률 1/3 미만(21~24년 계획 5.1 vs 실적 1.6GW)</b><br>25년 재생 +1.3GW뿐<br>석탄(캡티브)만 계획 외 초과 실행(+4.5GW/년)</td></tr>
+<tr><td><b>정부 재원</b></td><td>PLN 요금 동결 + 정부 보조금 연 ~70조 루피아 의존 / JETP $200억 중 승인 ~$31억·미국 탈퇴(25.01)</td></tr>
+<tr><td><b>26년 정전</b></td><td>(26.04.10) 자카르타 대정전 → (26.06) 자바 순환정전: 설비 부족 아닌 석탄 조달 실패<br>(내수 상한가가 국제가의 절반이라 광산이 수출 선호 → PLN 재고 18~20백만톤 부족)<br>(26.07) 비상 180만톤 + (26.08~12) 월 300만톤 특별배정으로 자바-발리 예비력 ~5GW 복원:<br>단 석탄 내수가격 구조 미개혁으로 재발 가능성 잔존</td></tr>
+<tr class="sub"><td><b>평가</b></td><td>정부 증설 계획(RUPTL)은 최대치 시나리오라 할인해서 봐야 함: 실행 최하위권<br><b>26년 자바 순환정전은 DC 신뢰도 리스크</b><br>현재는 남는 전력으로 초도 DC는 빨리 받지만, GW급·장기 공급엔 취약<br>CoreWeave 3개 시설의 위치는 미공개(28년 가동 목표: 아직 착공 전):<br>자바(정전 발생 지역)면 신뢰도 리스크에 노출, 바탐이면 정전과 무관<br>(바탐: 싱가포르 앞바다의 인니 섬. 자바와 별개 전력망(PLN Batam)을 씀)</td></tr>
+</tbody></table>
+
+<div class="country-head">4) 말레이시아 (조호르)</div>
+<table class="data" style="margin:0 0 6px"><tbody>
+<tr><td style="width:104px"><b>수요</b></td><td>전력공급계약(ESA: DC가 전력사 TNB와 맺는 공급 확약)이 59건·8.3GW까지 누적(26.07)<br>실제 쓰는 전력은 0.4GW(24.12)<br><b>계약 GW ≫ 실사용 GW: 계약이 다 실수요로 이어지는 건 아니라는 과잉 계약 논쟁 있음</b></td></tr>
+<tr><td><b>증설 계획</b></td><td>TNB 계통 투자 RP4 RM429억(전 주기의 2배) / 가스 6.3GW 낙찰(26.02) / 태양광 LSS 입찰 연 ~2GW</td></tr>
+<tr><td><b>실행 실적 ★</b></td><td>Green Lane 수전 33건 인도 완료(26.03) / 대규모 미달 이력 없음: 계획 대체로 이행</td></tr>
+<tr><td><b>정부 재원</b></td><td>정부 재정이 아니라 요금 기반(IBR): 25.07 기준요금 +14.2% 인상으로 DC 등 대수용가에 전가</td></tr>
+<tr class="sub"><td><b>평가</b></td><td>실행 체계 아시아 최상. 상한은 물(Tier1·2 승인 중단 유지, 공랭만 허용 26.03.10)과 싱가포르 수출 900MW(26.08.07)의 계통 경합</td></tr>
+</tbody></table>
+
+<div class="country-head">5) 인도</div>
+<table class="data" style="margin:0 0 6px"><tbody>
+<tr><td style="width:104px"><b>수요</b></td><td>Google 비사카파트남 1GW($150억) · Reliance AI 인프라 $1,100억 계획(26.02.19)</td></tr>
+<tr><td><b>증설 계획</b></td><td>2030 비화석 500GW(현 300GW: 60% 달성) / 2032 총설비 874GW / 원전 2047 100GW / 송전 ~$1,100억(~32년)</td></tr>
+<tr><td><b>실행 실적 ★</b></td><td>재생 24년 +30GW → <b>25년 +44.5GW(태양광 신규 세계 2위): 필요 속도(연 45~50GW) 도달</b><br>단 송전은 목표의 80%·프로젝트 25%가 1년+ 지연: 1Q26 출력제한 470GWh</td></tr>
+<tr><td><b>정부 재원</b></td><td>태양광 PLI ₹24,000cr(<b>실지급 0</b>) / IndiaAI 실집행 4%<br>주정부 패키지 실물(AP: 부지 25% 할인·전기세 면제·15년 요금 할인·SGST 환급) / Google 자회사에 배전 라이선스 부여</td></tr>
+<tr class="sub"><td><b>평가</b></td><td><b>발전 증설 속도는 충족, 계통·보조금 집행은 느림</b>. DC는 캡티브·오픈액세스로 계통 병목을 우회 가능</td></tr>
+</tbody></table>
+
+<div class="country-head">6) 호주</div>
+<table class="data" style="margin:0 0 6px"><tbody>
+<tr><td style="width:104px"><b>계획·재원</b></td><td>2030 재생 82% / CIS(용량투자제도) 32GW 정부 언더라이팅 / Rewiring the Nation 송전 확충</td></tr>
+<tr><td><b>실행 ★</b></td><td>DC 접속 제도가 지금 형성 중(AEMC 표준 신설) / 시드니 서부 2033년 계통 포화 전망 / Ausgrid는 투기성 수요 3GW+ 제거</td></tr>
+<tr class="sub"><td><b>평가</b></td><td>재생 조달은 강점, DC 전용 제도·패스트트랙은 부재</td></tr>
+</tbody></table>
+<p class="src">Source: 각국 정부·유틸리티 공식 발표와 실적 통계(METI·OCCTO·GXA / MNRE·PIB / PLN·CREA·IESR / TNB·EC / 기후부·한전·KPX), 26.08 조사. 상세 출처는 하단 Source 블록.</p>
+
+<h2 class="sec"><span class="no">2.6</span>국가 스코어카드 (잠정 관찰)</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">2.1장의 체크리스트 × 2.2장의 실측 × 2.5장의 증설 실행을 겹친 것. ✓ 충족 / △ 부분·진행 중 / ✗ 미충족.</p>
+<table class="data">
+<thead><tr><th style="width:190px">조건</th><th style="text-align:center">한국</th><th style="text-align:center">일본</th><th style="text-align:center">조호르</th><th style="text-align:center">인니</th><th style="text-align:center">인도</th><th style="text-align:center">호주</th></tr></thead>
+<tbody>
+<tr><td>증설 실행 실적 (계획 대비)</td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">~1/3</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">~60%</span></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">이행 궤도</span></td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">&lt;1/5</span></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">속도 도달</span></td><td style="text-align:center">△</td></tr>
+<tr><td>수전 속도 (실측)</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">초도 40MW급 ✓<br>100MW+ 미실증</span></td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">도쿄 10년</span></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">12개월</span></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">6~20개월</span></td><td style="text-align:center">△</td><td style="text-align:center">△</td></tr>
+<tr><td>계통 우회로 (발전 인접·캡티브)</td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">울산·동해·해남</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">공장 전환</span></td><td style="text-align:center">△</td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">캡티브 허용</span></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">잠나가르</span></td><td style="text-align:center">✗</td></tr>
+<tr><td>전력계약 사전 확정 (ESA류)</td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">제도 없음</span></td><td style="text-align:center">△</td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">ESA 다수</span></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">PLN 450MW</span></td><td style="text-align:center">△</td><td style="text-align:center">△</td></tr>
+<tr><td>GW급 확장 옵션</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">울산 1GW 옵션·동해 2.4GW·해남 2GW 구상: 전부 비구속</span></td><td style="text-align:center">△</td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">클러스터 운영 897MW·ESA 8.3GW</span></td><td style="text-align:center"><b>✓</b></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">1GW급 복수</span></td><td style="text-align:center">△</td></tr>
+<tr><td>패스트트랙 제도 가동</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">특별법 27.02</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">개편 착수</span></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">가동 중</span></td><td style="text-align:center">△</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">주별</span></td><td style="text-align:center">✗</td></tr>
+<tr><td>재생 조달 경로</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">녹색프리미엄·제3자 PPA 가동 중<br>직접 PPA 특례 27.02<br>제약은 재생 물량 자체</span></td><td style="text-align:center">△</td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">CGPP·CRESS</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">석탄 비중</span></td><td style="text-align:center"><b>✓</b></td><td style="text-align:center"><b>✓</b></td></tr>
+<tr><td>로컬 스폰서 (대기업 파트너)</td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">SK·GS·네이버</span></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">소프트뱅크</span></td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">YTL·TNB</span></td><td style="text-align:center">△</td><td style="text-align:center"><b>✓</b> <span style="color:var(--muted);font-size:11px">릴라이언스·타타</span></td><td style="text-align:center">△</td></tr>
+</tbody></table>
+<p class="src">Note: 잠정 관찰. 물 제약(조호르 Tier1·2 승인 중단 25.11)·지진(규슈)·규제 변경은 추적 변수로 별도 관리.</p>
+<ul style="margin-top:22px">
+<li><b>한국의 격차 항목은 2개</b>:<br>전력계약 사전 확정(ESA류 제도 부재)과 패스트트랙 미가동<br>둘 다 제도 문제: 전용요금제(연내)와 특별법(27.02)이 정확히 이 두 칸을 채우는 정책</li>
+<li><b>한국이 충족하는 항목 2개</b>:<br><b>계통 우회로(발전소 인접 부지 보유: 울산·동해·해남)와 로컬 스폰서 존재(SK·GS·네이버).</b><br>단 스폰서의 실행력은 일본 소프트뱅크가 앞서 있음(1.7장): "충족"이지 "우위"는 아님</li>
+<li><b>종합순위(잠정):</b><br>초도·임차형(수백MW): 조호르·인니가 실적 선두 (단 물(조호르)·GW급 지속성(인니) 한계)<br><b>GW급 캠퍼스·CSP 리전: 일본·인도가 자본·증설 실행에서 우위 (단 인도는 자국 수요 소화가 본체)</b><br><b>아시아 리전(수출형) 경쟁의 직접 상대는 일본·동남아 허브: 한국이 추격하는 경합 구도</b><br><b>한국의 변곡점은 ✗ 2칸(전력계약 확정·패스트트랙)이 제도로 채워지는 27년 상반기</b></li>
+</ul>
+
+<h2 class="sec"><span class="no">2.7</span>판정 (잠정: 12차 전기본·특별법 시행령 이후 확정)</h2><hr class="sec-rule">
+<ul>
+<li><b>초도 물량(사이트당 ~수백MW)까지: 한국은 경쟁력 있음</b><br>발전 인접 부지(울산·동해·해남) + 비수도권 평가 통과율 87~90% + 지자체 패스트트랙.<br>울산 발표→착공 2.5개월이 실증</li>
+<li><b>그 이상(100MW+ 수전·GW급 캠퍼스): 어느 나라도 실증 없음</b><br>결정 변수는 전력 증설 속도 = 정부의 의지와 투자 결정:<br>12차 전기본 · 재생 100GW 조기 · 해상풍력 입찰 55GW · 원전 2+1기 · 전용요금제 · 특별법 시행령</li>
+<li><b>현 증설 실행률 순위(잠정): 인도 ≥ 말레이 &gt; 일본 &gt; 한국 &gt; 인니</b><br><b>한국의 "정부 의지"는 계획·재원 설계까지 확인됨. 실물 실행(~1/3)이 격차</b><br><b>정부 의지와 계획이 실행된다면 GW급 발주 가능성 상승</b></li>
+<li><span class="mark">함의: AIDC 테마의 다음 국면은 전력(에너지)</span><br><b>수요(테넌트)가 확인될수록 병목은 공급(전력)으로 이동:<br>원전·신재생이 후속 테마로 주목받는 구조 (4장에서 종목화)</b></li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">순위를 바꾸는 트리거</p>
+<table class="data">
+<thead><tr><th>이벤트</th><th style="width:120px">예상 시점</th><th>영향</th></tr></thead>
+<tbody>
+<tr><td>AIDC 전용 요금제 공개: <b>고정가·장기계약 여부가 관건</b></td><td>26년 내</td><td>ESA류 격차 해소 시 스코어 ✗→△</td></tr>
+<tr><td>특별법 시행령 입법예고: 평가 면제·직접 PPA 범위</td><td>4Q26~1Q27</td><td>패스트트랙 △→✓ 여부</td></tr>
+<tr><td>12차 전기본 확정: AIDC 수요 반영 수준</td><td>12월 초안 목표</td><td>총량 기준선·계통 투자 교체</td></tr>
+<tr><td>한전 수전 100MW+ 완화 (초도 40MW 관행 해제)</td><td>수시</td><td>실현 통과율 상향</td></tr>
+<tr><td>울산형 2호 착공 (동해 100~120MW)</td><td>10~11월</td><td>우회로 양산 실증</td></tr>
+</tbody></table>
+
+<div class="src" style="border-top:1px solid var(--hairline);padding-top:12px;margin-top:36px">
+Source: 각 딜 공식 발표·보도(AWS-SK 25.06.20 · CoreWeave 26.08.04 · AirTrunk 23.01~26.04 · TM Nxera 26.01.12 · Meta-Reliance 26.06.10 · OpenAI-Tata 26.02.19) · MIDA·TNB 공식 자료 · KDDI(26.01.22) · 닛케이(도쿄 접속 25.08) · 서울경제(계통영향평가 통계 26.08.03) · 국가법령정보센터(AIDC 특별법) · 기후부 업무보고(26.08.04) · KPX 출력제어(한국경제 26.08.04) · NSW 의회 제출자료(26.03.27).<br>
+Note: 본 자료는 정보 제공용이며 투자 권유가 아닙니다. 판정은 잠정이며 12차 전기본·특별법 시행령 확인 후 갱신합니다.
+</div>
+
+
+<div class="section-divider" id="ch3" style="margin-top:150px"><span class="stripes"><i></i><i></i><i></i></span><h2>3장. 프로젝트 실현 검증: 발표 18.4GW는 얼마나 지어지는가</h2></div>
+<p style="font-weight:800;font-size:15px;margin-top:26px">3장 요약</p>
+<div class="callout olive" style="line-height:2.05;font-size:13.5px;font-weight:400">
+① 발표 프로젝트 전수를 5단계 사다리 × 4관문(테넌트→자금→전력·부지→착공)으로 채점함<br>
+② 착공·실행 ~0.5GW + 협상 파이프라인 ~1.5GW(전부 비구속) + 비전 ~16GW의 3층 구조<br>
+③ <b>발표 물량의 약 8할이 첫 관문(테넌트)에서 대기 중: 테넌트 확보가 사실상 유일한 관문</b><br>
+④ 상향식 합산: <b>2030년까지 착공 Base 2.5~3GW · 2035년 가동 Base 4~6GW</b>(정부 18.4의 25~33%)<br>
+⑤ 판정(잠정): 갈림길은 테넌트 계약 전환. 예외는 그룹 자본 선착공(동해 초도: 단 GW급 확장은 결국 테넌트)<br>
+확정은 4Q 이벤트(브룩필드·동해 착공·Anthropic 입찰·12차 전기본) 이후
+</div>
+
+<h2 class="sec"><span class="no">3.1</span>방법: 사다리 × 4관문</h2><hr class="sec-rule">
+<ul>
+<li><b>5단계 사다리</b>: 루머·비전 &lt; MOU·LOI &lt; 구속력 계약 &lt; 착공 &lt; 가동. 위로 갈수록 실현 확률이 계단식으로 상승</li>
+<li><b>4관문</b> (차니파파 인과사슬): ① 앵커 테넌트 → ② 자금·PF → ③ 전력·부지 → ④ 착공.<br>테넌트가 최상류: 테넌트 없으면 PF가 막히고, PF 없으면 착공이 형식에 그침</li>
+<li>채점은 공시·착공식 등 <b>공개 사실만</b> 사용. 전언·전망은 별도 표기</li>
+<li>캡티브(자가용)는 관문 ①이 면제됨: 대신 그룹의 착공 실행력이 관건</li>
+</ul>
+
+<h2 class="sec"><span class="no">3.2</span>프로젝트 마스터 보드 (26.08.16 기준)</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">✓ 확인 / △ 진행·부분 / ✗ 미확보·미확인. <b>상위 5개 연두색 음영 행 = 착공·실행 단계(사다리 4단)</b>, 나머지는 계약 이전 단계.</p>
+<table class="data">
+<thead><tr><th style="width:150px">프로젝트</th><th style="width:80px">발표 규모</th><th style="text-align:center;width:55px">①테넌트</th><th style="text-align:center;width:55px">②자금</th><th style="text-align:center;width:55px">③전력·부지</th><th style="text-align:center;width:55px">④착공</th><th>다음 관문 (시점)</th></tr></thead>
+<tbody>
+<tr class="sub"><td><b>AWS–SK 울산</b></td><td class="num">103MW<br>→1GW 비전</td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">AWS·1단계</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">KKR·IMM 3조 우협</span></td><td style="text-align:center">✓</td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">25.08.29</span></td><td>KKR 본계약 체결 · A동 준공(27.04). 확장분 AWS 커밋은 비전 단계</td></tr>
+<tr class="sub"><td><b>해남 국가AI센터</b></td><td class="num">40→80MW</td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">정부</span></td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">2.4조 확정</span></td><td style="text-align:center">✓</td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">26.08.03</span></td><td>28년 가동</td></tr>
+<tr class="sub"><td><b>LG U+ 파주</b></td><td class="num">200MW급<br>2조원</td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">1동 50MW 완판</span></td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">자체 현금·PF 없음</span></td><td style="text-align:center">✓</td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">1단계 공사 중</span></td><td>2단계 착공일(이사회 1.35조, 26.07.29) · Google DBO 확정 여부</td></tr>
+<tr class="sub"><td><b>네오AI 포항</b></td><td class="num">40MW<br>→300MW</td><td style="text-align:center">✗</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">정책펀드 1,315억</span></td><td style="text-align:center">✓</td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">26.07.20</span></td><td>테넌트 계약. 28년 상반기 상업운전이면 <b>국내 상업용 AIDC 최초 가동</b></td></tr>
+<tr class="sub"><td><b>SGC 군산</b></td><td class="num">60MW<br>→300MW</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">KT 인프라 파트너</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">미래에셋 협약</span></td><td style="text-align:center">✓ <span style="color:var(--muted);font-size:11px">자가 열병합 424MW</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">발전기 계약 개시</span></td><td>착공식 · KT 임차 확정 공시 (지엔씨 발전기 755억, 26.08.03)</td></tr>
+<tr><td><b>네이버 세종</b></td><td class="num">200MW<br>→1GW</td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">3Q 분수령</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">NVIDIA $10억+브룩필드 $90억</span></td><td style="text-align:center">✓</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">2·3단계 미확인</span></td><td><b>브룩필드 본계약(12주 시한 ~10월 말)</b> · 앵커 고객 공시 · 27 상반기 55MW</td></tr>
+<tr><td><b>GS 동해</b></td><td class="num">2.4GW</td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">입찰 종속설</span></td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">PF·SPC 미확인</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">부지·발전 보유, 전계평 미확인</span></td><td style="text-align:center">✗</td><td>전계평(8~9월) → GS건설 수주 공시(~1조) → 착공(10~11월설)</td></tr>
+<tr><td><b>SKT / SK하이퍼</b></td><td class="num">5GW<br>→15GW</td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">NVIDIA 2GW LOI·Anthropic MOU</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">7,500억 약정</span></td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">부지 미확정</span></td><td style="text-align:center">✗</td><td>LOI·MOU의 본계약 전환 · 부지 확정. "先고객 後건설" 공식(26.08.05 컨콜)</td></tr>
+<tr><td><b>KT</b></td><td class="num">1GW<br>5조·20개소+</td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">MS 물량 확약 아님</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">자체</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">기존 국사 활용</span></td><td style="text-align:center">✗</td><td>MS 계약 재협상(축소 요청 중) · 1호 신규 부지 발표</td></tr>
+<tr><td>현대차 새만금 <span style="color:var(--muted);font-size:11px">캡티브</span></td><td class="num">5.8조<br>GPU 5만장</td><td style="text-align:center">면제</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">MOU</span></td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">자체 태양광 구상</span></td><td style="text-align:center">✗</td><td>착공식: 29년 완공이면 26년 하반기 착공이 리트머스</td></tr>
+<tr><td>카카오 남양주 <span style="color:var(--muted);font-size:11px">자가용</span></td><td class="num">6,000억</td><td style="text-align:center">면제</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">26년 착공 계획</span></td><td>착공식. <b>임대업 진출 안 함 공식화(26.08.06)</b>: 공급 이탈 1호</td></tr>
+<tr><td>삼성SDS <span style="color:var(--muted);font-size:11px">동탄·구미 등</span></td><td class="num">110<br>→800MW</td><td style="text-align:center">면제+GPUaaS</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">동탄 서관 26.1Q 가동</span></td><td>구미 착공(29년 개관) · 잔여 570MW 사이트 발표</td></tr>
+<tr><td>OpenAI 포항·전남</td><td class="num">20MW×2</td><td style="text-align:center">△ <span style="color:var(--muted);font-size:11px">LOI</span></td><td style="text-align:center">✗</td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">부지 보도 혼재</span></td><td style="text-align:center">✗ <span style="color:var(--muted);font-size:11px">"3월 착공" 무산</span></td><td>부지 공식 발표 · 합작법인 등기</td></tr>
+<tr><td>기타 <span style="color:var(--muted);font-size:11px">신세계 250MW·솔라시도 후속·대우 장성 26MW</span></td><td class="num">~0.3GW+</td><td style="text-align:center">✗</td><td style="text-align:center">✗</td><td style="text-align:center">△</td><td style="text-align:center">✗</td><td>신세계: 입지 호남 변경 검토·연내 JV. 솔라시도 후속 동은 테넌트 전무</td></tr>
+</tbody></table>
+<p class="src">Source: 각 사 공시·컨콜·착공식 보도(26.08.16 기준 취합). Note: 1장 도입의 파이프라인 현황판(착공 0.5 / 협상 1.5 / 비전 16)이 이 보드의 요약본.</p>
+
+<h2 class="sec"><span class="no">3.3</span>판독: 발표 물량의 8할이 테넌트 대기</h2><hr class="sec-rule">
+<ul>
+<li><span class="mark">발표 18.4GW의 약 8할이 사슬의 첫 관문(테넌트)에서 대기 중</span>: GS 동해·SKT·네이버·KT 등 임대형 전부<br>착공까지 간 건 ~0.5GW, 전부 40~200MW급 초도(2장 실측과 정합)</li>
+<li><b>전진 신호</b> (26.07~08): 해남 착공(26.08.03) · 파주 2단계 1.35조 이사회(26.07.29) · 포항 정책펀드 3호 선정(26.08.06) · 군산 발전기 계약(26.08.03) · 울산 지분 3조 우협(KKR·IMM)</li>
+<li><b>이탈 신호</b>: 카카오 임대업 포기(26.08.06) · KT의 MS 계약 축소 요청 · 솔라시도 후속 동 테넌트 전무·퍼힐 15조 협상권 회수 · OpenAI 20MW "3월 착공" 무산</li>
+</ul>
+
+<h2 class="sec"><span class="no">3.4</span>상향식 합산: 결국 몇 GW가 지어지는가</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">기준 2개: <b>2030년 말까지 착공 누적</b>(발주·수주와 직결: 투자의 중심)과 <b>2035년 가동 누적</b>(정부 2단계 18.4GW 대비).<br>"2030년 가동"은 28년 이전 착공분만 잡히는 이른 기준이라 참고로 강등.</p>
+
+<table class="data" style="max-width:720px">
+<thead><tr><th>지표 (누적 GW)</th><th style="text-align:right">확보분 (상수)</th><th style="text-align:right">Base</th><th style="text-align:right">Bull</th></tr></thead>
+<tbody>
+<tr><td><b>2030년 말까지 착공</b></td><td class="num">0.5</td><td class="num"><b>~2.5~3.0</b><br><span style="color:var(--muted);font-size:11px">1단계 8.4의 30~35%</span></td><td class="num"><b>6~8</b><br><span style="color:var(--muted);font-size:11px">70~95%</span></td></tr>
+<tr><td><b>2035년 가동</b></td><td class="num">~1.0</td><td class="num"><b>4~6</b><br><span style="color:var(--muted);font-size:11px">전체 18.4의 25~33%</span></td><td class="num">7~9<br><span style="color:var(--muted);font-size:11px">40~50%</span></td></tr>
+<tr class="sub"><td>(참고) 2030년 가동</td><td class="num">~1.0</td><td class="num">~1.9</td><td class="num">~3.5</td></tr>
+</tbody></table>
+
+<p style="font-weight:800;font-size:15px;margin-top:56px">배점 근거</p>
+<ul>
+<li><b>확보분(상수)</b>: 착공 5건 0.5GW. 시나리오가 아니라 바닥값: 여기서 깎이려면 착공한 것까지 좌초해야 함</li>
+<li><b>Base 착공 2.5~3.0</b> = 확보 0.5 + 협상 파이프라인 1.4~1.5의 대부분 착공 전환 + 후속 착공(동해 후속·SKT 1호·캡티브) ~1.0<br>착공은 가동보다 문턱이 낮음: 초도 1개 동은 그룹 자본으로 테넌트 없이 착공 가능(동해 선착공 경로)</li>
+<li><b>Bull 착공 6~8</b> = 동해 2.4 풀착공 + SKT–NVIDIA 2GW 계약 전환(27년 구축 개시 목표) + 파이프라인 전부 + 캡티브·기타.<br>착공은 가동과 달리 계통 제약을 덜 받음: 자본과 의지의 영역.<br>8.4 전부가 아닌 이유: 확인된 이탈분(카카오·KT 축소) + EPC·기자재 캐파(동해 1.2GW에만 현장 3~4천 명, GS건설 "딱 간신히")</li>
+<li><b>2035년 가동은 ~2031년까지의 착공분이 결정</b>(건설 2~3년 + 램프업)<br>Base = 파이프라인 성사분 + 이후 연 0.5~0.8GW 착공 지속(현 실행 속도 + 제도 촉매) / Bull = 실행 변곡점 전부 작동. 외삽 성격: 잠정</li>
+<li style="margin-top:8px"><span class="mark">발표 18.4GW의 현실적 중심값: 2035년 가동 4~6GW. 1→2GW와 2→5GW를 가르는 건 전부 테넌트 계약 전환</span></li>
+<li>수요 상한 점검은 3.6: 수요는 실현의 제약이 아님을 확인하는 절</li>
+</ul>
+
+<h2 class="sec"><span class="no">3.5</span>판정 (잠정) + 확인 캘린더</h2><hr class="sec-rule">
+<ul>
+<li><b>판정(잠정): 2030년까지 착공 2.5~3GW(Base), 2035년 가동 4~6GW(Base·정부 18.4의 25~33%)</b></li>
+<li>Base 성립 조건: 협상 중 물량(네이버·동해·군산 확장)의 <b>절반 안팎이 계약으로 전환</b></li>
+<li>Bull 성립 조건: GS·SKT의 GW급 중 1개 이상이 앵커 테넌트 확약을 받는 것 (Anthropic 입찰이 최대 단일 변수)</li>
+<li>시나리오 확정은 최종장에서: 아래 캘린더의 4Q 이벤트 확인 후</li>
+</ul>
+<table class="data">
+<thead><tr><th>확인 이벤트</th><th style="width:110px">시점</th><th>영향</th></tr></thead>
+<tbody>
+<tr><td>동해 전력계통영향평가 결과</td><td>8~9월</td><td>동해 착공 선행조건</td></tr>
+<tr><td>네이버 앵커 고객 공시 (증권가 "3분기가 분수령")</td><td>3Q</td><td>네이버 Base→Bull 이동</td></tr>
+<tr><td><b>브룩필드 SPV 본계약 (12주 시한)</b></td><td>~10월 말</td><td>네이버 자금 관문 통과 여부</td></tr>
+<tr><td>동해 100~120MW 착공·GS건설 수주 공시(~1조)</td><td>10~11월</td><td>테마 유지의 단기 앵커 (1.7의 3)</td></tr>
+<tr><td>울산 KKR·IMM 3조 본계약·법인 출범</td><td>연내</td><td>울산 확장 자금 확보</td></tr>
+<tr><td><b>Anthropic 동아시아 입찰 결과</b></td><td>26년 말 (전언)</td><td>GS·SKT Bull 성립/기각의 최대 단일 변수</td></tr>
+<tr><td>12차 전기본 확정 · SKT LOI→계약 전환 · 현대차 새만금 착공</td><td>12월~</td><td>시나리오 확정 재료 (최종장)</td></tr>
+</tbody></table>
+
+<h2 class="sec"><span class="no">3.6</span>수요 시나리오 (2030): 수요는 제약이 아님</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">이 절은 수요(테넌트가 원할 물량)의 추정. 실현(착공·가동) 판정은 3.4가 정본.</p>
+<table class="data">
+<thead><tr><th>수요 항목 (GW, 2030)</th><th style="text-align:right">Base</th><th style="text-align:right">Bull</th><th>산출 근거</th></tr></thead>
+<tbody>
+<tr><td>프론티어 추론 (국내 서빙분)</td><td class="num">0.30</td><td class="num">0.80</td><td>1.4의 한국 귀속 0.5~1.7GW × 국내 서빙비율 30 / 50%</td></tr>
+<tr><td>국내 기업 자체 AI</td><td class="num">0.60</td><td class="num">1.00</td><td>NVIDIA GPU 26만장 프로그램(=0.34~0.49GW) + 금융·공공 규제 코어: 부록 A</td></tr>
+<tr><td>공공·소버린</td><td class="num">0.45</td><td class="num">0.70</td><td>해남 40→210MW 풀빌드 + GPU 국가사업 1~3차 + 부처 수요</td></tr>
+<tr><td>캡티브 (그룹 내부)</td><td class="num">0.40</td><td class="num">0.70</td><td>현대차 새만금·삼성SDS 동탄/구미 등 공표 프로젝트 합산</td></tr>
+<tr><td>수출형 (아시아 허브·미국 이전)</td><td class="num">0.20</td><td class="num">1.50</td><td>아시아 리전 시장 7~14GW(부록 A)의 점유 3 / 10~20%</td></tr>
+<tr><td>일반 IDC 증설 (비AI)</td><td class="num">0.55</td><td class="num">0.70</td><td>기존 운영 1.5GW 스톡의 증설 추세 연장</td></tr>
+<tr class="total"><td>합계</td><td class="num">2.5</td><td class="num">5.4</td><td></td></tr>
+</tbody></table>
+
+<p style="font-weight:800;font-size:15px;margin-top:56px">수요 → 실현 번역 (3.4장과의 연결)</p>
+<table class="data" style="max-width:640px">
+<thead><tr><th></th><th style="text-align:right">수요 (2030, 본 절)</th><th style="text-align:right">착공 (2030, 3.4)</th><th style="text-align:right">가동 (2035, 3.4)</th></tr></thead>
+<tbody>
+<tr><td><b>Base</b></td><td class="num">2.5</td><td class="num">2.5~3.0</td><td class="num">4~6</td></tr>
+<tr><td><b>Bull</b></td><td class="num">5.4</td><td class="num">6~8</td><td class="num">7~9</td></tr>
+</tbody></table>
+<ul>
+<li><b>Base: 수요 2.5 ≈ 착공 2.5~3.0.</b> 수요만큼은 착공됨: 병목은 수요가 아니라 가동 전환(전력·계통)</li>
+<li><b>Bull에선 착공(6~8)이 당해 수요(5.4)를 앞섬</b>: 2035년의 더 큰 수요(아시아 리전 시장 7~14GW 중 점유)를 선점하는 그림.<br>점유를 못 따내면 과잉공급으로 반전: 최종장에서 리스크로 다룸</li>
+<li>산출 과정 전체(3경로 삼각측량·앵커·갱신 트리거)는 <a href="scenario.html" style="color:var(--brand-heading);font-weight:700">부록 A: 수요 시나리오 산출 노트</a><br><span style="color:var(--muted);font-size:12px">(부록 A는 Bear 포함 3안 기준의 초판 산출 노트: 수치는 동일하며 본문은 Base·Bull 2안으로 재편함)</span></li>
+<li><span class="hl">수요는 수 GW까지 열려 있음. 병목은 수요가 아니라 전력 확보 속도(2장)와 테넌트 계약 전환(3장)</span></li>
+</ul>
+
+
+<div class="src" style="border-top:1px solid var(--hairline);padding-top:12px;margin-top:36px">
+Source: 각 사 공시·컨콜(네이버 26.08.03·07 / LG U+ 26.07.29·08.06 / SKT 26.08.05 / 카카오 26.08.06 / 삼성SDS 26.07.30) · 착공식 보도(울산 25.08.29 · 해남 26.08.03 · 포항 26.07.20) · 지엔씨에너지 공시(26.08.03) · 인베스트조선(울산 지분 26.05.06) · 강원일보·허프포스트(동해) · 이포커스(계통 신청 33.6GW). 본 자료는 정보 제공용이며 투자 권유가 아닙니다.
+</div>
+
+<div class="section-divider" id="ch4" style="margin-top:150px"><span class="stripes"><i></i><i></i><i></i></span><h2>4장. 종목: 대장주 + 에너지(다음 후보)</h2></div>
+<p style="font-weight:800;font-size:15px;margin-top:26px">4장 요약</p>
+<div class="callout olive" style="line-height:2.05;font-size:13.5px;font-weight:400">
+① <b>4~5GW 착공 가정 시 단기 모멘텀이 끝나도 실수혜 강도가 큰 기업들 존재</b><br>
+② 현 대장주: 지엔씨에너지 · 자이에스앤디 · GS건설 · SGC에너지<br>
+③ 2막은 에너지: 두산에너빌리티 · 현대건설 · GS글로벌 · HD현대에너지솔루션 등<br>
+④ 촉매가 9~12월에 집중: K-GX · 12차 전기본 · 동해 착공 · 브룩필드 본계약 · 태안 선정(GS글로벌)
+</div>
+
+<h2 class="sec"><span class="no">4.1</span>밸류체인 맵: 착공 1GW가 만드는 발주</h2><hr class="sec-rule">
+<table class="data">
+<thead><tr><th style="width:130px">경로</th><th style="width:230px">종목</th><th>규모 감 (실측 앵커)</th><th>현재 단계</th></tr></thead>
+<tbody>
+<tr><td><b>EPC·시공</b></td><td>GS건설 · 자이에스앤디(자이C&amp;A) · 현대건설 · 삼성물산 · 대우건설 · SK에코플랜트(비상장)</td><td>MW당 시공비 80~100억원: <b>1GW ≈ 10조원</b><br>자이C&amp;A 자체 예측 포션 30~40%</td><td>동해 ~1조 수주 전망(하반기) · 포항은 현대건설 시공 중</td></tr>
+<tr><td><b>발전기·브리지 전력</b></td><td>지엔씨에너지</td><td>군산 60MW에 755억 = <b>MW당 ~12.6억원 실측</b>(기존 ~10억 대비 +20~30%)</td><td>군산 수주 공시(26.08.03). 동해·후속 대기</td></tr>
+<tr><td>전력기기·배전</td><td>LS일렉트릭 등</td><td>DC 직류배전(SST·SSCB)</td><td>초기</td></tr>
+<tr><td><b>전력 공급: 원전</b></td><td>두산에너빌리티 · 한전기술 · 비에이치아이 · 태광·성광(피팅)</td><td>국내: 11차(대형 2기+SMR 1기)에서 상향 전망<br>미국: AP1000 10기 주기기(두산 3.1~5.4조 추정)</td><td>국내: 12차 전기본 확정 후 28년 발주 전망<br>미국: 26년 하반기 현대건설 부분수주 전망</td></tr>
+<tr><td><b>전력 공급: 해상풍력</b></td><td>SK이터닉스 · GS글로벌 · 유니슨<br><span style="color:var(--muted);font-size:11.5px">설치선 한화오션·삼성중공업·HD현대중공업 / 케이블 LS마린솔루션·LS에코에너지·대한전선 / 변전 HD현대일렉트릭·효성중공업 / 타워 씨에스윈드 / 하부구조물 SK오션플랜트 / 터빈 두산에너빌리티·유니슨</span></td><td>설치량 25년 0.6GW → 30년~ 연 4GW+<br>10년 입찰 55GW</td><td>인허가 10년 → 6.5년(해상풍력특별법)<br>WTIV(대형 설치선)·지원항만 확보가 성패 열쇠</td></tr>
+<tr><td>계통·송전</td><td>HVDC 케이블: LS · 대한전선<br>변환·변전: 효성중공업 · HD현대일렉트릭 · LS일렉트릭</td><td>한전 송변전 72.8조(~38년) + 서해안 HVDC 9.6조</td><td>12차 전기본에서 증액 전망</td></tr>
+</tbody></table>
+<p class="src">Note: 사업자(SKT·네이버·KT 등) 자체는 본 장 범위 밖: 인프라·기자재 수혜주 중심. 시공비·단가는 한화 세미나(26.08.13)·지엔씨 공시 실측.</p>
+
+<h2 class="sec"><span class="no">4.2</span>현 대장주 점검</h2><hr class="sec-rule">
+
+<p style="font-weight:800;font-size:15px;margin-top:20px">1) 지엔씨에너지 (비상용 발전기 · 현시총 9,030억)</p>
+<p style="font-weight:700;font-size:13.5px;margin:14px 0 6px">(애널 코멘트)</p>
+<ul>
+<li>교보증권:<br>3대 메가 8.4GW 역산 4년 도달가능매출(SAM) ~4조: 작년 발전기 매출 2,000억의 연 1조 셈<br>단 8.4GW 자체는 미달 전제: 절반, 반의 반만 와도 기대 매출이 조 단위로 증가<br>실적 모델: 27년 800~900억 → 28년 1,200~1,300억(7월 수주 호조 반영 상향)<br>EPC라 캐파 부담 없음(직전 더블업 4개월)<br>엔진 병목은 보두앙(중국 자본의 프랑스 브랜드) 소싱으로 대응: 관건은 중국산 여부가 아니라 납기<br>GS 초도 PO 빠르면 하반기 · 대형 DC 가능 업체는 사실상 지엔씨뿐</li>
+<li>하나증권:<br>DC 비상발전기 M/S 70%+: 시장이 3GW+ 커지면 그대로 받는 구조. 자이에스앤디와 최선호 조합</li>
+</ul>
+<p style="font-weight:700;font-size:13.5px;margin:18px 0 6px">(내 정리)</p>
+<ul>
+<li>군산 실측 단가 MW당 ~12.6억(60MW 755억): 기존 ~10억 대비 +20~30%<br>시나리오: 착공 5GW·M/S 80%(4GW) 가정 시<br>MW당 10억이면 매출 4조·영익 7,600억(OPM 19%) / 12.6억이면 5.04조·9,580억</li>
+<li>글로벌 병목이 순풍: 미국 1위 제네락 납기 40~45주·경쟁사 70~80주로 전 세계가 밀림<br>→ 국내 AIDC 발주는 지엔씨로 갈 개연성</li>
+<li>현케파: 출하 70대(25) → 90대(26E) → 130대(27F) → 최대 250대(≈발전기 매출 5,000억)<br>향후 추가 증설 필요. FCF가 관건</li>
+</ul>
+<p class="src">정리: <a href="https://app.notion.com/p/3b3bb1729c15800a8a09e7b8e898af3d" style="color:var(--brand-heading)">지엔씨에너지 초간단정리</a></p>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">2) 자이에스앤디 (현시총 3,890억)</p>
+<p style="font-weight:700;font-size:13.5px;margin:14px 0 6px">(애널 코멘트)</p>
+<ul>
+<li>한화투자증권:<br>TP 1만원은 DC 일절 미반영(목표배수 5배)<br><b>DC 3~4조 수주 + 연매출 1조 얹히면 내년 이익 기준 ~50% 업사이드 → 같은 5배로 TP 1.5만원 경로</b><br>DC 시공 이력: GS 계열 21건 중 10건이 자이C&amp;A(LG유플러스·LG CNS 공사 이력): 20MW+만 추려도 톱티어<br>자이C&amp;A 자체 예측 포션 30~40%(자체 설계 인력·내부 MEP(기계·전기·배관) 강점)<br>실적 자체도 올해부터 턴: 27년 이익 추정 1,200억도 보수적(주택 원가율 87% → 80% 초반 여지)</li>
+<li>하나증권: 과거 그룹 DC 매출을 GS건설과 거의 5:5 수행: 시총 대비 탄력 최대, "둘 다 사면 된다"</li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">3) GS건설 (현시총 3.0조)</p>
+<p style="font-weight:700;font-size:13.5px;margin:14px 0 6px">(애널 코멘트)</p>
+<ul>
+<li>한화투자증권:<br>동해 2.4GW 시공비 환산 20~25조(MW당 ~100억·DC GP마진 10~12%)<br>"다 될 거라고는 안 본다. 그래도 하반기엔 대응해야":<br><b>100MW 착공이 확정되면 시장은 그걸 보며 1.2·2.4GW를 상상하는 구간</b><br>2Q 비용 선반영(대손 ~1,000억)은 긍정 신호: 빠르면 4Q·내년 주택 매출 반등 구간</li>
+<li>하나증권:<br>1.2GW 수주 시 ~10조·피크 연매출 +5조: 28년 피크 이익 PER 5배 = 5.2만원 경로<br>DC 시공 이력 국내 1위(계열 21건) · GS의 유일한 우위는 "바로 착공할 땅+발전소+용수"</li>
+</ul>
+<p style="font-weight:700;font-size:13.5px;margin:18px 0 6px">(내 정리·리스크)</p>
+<ul>
+<li>착공은 해도 전부 현실화는 어렵다는 게 애널 공통 전제<br>GS 내부 전언도 동일: "1.2GW는 고객 없으면 구상만 하고 실제 못 할 것"(차니파파 채널)<br>착공만 나오고 테넌트가 계속 비공개면 기대감의 유효기간은 길지 않음</li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">4) SGC에너지 (군산: 발전소 결합형 300MW · 현시총 9,208억)</p>
+<p class="src">정리: <a href="https://scented-muscari-c06.notion.site/260806_SGC-3b42cff291cc81ef89b2fff3ebdd8c73?source=copy_link" style="color:var(--brand-heading)">재영님 탐방정리(26.08.06)</a></p>
+
+<h2 class="sec"><span class="no">4.3</span>2막: 에너지 (2장 결론의 종목화)</h2><hr class="sec-rule">
+<p class="lead" style="margin-bottom:10px">2장 판정: GW급 AIDC는 전력 증설 속도가 결정. 한국의 실행률 1/3 격차 = 계획을 실행으로 옮기는 순간 터질 발주 잠재력.</p>
+
+<p style="font-weight:800;font-size:16.5px;margin-top:36px">1) 원전</p>
+<p style="font-size:13.5px;line-height:1.9;margin:10px 0 14px">
+국내: 확정 대형 2기(영덕)+SMR 1기(기장)에 추가 기수 공론화 진행 중: <b>12차 전기본 확정 기수가 최대 변수</b><br>
+미국: 2030년까지 AP1000 10기 착공 계획(행정명령·웨스팅하우스·DOE 대출이 같은 사업):<br>
+장납기 주기기는 지금부터 발주해야 하는 구조: 그 덩어리가 통째로 두산 영역<br>
+그 외 국가: 발주 순서 전망은 26년 하반기 현대건설 부분수주(팔리세이즈·불가리아·페르미) → 27년 베트남·폴란드 → 28년 국내:<br>
+각국 자금조달 문제로 발주가 계속 밀려 옴: <b>기대가 바닥이라 하나만 현실화돼도 임팩트</b>
+</p>
+<ul>
+<li>두산에너빌리티(시총 52.9조): 과거 미국 AP1000 4기 주기기 전량 공급 실적: 10기 주기기 M/S 40~70% 시 매출 3.1~5.4조 추정</li>
+<li>현대건설: 팔리세이즈 SMR 부분계약 임박(하반기, DOE 자금 활용) · 불가리아 27년 EPC 전환(하반기 2차 엔지니어링 계약 목표)<br>루마니아 체르나보다 시공사 선정 하반기(한수원 2.5조 설비개선 기수주 건)</li>
+<li>한전기술: 원전 설계 독점 (JP모건 Overweight)</li>
+<li>비에이치아이: 보조기기(2차측): 테마 탄력 크나 아직 LNG 비중이 큼</li>
+<li>태광 · 성광벤드: 원전 1기당 피팅 700~1,000억: 실수혜 강하나 발주가 착공 근접 시점이라 후순위</li>
+</ul>
+<p class="src">정리: <a href="https://app.notion.com/p/3babb1729c15801380e7f0484600b5da" style="color:var(--brand-heading)">노션: 원전 관심가져볼만한 시기</a></p>
+
+<p style="font-weight:800;font-size:16.5px;margin-top:36px">2) 해상풍력</p>
+<p style="font-size:13.5px;line-height:1.9;margin:10px 0 14px">
+설치량 25년 0.6GW → 30년 이후 연 4GW+: 10년 입찰 55GW<br>
+인허가 10년 → 6.5년 단축(해상풍력특별법)
+</p>
+<ul>
+<li>SK이터닉스: 굴업 디벨로퍼: 홀드코 이해상충·레버리지 리스크</li>
+<li>GS글로벌(시총 2,290억: 풀케파 시 연결 영익 1,000억+ 전망): <b>연내 태안 500 + 한빛 344 = 840MW(GS엔텍 풀케파 상당)</b><br>태안 공급사 선정 9월~연내(지명입찰·국산 우대 배점) · 한빛은 사실상 내정 → 이후 굴업·전남 2·3</li>
+<li>유니슨: 국산 터빈 복점(10MW급): 재무·중국계 리스크</li>
+</ul>
+<p class="src">정리: <a href="https://app.notion.com/p/3b6bb1729c15808d8220d55652634029" style="color:var(--brand-heading)">노션: GS글로벌 탐방(26.08.07)</a> · <a href="https://app.notion.com/p/377bb1729c1580528649edd9c100c390" style="color:var(--brand-heading)">노션: GS글로벌/풍력 정리+탐방(26.06.02)</a></p>
+
+<p style="font-weight:800;font-size:16.5px;margin-top:36px">3) 태양광</p>
+<p style="font-size:13.5px;line-height:1.9;margin:10px 0 14px">
+국내: 재생 100GW(태양광 87GW) 확대 국면 + 정부의 국산 사용 확대·의무화 추진
+</p>
+<ul>
+<li>HD현대에너지솔루션: 국내 모듈 점유율 27% 1위<br>한화솔루션 국내 케파(진천 셀 6.2GW) 인수설(미확인): 성사 시 국내 통합 1위</li>
+</ul>
+<p class="src">정리: <a href="https://app.notion.com/p/361bb1729c158071af8bf0113ae7e373" style="color:var(--brand-heading)">노션: HD현대에너지솔루션 태양광 관세 정리</a></p>
+
+<p style="font-weight:800;font-size:16.5px;margin-top:36px">4) 리스크</p>
+<p style="font-size:13.5px;line-height:1.9;margin:10px 0 14px">
+<b>에너지는 AIDC의 2막(후순위) 아이디어: 주가 반영이 늦거나 제한될 가능성</b><br>
+발주·착공 자체는 정부 주도(12차 전기본)로 진행: 테넌트 수주에 종속되지 않음<br>
+단 실행 속도가 계획을 하회하면 발주 시점이 밀릴 수 있음(2.5장)
+</p>
+
+<h2 class="sec"><span class="no">4.4</span>트레이딩 노트: 리스크 이벤트 경로</h2><hr class="sec-rule">
+<p style="font-weight:800;font-size:15px;margin-top:40px">1) 단기 모멘텀 플레이 뷰 (한화 애널)</p>
+<ul>
+<li>"데센을 원전보다 더 크게 보기는 어려움. 단기에 몰아치기 때문에 <b>하반기 플레이 정도로만</b>"</li>
+<li>GS 동해: 착공까지는 무리 없을 것. 단 <b>테넌트 불명확, 100% 현실화는 어렵다</b>는 전제</li>
+<li>의미: 시장도 <b>모멘텀 트레이딩</b>으로 접근 중: 테마의 지속성은 검증 전</li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">2) 단기 이벤트 경로</p>
+<ul>
+<li><b>10~11월 동해 100~120MW(~1조원) 우선 착공설:</b></li>
+<li>① 증권가: 평가 8~9월 통과 → 테넌트 없이 선착공 가능 (계열 발주·~1조원)</li>
+<li>② GS 투자팀발 전언: Anthropic 동아시아 입찰 결과(26년 말)에 종속</li>
+<li><b style="color:var(--brand-heading)">선착공이 맞다면 10~11월까진 테마 유지 가능성 높음</b></li>
+<li><b style="color:var(--brand-heading)">이후 테넌트 비공개 지속·후속 수주 공백 시: 테마 꺼질 리스크</b></li>
+</ul>
+
+<p style="font-weight:800;font-size:15px;margin-top:40px">3) 판정 이벤트</p>
+<ul>
+<li>Anthropic 아태 사이트 선정(26년 말~1Q27): <b>한국 포함 여부가 이 리스크의 분기점</b></li>
+<li>AWS 한국(kr.) 추론 프로필 개설 여부</li>
+<li>네이버-브룩필드 클로징(3Q말~4Q26) · GS 동해 테넌트 계약(9~11월)</li>
+</ul>
+
+<div class="src" style="border-top:1px solid var(--hairline);padding-top:12px;margin-top:36px">
+Source: 한화투자 건설 세미나(26.08.13) · 하나증권 김승준 세미나(26.07.24) · 교보 박희철 세미나(26.08.11) · 메리츠·JP모건(26.08) · GS글로벌 탐방(26.08.07) · 지엔씨에너지 공시(26.08.03) · 노션 정리(지엔씨 초간단정리·국내 AIDC 테마 리스크·원전 노트·HD현대에너지솔루션).<br>
+Note: 시가총액은 26.08.14 종가 기준(에프앤가이드). 목표가·배수는 각 세미나 시점 기준. 본 자료는 정보 제공용이며 투자 권유가 아닙니다.
 </div>
 
 </div></body></html>
