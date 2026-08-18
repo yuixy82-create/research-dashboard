@@ -4,14 +4,19 @@
    "getdeploying": {
     "models": {
      "B200": {
-      "median": 7.67,
+      "median": 5.88,
       "min": 3.75,
-      "n_offers": 19,
+      "n_offers": 20,
       "providers": [
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Packet·ai",
+        "provider": "Packet·ai Our sponsor",
         "usd_hr": 3.75
+       },
+       {
+        "billing": "Spot Variable spot pricing with potential interruptions.",
+        "provider": "UpCloud",
+        "usd_hr": 3.9
        },
        {
         "billing": "Spot Variable spot pricing with potential interruptions.",
@@ -19,9 +24,14 @@
         "usd_hr": 4.08
        },
        {
-        "billing": "On-Demand $5.10 / GPU / hour",
-        "provider": "Beyond.pl",
-        "usd_hr": 5.1
+        "billing": "Spot Variable spot pricing with potential interruptions.",
+        "provider": "Vast.ai",
+        "usd_hr": 5.0
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "UpCloud",
+        "usd_hr": 5.2
        },
        {
         "billing": "Spot Variable spot pricing with potential interruptions.",
@@ -34,46 +44,36 @@
         "usd_hr": 5.37
        },
        {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Packet·ai",
-        "usd_hr": 5.9
+        "billing": "Spot Variable spot pricing with potential interruptions.",
+        "provider": "Vast.ai",
+        "usd_hr": 5.5
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Hyperstack",
-        "usd_hr": 6.0
+        "provider": "Vast.ai",
+        "usd_hr": 5.88
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Fal.ai",
-        "usd_hr": 6.25
+        "provider": "Vast.ai",
+        "usd_hr": 5.88
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "GPU.ai",
-        "usd_hr": 6.79
-       },
-       {
-        "billing": "Reserved (36mo) Reserved capacity with a 3-year minimum commitment.",
-        "provider": "Google Cloud",
-        "usd_hr": 7.09
+        "usd_hr": 5.88
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Nebius",
-        "usd_hr": 7.15
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Together",
-        "usd_hr": 8.19
+        "provider": "GPU.ai",
+        "usd_hr": 5.88
        }
       ]
      },
      "B300": {
-      "median": 10.73,
-      "min": 7.4,
-      "n_offers": 19,
+      "median": 9.975,
+      "min": 7.5,
+      "n_offers": 20,
       "providers": [
        {
         "billing": "Reserved (36mo) Reserved capacity with a 3-year minimum commitment.",
@@ -103,17 +103,12 @@
        {
         "billing": "Spot Variable spot pricing with potential interruptions.",
         "provider": "Vast.ai",
-        "usd_hr": 5.0
-       },
-       {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Vast.ai",
         "usd_hr": 5.01
        },
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Spheron",
-        "usd_hr": 5.81
+        "billing": "Reserved (24mo) Reserved capacity with a 24-month minimum commitment.",
+        "provider": "Verda",
+        "usd_hr": 5.62
        },
        {
         "billing": "Spot Variable spot pricing with potential interruptions.",
@@ -121,19 +116,24 @@
         "usd_hr": 5.85
        },
        {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Hyperstack",
-        "usd_hr": 7.4
+        "billing": "Reserved (12mo) Reserved capacity with a 1-year minimum commitment.",
+        "provider": "Verda",
+        "usd_hr": 6.9
        },
        {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Enverge",
-        "usd_hr": 7.5
+        "billing": "Reserved (6mo) Reserved capacity with a 6-month minimum commitment.",
+        "provider": "Verda",
+        "usd_hr": 7.2
        },
        {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Nebius",
-        "usd_hr": 7.85
+        "billing": "Reserved (3mo) Reserved capacity with a 3-month minimum commitment.",
+        "provider": "Verda",
+        "usd_hr": 7.28
+       },
+       {
+        "billing": "Reserved (1mo) Reserved capacity with a 1-month minimum commitment.",
+        "provider": "Verda",
+        "usd_hr": 7.35
        }
       ]
      },
@@ -232,24 +232,14 @@
       ]
      },
      "H100": {
-      "median": 3.29,
-      "min": 1.73,
+      "median": 2.945,
+      "min": 1.74,
       "n_offers": 20,
       "providers": [
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Vast.ai",
-        "usd_hr": 1.73
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
         "usd_hr": 1.74
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "UpCloud",
-        "usd_hr": 1.89
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
@@ -268,13 +258,28 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai Our sponsor",
+        "provider": "Runpod Our sponsor",
+        "usd_hr": 2.59
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
         "usd_hr": 2.6
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Lyceum",
-        "usd_hr": 2.79
+        "provider": "Massed Compute",
+        "usd_hr": 2.73
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Massed Compute",
+        "usd_hr": 2.73
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Runcrate",
+        "usd_hr": 2.75
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
@@ -283,23 +288,18 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Runpod",
-        "usd_hr": 3.29
+        "provider": "Sesterce",
+        "usd_hr": 3.0
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Runpod",
-        "usd_hr": 3.29
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Novita",
-        "usd_hr": 3.39
+        "usd_hr": 3.19
        }
       ]
      },
      "H200": {
-      "median": 3.9,
+      "median": 3.82,
       "min": 3.0,
       "n_offers": 20,
       "providers": [
@@ -315,13 +315,23 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Runcrate",
+        "provider": "Sesterce",
         "usd_hr": 3.52
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Sesterce",
-        "usd_hr": 3.52
+        "provider": "Vast.ai Our sponsor",
+        "usd_hr": 3.57
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
+        "usd_hr": 3.57
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
+        "usd_hr": 3.57
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
@@ -345,51 +355,41 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "usd_hr": 3.9
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "usd_hr": 3.9
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "usd_hr": 3.9
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Verda",
         "usd_hr": 4.0
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Lyceum",
+        "usd_hr": 4.29
        }
       ]
      }
     },
     "overview_median": {
-     "B200": 6.97,
-     "B300": 8.5,
+     "B200": 6.25,
+     "B300": 8.25,
      "GB200": 18.77,
      "GB300": 15.36,
-     "H100": 3.63,
-     "H200": 4.29
+     "H100": 3.39,
+     "H200": 4.47
     }
    },
    "vastai": {
     "B200": {
-     "median": 5.8764,
-     "min": 5.8764,
-     "n": 1
+     "median": 5.8771,
+     "min": 5.3146,
+     "n": 4
     },
     "H100": {
-     "median": 2.1344,
+     "median": 2.5222,
      "min": 1.7335,
-     "n": 31
+     "n": 29
     },
     "H200": {
-     "median": 3.9751,
-     "min": 3.8165,
-     "n": 8
+     "median": 3.8162,
+     "min": 3.4015,
+     "n": 19
     }
    }
   }
