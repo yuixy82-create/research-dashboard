@@ -1,98 +1,155 @@
 <!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI 클라우드 임대가격 트래커</title>
+<title>AI 클라우드 임대가격 · 신용 트래커</title>
 <style>
-:root { --primary:#4A5228; --heading:#5F6C2C; --teal:#2E97A7;
---red:#B7332B; --gold:#D9A62E; --text:#3A3A3A; --muted:#6E6E6E;
---faint:#9B9B9B; --hair:#D8D8D8; --tint:#F3F4EA; --fill:#E3E6D2; }
-* { box-sizing:border-box }
-body { font-family:"Pretendard","Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",Arial,sans-serif;
-color:var(--text); margin:0; background:#F7F7F4; font-variant-numeric:tabular-nums;
--webkit-font-smoothing:antialiased }
-.wrap { max-width:1080px; margin:0 auto; padding:0 20px 60px }
-header.hero { background:var(--primary); color:#fff; padding:34px 0 26px; margin-bottom:22px }
-.hero-in { max-width:1080px; margin:0 auto; padding:0 20px; display:flex; align-items:center; gap:18px; position:relative }
-.back { position:absolute; top:-18px; left:20px; color:#fff; opacity:.72; font-size:11.5px;
-text-decoration:none; font-weight:600 }
-.back:hover { opacity:1; text-decoration:underline }
-.stripes { display:inline-flex; gap:5px }
-.stripes i { width:7px;height:40px;background:#fff;transform:skewX(-18deg);display:block;border-radius:1px }
-.stripes i:nth-child(2){height:31px;margin-top:9px} .stripes i:nth-child(3){height:22px;margin-top:18px}
-.hero h1 { font-size:24px; font-weight:800; margin:0 }
-.hero .sub { font-size:12.5px; opacity:.85; margin-top:4px }
-.thesis { background:var(--tint); color:var(--heading); font-weight:700; font-size:14.5px;
-padding:14px 18px; border-left:4px solid var(--primary); margin:0 0 22px; line-height:1.5 }
-.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:26px }
-.kpi-card { background:#fff; border:1px solid var(--hair); border-radius:8px; padding:12px 14px;
-box-shadow:0 1px 3px rgba(0,0,0,.05) }
-.kpi-label { font-size:11px; font-weight:700; color:var(--muted) }
-.kpi-num { font-size:26px; font-weight:800; color:var(--heading); margin:2px 0 }
-.kpi-unit { font-size:12px; color:var(--faint); font-weight:600; margin-left:2px }
-.kpi-sub { font-size:10px; color:var(--faint) }
-.banner { background:var(--primary); color:#fff; font-size:14px; font-weight:700;
-padding:6px 12px; margin:0 0 12px; display:block }
-.banner .u { font-weight:400; font-size:11px; opacity:.8; float:right }
-.card-sec { background:#fff; border:1px solid var(--hair); border-radius:8px; padding:18px;
-margin-bottom:22px; box-shadow:0 1px 3px rgba(0,0,0,.05) }
-.cols-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px }
-@media (max-width:760px) { .cols-2 { grid-template-columns:1fr } }
-table.data { width:100%; border-collapse:collapse; font-size:12px }
-table.data thead th { background:var(--primary); color:#fff; font-weight:700; padding:5px 8px; text-align:left }
-table.data td { padding:5px 8px; border-bottom:1px solid #EFEFEF; vertical-align:top }
-table.data td.num { text-align:right }
-.pos { color:var(--teal); font-weight:700 } .neg { color:var(--red); font-weight:700 }
-.ana { font-size:13.5px; line-height:1.65; margin:0 0 12px }
-.ana b { color:var(--heading) }
-footer { font-size:10px; color:var(--faint); line-height:1.6; border-top:1px solid var(--hair);
-padding-top:12px; margin-top:8px }
+:root{--primary:#4A5228;--heading:#5F6C2C;--teal:#2E97A7;--red:#B7332B;
+--gold:#D9A62E;--blue:#4587B2;--text:#3A3A3A;--muted:#6E6E6E;--faint:#9B9B9B;
+--hair:#D8D8D8;--tint:#F3F4EA;--fill:#E3E6D2;--redbg:#FBEDEA;--tealbg:#E6F2F4;
+--goldbg:#FAF3E0}
+*{box-sizing:border-box}
+body{font-family:"Pretendard","Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",Arial,sans-serif;
+color:var(--text);margin:0;background:#F7F7F4;font-variant-numeric:tabular-nums;
+-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px 60px}
+header.hero{background:var(--primary);color:#fff;padding:30px 0 22px;margin-bottom:20px}
+.hero-in{max-width:1060px;margin:0 auto;padding:0 20px;display:flex;align-items:center;
+gap:18px;position:relative}
+.back{position:absolute;top:-14px;left:20px;color:#fff;opacity:.72;font-size:11.5px;
+text-decoration:none;font-weight:600}
+.back:hover{opacity:1;text-decoration:underline}
+.stripes{display:inline-flex;gap:5px}
+.stripes i{width:7px;height:38px;background:#fff;transform:skewX(-18deg);display:block;border-radius:1px}
+.stripes i:nth-child(2){height:29px;margin-top:9px}
+.stripes i:nth-child(3){height:21px;margin-top:17px}
+.hero h1{font-size:22px;font-weight:800;margin:0}
+.hero .sub{font-size:11.5px;opacity:.85;margin-top:4px}
+
+/* 신호등 */
+.sig-row{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:12px;margin-bottom:18px}
+@media(max-width:760px){.sig-row{grid-template-columns:1fr}}
+.sig{background:#fff;border:1px solid var(--hair);border-left:5px solid var(--faint);
+border-radius:8px;padding:13px 15px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.sig.good{border-left-color:var(--teal)}
+.sig.warn{border-left-color:var(--gold)}
+.sig.bad{border-left-color:var(--red)}
+.sig .t{font-size:10.5px;font-weight:700;color:var(--muted)}
+.sig .s{font-size:19px;font-weight:800;margin:3px 0 1px}
+.sig.good .s{color:var(--teal)}.sig.warn .s{color:var(--gold)}.sig.bad .s{color:var(--red)}
+.sig.flat .s{color:var(--muted)}
+.sig .d{font-size:11px;color:var(--text);line-height:1.45}
+
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:22px}
+.kpi-card{background:#fff;border:1px solid var(--hair);border-radius:8px;padding:10px 12px}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted)}
+.kpi-num{font-size:21px;font-weight:800;color:var(--heading);margin:1px 0}
+.kpi-unit{font-size:11px;color:var(--faint);font-weight:600;margin-left:2px}
+.kpi-sub{font-size:9px;color:var(--faint)}
+.banner{background:var(--primary);color:#fff;font-size:13px;font-weight:700;
+padding:6px 12px;margin:0 0 12px;display:block}
+.banner .u{font-weight:400;font-size:10px;opacity:.82;float:right;padding-top:2px}
+.card-sec{background:#fff;border:1px solid var(--hair);border-radius:8px;padding:16px;
+margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.cols-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:820px){.cols-2{grid-template-columns:1fr}}
+table.data{width:100%;border-collapse:collapse;font-size:11.5px}
+table.data thead th{background:var(--primary);color:#fff;font-weight:700;padding:5px 8px;text-align:left}
+table.data td{padding:5px 8px;border-bottom:1px solid #EFEFEF;vertical-align:top}
+table.data td.num{text-align:right}
+table.data tr.hl td{background:var(--fill);font-weight:700}
+.pos{color:var(--teal);font-weight:700}.neg{color:var(--red);font-weight:700}
+.ana{font-size:12.5px;line-height:1.65;margin:0 0 10px}
+.ana b{color:var(--heading)}
+.note{font-size:10.5px;color:var(--faint);margin-top:8px;line-height:1.5}
+.thesis{background:var(--tint);border-left:4px solid var(--primary);padding:14px 20px;margin:0 0 18px}
+.thesis-title{font-weight:800;color:var(--primary);font-size:15.5px;margin-bottom:9px}
+.thesis ul{margin:0;padding-left:16px;list-style:disc}
+.thesis li{color:var(--heading);font-size:13px;line-height:1.62;margin-bottom:6px}
+.thesis li:last-child{margin-bottom:0}
+.thesis li b{color:var(--primary)}
+/* 접이식 */
+details.more{background:#fff;border:1px solid var(--hair);border-radius:8px;margin-bottom:18px}
+details.more>summary{cursor:pointer;padding:12px 16px;font-size:13px;font-weight:700;
+color:var(--heading);list-style:none;user-select:none}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary:before{content:"▸ ";color:var(--primary)}
+details.more[open]>summary:before{content:"▾ "}
+details.more>summary span{font-weight:400;font-size:10.5px;color:var(--faint);margin-left:6px}
+.more-body{padding:0 16px 16px}
+dl.guide{font-size:12px;line-height:1.6;margin:0}
+dl.guide dt{font-weight:700;color:var(--heading);margin-top:10px}
+dl.guide dd{margin:2px 0 0 0}
+.tag{display:inline-block;font-size:10px;font-weight:800;padding:1px 7px;border-radius:3px;
+color:#fff;margin-right:5px}
+.tag.warn{background:var(--red)}.tag.ok{background:var(--teal)}.tag.mid{background:var(--gold)}
+footer{font-size:10px;color:var(--faint);line-height:1.6;border-top:1px solid var(--hair);padding-top:12px}
 </style></head><body>
 <header class="hero"><div class="hero-in">
 <a class="back" href="../">← 리서치 아카이브</a>
 <span class="stripes"><i></i><i></i><i></i></span>
-<div><h1>AI 클라우드 임대가격 트래커</h1>
-<div class="sub">GPU 시간당 임대가 · 네오클라우드 신용지표 — 매일 자동 수집 | 빌드 2026-08-18 23:04 UTC | 누적 1일</div></div>
+<div><h1>AI 클라우드 임대가격 · 신용 트래커</h1>
+<div class="sub">빌드 2026-08-19 16:53 KST | 가격 누적 1일</div></div>
 </div></header>
 <div class="wrap">
-<div class="thesis">클라우드 임대 가격이 유지되는 한 자금은 계속 들어온다 — 무너지면 담보 구조 전체가 흔들린다</div>
-<div class="kpi-row"><div class="kpi-card"><div class="kpi-label">H100 임대가 (중위)</div><div class="kpi-num">2.94<span class="kpi-unit">$/hr</span></div><div class="kpi-sub">getdeploying, 26.08.19</div></div><div class="kpi-card"><div class="kpi-label">GB300 임대가 (중위)</div><div class="kpi-num">8.62<span class="kpi-unit">$/hr</span></div><div class="kpi-sub">getdeploying, 26.08.19</div></div><div class="kpi-card"><div class="kpi-label">B200 임대가 (중위)</div><div class="kpi-num">5.88<span class="kpi-unit">$/hr</span></div><div class="kpi-sub">getdeploying, 26.08.19</div></div><div class="kpi-card"><div class="kpi-label">SDH100RT 정식 지수</div><div class="kpi-num">2.76<span class="kpi-unit">$/hr</span></div><div class="kpi-sub">Bloomberg 수동, 26.08.17</div></div><div class="kpi-card"><div class="kpi-label">CoreWeave 주가</div><div class="kpi-num">—<span class="kpi-unit">$</span></div><div class="kpi-sub">stooq, 수집 대기</div></div><div class="kpi-card"><div class="kpi-label">CoreWeave CDS 5Y</div><div class="kpi-num">738.80<span class="kpi-unit">bp</span></div><div class="kpi-sub">Bloomberg 수동, 26.08.17</div></div></div>
 
-<div class="card-sec">
-<span class="banner">H100 임대가 추이 ($/GPU-시간) <span class="u">자동: getdeploying 온디맨드 중위가 · Vast.ai 호가 | 수동: SDH100RT</span></span>
-<svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit"><line x1="52" y1="254.0" x2="522" y2="254.0" stroke="#D8D8D8" stroke-width="1"/><text x="46" y="257.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$1.81</text><line x1="52" y1="174.0" x2="522" y2="174.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="46" y="177.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$2.24</text><line x1="52" y1="94.0" x2="522" y2="94.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="46" y="97.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$2.67</text><line x1="52" y1="14.0" x2="522" y2="14.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="46" y="17.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$3.09</text><text x="52.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">25.12</text><text x="169.5" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.02</text><text x="287.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.04</text><text x="404.5" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.06</text><text x="522.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.08</text><circle cx="522.0" cy="41.7" r="3.2" fill="#4A5228" stroke="#fff" stroke-width="1.2"/><circle cx="522.0" cy="120.9" r="3.2" fill="#C9C9C9" stroke="#fff" stroke-width="1.2"/><polyline points="52.0,226.3 504.1,68.9 518.0,76.4" fill="none" stroke="#D9A62E" stroke-width="2.2" stroke-dasharray="5,4" stroke-linejoin="round"/><circle cx="52.0" cy="226.3" r="3.2" fill="#D9A62E" stroke="#fff" stroke-width="1.2"/><circle cx="504.1" cy="68.9" r="3.2" fill="#D9A62E" stroke="#fff" stroke-width="1.2"/><circle cx="518.0" cy="76.4" r="3.2" fill="#D9A62E" stroke="#fff" stroke-width="1.2"/><text x="529.0" y="44.7" font-size="10" font-weight="700" fill="#4A5228">H100 중위가(자동) $2.94</text><text x="525.0" y="79.4" font-size="10" font-weight="700" fill="#D9A62E">SDH100RT(수동) $2.76</text><text x="529.0" y="123.9" font-size="10" font-weight="700" fill="#C9C9C9">Vast.ai 호가 $2.52</text></svg>
+<div class="thesis">
+<div class="thesis-title">이번 싸이클의 핵심. 클라우드 가격. 금리.</div>
+<ul><li>AI 인프라 자금 = 데이터센터가 만들 현금흐름을 담보로 한 장기대출<br>: GPU도 담보에 들어가지만 감가가 빨라 핵심은 현금흐름임</li><li>현금흐름 = 클라우드 렌탈 가격 × 고객 신용도 (고객 등급에 따른 대출 금리 차이)</li><li>대출 만기는 GPU 수명(5~6년)보다도 짧음<br>: 클라우드 가격으로 현금흐름을 당겨올 수 있느냐가 관건</li><li>GPU 자산가치도 그 GPU가 벌어올 임대료로 매겨짐<br><b>→ 결국 모든 것이 클라우드 가격으로 수렴해, 클라우드 가격 하락 시 시스템 붕괴 위험</b></li><li><b>★ 축소 신호: 임대가 피크아웃 / 금리 급등 / 자금조달 차질 / CDS 급등. 하나만 나와도 줄임</b></li></ul>
 </div>
 
-<div class="card-sec">
-<span class="banner">차세대(Blackwell 세대) 임대가 추이 ($/GPU-시간) <span class="u">GB300 · B200 · GB200</span></span>
-<svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit"><line x1="52" y1="254.0" x2="522" y2="254.0" stroke="#D8D8D8" stroke-width="1"/><text x="46" y="257.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$0.00</text><line x1="52" y1="174.0" x2="522" y2="174.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="46" y="177.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$6.93</text><line x1="52" y1="94.0" x2="522" y2="94.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="46" y="97.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$13.86</text><line x1="52" y1="14.0" x2="522" y2="14.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="46" y="17.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$20.80</text><text x="52.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">08.17</text><text x="287.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">08.18</text><text x="522.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">08.19</text><circle cx="522.0" cy="154.5" r="3.2" fill="#4A5228" stroke="#fff" stroke-width="1.2"/><circle cx="522.0" cy="186.1" r="3.2" fill="#81C0CB" stroke="#fff" stroke-width="1.2"/><circle cx="522.0" cy="37.4" r="3.2" fill="#C9C9C9" stroke="#fff" stroke-width="1.2"/><circle cx="52.0" cy="193.3" r="3.2" fill="#D9A62E" stroke="#fff" stroke-width="1.2"/><text x="529.0" y="40.4" font-size="10" font-weight="700" fill="#C9C9C9">GB200 중위가 $18.77</text><text x="529.0" y="157.5" font-size="10" font-weight="700" fill="#4A5228">GB300 중위가 $8.62</text><text x="529.0" y="189.1" font-size="10" font-weight="700" fill="#81C0CB">B200 중위가 $5.88</text><text x="59.0" y="202.1" font-size="10" font-weight="700" fill="#D9A62E">블랙웰 지수(수동) $5.26</text></svg>
-</div>
+<div class="sig-row"><div class="sig flat"><div class="t">클라우드 임대가 (빌려주고 받는 값)</div><div class="s">보합</div><div class="d">30일 +2.2% (26.08.17 기준)</div></div><div class="sig flat"><div class="t">신용 여건 (빌리는 값)</div><div class="s">데이터 대기</div><div class="d">FRED 수집 후 표시됩니다</div></div><div class="sig flat"><div class="t">종합 판정</div><div class="s">관망</div><div class="d">두 값 모두 방향이 뚜렷하지 않음</div></div></div>
 
-<div class="cols-2">
+<div class="kpi-row"><div class="kpi-card"><div class="kpi-label">H100 네오클라우드</div><div class="kpi-num">3.19<span class="kpi-unit">$/hr</span></div><div class="kpi-sub">getdeploying, 26.08.19</div></div><div class="kpi-card"><div class="kpi-label">SDH100RT 정식지수</div><div class="kpi-num">2.76<span class="kpi-unit">$/hr</span></div><div class="kpi-sub">Bloomberg, 26.08.17</div></div><div class="kpi-card"><div class="kpi-label">GB300</div><div class="kpi-num">8.62<span class="kpi-unit">$/hr</span></div><div class="kpi-sub">getdeploying, 26.08.19</div></div><div class="kpi-card"><div class="kpi-label">하이일드 스프레드</div><div class="kpi-num">—<span class="kpi-unit">%</span></div><div class="kpi-sub">FRED, 대기</div></div><div class="kpi-card"><div class="kpi-label">국채 10년</div><div class="kpi-num">—<span class="kpi-unit">%</span></div><div class="kpi-sub">FRED — 사이클의 대표 축</div></div><div class="kpi-card"><div class="kpi-label">코어위브 CDS</div><div class="kpi-num">739<span class="kpi-unit">bp</span></div><div class="kpi-sub">Bloomberg, 26.08.17</div></div></div>
+
 <div class="card-sec">
-<span class="banner">네오클라우드 주가 (기준일=100) <span class="u">CRWV·NBIS·IREN·APLD</span></span>
-<div style="color:#9B9B9B;font-size:12px;padding:30px">데이터 수집 대기 중 — 첫 자동 수집 후 차트가 그려집니다</div>
-</div>
-<div class="card-sec">
-<span class="banner">CoreWeave CDS 5Y (bp) <span class="u">Bloomberg 수동 기록</span></span>
-<svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit"><line x1="52" y1="254.0" x2="522" y2="254.0" stroke="#D8D8D8" stroke-width="1"/><text x="46" y="257.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">665bp</text><line x1="52" y1="174.0" x2="522" y2="174.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="46" y="177.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">714bp</text><line x1="52" y1="94.0" x2="522" y2="94.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="46" y="97.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">763bp</text><line x1="52" y1="14.0" x2="522" y2="14.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="46" y="17.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">813bp</text><text x="52.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">08.16</text><text x="287.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">08.17</text><text x="522.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">08.18</text><circle cx="287.0" cy="134.0" r="3.2" fill="#B7332B" stroke="#fff" stroke-width="1.2"/><text x="294.0" y="137.0" font-size="10" font-weight="700" fill="#B7332B">CDS 5Y 739bp</text></svg>
-</div>
+<span class="banner">① H100 임대가 ($/GPU-시간) <span class="u">올리브 = 네오클라우드(담보 기준) · 금색 = Bloomberg</span></span>
+<svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit"><line x1="54" y1="254.0" x2="548" y2="254.0" stroke="#D8D8D8" stroke-width="1"/><text x="48" y="257.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$1.76</text><line x1="54" y1="173.3" x2="548" y2="173.3" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="176.3" text-anchor="end" font-size="9.5" fill="#6E6E6E">$2.30</text><line x1="54" y1="92.7" x2="548" y2="92.7" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="95.7" text-anchor="end" font-size="9.5" fill="#6E6E6E">$2.84</text><line x1="54" y1="12.0" x2="548" y2="12.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="15.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$3.38</text><text x="54.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">25.08</text><text x="177.5" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">25.11</text><text x="301.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.02</text><text x="424.5" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.05</text><text x="548.0" y="272" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.08</text><circle cx="548.0" cy="39.9" r="3" fill="#4A5228" stroke="#fff" stroke-width="1.2"/><polyline points="54.0,211.1 56.7,208.1 59.4,208.1 60.7,209.6 64.8,208.1 66.1,206.6 70.2,208.1 74.2,211.1 75.6,211.1 76.9,212.6 81.0,212.6 83.7,214.1 86.4,215.6 90.4,217.1 91.8,215.6 94.5,214.1 97.2,215.6 99.9,217.1 102.6,217.1 103.9,215.6 108.0,215.6 113.4,215.6 118.8,215.6 120.1,217.1 124.2,215.6 126.9,214.1 129.6,214.1 130.9,215.6 135.0,220.1 137.7,223.1 140.4,221.6 145.8,223.1 147.1,221.6 153.9,223.1 155.2,220.1 156.6,221.6 159.3,223.1 162.0,221.6 163.3,223.1 167.4,221.6 172.8,221.6 175.5,220.1 178.2,220.1 179.5,221.6 183.6,223.1 190.3,220.1 193.0,223.1 194.4,224.6 195.7,223.1 201.1,226.1 203.8,223.1 205.2,223.1 209.2,221.6 210.6,218.6 214.6,217.1 216.0,217.1 220.0,206.6 221.4,206.6 224.1,203.6 226.8,202.1 230.8,194.6 232.2,194.6 233.5,193.0 237.6,193.0 238.9,188.5 243.0,188.5 245.7,187.0 248.4,187.0 249.7,185.5 253.8,185.5 257.8,184.0 259.2,182.5 261.9,184.0 264.6,181.0 268.6,175.0 270.0,175.0 272.7,173.5 275.4,175.0 276.7,172.0 280.8,173.5 282.1,172.0 286.2,170.5 290.2,169.0 291.6,169.0 295.6,166.0 297.0,167.5 301.0,160.0 302.3,157.0 306.4,155.5 307.7,155.5 313.1,154.0 315.8,152.5 318.5,152.5 322.6,151.0 323.9,151.0 325.3,152.5 330.7,152.5 332.0,149.5 334.7,148.0 336.1,149.5 340.1,148.0 345.5,148.0 349.6,146.5 350.9,145.0 355.0,127.0 356.3,125.5 360.4,121.0 361.7,121.0 367.1,121.0 371.2,131.5 372.5,142.0 373.9,143.5 377.9,143.5 380.6,139.0 383.3,140.5 388.7,137.5 394.1,136.0 395.5,131.5 399.5,133.0 400.9,131.5 404.9,131.5 407.6,130.0 411.7,127.0 414.4,121.0 415.7,119.5 419.8,124.0 421.1,122.5 422.5,124.0 426.5,124.0 429.2,125.5 431.9,124.0 437.3,122.5 441.4,107.5 442.7,104.5 446.8,100.0 448.1,100.0 450.8,97.0 453.5,97.0 454.9,101.5 458.9,100.0 463.0,98.5 464.3,106.0 468.4,110.5 469.7,112.0 473.8,118.0 475.1,121.0 476.5,122.5 480.5,121.0 485.9,119.5 488.6,113.5 491.3,110.5 495.4,115.0 496.7,115.0 499.4,113.5 502.1,113.5 506.2,116.5 507.5,116.5 510.2,110.5 512.9,110.5 517.0,112.0 518.3,110.5 521.0,104.5 526.4,101.5 527.8,98.5 530.5,97.0 533.2,104.5 534.5,104.5 539.9,104.5 544.0,106.0 545.3,104.5" fill="none" stroke="#D9A62E" stroke-width="2.0" stroke-linejoin="round"/><text x="555.0" y="42.9" font-size="10" font-weight="700" fill="#4A5228">네오클라우드 $3.19</text><text x="552.3" y="107.5" font-size="10" font-weight="700" fill="#D9A62E">SDH100RT $2.76</text></svg>
+<div class="note">담보로 잡히는 건 <b>네오클라우드 가격</b>.<br>정식 지수(SDH100RT)는 블룸버그 유료 자료라 <b>getdeploying 네오클라우드 중위가로 대체 추적</b>: 금색 선은 PDF 판독분(수동)임.</div>
+<div style="margin-top:12px"><table class="data"><thead><tr><th>계층</th><th class="num">H100</th><th class="num">B200</th><th class="num">GB300</th><th>성격</th></tr></thead><tbody><tr class="hl"><td><b>네오클라우드</b></td><td class="num">$3.19</td><td class="num">$5.90</td><td class="num">$8.62</td><td style="color:#6E6E6E">★ 담보 기준 · 계약·SLA 있는 기업용 클러스터</td></tr><tr><td><b>하이퍼스케일러</b></td><td class="num">$7.43</td><td class="num">$15.18</td><td class="num">—</td><td style="color:#6E6E6E">AWS·구글·애저 정가</td></tr><tr><td><b>장터</b></td><td class="num">$1.87</td><td class="num">$5.88</td><td class="num">—</td><td style="color:#6E6E6E">개인 유휴 GPU · 계약 없음 → 먼저 빠짐</td></tr><tr><td>SDH100RT (Bloomberg)</td><td class="num">$2.76</td><td class="num">—</td><td class="num">—</td><td style="color:#6E6E6E">블룸버그 정식지수</td></tr></tbody></table></div>
 </div>
 
 <div class="card-sec">
-<span class="banner">제공업체별 온디맨드 최저가 Top5 <span class="u">getdeploying 최근 수집분</span></span>
-<table class="data"><thead><tr><th>GPU</th><th>제공업체</th><th>과금</th><th class="num">$/GPU/시간</th></tr></thead><tbody><tr><td rowspan=5><b>H100</b></td><td>Vast.ai</td><td>On-Demand Pay-as-you-go pricing. No term commitments.</td><td class="num">$1.74</td></tr><tr><td>Theta EdgeCloud</td><td>On-Demand Pay-as-you-go pricing. No term commitments.</td><td class="num">$2.29</td></tr><tr><td>Theta EdgeCloud</td><td>On-Demand Pay-as-you-go pricing. No term commitments.</td><td class="num">$2.29</td></tr><tr><td>Koyeb</td><td>On-Demand Pay-as-you-go pricing. No term commitments.</td><td class="num">$2.50</td></tr><tr><td>Runpod Our sponsor</td><td>On-Demand Pay-as-you-go pricing. No term commitments.</td><td class="num">$2.59</td></tr><tr><td rowspan=5><b>B200</b></td><td>Packet·ai Our sponsor</td><td>On-Demand Pay-as-you-go pricing. No term commitments.</td><td class="num">$3.75</td></tr><tr><td>UpCloud</td><td>Spot Variable spot pricing with potential interruptions.</td><td class="num">$3.90</td></tr><tr><td>Google Cloud</td><td>Spot Variable spot pricing with potential interruptions.</td><td class="num">$4.08</td></tr><tr><td>Vast.ai</td><td>Spot Variable spot pricing with potential interruptions.</td><td class="num">$5.00</td></tr><tr><td>UpCloud</td><td>On-Demand Pay-as-you-go pricing. No term commitments.</td><td class="num">$5.20</td></tr><tr><td rowspan=5><b>GB300</b></td><td>Verda</td><td>Spot Variable spot pricing with potential interruptions.</td><td class="num">$4.31</td></tr><tr><td>Verda</td><td>Spot Variable spot pricing with potential interruptions.</td><td class="num">$4.31</td></tr><tr><td>Verda</td><td>Spot Variable spot pricing with potential interruptions.</td><td class="num">$4.31</td></tr><tr><td>Verda</td><td>Reserved (24mo) Reserved capacity with a 24-month minimum commitment.</td><td class="num">$6.46</td></tr><tr><td>Verda</td><td>Reserved (24mo) Reserved capacity with a 24-month minimum commitment.</td><td class="num">$6.46</td></tr></tbody></table>
+<span class="banner">② 블랙웰 · GB300 임대가 ($/GPU-시간) <span class="u">차세대 담보</span></span>
+<svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit"><line x1="54" y1="234.0" x2="548" y2="234.0" stroke="#D8D8D8" stroke-width="1"/><text x="48" y="237.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$3.21</text><line x1="54" y1="160.0" x2="548" y2="160.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="163.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$5.25</text><line x1="54" y1="86.0" x2="548" y2="86.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="89.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$7.29</text><line x1="54" y1="12.0" x2="548" y2="12.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="15.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$9.32</text><text x="54.0" y="252" text-anchor="middle" font-size="9.5" fill="#6E6E6E">25.08</text><text x="177.5" y="252" text-anchor="middle" font-size="9.5" fill="#6E6E6E">25.11</text><text x="301.0" y="252" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.02</text><text x="424.5" y="252" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.05</text><text x="548.0" y="252" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.08</text><circle cx="548.0" cy="37.6" r="3" fill="#4A5228" stroke="#fff" stroke-width="1.2"/><polyline points="54.0,163.7 56.7,162.6 58.1,162.6 60.8,161.5 63.5,161.5 68.9,161.5 72.9,161.2 74.3,159.7 77.0,157.5 79.7,157.2 81.1,156.4 85.1,156.4 89.2,158.6 90.5,159.0 94.6,160.4 96.0,160.1 97.3,160.8 101.4,161.2 105.4,164.4 106.8,163.7 108.1,164.8 112.2,164.1 116.3,164.4 117.6,164.4 121.7,166.6 123.0,168.1 127.1,170.6 128.4,171.7 132.5,175.7 133.9,176.8 137.9,181.1 139.3,181.1 144.7,181.1 150.1,181.1 154.2,196.0 155.5,196.0 159.6,197.1 160.9,197.1 165.0,198.9 166.3,199.3 170.4,200.8 171.7,200.8 174.5,201.1 178.5,201.8 181.2,200.8 182.6,200.8 183.9,200.0 188.0,200.0 193.4,200.0 197.5,197.8 198.8,197.1 204.2,197.1 205.6,197.8 209.6,197.5 211.0,197.8 215.1,198.6 216.4,197.8 220.5,198.9 224.5,197.8 225.9,197.8 229.9,200.4 231.3,201.1 232.7,202.2 236.7,201.8 239.4,202.2 242.1,201.8 246.2,197.8 247.5,197.8 250.2,197.1 253.0,197.1 255.7,197.8 259.7,201.8 262.4,199.3 263.8,198.9 267.8,198.6 269.2,199.7 273.3,201.8 274.6,201.8 276.0,202.9 280.0,202.2 284.1,200.8 285.4,200.8 290.8,197.5 292.2,197.8 296.3,197.1 300.3,195.3 301.7,195.7 305.7,194.2 308.4,194.6 311.2,192.8 312.5,192.0 316.6,188.8 320.6,186.9 322.0,188.4 323.3,188.4 327.4,197.8 330.1,199.7 332.8,197.8 334.2,197.8 338.2,202.6 339.6,203.3 342.3,204.4 345.0,204.0 347.7,206.9 350.4,204.8 354.5,189.1 355.8,189.1 359.9,190.9 361.2,190.9 365.3,195.7 366.6,199.7 370.7,207.7 372.1,208.4 376.1,206.9 377.5,205.8 381.5,201.8 382.9,201.8 384.2,202.6 389.6,204.0 392.4,201.5 393.7,200.0 396.4,199.3 400.5,198.6 401.8,202.6 404.5,195.3 408.6,186.9 410.0,186.2 412.7,185.1 415.4,185.9 419.4,181.1 420.8,178.6 424.8,183.0 426.2,183.7 430.3,183.0 431.6,182.2 434.3,181.1 437.0,180.4 441.1,178.2 442.4,177.5 446.5,175.3 447.8,174.2 454.6,174.2 457.3,178.2 458.7,181.9 462.7,184.4 464.1,181.1 465.4,182.2 469.5,182.6 473.6,188.4 474.9,188.4 479.0,184.4 480.3,184.0 483.0,183.3 485.7,183.7 488.4,174.2 491.2,169.9 493.9,168.4 496.6,166.6 499.3,163.7 502.0,160.8 504.7,161.2 507.4,161.5 511.5,166.6 512.8,165.5 515.5,161.5 518.2,161.5 519.6,162.2 523.6,162.6 526.3,163.0 529.1,162.6 533.1,161.9 534.5,161.5 537.2,160.8 539.9,160.8 543.9,159.0 545.3,159.7" fill="none" stroke="#D9A62E" stroke-width="1.9" stroke-linejoin="round"/><circle cx="548.0" cy="78.3" r="3" fill="#C9C9C9" stroke="#fff" stroke-width="1.2"/><circle cx="548.0" cy="136.4" r="3" fill="#ABABAB" stroke="#fff" stroke-width="1.2"/><text x="555.0" y="40.6" font-size="10" font-weight="700" fill="#4A5228">GB300 $8.62</text><text x="555.0" y="81.3" font-size="10" font-weight="700" fill="#C9C9C9">B300 $7.50</text><text x="555.0" y="139.4" font-size="10" font-weight="700" fill="#ABABAB">B200 $5.90</text><text x="552.3" y="162.7" font-size="10" font-weight="700" fill="#D9A62E">블랙웰 지수 $5.26</text></svg>
+<div class="note">신규 공급이 쏟아지는데도 <b>$5 위를 지키는지</b>가 관건.<br>블랙웰 지수도 블룸버그 유료 자료라 <b>GB300 중위가(getdeploying)로 대체 추적</b>: 금색 선은 PDF 판독분(수동)임.</div>
 </div>
 
 <div class="card-sec">
-<span class="banner">해석 — 임대가와 신용의 연결고리 <span class="u">Claude 수동 갱신 26.08.18</span></span>
-<p class="ana">이번 사이클의 AI 인프라 자금 조달은 데이터센터가 만들어낼 <b>클라우드 임대 현금흐름을 담보로 한 대출</b>이 핵심이다: GPU 수명이 짧아 실물 담보 가치는 제한적이고, 결국 <b>임대 가격 × 가동률 × 고객 신용도</b>가 대출의 전부를 결정함</p><p class="ana">H100 임대가는 25.12월 저점($1.96) 이후 <b>26.08월 $2.76까지 약 +40% 회복</b>: 임대가 상승 구간에서는 담보가치가 유지되어 보험·연금발 자금 유입이 지속될 수 있는 환경임</p><p class="ana">코어위브 CDS(신용부도스와프, 부도 위험 보험료)는 26.07월 말 <b>~970bp까지 급등 후 ~740bp로 반락</b>: 임대가가 견조한데도 CDS가 급등했던 것은 개별 기업 레버리지 이슈 — 임대가 하락과 CDS 급등이 <b>동시에</b> 나타나면 시스템 리스크 신호로 해석해야 함</p><p class="ana">★ 체크포인트: ① H100 임대가가 $2.5 아래로 꺾이는지 ② Blackwell/GB300 임대가가 신규 공급에도 $5 이상을 유지하는지 ③ CDS 재차 900bp 돌파 여부</p>
+<span class="banner">③ 코어위브 CDS 5Y (bp) <span class="u">부도 위험 보험료</span></span>
+<svg viewBox="0 0 680 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit"><line x1="54" y1="224.0" x2="548" y2="224.0" stroke="#D8D8D8" stroke-width="1"/><text x="48" y="227.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">333bp</text><line x1="54" y1="153.3" x2="548" y2="153.3" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="156.3" text-anchor="end" font-size="9.5" fill="#6E6E6E">576bp</text><line x1="54" y1="82.7" x2="548" y2="82.7" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="85.7" text-anchor="end" font-size="9.5" fill="#6E6E6E">818bp</text><line x1="54" y1="12.0" x2="548" y2="12.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="15.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">1061bp</text><text x="54.0" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">25.09</text><text x="177.5" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">25.12</text><text x="301.0" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.03</text><text x="424.5" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.05</text><text x="548.0" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.08</text><polyline points="54.0,199.5 57.1,194.9 63.2,199.5 64.8,195.8 66.3,194.9 70.9,189.6 72.5,189.6 75.5,185.0 78.6,184.1 83.2,187.0 84.8,185.9 89.4,184.1 90.9,183.2 95.6,178.0 97.1,178.9 100.2,176.0 103.2,176.0 104.8,175.1 109.4,169.8 114.0,160.8 115.6,155.3 120.2,148.3 121.7,148.3 126.3,129.4 127.9,123.0 132.5,108.4 134.0,108.4 135.6,111.3 140.2,104.9 143.3,93.2 146.3,97.6 149.4,100.5 155.6,94.1 157.1,111.3 160.2,112.2 163.3,108.4 164.8,107.5 169.4,94.1 171.0,94.1 175.6,64.4 178.7,51.0 181.7,65.3 183.3,65.3 187.9,82.5 189.4,82.5 192.5,79.6 195.6,79.6 201.7,86.0 206.4,94.1 207.9,93.2 211.0,91.5 214.0,92.4 218.7,96.7 220.2,98.5 221.7,103.1 226.4,104.9 229.4,101.4 232.5,99.7 237.1,108.4 238.7,109.6 243.3,126.4 244.8,126.4 251.0,127.3 255.6,116.5 257.1,114.8 261.8,123.0 263.3,123.8 266.4,125.6 269.5,126.4 272.5,129.4 275.6,128.5 280.2,120.3 281.8,118.3 286.4,127.3 287.9,127.3 292.5,108.4 294.1,109.6 298.7,123.0 300.2,122.1 301.8,115.7 306.4,117.4 311.0,113.0 312.5,113.9 315.6,118.3 318.7,114.8 323.3,112.2 324.9,110.4 329.5,113.9 331.0,112.2 335.6,100.5 337.2,101.4 341.8,114.8 343.3,116.5 346.4,119.5 349.5,121.2 354.1,132.9 355.6,138.4 360.2,148.3 361.8,148.3 366.4,149.2 367.9,150.9 372.6,148.3 375.6,147.1 378.7,144.5 380.3,143.6 383.3,141.9 386.4,142.8 391.0,154.4 392.6,152.7 395.6,156.1 398.7,156.1 401.8,151.8 404.9,154.4 406.4,157.0 411.0,157.0 415.7,152.7 417.2,154.4 421.8,159.1 423.3,159.9 428.0,163.4 431.0,165.2 434.1,170.7 437.2,171.6 440.3,169.0 441.8,166.0 446.4,160.8 448.0,158.2 449.5,155.3 454.1,156.1 457.2,161.7 460.3,162.6 463.4,164.3 466.4,159.9 471.1,151.8 472.6,149.2 477.2,142.8 478.7,141.0 480.3,137.2 484.9,133.7 488.0,131.1 492.6,131.1 495.7,132.9 497.2,134.6 500.3,122.1 503.4,117.4 508.0,103.1 509.5,104.9 514.1,99.7 515.7,97.6 520.3,79.6 521.8,65.3 524.9,36.5 528.0,57.1 532.6,90.6 534.1,89.8 538.8,82.5 540.3,86.0 544.9,92.4 546.5,104.0 548.0,105.8" fill="none" stroke="#B7332B" stroke-width="2.4" stroke-linejoin="round"/><text x="555.0" y="108.8" font-size="10" font-weight="700" fill="#B7332B">CDS 5Y 739bp</text></svg>
+<div class="note">개별 기업의 신용 온도계. <b>900bp 재돌파 시 경고.</b></div>
 </div>
+
+<div class="card-sec">
+<span class="banner">④ 하이일드 스프레드 (%) <span class="u">시장 전체의 신용 온도계</span></span>
+<div style="color:#9B9B9B;font-size:12px;padding:26px 4px">데이터 수집 대기 중 — 자동 수집이 쌓이면 그려집니다</div>
+<div class="note">신용도 낮은 채권의 위험 프리미엄. <b>확대 = 자금의 문이 좁아짐.</b></div>
+</div>
+
+<div class="card-sec">
+<span class="banner">⑤ 조달비용 vs 임대가 <span class="u">시작일 = 100 기준</span></span>
+<div style="color:#9B9B9B;font-size:12px;padding:26px 4px">데이터 수집 대기 중 — 자동 수집이 쌓이면 그려집니다</div>
+<div class="note">빨강이 올리브 위로 벌어지면 <b>마진 축소 = 사이클 꺾임</b>. (조달비용 = SOFR + 하이일드 스프레드)</div>
+</div>
+
+<details class="more"><summary>금리 · 프론티어 랩 매출<span>국채 곡선, 앤스로픽·오픈AI</span></summary>
+<div class="more-body">
+<span class="banner">미국 국채 금리 (%) <span class="u">10년물이 주인공</span></span>
+<div style="color:#9B9B9B;font-size:12px;padding:26px 4px">데이터 수집 대기 중 — 자동 수집이 쌓이면 그려집니다</div>
+<div class="note"><b>10년물 = 이번 사이클의 대표 축</b> (장기 조달비용·밸류에이션 할인율).</div>
+<div style="margin-top:18px">
+<span class="banner">프론티어 랩 연환산 매출 ($B) <span class="u">언론 보도 기준 · 이익 비공개</span></span>
+<svg viewBox="0 0 680 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit"><line x1="54" y1="224.0" x2="548" y2="224.0" stroke="#D8D8D8" stroke-width="1"/><text x="48" y="227.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$0B</text><line x1="54" y1="153.3" x2="548" y2="153.3" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="156.3" text-anchor="end" font-size="9.5" fill="#6E6E6E">$24B</text><line x1="54" y1="82.7" x2="548" y2="82.7" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="85.7" text-anchor="end" font-size="9.5" fill="#6E6E6E">$49B</text><line x1="54" y1="12.0" x2="548" y2="12.0" stroke="#D8D8D8" stroke-width="0.6"/><text x="48" y="15.0" text-anchor="end" font-size="9.5" fill="#6E6E6E">$73B</text><text x="54.0" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">25.12</text><text x="177.5" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.02</text><text x="301.0" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.04</text><text x="424.5" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.06</text><text x="548.0" y="242" text-anchor="middle" font-size="9.5" fill="#6E6E6E">26.08</text><polyline points="54.0,198.0 385.5,88.3 519.5,36.3" fill="none" stroke="#4A5228" stroke-width="2.4" stroke-linejoin="round"/><circle cx="54.0" cy="198.0" r="3" fill="#4A5228" stroke="#fff" stroke-width="1.2"/><circle cx="385.5" cy="88.3" r="3" fill="#4A5228" stroke="#fff" stroke-width="1.2"/><circle cx="519.5" cy="36.3" r="3" fill="#4A5228" stroke="#fff" stroke-width="1.2"/><polyline points="54.0,166.2 548.0,108.5" fill="none" stroke="#C9C9C9" stroke-width="1.6" stroke-linejoin="round"/><circle cx="54.0" cy="166.2" r="3" fill="#C9C9C9" stroke="#fff" stroke-width="1.2"/><circle cx="548.0" cy="108.5" r="3" fill="#C9C9C9" stroke="#fff" stroke-width="1.2"/><text x="526.5" y="39.3" font-size="10" font-weight="700" fill="#4A5228">앤스로픽 $65B</text><text x="555.0" y="111.5" font-size="10" font-weight="700" fill="#C9C9C9">오픈AI $40B</text></svg>
+<div class="note">클라우드 가격을 떠받치는 최종 수요. 비정기 공개(보도 시 수동 기록) · 앤스로픽 10월 상장 후 분기 공시 예정.</div>
+</div>
+</div></details>
+
 
 <footer>
-Source: getdeploying.com (75개 클라우드 제공업체 가격 집계), Vast.ai 공개 API, stooq.com (주가),
-Bloomberg SDH100RT·CDS (사용자 제공 PDF 수동 기록).<br>
-Note: getdeploying 중위가는 전체 클라우드 시장 기준으로, 네오클라우드 가중 방식인 Silicon Data 지수와 절대 수준이 다를 수 있음.
-수동 기록값에는 판독 오차가 있을 수 있음 (잠정).<br>
-본 페이지는 정보 제공 목적이며 투자 권유가 아닙니다. Generated automatically via GitHub Actions.
+Source: getdeploying.com(제공업체 가격 집계), Vast.ai 공개 API, FRED(금리·신용스프레드),
+Bloomberg SDH100RT·블랙웰지수·CRWV CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도).<br>
+Note: 블룸버그 3개 계열은 차트 판독값으로 <b>오차 약 ±1%의 잠정치</b> (평균·고점·저점을 원 차트와 대조 검증).
+계층 분류는 제공업체명 기준 자동 판정.<br>
+정보 제공 목적이며 투자 권유가 아닙니다. Generated automatically via GitHub Actions.
 </footer>
 </div></body></html>

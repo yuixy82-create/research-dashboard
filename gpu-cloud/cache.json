@@ -4,162 +4,189 @@
    "getdeploying": {
     "models": {
      "B200": {
-      "median": 5.88,
+      "hyperscaler": {
+       "median": 15.175,
+       "min": 14.24,
+       "n": 2
+      },
+      "marketplace": {
+       "median": 5.88,
+       "min": 5.88,
+       "n": 3
+      },
+      "median": 6.345,
       "min": 3.75,
       "n_offers": 20,
+      "neocloud": {
+       "median": 5.9,
+       "min": 3.75,
+       "n": 7
+      },
       "providers": [
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Packet·ai Our sponsor",
+        "provider": "Packet·ai",
+        "tier": "neocloud",
         "usd_hr": 3.75
        },
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "UpCloud",
-        "usd_hr": 3.9
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
+        "tier": "marketplace",
+        "usd_hr": 5.88
        },
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
+        "tier": "marketplace",
+        "usd_hr": 5.88
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "GPU.ai",
+        "tier": "neocloud",
+        "usd_hr": 5.88
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "GPU.ai",
+        "tier": "neocloud",
+        "usd_hr": 5.88
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Packet·ai",
+        "tier": "neocloud",
+        "usd_hr": 5.9
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Runpod Our sponsor",
+        "tier": "neocloud",
+        "usd_hr": 6.79
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Runpod",
+        "tier": "neocloud",
+        "usd_hr": 6.79
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
+        "tier": "marketplace",
+        "usd_hr": 7.13
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "GPU.ai",
+        "tier": "neocloud",
+        "usd_hr": 7.13
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "AWS",
+        "tier": "hyperscaler",
+        "usd_hr": 14.24
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Google Cloud",
-        "usd_hr": 4.08
-       },
-       {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Vast.ai",
-        "usd_hr": 5.0
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "UpCloud",
-        "usd_hr": 5.2
-       },
-       {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Spheron",
-        "usd_hr": 5.34
-       },
-       {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Spheron",
-        "usd_hr": 5.37
-       },
-       {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Vast.ai",
-        "usd_hr": 5.5
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "usd_hr": 5.88
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "usd_hr": 5.88
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "GPU.ai",
-        "usd_hr": 5.88
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "GPU.ai",
-        "usd_hr": 5.88
+        "tier": "hyperscaler",
+        "usd_hr": 16.11
        }
       ]
      },
      "B300": {
-      "median": 9.975,
-      "min": 7.5,
-      "n_offers": 20,
+      "hyperscaler": {
+       "median": 17.8,
+       "min": 15.0,
+       "n": 3
+      },
+      "median": 8.175,
+      "min": 4.49,
+      "n_offers": 19,
+      "neocloud": {
+       "median": 7.5,
+       "min": 4.49,
+       "n": 5
+      },
       "providers": [
        {
-        "billing": "Reserved (36mo) Reserved capacity with a 3-year minimum commitment.",
-        "provider": "Bentaus",
-        "usd_hr": 4.15
+        "billing": "Custom Committed-use pricing",
+        "provider": "Fal.ai",
+        "tier": "neocloud",
+        "usd_hr": 4.49
        },
        {
-        "billing": "Reserved (48mo) Reserved capacity with a 48-month minimum commitment.",
-        "provider": "Bentaus",
-        "usd_hr": 4.35
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Hyperstack",
+        "tier": "neocloud",
+        "usd_hr": 7.4
        },
        {
-        "billing": "Reserved (24mo) 2-year reservation with optional 2-year extension",
-        "provider": "Bentaus",
-        "usd_hr": 4.5
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Enverge",
+        "tier": "neocloud",
+        "usd_hr": 7.5
        },
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Vast.ai",
-        "usd_hr": 5.0
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Nebius",
+        "tier": "neocloud",
+        "usd_hr": 7.85
        },
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Vast.ai",
-        "usd_hr": 5.0
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Fal.ai",
+        "tier": "neocloud",
+        "usd_hr": 8.5
        },
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Vast.ai",
-        "usd_hr": 5.01
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Oracle Cloud",
+        "tier": "hyperscaler",
+        "usd_hr": 15.0
        },
        {
-        "billing": "Reserved (24mo) Reserved capacity with a 24-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 5.62
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "AWS",
+        "tier": "hyperscaler",
+        "usd_hr": 17.8
        },
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Spheron",
-        "usd_hr": 5.85
-       },
-       {
-        "billing": "Reserved (12mo) Reserved capacity with a 1-year minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 6.9
-       },
-       {
-        "billing": "Reserved (6mo) Reserved capacity with a 6-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 7.2
-       },
-       {
-        "billing": "Reserved (3mo) Reserved capacity with a 3-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 7.28
-       },
-       {
-        "billing": "Reserved (1mo) Reserved capacity with a 1-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 7.35
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Oracle Cloud",
+        "tier": "hyperscaler",
+        "usd_hr": 18.0
        }
       ]
      },
      "GB200": {
+      "hyperscaler": {
+       "median": 27.04,
+       "min": 27.04,
+       "n": 1
+      },
       "median": 18.77,
       "min": 10.5,
       "n_offers": 4,
+      "neocloud": {
+       "median": 10.5,
+       "min": 10.5,
+       "n": 1
+      },
       "providers": [
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "CoreWeave",
+        "tier": "neocloud",
         "usd_hr": 10.5
-       },
-       {
-        "billing": "Reservation Reserved capacity with term commitments.",
-        "provider": "AWS",
-        "usd_hr": 10.58
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Azure",
-        "usd_hr": 27.04
-       },
-       {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
-        "provider": "Azure",
+        "tier": "hyperscaler",
         "usd_hr": 27.04
        }
       ]
@@ -168,230 +195,253 @@
       "median": 8.62,
       "min": 8.62,
       "n_offers": 20,
+      "neocloud": {
+       "median": 8.62,
+       "min": 8.62,
+       "n": 4
+      },
       "providers": [
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Verda",
-        "usd_hr": 4.31
+        "tier": "neocloud",
+        "usd_hr": 8.62
        },
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Verda",
-        "usd_hr": 4.31
+        "tier": "neocloud",
+        "usd_hr": 8.62
        },
        {
-        "billing": "Spot Variable spot pricing with potential interruptions.",
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Verda",
-        "usd_hr": 4.31
+        "tier": "neocloud",
+        "usd_hr": 8.62
        },
        {
-        "billing": "Reserved (24mo) Reserved capacity with a 24-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 6.46
-       },
-       {
-        "billing": "Reserved (24mo) Reserved capacity with a 24-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 6.46
-       },
-       {
-        "billing": "Reserved (24mo) Reserved capacity with a 24-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 6.46
-       },
-       {
-        "billing": "Reserved (12mo) Reserved capacity with a 1-year minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 7.93
-       },
-       {
-        "billing": "Reserved (12mo) Reserved capacity with a 1-year minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 7.93
-       },
-       {
-        "billing": "Reserved (12mo) Reserved capacity with a 1-year minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 7.93
-       },
-       {
-        "billing": "Reserved (6mo) Reserved capacity with a 6-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 8.28
-       },
-       {
-        "billing": "Reserved (6mo) Reserved capacity with a 6-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 8.28
-       },
-       {
-        "billing": "Reserved (6mo) Reserved capacity with a 6-month minimum commitment.",
-        "provider": "Verda",
-        "usd_hr": 8.28
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "CoreWeave",
+        "tier": "neocloud",
+        "usd_hr": 15.36
        }
       ]
      },
      "H100": {
-      "median": 2.945,
+      "hyperscaler": {
+       "median": 7.435,
+       "min": 6.88,
+       "n": 4
+      },
+      "marketplace": {
+       "median": 1.87,
+       "min": 1.74,
+       "n": 3
+      },
+      "median": 3.24,
       "min": 1.74,
       "n_offers": 20,
+      "neocloud": {
+       "median": 3.19,
+       "min": 1.89,
+       "n": 13
+      },
       "providers": [
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Vast.ai",
+        "tier": "marketplace",
         "usd_hr": 1.74
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
+        "tier": "marketplace",
+        "usd_hr": 1.87
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "UpCloud",
+        "tier": "neocloud",
+        "usd_hr": 1.89
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Theta EdgeCloud",
+        "tier": "neocloud",
         "usd_hr": 2.29
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Theta EdgeCloud",
+        "tier": "neocloud",
         "usd_hr": 2.29
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Koyeb",
+        "tier": "neocloud",
         "usd_hr": 2.5
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Runpod Our sponsor",
+        "tier": "neocloud",
         "usd_hr": 2.59
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Vast.ai",
-        "usd_hr": 2.6
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Massed Compute",
-        "usd_hr": 2.73
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Massed Compute",
-        "usd_hr": 2.73
+        "tier": "marketplace",
+        "usd_hr": 2.7
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Runcrate",
-        "usd_hr": 2.75
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Runpod",
-        "usd_hr": 2.89
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Sesterce",
+        "tier": "neocloud",
         "usd_hr": 3.0
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Runpod",
+        "tier": "neocloud",
         "usd_hr": 3.19
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Lambda Labs",
+        "tier": "neocloud",
+        "usd_hr": 3.29
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Runpod",
+        "tier": "neocloud",
+        "usd_hr": 3.29
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Novita",
+        "tier": "neocloud",
+        "usd_hr": 3.39
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Novita",
+        "tier": "neocloud",
+        "usd_hr": 3.39
        }
       ]
      },
      "H200": {
-      "median": 3.82,
+      "hyperscaler": {
+       "median": 9.175,
+       "min": 7.91,
+       "n": 2
+      },
+      "marketplace": {
+       "median": 4.29,
+       "min": 3.6,
+       "n": 3
+      },
+      "median": 4.29,
       "min": 3.0,
       "n_offers": 20,
+      "neocloud": {
+       "median": 3.74,
+       "min": 3.0,
+       "n": 14
+      },
       "providers": [
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Koyeb",
+        "tier": "neocloud",
         "usd_hr": 3.0
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Koyeb",
+        "tier": "neocloud",
         "usd_hr": 3.0
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Runcrate",
+        "tier": "neocloud",
+        "usd_hr": 3.52
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Sesterce",
+        "tier": "neocloud",
         "usd_hr": 3.52
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Vast.ai Our sponsor",
-        "usd_hr": 3.57
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "usd_hr": 3.57
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "usd_hr": 3.57
+        "tier": "marketplace",
+        "usd_hr": 3.6
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Theta EdgeCloud",
+        "tier": "neocloud",
         "usd_hr": 3.69
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Theta EdgeCloud",
+        "tier": "neocloud",
         "usd_hr": 3.69
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Theta EdgeCloud",
+        "tier": "neocloud",
         "usd_hr": 3.69
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "usd_hr": 3.82
+        "provider": "Runpod",
+        "tier": "neocloud",
+        "usd_hr": 3.79
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Verda",
-        "usd_hr": 4.0
+        "provider": "Vast.ai",
+        "tier": "marketplace",
+        "usd_hr": 4.29
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Lyceum",
+        "tier": "neocloud",
         "usd_hr": 4.29
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Runpod",
+        "tier": "neocloud",
+        "usd_hr": 4.59
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Runpod",
+        "tier": "neocloud",
+        "usd_hr": 4.59
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Runpod",
+        "tier": "neocloud",
+        "usd_hr": 4.59
        }
       ]
      }
-    },
-    "overview_median": {
-     "B200": 6.25,
-     "B300": 8.25,
-     "GB200": 18.77,
-     "GB300": 15.36,
-     "H100": 3.39,
-     "H200": 4.47
-    }
-   },
-   "vastai": {
-    "B200": {
-     "median": 5.8771,
-     "min": 5.3146,
-     "n": 4
-    },
-    "H100": {
-     "median": 2.5222,
-     "min": 1.7335,
-     "n": 29
-    },
-    "H200": {
-     "median": 3.8162,
-     "min": 3.4015,
-     "n": 19
     }
    }
   }
- }
+ },
+ "series": {}
 }
