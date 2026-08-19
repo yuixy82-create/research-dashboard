@@ -28,6 +28,8 @@ jobs:
           python-version: "3.12"
 
       - name: collect and build
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python gpu-cloud/tracker.py
 
       - name: commit changes
