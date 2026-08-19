@@ -2328,6 +2328,7 @@ ANALYSIS = {
         "현금흐름 = 클라우드 렌탈 가격 × 고객 신용도 (고객 등급에 따른 대출 금리 차이)",
         "대출 만기는 GPU 수명(5~6년)보다도 짧음<br>: 클라우드 가격으로 현금흐름을 당겨올 수 있느냐가 관건",
         "GPU 자산가치도 그 GPU가 벌어올 임대료로 매겨짐<br><b>→ 결국 모든 것이 클라우드 가격으로 수렴해, 클라우드 가격 하락 시 시스템 붕괴 위험</b>",
+        "스팟 임대가는 매출의 꼬리임(장기 take-or-pay 계약이 대부분)<br>: 계약가·신규계약 단가로 봐야 하고, 그건 26년 들어 오히려 상승 중",
         "<b>★ 축소 신호: 임대가 피크아웃 / 금리 급등 / 자금조달 차질 / CDS 급등. 하나만 나와도 줄임</b>",
     ],
 }
@@ -2543,6 +2544,8 @@ def collect_getdeploying():
 FRED = {
     "HY_OAS":  ("BAMLH0A0HYM2", "하이일드 스프레드 (HY OAS)"),
     "IG_OAS":  ("BAMLC0A0CM",   "투자등급 스프레드 (IG OAS)"),
+    "IG_YLD":  ("BAMLC0A0CMEY", "투자등급 회사채 실제 금리"),
+    "HY_YLD":  ("BAMLH0A0HYM2EY", "하이일드 회사채 실제 금리"),
     "SOFR":    ("SOFR",         "미국 기준금리(SOFR)"),
     "UST2Y":   ("DGS2",         "국채 2년"),
     "UST5Y":   ("DGS5",         "국채 5년"),
@@ -2660,6 +2663,8 @@ def collect_fred(since):
 
 
 
+
+
 # ============================================================
 # 4. 차트 (인라인 SVG) — 주인공만 색, 나머지는 회색, 직접 라벨
 # ============================================================
@@ -2697,7 +2702,7 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False):
     lo, hi = min(ys), max(ys)
     pad = (hi - lo) * 0.15 or abs(hi) * 0.1 or 1
     y0, y1 = lo - pad, hi + pad
-    if zero_base or (lo >= 0 and lo < 0.25 * (hi - lo)):
+    if zero_base or (lo >= 0 and y0 < 0.25 * (hi - lo)):
         y0 = 0
     X = lambda o: ml + (o - x0) / (x1 - x0) * pw
     Y = lambda v: mt + (1 - (v - y0) / (y1 - y0)) * ph
@@ -2803,6 +2808,8 @@ def kpi(label, value, sub, unit="", delta=None, digits=2):
     return ('<div class="kpi-card"><div class="kpi-label">%s</div>'
             '<div class="kpi-num">%s<span class="kpi-unit">%s</span>%s</div>'
             '<div class="kpi-sub">%s</div></div>' % (label, v, unit, d, sub))
+
+
 
 
 # ============================================================
@@ -2946,13 +2953,24 @@ def build_html():
                  **dict(hist_series(cache, "HY_OAS"))}.items())
     ig = hist_series(cache, "IG_OAS")
     sofr = hist_series(cache, "SOFR")
+    # 회사채 실제 발행금리(ICE BofA 유효수익률). 막히면 국채10년+스프레드로 근사
+    ig_yld = hist_series(cache, "IG_YLD")
+    hy_yld = hist_series(cache, "HY_YLD")
     ust = {k: hist_series(cache, k) for k in ("UST2Y", "UST5Y", "UST10Y", "UST30Y")}
+    if not ig_yld or not hy_yld:
+        t10 = dict(ust["UST10Y"])
+        if not ig_yld:
+            ig_yld = sorted((d, round(v + t10[d], 3)) for d, v in ig if d in t10)
+        if not hy_yld:
+            hy_yld = sorted((d, round(v + t10[d], 3)) for d, v in hy if d in t10)
 
     # ---------- 신호등 ----------
     # 자동 수집이 30일 이상 쌓이면 자동 계열로 판정 (수동 계열은 갱신이 멈춰 신호가 얼어붙음)
     def span_days(pts):
         return (d2o(pts[-1][0]) - d2o(pts[0][0])) if len(pts) > 1 else 0
-    price_ref = h_neo if span_days(h_neo) >= 30 else sdh
+    # 스팟 H100은 매출의 꼬리 — 신규 수요가 붙는 최신 세대를 기준으로 판정
+    price_ref = (gb300 if span_days(gb300) >= 30 else
+                 (bw_seed or (h_neo if span_days(h_neo) >= 30 else sdh)))
     ref_date = price_ref[-1][0] if price_ref else None
     _, p_pct = change_over(price_ref, 30)
     hy_abs, _ = change_over(hy, 30)
@@ -2989,7 +3007,7 @@ def build_html():
         vc, vs = "good", "정상"
         vd = "임대가와 금리가 함께 버티는 구간"
 
-    signals = (sig_card("클라우드 임대가 (빌려주고 받는 값)", pc, ps, pd_)
+    signals = (sig_card("클라우드 임대가 (최신 세대 기준)", pc, ps, pd_)
                + sig_card("신용 여건 (빌리는 값)", sc, ss, sd_)
                + sig_card("종합 판정", vc, vs, vd))
 
@@ -3001,38 +3019,21 @@ def build_html():
     v_sofr, _ = last_of(sofr)
     v_cds, d_cds = last_of(cds)
     v_10y, _ = last_of(ust["UST10Y"])
+    v_ig_yld, _ = last_of(ig_yld)
     dl_neo = (h_neo[-1][1] - h_neo[-2][1]) if len(h_neo) > 1 else None
     kpis = [
         kpi("H100 네오클라우드", v_neo, "getdeploying, " + (fmt_kr(d_neo) if d_neo else "대기"), "$/hr", dl_neo),
         kpi("SDH100RT 정식지수", v_sdh, "Bloomberg, " + (fmt_kr(d_sdh) if d_sdh else "—"), "$/hr"),
         kpi("GB300", v_gb3, "getdeploying, " + (fmt_kr(d_gb3) if d_gb3 else "대기"), "$/hr"),
         kpi("하이일드 스프레드", v_hy, "FRED, " + (fmt_kr(d_hy) if d_hy else "대기"), "%"),
+        kpi("회사채 금리(투자등급)", v_ig_yld, "FRED — 하이퍼스케일러 조달선", "%"),
         kpi("국채 10년", v_10y, "FRED — 사이클의 대표 축", "%"),
         kpi("코어위브 CDS", v_cds, "Bloomberg, " + (fmt_kr(d_cds) if d_cds else "—"), "bp", None, 0),
     ]
 
     # ---------- 파생 계열 ----------
-    # 조달비용: 미국 기준금리 + 코어위브 CDS(개별 기업 실제 신용위험).
-    # 시장 평균(하이일드 지수)이 아니라 실제 차입자의 위험을 써야 방향이 맞는다.
-    sofr_map, cds_map = dict(sofr), dict(cds)
-    def _nearest(m, d, win=7):
-        for k in range(win + 1):
-            for c in ((date.fromisoformat(d) - timedelta(days=k)).isoformat(),
-                      (date.fromisoformat(d) + timedelta(days=k)).isoformat()):
-                if c in m:
-                    return m[c]
-        return None
-    fund = []
-    for d, bp in cds:
-        base = _nearest(sofr_map, d)
-        if base is not None:
-            fund.append((d, round(base + bp / 100.0, 3)))
-    pair, base_label = None, ""
-    if fund and sdh:
-        start = max(fund[0][0], sdh[0][0])
-        pair = (rebase([p for p in fund if p[0] >= start]),
-                rebase([p for p in sdh if p[0] >= start]))
-        base_label = fmt_kr(start)
+    # 조달비용 = 회사채 시장에서 실제로 매겨지는 금리(국채금리+신용스프레드가 이미 합산된 값).
+    # 투자등급 = 하이퍼스케일러 조달선, 하이일드 = 네오클라우드 조달선.
 
     # ---------- 차트 ----------
     c_h100 = svg_chart([
@@ -3044,9 +3045,9 @@ def build_html():
         {"label": "투자등급", "color": T["chartGray"], "width": 1.3, "points": ig},
     ], h=250, yfmt=lambda v: "%.2f%%" % v)
     c_margin = svg_chart([
-        {"label": "H100 임대가", "color": T["primary"], "width": 2.6, "points": pair[1]},
-        {"label": "조달비용", "color": T["red"], "width": 2.0, "points": pair[0]},
-    ], h=250, yfmt=lambda v: "%.0f" % v) if pair else svg_chart([])
+        {"label": "하이일드", "color": T["red"], "width": 2.4, "points": hy_yld},
+        {"label": "투자등급", "color": T["primary"], "width": 2.2, "points": ig_yld},
+    ], h=250, yfmt=lambda v: "%.2f%%" % v)
     # 국채: 10년물만 주인공, 나머지는 회색 얇게
     c_ust = svg_chart([
         {"label": "10년 ★", "color": T["primary"], "width": 2.8, "points": ust["UST10Y"]},
@@ -3096,22 +3097,23 @@ def build_html():
 <div class="card-sec">
 <span class="banner">① H100 임대가 ($/GPU-시간) <span class="u">올리브 = 네오클라우드(담보 기준) · 금색 = Bloomberg</span></span>
 """ + c_h100 + """
-<div class="note">정식 지수(SDH100RT)는 블룸버그 유료 자료라 <b>getdeploying 네오클라우드 중위가로 26.08.19부터 대체 추적</b></div>
+<div class="note">정식 지수(SDH100RT)는 블룸버그 유료 자료라 <b>getdeploying 네오클라우드 중위가로 26.08.19부터 대체 추적</b><br>
+<span class="key">단, 이 값은 스팟·온디맨드임. 네오클라우드 매출은 대부분 take-or-pay 장기계약이라 스팟은 꼬리임</span><br>
+계약가는 오히려 상승 중 — 코어위브 26.07 전 SKU +25% 인상, 네비우스 구세대 +30% QoQ, 1년 계약가 $1.70(25.10)→$2.35(26.03)</div>
 
 </div>
 
 <div class="card-sec">
 <span class="banner">② 블랙웰 · GB300 임대가 ($/GPU-시간) <span class="u">차세대 담보</span></span>
 """ + c_next + """
-<div class="note">블랙웰 지수도 블룸버그 유료 자료라 <b>GB300 중위가(getdeploying)로 26.08.19부터 대체 추적</b></div>
+<div class="note">블랙웰 지수도 블룸버그 유료 자료라 <b>GB300 중위가(getdeploying)로 26.08.19부터 대체 추적</b><br>
+<span class="key">피크아웃 신호는 여기서 읽음 — 구세대는 계약에 잠겨 있어 신규 수요를 반영 못 함</span></div>
 </div>
 
 <div class="card-sec">
 <span class="banner">③ CDS 5Y — 부도 위험 보험료 (bp) <span class="u">코어위브 · 오라클</span></span>
 """ + c_cds + """
-<div class="note">개별 기업의 부도 위험 보험료.
-<span class="key">전고점 재돌파 시 경고: 코어위브 977bp(26.08 초) / 오라클 218bp(26.07.31)</span><br>
-오라클은 AI 최대 차입자라 개별이 아닌 시장 전체 신호로 읽음. 벤더별 호가 차이로 같은 날 수치가 다를 수 있음</div>
+<div class="note">개별 기업의 부도 위험 보험료. 오라클은 AI 최대 차입자라 개별이 아닌 시장 전체 신호로 읽음. 벤더별 호가 차이로 같은 날 수치가 다를 수 있음</div>
 </div>
 
 <div class="card-sec">
@@ -3121,11 +3123,11 @@ def build_html():
 </div>
 
 <div class="card-sec">
-<span class="banner">⑤ 조달비용 vs 임대가 <span class="u">기준금리+코어위브CDS · """ + (base_label or "시작일") + """ = 100 기준</span></span>
+<span class="banner">⑤ 조달비용 — 회사채 실제 발행금리 (%) <span class="u">올리브 = 하이퍼스케일러 · 빨강 = 네오클라우드</span></span>
 """ + c_margin + """
-<div class="note"><span class="key">빨강이 올리브 위로 벌어지면 마진 축소 = 사이클 꺾임</span><br>
-조달비용 = 미국 기준금리 + 코어위브 CDS. 실제 대출은 개별 약정 스프레드(예: S+550bp)로 매겨지므로 <b>방향을 보는 대용치</b>이며,
-데이터센터 건설비·장비비는 포함되지 않음</div>
+<div class="note">국채금리+신용스프레드가 합산된 실제 발행금리(ICE BofA 유효수익률). <b>빨강이 올리브에서 벌어지면 등급별 조달 분화</b><br>
+<span class="key">실사례 26.08.10 코어위브 DDTL 5.5 $26억: 최초 제시 SOFR+425~450bp → 최종 SOFR+550bp, OID 97(YTM 10.4%), DSCR 1.35배 커버넌트</span><br>
+같은 달 회사는 "조달금리 300bp 하락"을 강조했으나 그건 IG 담보부(DDTL 4.0 SOFR+225bp) 기준임. 비IG 트랜치는 반대로 벌어지는 중</div>
 </div>
 
 <div class="sec-head">금리 · 프론티어 랩 매출</div>
