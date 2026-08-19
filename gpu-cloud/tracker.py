@@ -2341,29 +2341,94 @@ FRED = {
 }
 
 
-def collect_fred(since):
-    """FRED 평문 데이터(.txt) → {키: {날짜: 값}}. since 이후만 취한다."""
-    out = {}
-    for key, (sid, label) in FRED.items():
-        txt = http_get(f"https://fred.stlouisfed.org/data/{sid}.txt")
+def _fred_one(sid, since):
+    """FRED 한 계열: fredgraph.csv → data/*.txt 순서로 시도."""
+    for url in (f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}&cosd={since}",
+                f"https://fred.stlouisfed.org/data/{sid}.txt"):
+        txt = http_get(url, retries=1, headers={"Accept-Encoding": "identity"})
         if not txt:
-            print(f"  [warn] FRED {sid}: 실패")
             continue
         series = {}
         for line in txt.splitlines():
-            parts = line.split()
-            if len(parts) != 2 or not re.match(r"^\d{4}-\d{2}-\d{2}$", parts[0]):
+            parts = line.replace(",", " ").split()
+            if len(parts) < 2 or not re.match(r"^\d{4}-\d{2}-\d{2}$", parts[0]):
                 continue
             if parts[0] < since:
                 continue
             try:
                 series[parts[0]] = round(float(parts[1]), 4)
             except ValueError:
-                continue          # 결측치는 "." 로 표기됨
+                continue
         if series:
-            out[key] = series
-            last = max(series)
-            print(f"  {key:7s} {series[last]:>8} ({last})  {len(series)}일치")
+            return series
+    return {}
+
+
+def _treasury_fallback(since):
+    """미국 재무부 공식 일별 금리 CSV — FRED가 막힐 때 국채 4종 대체."""
+    cols = {"2 Yr": "UST2Y", "5 Yr": "UST5Y", "10 Yr": "UST10Y", "30 Yr": "UST30Y"}
+    out = {v: {} for v in cols.values()}
+    for year in {since[:4], today_kst()[:4]}:
+        url = ("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/"
+               f"daily-treasury-rates.csv/{year}/all?type=daily_treasury_yield_curve"
+               f"&field_tdr_date_value={year}&page&_format=csv")
+        txt = http_get(url, retries=1)
+        if not txt:
+            continue
+        rows = list(csv.DictReader(io.StringIO(txt)))
+        for r in rows:
+            d = r.get("Date", "")
+            try:
+                m, dd, y = d.split("/")
+                iso = f"{y}-{int(m):02d}-{int(dd):02d}"
+            except ValueError:
+                continue
+            if iso < since:
+                continue
+            for col, key in cols.items():
+                try:
+                    out[key][iso] = round(float(r[col]), 4)
+                except (KeyError, TypeError, ValueError):
+                    continue
+    return {k: v for k, v in out.items() if v}
+
+
+def _sofr_fallback(since):
+    """뉴욕연준 공식 API — FRED가 막힐 때 SOFR 대체."""
+    txt = http_get("https://markets.newyorkfed.org/api/rates/secured/sofr/last/300.json",
+                   retries=1, headers={"Accept": "application/json"})
+    if not txt:
+        return {}
+    try:
+        rows = json.loads(txt).get("refRates", [])
+        return {r["effectiveDate"]: round(float(r["percentRate"]), 4)
+                for r in rows if r.get("effectiveDate", "") >= since}
+    except Exception:
+        return {}
+
+
+def collect_fred(since):
+    """금리·스프레드 시계열. FRED 차단 시 재무부·뉴욕연준 공식 소스로 폴백."""
+    out = {}
+    for key, (sid, label) in FRED.items():
+        s = _fred_one(sid, since)
+        if s:
+            out[key] = s
+            last = max(s)
+            print(f"  {key:7s} {s[last]:>8} ({last})  {len(s)}일치")
+        else:
+            print(f"  [warn] FRED {sid}: 실패")
+    if not any(k.startswith("UST") and out.get(k) for k in FRED):
+        t = _treasury_fallback(since)
+        for k, v in t.items():
+            out.setdefault(k, v)
+        if t:
+            print(f"  국채 4종: 재무부 CSV 폴백으로 수집 ({len(t)}종)")
+    if "SOFR" not in out:
+        v = _sofr_fallback(since)
+        if v:
+            out["SOFR"] = v
+            print(f"  SOFR: 뉴욕연준 API 폴백으로 수집 ({len(v)}일치)")
     return out
 
 
