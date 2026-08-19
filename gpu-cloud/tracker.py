@@ -2317,6 +2317,100 @@ SEED = {
                 40.0
             ]
         ]
+    },
+    "crwv_margin": {
+        "label": "코어위브 조정영업이익률(%)",
+        "source": "CoreWeave 분기 실적발표",
+        "note": "GAAP 영업이익 + SBC·인수관련비용·무형자산상각 환입. 감가상각은 환입하지 않음",
+        "points": [
+            [
+                "2024-03-31",
+                13.2
+            ],
+            [
+                "2024-06-30",
+                21.6
+            ],
+            [
+                "2024-09-30",
+                21.4
+            ],
+            [
+                "2024-12-31",
+                16.2
+            ],
+            [
+                "2025-03-31",
+                16.6
+            ],
+            [
+                "2025-06-30",
+                16.5
+            ],
+            [
+                "2025-09-30",
+                15.9
+            ],
+            [
+                "2025-12-31",
+                5.6
+            ],
+            [
+                "2026-03-31",
+                1.0
+            ],
+            [
+                "2026-06-30",
+                5.0
+            ]
+        ]
+    },
+    "crwv_interest": {
+        "label": "코어위브 이자비용/매출(%)",
+        "source": "CoreWeave 분기 실적발표",
+        "note": "순이자비용 기준",
+        "points": [
+            [
+                "2024-03-31",
+                21.6
+            ],
+            [
+                "2024-06-30",
+                16.9
+            ],
+            [
+                "2024-09-30",
+                17.9
+            ],
+            [
+                "2024-12-31",
+                19.9
+            ],
+            [
+                "2025-03-31",
+                26.9
+            ],
+            [
+                "2025-06-30",
+                22.0
+            ],
+            [
+                "2025-09-30",
+                22.8
+            ],
+            [
+                "2025-12-31",
+                24.7
+            ],
+            [
+                "2026-03-31",
+                25.8
+            ],
+            [
+                "2026-06-30",
+                24.9
+            ]
+        ]
     }
 }
 
@@ -2324,7 +2418,7 @@ ANALYSIS = {
     "updated": "2026-08-19",
     "title": "이번 싸이클의 핵심. 클라우드 가격. 금리.",
     "thesis": [
-        "AI 인프라 자금 = 데이터센터가 만들 현금흐름을 담보로 한 장기대출<br>: GPU도 담보에 들어가지만 감가가 빨라 핵심은 현금흐름임",
+        "AI 인프라 자금 = 데이터센터가 만들 현금흐름을 담보로 한 장기대출<br>: GPU도 담보에 들어가지만 감가가 빨라 핵심은 현금흐름임<br><b>★ 때문에 클라우드 가격이 매우 중요</b>",
         "현금흐름 = 클라우드 렌탈 가격 × 고객 신용도 (고객 등급에 따른 대출 금리 차이)",
         "대출 만기는 GPU 수명(5~6년)보다도 짧음<br>: 클라우드 가격으로 현금흐름을 당겨올 수 있느냐가 관건",
         "GPU 자산가치도 그 GPU가 벌어올 임대료로 매겨짐<br><b>→ 결국 모든 것이 클라우드 가격으로 수렴해, 클라우드 가격 하락 시 시스템 붕괴 위험</b>",
@@ -2942,6 +3036,8 @@ def build_html():
     bw_seed = seed_series("blackwell")
     cds = seed_series("cds")
     ora_cds = seed_series("oracle_cds")
+    cw_mgn = seed_series("crwv_margin")
+    cw_int = seed_series("crwv_interest")
     ant_rev = seed_series("anthropic_rev")
     oai_rev = seed_series("openai_rev")
     gb300 = daily_series(cache, gd("GB300", ("neocloud", "median")))
@@ -2968,9 +3064,7 @@ def build_html():
     # 자동 수집이 30일 이상 쌓이면 자동 계열로 판정 (수동 계열은 갱신이 멈춰 신호가 얼어붙음)
     def span_days(pts):
         return (d2o(pts[-1][0]) - d2o(pts[0][0])) if len(pts) > 1 else 0
-    # 스팟 H100은 매출의 꼬리 — 신규 수요가 붙는 최신 세대를 기준으로 판정
-    price_ref = (gb300 if span_days(gb300) >= 30 else
-                 (bw_seed or (h_neo if span_days(h_neo) >= 30 else sdh)))
+    price_ref = h_neo if span_days(h_neo) >= 30 else sdh
     ref_date = price_ref[-1][0] if price_ref else None
     _, p_pct = change_over(price_ref, 30)
     hy_abs, _ = change_over(hy, 30)
@@ -3007,7 +3101,7 @@ def build_html():
         vc, vs = "good", "정상"
         vd = "임대가와 금리가 함께 버티는 구간"
 
-    signals = (sig_card("클라우드 임대가 (최신 세대 기준)", pc, ps, pd_)
+    signals = (sig_card("클라우드 임대가 (담보 기준)", pc, ps, pd_)
                + sig_card("신용 여건 (빌리는 값)", sc, ss, sd_)
                + sig_card("종합 판정", vc, vs, vd))
 
@@ -3065,6 +3159,10 @@ def build_html():
         {"label": "코어위브", "color": T["red"], "width": 2.4, "points": cds},
         {"label": "오라클", "color": T["gold"], "width": 2.0, "markers": True, "points": ora_cds},
     ], h=250, yfmt=lambda v: "%.0fbp" % v)
+    c_gap = svg_chart([
+        {"label": "이자비용/매출", "color": T["red"], "width": 2.4, "markers": True, "points": cw_int},
+        {"label": "조정영업이익률", "color": T["primary"], "width": 2.4, "markers": True, "points": cw_mgn},
+    ], h=250, yfmt=lambda v: "%.0f%%" % v)
     c_rev = svg_chart([
         {"label": "앤스로픽", "color": T["primary"], "width": 2.4, "markers": True, "points": ant_rev},
         {"label": "오픈AI", "color": T["teal"], "width": 2.4, "markers": True, "points": oai_rev},
@@ -3098,8 +3196,8 @@ def build_html():
 <span class="banner">① H100 임대가 ($/GPU-시간) <span class="u">올리브 = 네오클라우드(담보 기준) · 금색 = Bloomberg</span></span>
 """ + c_h100 + """
 <div class="note">정식 지수(SDH100RT)는 블룸버그 유료 자료라 <b>getdeploying 네오클라우드 중위가로 26.08.19부터 대체 추적</b><br>
-<span class="key">단, 이 값은 스팟·온디맨드임. 네오클라우드 매출은 대부분 take-or-pay 장기계약이라 스팟은 꼬리임</span><br>
-계약가는 오히려 상승 중 — 코어위브 26.07 전 SKU +25% 인상, 네비우스 구세대 +30% QoQ, 1년 계약가 $1.70(25.10)→$2.35(26.03)</div>
+<span class="key">H100 = 이미 나간 대출의 담보. 재계약가가 무너지면 기존 담보부터 깨지므로 가장 중요한 축임</span><br>
+단, 이 값은 스팟·온디맨드임. 네오클라우드 매출은 대부분 take-or-pay 장기계약임. 계약가는 상승 중 — 코어위브 26.07 전 SKU +25%, 네비우스 구세대 +30% QoQ, 1년 계약가 $1.70(25.10)→$2.35(26.03)</div>
 
 </div>
 
@@ -3107,7 +3205,8 @@ def build_html():
 <span class="banner">② 블랙웰 · GB300 임대가 ($/GPU-시간) <span class="u">차세대 담보</span></span>
 """ + c_next + """
 <div class="note">블랙웰 지수도 블룸버그 유료 자료라 <b>GB300 중위가(getdeploying)로 26.08.19부터 대체 추적</b><br>
-<span class="key">피크아웃 신호는 여기서 읽음 — 구세대는 계약에 잠겨 있어 신규 수요를 반영 못 함</span></div>
+최신 세대 = <b>신규 수요 온도계</b> / H100 = <b>기존 담보</b>. 역할이 달라 둘 다 봐야 함<br>
+<b>다만 지금부터 나가는 대출의 담보는 GB300·루빈이라, 앞으로의 무게중심은 이쪽임</b></div>
 </div>
 
 <div class="card-sec">
@@ -3130,16 +3229,22 @@ def build_html():
 같은 달 회사는 "조달금리 300bp 하락"을 강조했으나 그건 IG 담보부(DDTL 4.0 SOFR+225bp) 기준임. 비IG 트랜치는 반대로 벌어지는 중</div>
 </div>
 
-<div class="sec-head">금리 · 프론티어 랩 매출</div>
+<div class="card-sec">
+<span class="banner">⑥ 버는 값 vs 내는 값 — 코어위브 분기 (%) <span class="u">갭이 좁혀지는지가 관건</span></span>
+""" + c_gap + """
+<div class="note"><span class="key">빨강이 올리브 위에 있으면 이자가 영업이익을 다 먹는 구간. 25.1Q에 역전됨</span><br>
+갭 26.1Q -24.8%p(바닥) → 26.2Q -19.9%p → 26.3Q 가이드 약 -19%p. 좁혀지는 중이고 <b>재역전 시점이 이 사이클의 분기점</b><br>
+조정영업이익 = GAAP 영업이익 + SBC·인수비용·무형상각 환입(감가상각은 그대로 반영). 이자비용은 순액. 분기 1회 갱신</div>
+</div>
 
 <div class="card-sec">
-<span class="banner">미국 국채 금리 (%) <span class="u">10년물이 주인공</span></span>
+<span class="banner">⑦ 미국 국채 금리 (%) <span class="u">10년물이 주인공</span></span>
 """ + c_ust + """
 <div class="note"><b>10년물 = 이번 사이클의 대표 축</b> (장기 조달비용·밸류에이션 할인율)</div>
 </div>
 
 <div class="card-sec">
-<span class="banner">프론티어 랩 연환산 매출 ($B) <span class="u">언론 보도 기준 · 이익 비공개</span></span>
+<span class="banner">⑧ 프론티어 랩 연환산 매출 ($B) <span class="u">언론 보도 기준 · 이익 비공개</span></span>
 """ + c_rev + """
 <div class="note">클라우드 가격을 떠받치는 최종 수요.<br>
 <span class="key">연환산(run-rate) 기준: 해당 시점 월매출 × 12이며 연간 실적이 아님</span><br>앤스로픽 10월 상장 후 분기 공시 예정</div>
