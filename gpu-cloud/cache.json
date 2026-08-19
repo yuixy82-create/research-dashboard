@@ -14,13 +14,13 @@
        "min": 5.88,
        "n": 3
       },
-      "median": 5.9,
+      "median": 5.89,
       "min": 3.75,
-      "n_offers": 20,
+      "n_offers": 19,
       "neocloud": {
-       "median": 5.89,
+       "median": 5.88,
        "min": 3.75,
-       "n": 6
+       "n": 5
       },
       "providers": [
        {
@@ -61,12 +61,6 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Runpod Our sponsor",
-        "tier": "neocloud",
-        "usd_hr": 6.79
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Vast.ai",
         "tier": "marketplace",
         "usd_hr": 7.5
@@ -93,9 +87,9 @@
      },
      "B300": {
       "hyperscaler": {
-       "median": 17.8,
+       "median": 17.9,
        "min": 17.8,
-       "n": 1
+       "n": 2
       },
       "marketplace": {
        "median": 7.5,
@@ -103,31 +97,37 @@
        "n": 2
       },
       "median": 7.89,
-      "min": 7.5,
+      "min": 7.4,
       "n_offers": 20,
       "neocloud": {
        "median": 7.89,
-       "min": 7.5,
-       "n": 5
+       "min": 7.4,
+       "n": 6
       },
       "providers": [
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "tier": "marketplace",
-        "usd_hr": 7.5
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "tier": "marketplace",
-        "usd_hr": 7.5
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Verda",
+        "provider": "Hyperstack",
         "tier": "neocloud",
+        "usd_hr": 7.4
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
+        "tier": "marketplace",
         "usd_hr": 7.5
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
+        "tier": "marketplace",
+        "usd_hr": 7.5
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Nebius",
+        "tier": "neocloud",
+        "usd_hr": 7.85
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
@@ -143,13 +143,13 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Runcrate",
+        "provider": "Fal.ai",
         "tier": "neocloud",
-        "usd_hr": 8.7
+        "usd_hr": 8.5
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Sesterce",
+        "provider": "Runcrate",
         "tier": "neocloud",
         "usd_hr": 8.7
        },
@@ -158,6 +158,12 @@
         "provider": "AWS",
         "tier": "hyperscaler",
         "usd_hr": 17.8
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Oracle Cloud",
+        "tier": "hyperscaler",
+        "usd_hr": 18.0
        }
       ]
      },
@@ -231,13 +237,13 @@
        "min": 1.73,
        "n": 3
       },
-      "median": 2.865,
+      "median": 2.75,
       "min": 1.73,
-      "n_offers": 20,
+      "n_offers": 19,
       "neocloud": {
-       "median": 2.73,
+       "median": 2.74,
        "min": 1.89,
-       "n": 13
+       "n": 12
       },
       "providers": [
        {
@@ -278,12 +284,6 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Runpod Our sponsor",
-        "tier": "neocloud",
-        "usd_hr": 2.59
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Runpod",
         "tier": "neocloud",
         "usd_hr": 2.59
@@ -302,6 +302,12 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Sesterce",
+        "tier": "neocloud",
+        "usd_hr": 2.75
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Runcrate",
         "tier": "neocloud",
         "usd_hr": 3.0
@@ -314,9 +320,9 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Novita",
+        "provider": "Runpod",
         "tier": "neocloud",
-        "usd_hr": 3.39
+        "usd_hr": 3.29
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
@@ -333,11 +339,11 @@
        "n": 2
       },
       "marketplace": {
-       "median": 3.655,
-       "min": 3.07,
+       "median": 3.935,
+       "min": 3.39,
        "n": 4
       },
-      "median": 4.17,
+      "median": 4.44,
       "min": 3.0,
       "n_offers": 20,
       "neocloud": {
@@ -360,15 +366,9 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
+        "provider": "Vast.ai Our sponsor",
         "tier": "marketplace",
-        "usd_hr": 3.07
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "tier": "marketplace",
-        "usd_hr": 3.48
+        "usd_hr": 3.39
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
@@ -392,7 +392,13 @@
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Vast.ai",
         "tier": "marketplace",
-        "usd_hr": 3.83
+        "usd_hr": 3.93
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Vast.ai",
+        "tier": "marketplace",
+        "usd_hr": 3.94
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
@@ -402,19 +408,19 @@
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Vast.ai",
-        "tier": "marketplace",
-        "usd_hr": 4.05
-       },
-       {
-        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
         "provider": "Lyceum",
         "tier": "neocloud",
         "usd_hr": 4.29
        },
        {
         "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
-        "provider": "Runpod Our sponsor",
+        "provider": "Runpod",
+        "tier": "neocloud",
+        "usd_hr": 4.59
+       },
+       {
+        "billing": "On-Demand Pay-as-you-go pricing. No term commitments.",
+        "provider": "Runpod",
         "tier": "neocloud",
         "usd_hr": 4.59
        },
