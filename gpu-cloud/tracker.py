@@ -2112,17 +2112,13 @@ SEED = {
 
 ANALYSIS = {
     "updated": "2026-08-19",
+    "title": "이번 싸이클의 핵심. 클라우드 가격. 금리.",
     "thesis": [
-        "AI 인프라 자금 = 데이터센터가 만들 현금흐름을 담보로 한 대출: GPU도 담보에 들어가지만 감가가 빨라 핵심은 현금흐름임",
-        "<b>현금흐름 = 클라우드 렌탈 가격 × 고객 신용도: 메타급 고객이면 이자↓, 작은 고객이면 이자↑</b> (제조사가 잔존가치 25% 보증까지)",
-        "대출 만기는 GPU 수명(5~6년)보다도 짧음: 클라우드 가격으로 현금흐름을 당겨올 수 있느냐가 관건",
-        "<b>★ GPU라는 물건의 값 자체도 중고가가 아니라 그 GPU가 벌어올 임대료로 매겨짐: 결국 모든 것이 클라우드 가격 하나에 달려 있음</b>",
-    ],
-    "paragraphs": [
-        "H100 임대가: 25.12월 $1.95 저점 → 26.08월 $2.76 (+40%)",
-        "코어위브 CDS: 26.08월 초 977bp 급등 후 739bp 반락. 임대가 견조 → 개별 이슈로 읽음",
-        "<b>★ 축소 신호: 임대가 피크아웃 / 조달 차질 / CDS 급등 / 금리 급등. 하나만 나와도 줄임</b>",
-        "★ 체크포인트: H100 $2.5 이탈 / GB300 $5 이탈 / 하이일드 스프레드 400bp 돌파",
+        "AI 인프라 자금 = 데이터센터가 만들 현금흐름을 담보로 한 장기대출<br>: GPU도 담보에 들어가지만 감가가 빨라 핵심은 현금흐름임",
+        "현금흐름 = 클라우드 렌탈 가격 × 고객 신용도 (고객 등급에 따른 대출 금리 차이)",
+        "대출 만기는 GPU 수명(5~6년)보다도 짧음<br>: 클라우드 가격으로 현금흐름을 당겨올 수 있느냐가 관건",
+        "GPU 자산가치도 그 GPU가 벌어올 임대료로 매겨짐<br><b>→ 결국 모든 것이 클라우드 가격으로 수렴해, 클라우드 가격 하락 시 시스템 붕괴 위험</b>",
+        "<b>★ 축소 신호: 임대가 피크아웃 / 금리 급등 / 자금조달 차질 / CDS 급등. 하나만 나와도 줄임</b>",
     ],
 }
 
@@ -2580,9 +2576,10 @@ table.data tr.hl td{background:var(--fill);font-weight:700}
 .ana{font-size:12.5px;line-height:1.65;margin:0 0 10px}
 .ana b{color:var(--heading)}
 .note{font-size:10.5px;color:var(--faint);margin-top:8px;line-height:1.5}
-.thesis{background:var(--tint);border-left:4px solid var(--primary);padding:13px 18px;margin:0 0 18px}
-.thesis ol{margin:0;padding-left:18px}
-.thesis li{color:var(--heading);font-size:12.5px;line-height:1.6;margin-bottom:5px}
+.thesis{background:var(--tint);border-left:4px solid var(--primary);padding:14px 20px;margin:0 0 18px}
+.thesis-title{font-weight:800;color:var(--primary);font-size:15.5px;margin-bottom:9px}
+.thesis ul{margin:0;padding-left:16px;list-style:disc}
+.thesis li{color:var(--heading);font-size:13px;line-height:1.62;margin-bottom:6px}
 .thesis li:last-child{margin-bottom:0}
 .thesis li b{color:var(--primary)}
 /* 접이식 */
@@ -2788,7 +2785,6 @@ def build_html():
     ], h=250, yfmt=lambda v: "$%.0fB" % v)
 
     thesis = "".join("<li>%s</li>" % p for p in ANALYSIS["thesis"])
-    paras = "".join('<p class="ana">%s</p>' % p for p in ANALYSIS["paragraphs"])
 
     doc = """<!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8">
@@ -2802,6 +2798,11 @@ def build_html():
 <div class="sub">빌드 """ + now + """ | 가격 누적 """ + str(n_days) + """일</div></div>
 </div></header>
 <div class="wrap">
+
+<div class="thesis">
+<div class="thesis-title">""" + ANALYSIS["title"] + """</div>
+<ul>""" + thesis + """</ul>
+</div>
 
 <div class="sig-row">""" + signals + """</div>
 
@@ -2850,9 +2851,6 @@ def build_html():
 </div>
 </div></details>
 
-<details class="more"><summary>임대가가 왜 중요한가 — 이번 사이클의 대출 구조<span>세미나 요약</span></summary>
-<div class="more-body"><div class="thesis"><ol>""" + thesis + """</ol></div>
-""" + paras + """</div></details>
 
 <footer>
 Source: getdeploying.com(제공업체 가격 집계), Vast.ai 공개 API, FRED(금리·신용스프레드),
