@@ -1429,8 +1429,8 @@ SEED = {
     },
     "cds": {
         "label": "CoreWeave CDS 5Y (bp)",
-        "source": "Bloomberg — PDF 차트 판독",
-        "note": "검증: 최근 738.8 / 고점 977 (잠정)",
+        "source": "Bloomberg PDF 차트 판독 (일별)",
+        "note": "최근 738.8 / 고점 977 (26.08 초). 언론 보도치와 벤더 차이 있음",
         "points": [
             [
                 "2025-09-30",
@@ -2076,9 +2076,25 @@ SEED = {
     },
     "oracle_cds": {
         "label": "Oracle CDS 5Y (bp)",
-        "source": "언론 보도 (RIA·TechTimes·AI Weekly)",
-        "note": "AI 최대 차입자. 26.07.24 215bp 사상 최고 (S&P BBB- 강등). 보도 시점만 있는 이산 데이터",
+        "source": "언론 보도 (Bloomberg·Reuters·S&P GMI 인용) 19개 시점",
+        "note": "26.07.31 218bp 사상 최고 후 26.08.17 약 180bp로 축소. 벤더별 호가 차이 존재 (잠정)",
         "points": [
+            [
+                "2025-09-19",
+                43
+            ],
+            [
+                "2025-10-29",
+                73
+            ],
+            [
+                "2025-11-04",
+                87.7
+            ],
+            [
+                "2025-11-19",
+                111
+            ],
             [
                 "2025-11-20",
                 108
@@ -2088,22 +2104,62 @@ SEED = {
                 139
             ],
             [
-                "2026-01-15",
+                "2025-12-12",
+                139
+            ],
+            [
+                "2026-01-01",
                 144
             ],
             [
-                "2026-07-24",
-                215
+                "2026-01-27",
+                160
+            ],
+            [
+                "2026-03-09",
+                162
+            ],
+            [
+                "2026-03-27",
+                198.6
+            ],
+            [
+                "2026-03-30",
+                198.2
+            ],
+            [
+                "2026-04-10",
+                198
+            ],
+            [
+                "2026-07-18",
+                198
+            ],
+            [
+                "2026-07-20",
+                203
             ],
             [
                 "2026-07-28",
-                203
+                215
+            ],
+            [
+                "2026-07-31",
+                218
+            ],
+            [
+                "2026-08-11",
+                201
+            ],
+            [
+                "2026-08-17",
+                180
             ]
         ]
     },
     "hy_oas": {
         "label": "하이일드 스프레드 (%)",
-        "source": "FRED BAMLH0A0HYM2 (월말 기준)",
+        "source": "FRED BAMLH0A0HYM2",
         "note": "FRED 차단 대비 과거 시드. 자동 수집분과 병합",
         "points": [
             [
@@ -2217,9 +2273,13 @@ SEED = {
     },
     "openai_rev": {
         "label": "오픈AI 연환산 매출 run-rate ($B)",
-        "source": "Reuters·The Information·Bloomberg",
+        "source": "Reuters·The Information·Bloomberg·Epoch AI",
         "note": "연환산(run-rate) 기준. 26.02~06 약 25B 정체 후 7월 급가속. 이익 비공개(적자)",
         "points": [
+            [
+                "2024-06-30",
+                3.4
+            ],
             [
                 "2024-12-31",
                 5.5
@@ -2492,23 +2552,39 @@ FRED = {
 
 
 def _fred_one(sid, since):
-    """FRED 한 계열: fredgraph.csv → data/*.txt 순서로 시도."""
-    for url in (f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}&cosd={since}",
-                f"https://fred.stlouisfed.org/data/{sid}.txt"):
+    """FRED 한 계열. ① 공식 API(키 필요) ② fredgraph.csv ③ data/*.txt 순으로 시도.
+    키는 깃허브 Secrets(FRED_API_KEY)로 주입되며 코드에 저장하지 않는다."""
+    key = os.environ.get("FRED_API_KEY", "").strip()
+    urls = []
+    if key:
+        urls.append("https://api.stlouisfed.org/fred/series/observations"
+                    f"?series_id={sid}&api_key={key}&file_type=json"
+                    f"&observation_start={since}")
+    urls += [f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}&cosd={since}",
+             f"https://fred.stlouisfed.org/data/{sid}.txt"]
+    for url in urls:
         txt = http_get(url, retries=1, headers={"Accept-Encoding": "identity"})
         if not txt:
             continue
         series = {}
-        for line in txt.splitlines():
-            parts = line.replace(",", " ").split()
-            if len(parts) < 2 or not re.match(r"^\d{4}-\d{2}-\d{2}$", parts[0]):
-                continue
-            if parts[0] < since:
-                continue
+        if "api_key" in url:                       # JSON 응답
             try:
-                series[parts[0]] = round(float(parts[1]), 4)
-            except ValueError:
-                continue
+                for o in json.loads(txt).get("observations", []):
+                    if o.get("value") not in (".", None):
+                        series[o["date"]] = round(float(o["value"]), 4)
+            except Exception:
+                series = {}
+        else:                                      # CSV / 평문
+            for line in txt.splitlines():
+                parts = line.replace(",", " ").split()
+                if len(parts) < 2 or not re.match(r"^\d{4}-\d{2}-\d{2}$", parts[0]):
+                    continue
+                if parts[0] < since:
+                    continue
+                try:
+                    series[parts[0]] = round(float(parts[1]), 4)
+                except ValueError:
+                    continue
         if series:
             return series
     return {}
@@ -2791,6 +2867,7 @@ table.data tr.hl td{background:var(--fill);font-weight:700}
 .ana{font-size:12.5px;line-height:1.65;margin:0 0 10px}
 .ana b{color:var(--heading)}
 .note{font-size:10.5px;color:var(--faint);margin-top:8px;line-height:1.5}
+.note .key{color:var(--red);font-weight:800;font-size:11.5px}
 .thesis{background:var(--tint);border-left:5px solid var(--primary);padding:20px 24px;margin:0 0 22px}
 .thesis-title{font-weight:800;color:var(--primary);font-size:25px;margin-bottom:13px;letter-spacing:-.02em}
 .thesis ul{margin:0;padding-left:16px;list-style:disc}
@@ -2935,8 +3012,21 @@ def build_html():
     ]
 
     # ---------- 파생 계열 ----------
-    hy_map, sofr_map = dict(hy), dict(sofr)
-    fund = [(d, round(sofr_map[d] + hy_map[d], 3)) for d in sorted(set(hy_map) & set(sofr_map))]
+    # 조달비용: 미국 기준금리 + 코어위브 CDS(개별 기업 실제 신용위험).
+    # 시장 평균(하이일드 지수)이 아니라 실제 차입자의 위험을 써야 방향이 맞는다.
+    sofr_map, cds_map = dict(sofr), dict(cds)
+    def _nearest(m, d, win=7):
+        for k in range(win + 1):
+            for c in ((date.fromisoformat(d) - timedelta(days=k)).isoformat(),
+                      (date.fromisoformat(d) + timedelta(days=k)).isoformat()):
+                if c in m:
+                    return m[c]
+        return None
+    fund = []
+    for d, bp in cds:
+        base = _nearest(sofr_map, d)
+        if base is not None:
+            fund.append((d, round(base + bp / 100.0, 3)))
     pair, base_label = None, ""
     if fund and sdh:
         start = max(fund[0][0], sdh[0][0])
@@ -2976,7 +3066,7 @@ def build_html():
     ], h=250, yfmt=lambda v: "%.0fbp" % v)
     c_rev = svg_chart([
         {"label": "앤스로픽", "color": T["primary"], "width": 2.4, "markers": True, "points": ant_rev},
-        {"label": "오픈AI", "color": T["chartGray"], "width": 1.6, "markers": True, "points": oai_rev},
+        {"label": "오픈AI", "color": T["teal"], "width": 2.4, "markers": True, "points": oai_rev},
     ], h=250, yfmt=lambda v: "$%.0fB" % v)
 
     thesis = "".join("<li>%s</li>" % p for p in ANALYSIS["thesis"])
@@ -3019,7 +3109,9 @@ def build_html():
 <div class="card-sec">
 <span class="banner">③ CDS 5Y — 부도 위험 보험료 (bp) <span class="u">코어위브 · 오라클</span></span>
 """ + c_cds + """
-<div class="note">개별 기업의 부도 위험 보험료. <b>코어위브 900bp / 오라클 220bp 재돌파 시 경고</b> (오라클은 AI 최대 차입자라 시장 전체 신호)</div>
+<div class="note">개별 기업의 부도 위험 보험료.
+<span class="key">전고점 재돌파 시 경고: 코어위브 977bp(26.08 초) / 오라클 218bp(26.07.31)</span><br>
+오라클은 AI 최대 차입자라 개별이 아닌 시장 전체 신호로 읽음. 벤더별 호가 차이로 같은 날 수치가 다를 수 있음</div>
 </div>
 
 <div class="card-sec">
@@ -3029,9 +3121,11 @@ def build_html():
 </div>
 
 <div class="card-sec">
-<span class="banner">⑤ 조달비용 vs 임대가 <span class="u">""" + (base_label or "시작일") + """ = 100 기준</span></span>
+<span class="banner">⑤ 조달비용 vs 임대가 <span class="u">기준금리+코어위브CDS · """ + (base_label or "시작일") + """ = 100 기준</span></span>
 """ + c_margin + """
-<div class="note">빨강이 올리브 위로 벌어지면 <b>마진 축소 = 사이클 꺾임</b> (조달비용 = 미국 기준금리 + 하이일드 스프레드)</div>
+<div class="note"><span class="key">빨강이 올리브 위로 벌어지면 마진 축소 = 사이클 꺾임</span><br>
+조달비용 = 미국 기준금리 + 코어위브 CDS. 실제 대출은 개별 약정 스프레드(예: S+550bp)로 매겨지므로 <b>방향을 보는 대용치</b>이며,
+데이터센터 건설비·장비비는 포함되지 않음</div>
 </div>
 
 <div class="sec-head">금리 · 프론티어 랩 매출</div>
@@ -3046,7 +3140,7 @@ def build_html():
 <span class="banner">프론티어 랩 연환산 매출 ($B) <span class="u">언론 보도 기준 · 이익 비공개</span></span>
 """ + c_rev + """
 <div class="note">클라우드 가격을 떠받치는 최종 수요.<br>
-<b>연환산(run-rate) 기준</b>: 해당 시점 월매출 × 12이며 연간 실적이 아님. 앤스로픽 10월 상장 후 분기 공시 예정</div>
+<span class="key">연환산(run-rate) 기준: 해당 시점 월매출 × 12이며 연간 실적이 아님</span><br>앤스로픽 10월 상장 후 분기 공시 예정</div>
 </div>
 
 
