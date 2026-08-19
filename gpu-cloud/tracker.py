@@ -2074,37 +2074,187 @@ SEED = {
             ]
         ]
     },
-    "anthropic_rev": {
-        "label": "앤스로픽 연환산 매출 ($B)",
-        "source": "Bloomberg·TechCrunch 보도 (26.08.17)",
-        "note": "이익 비공개(적자). 26년 연말 전망 100~120B",
+    "oracle_cds": {
+        "label": "Oracle CDS 5Y (bp)",
+        "source": "언론 보도 (RIA·TechTimes·AI Weekly)",
+        "note": "AI 최대 차입자. 26.07.24 215bp 사상 최고 (S&P BBB- 강등). 보도 시점만 있는 이산 데이터",
         "points": [
             [
-                "2025-12-31",
-                9
+                "2025-11-20",
+                108
             ],
             [
-                "2026-05-31",
-                47
+                "2025-12-11",
+                139
+            ],
+            [
+                "2026-01-15",
+                144
+            ],
+            [
+                "2026-07-24",
+                215
+            ],
+            [
+                "2026-07-28",
+                203
+            ]
+        ]
+    },
+    "hy_oas": {
+        "label": "하이일드 스프레드 (%)",
+        "source": "FRED BAMLH0A0HYM2 (월말 기준)",
+        "note": "FRED 차단 대비 과거 시드. 자동 수집분과 병합",
+        "points": [
+            [
+                "2025-08-29",
+                2.82
+            ],
+            [
+                "2025-09-30",
+                2.8
+            ],
+            [
+                "2025-10-31",
+                2.94
+            ],
+            [
+                "2025-11-28",
+                2.95
+            ],
+            [
+                "2025-12-31",
+                2.81
+            ],
+            [
+                "2026-01-30",
+                2.8
+            ],
+            [
+                "2026-02-27",
+                3.1
+            ],
+            [
+                "2026-03-31",
+                3.28
+            ],
+            [
+                "2026-04-30",
+                2.83
+            ],
+            [
+                "2026-05-29",
+                2.72
+            ],
+            [
+                "2026-06-30",
+                2.75
             ],
             [
                 "2026-07-31",
-                65
+                2.85
+            ],
+            [
+                "2026-08-17",
+                2.7
+            ]
+        ]
+    },
+    "anthropic_rev": {
+        "label": "앤스로픽 연환산 매출 run-rate ($B)",
+        "source": "CNBC·Reuters·TechCrunch·Series G/H 공식 발표",
+        "note": "연환산(run-rate) = 해당 시점 월매출×12. 연간 실적 아님. 이익 비공개(적자)",
+        "points": [
+            [
+                "2024-12-31",
+                1.0
+            ],
+            [
+                "2025-03-11",
+                1.4
+            ],
+            [
+                "2025-05-30",
+                3.0
+            ],
+            [
+                "2025-07-15",
+                4.0
+            ],
+            [
+                "2025-08-31",
+                5.0
+            ],
+            [
+                "2025-10-15",
+                7.0
+            ],
+            [
+                "2025-12-31",
+                9.0
+            ],
+            [
+                "2026-02-12",
+                14.0
+            ],
+            [
+                "2026-03-04",
+                19.0
+            ],
+            [
+                "2026-04-06",
+                30.0
+            ],
+            [
+                "2026-05-07",
+                47.0
+            ],
+            [
+                "2026-07-31",
+                65.0
             ]
         ]
     },
     "openai_rev": {
-        "label": "오픈AI 연환산 매출 ($B)",
-        "source": "Bloomberg 보도 (26.08.13)",
-        "note": "이익 비공개(적자)",
+        "label": "오픈AI 연환산 매출 run-rate ($B)",
+        "source": "Reuters·The Information·Bloomberg",
+        "note": "연환산(run-rate) 기준. 26.02~06 약 25B 정체 후 7월 급가속. 이익 비공개(적자)",
         "points": [
             [
+                "2024-12-31",
+                5.5
+            ],
+            [
+                "2025-06-30",
+                10.0
+            ],
+            [
+                "2025-07-30",
+                12.0
+            ],
+            [
+                "2025-08-31",
+                13.0
+            ],
+            [
                 "2025-12-31",
-                20
+                21.4
+            ],
+            [
+                "2026-02-28",
+                25.0
+            ],
+            [
+                "2026-03-31",
+                25.0
+            ],
+            [
+                "2026-06-11",
+                25.0
             ],
             [
                 "2026-08-13",
-                40
+                40.0
             ]
         ]
     }
@@ -2333,7 +2483,7 @@ def collect_getdeploying():
 FRED = {
     "HY_OAS":  ("BAMLH0A0HYM2", "하이일드 스프레드 (HY OAS)"),
     "IG_OAS":  ("BAMLC0A0CM",   "투자등급 스프레드 (IG OAS)"),
-    "SOFR":    ("SOFR",         "SOFR (미국 기준금리)"),
+    "SOFR":    ("SOFR",         "미국 기준금리(SOFR)"),
     "UST2Y":   ("DGS2",         "국채 2년"),
     "UST5Y":   ("DGS5",         "국채 5년"),
     "UST10Y":  ("DGS10",        "국채 10년"),
@@ -2625,9 +2775,9 @@ border-radius:8px;padding:13px 15px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .kpi-num{font-size:21px;font-weight:800;color:var(--heading);margin:1px 0}
 .kpi-unit{font-size:11px;color:var(--faint);font-weight:600;margin-left:2px}
 .kpi-sub{font-size:9px;color:var(--faint)}
-.banner{background:var(--primary);color:#fff;font-size:13px;font-weight:700;
-padding:6px 12px;margin:0 0 12px;display:block}
-.banner .u{font-weight:400;font-size:10px;opacity:.82;float:right;padding-top:2px}
+.banner{background:var(--primary);color:#fff;font-size:17px;font-weight:800;
+padding:9px 14px;margin:0 0 14px;display:block;letter-spacing:-.01em}
+.banner .u{font-weight:400;font-size:11px;opacity:.85;float:right;padding-top:6px}
 .card-sec{background:#fff;border:1px solid var(--hair);border-radius:8px;padding:16px;
 margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .cols-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
@@ -2641,10 +2791,10 @@ table.data tr.hl td{background:var(--fill);font-weight:700}
 .ana{font-size:12.5px;line-height:1.65;margin:0 0 10px}
 .ana b{color:var(--heading)}
 .note{font-size:10.5px;color:var(--faint);margin-top:8px;line-height:1.5}
-.thesis{background:var(--tint);border-left:4px solid var(--primary);padding:14px 20px;margin:0 0 18px}
-.thesis-title{font-weight:800;color:var(--primary);font-size:15.5px;margin-bottom:9px}
+.thesis{background:var(--tint);border-left:5px solid var(--primary);padding:20px 24px;margin:0 0 22px}
+.thesis-title{font-weight:800;color:var(--primary);font-size:25px;margin-bottom:13px;letter-spacing:-.02em}
 .thesis ul{margin:0;padding-left:16px;list-style:disc}
-.thesis li{color:var(--heading);font-size:13px;line-height:1.62;margin-bottom:6px}
+.thesis li{color:var(--heading);font-size:15px;line-height:1.7;margin-bottom:9px}
 .thesis li:last-child{margin-bottom:0}
 .thesis li b{color:var(--primary)}
 /* 접이식 */
@@ -2662,6 +2812,8 @@ dl.guide dd{margin:2px 0 0 0}
 .tag{display:inline-block;font-size:10px;font-weight:800;padding:1px 7px;border-radius:3px;
 color:#fff;margin-right:5px}
 .tag.warn{background:var(--red)}.tag.ok{background:var(--teal)}.tag.mid{background:var(--gold)}
+.sec-head{font-size:21px;font-weight:800;color:var(--primary);margin:30px 0 14px;
+padding-bottom:8px;border-bottom:2px solid var(--primary)}
 footer{font-size:10px;color:var(--faint);line-height:1.6;border-top:1px solid var(--hair);padding-top:12px}
 """
 
@@ -2705,13 +2857,16 @@ def build_html():
     sdh = seed_series("sdh100rt")
     bw_seed = seed_series("blackwell")
     cds = seed_series("cds")
+    ora_cds = seed_series("oracle_cds")
     ant_rev = seed_series("anthropic_rev")
     oai_rev = seed_series("openai_rev")
     gb300 = daily_series(cache, gd("GB300", ("neocloud", "median")))
     b200 = daily_series(cache, gd("B200", ("neocloud", "median")))
     b300 = daily_series(cache, gd("B300", ("neocloud", "median")))
 
-    hy = hist_series(cache, "HY_OAS")
+    # 하이일드 스프레드: FRED 자동수집 + 시드 과거치 병합 (FRED 차단 시에도 1년치 유지)
+    hy = sorted({**{d: v for d, v in seed_series("hy_oas")},
+                 **dict(hist_series(cache, "HY_OAS"))}.items())
     ig = hist_series(cache, "IG_OAS")
     sofr = hist_series(cache, "SOFR")
     ust = {k: hist_series(cache, k) for k in ("UST2Y", "UST5Y", "UST10Y", "UST30Y")}
@@ -2779,33 +2934,6 @@ def build_html():
         kpi("코어위브 CDS", v_cds, "Bloomberg, " + (fmt_kr(d_cds) if d_cds else "—"), "bp", None, 0),
     ]
 
-    # ---------- 3계층 표 ----------
-    rows, last_gd = [], None
-    for day in sorted(cache.get("daily", {}), reverse=True):
-        if "getdeploying" in cache["daily"][day]:
-            last_gd = (day, cache["daily"][day]["getdeploying"])
-            break
-    TIERS = [("neocloud", "네오클라우드", "★ 담보 기준 · 계약·SLA 있는 기업용 클러스터"),
-             ("hyperscaler", "하이퍼스케일러", "AWS·구글·애저 정가"),
-             ("marketplace", "장터", "개인 유휴 GPU · 계약 없음 → 먼저 빠짐")]
-    if last_gd:
-        for tier, name, desc in TIERS:
-            cells = []
-            for model in ("H100", "B200", "GB300"):
-                t = (last_gd[1].get("models", {}).get(model, {}) or {}).get(tier) or {}
-                cells.append('<td class="num">%s</td>' %
-                             ("$%.2f" % t["median"] if t.get("median") else "—"))
-            rows.append('<tr%s><td><b>%s</b></td>%s<td style="color:#6E6E6E">%s</td></tr>'
-                        % (' class="hl"' if tier == "neocloud" else "", name, "".join(cells), desc))
-        if v_sdh:
-            rows.append('<tr><td>SDH100RT (Bloomberg)</td><td class="num">$%.2f</td>'
-                        '<td class="num">—</td><td class="num">—</td>'
-                        '<td style="color:#6E6E6E">블룸버그 정식지수</td></tr>' % v_sdh)
-    tier_table = ('<table class="data"><thead><tr><th>계층</th><th class="num">H100</th>'
-                  '<th class="num">B200</th><th class="num">GB300</th><th>성격</th></tr></thead>'
-                  '<tbody>%s</tbody></table>' % "".join(rows)) if rows else \
-        '<div style="color:#9B9B9B;font-size:12px">첫 자동 수집 후 표시됩니다</div>'
-
     # ---------- 파생 계열 ----------
     hy_map, sofr_map = dict(hy), dict(sofr)
     fund = [(d, round(sofr_map[d] + hy_map[d], 3)) for d in sorted(set(hy_map) & set(sofr_map))]
@@ -2842,8 +2970,10 @@ def build_html():
         {"label": "B300", "color": T["chartGray"], "width": 1.3, "points": b300},
         {"label": "B200", "color": T["peer"], "width": 1.3, "points": b200},
     ], h=260)
-    c_cds = svg_chart([{"label": "CDS 5Y", "color": T["red"], "width": 2.4, "points": cds}],
-                      h=250, yfmt=lambda v: "%.0fbp" % v)
+    c_cds = svg_chart([
+        {"label": "코어위브", "color": T["red"], "width": 2.4, "points": cds},
+        {"label": "오라클", "color": T["gold"], "width": 2.0, "markers": True, "points": ora_cds},
+    ], h=250, yfmt=lambda v: "%.0fbp" % v)
     c_rev = svg_chart([
         {"label": "앤스로픽", "color": T["primary"], "width": 2.4, "markers": True, "points": ant_rev},
         {"label": "오픈AI", "color": T["chartGray"], "width": 1.6, "markers": True, "points": oai_rev},
@@ -2876,20 +3006,20 @@ def build_html():
 <div class="card-sec">
 <span class="banner">① H100 임대가 ($/GPU-시간) <span class="u">올리브 = 네오클라우드(담보 기준) · 금색 = Bloomberg</span></span>
 """ + c_h100 + """
-<div class="note">담보로 잡히는 건 <b>네오클라우드 가격</b>.<br>정식 지수(SDH100RT)는 블룸버그 유료 자료라 <b>getdeploying 네오클라우드 중위가로 대체 추적</b>: 금색 선은 PDF 판독분(수동)임.</div>
-<div style="margin-top:12px">""" + tier_table + """</div>
+<div class="note">정식 지수(SDH100RT)는 블룸버그 유료 자료라 <b>getdeploying 네오클라우드 중위가로 26.08.19부터 대체 추적</b></div>
+
 </div>
 
 <div class="card-sec">
 <span class="banner">② 블랙웰 · GB300 임대가 ($/GPU-시간) <span class="u">차세대 담보</span></span>
 """ + c_next + """
-<div class="note">신규 공급이 쏟아지는데도 <b>$5 위를 지키는지</b>가 관건.<br>블랙웰 지수도 블룸버그 유료 자료라 <b>GB300 중위가(getdeploying)로 대체 추적</b>: 금색 선은 PDF 판독분(수동)임.</div>
+<div class="note">블랙웰 지수도 블룸버그 유료 자료라 <b>GB300 중위가(getdeploying)로 26.08.19부터 대체 추적</b></div>
 </div>
 
 <div class="card-sec">
-<span class="banner">③ 코어위브 CDS 5Y (bp) <span class="u">부도 위험 보험료</span></span>
+<span class="banner">③ CDS 5Y — 부도 위험 보험료 (bp) <span class="u">코어위브 · 오라클</span></span>
 """ + c_cds + """
-<div class="note">개별 기업의 신용 온도계. <b>900bp 재돌파 시 경고.</b></div>
+<div class="note">개별 기업의 부도 위험 보험료. <b>코어위브 900bp / 오라클 220bp 재돌파 시 경고</b> (오라클은 AI 최대 차입자라 시장 전체 신호)</div>
 </div>
 
 <div class="card-sec">
@@ -2901,27 +3031,30 @@ def build_html():
 <div class="card-sec">
 <span class="banner">⑤ 조달비용 vs 임대가 <span class="u">""" + (base_label or "시작일") + """ = 100 기준</span></span>
 """ + c_margin + """
-<div class="note">빨강이 올리브 위로 벌어지면 <b>마진 축소 = 사이클 꺾임</b>. (조달비용 = SOFR + 하이일드 스프레드)</div>
+<div class="note">빨강이 올리브 위로 벌어지면 <b>마진 축소 = 사이클 꺾임</b> (조달비용 = 미국 기준금리 + 하이일드 스프레드)</div>
 </div>
 
-<details class="more"><summary>금리 · 프론티어 랩 매출<span>국채 곡선, 앤스로픽·오픈AI</span></summary>
-<div class="more-body">
+<div class="sec-head">금리 · 프론티어 랩 매출</div>
+
+<div class="card-sec">
 <span class="banner">미국 국채 금리 (%) <span class="u">10년물이 주인공</span></span>
 """ + c_ust + """
-<div class="note"><b>10년물 = 이번 사이클의 대표 축</b> (장기 조달비용·밸류에이션 할인율).</div>
-<div style="margin-top:18px">
+<div class="note"><b>10년물 = 이번 사이클의 대표 축</b> (장기 조달비용·밸류에이션 할인율)</div>
+</div>
+
+<div class="card-sec">
 <span class="banner">프론티어 랩 연환산 매출 ($B) <span class="u">언론 보도 기준 · 이익 비공개</span></span>
 """ + c_rev + """
-<div class="note">클라우드 가격을 떠받치는 최종 수요. 비정기 공개(보도 시 수동 기록) · 앤스로픽 10월 상장 후 분기 공시 예정.</div>
+<div class="note">클라우드 가격을 떠받치는 최종 수요.<br>
+<b>연환산(run-rate) 기준</b>: 해당 시점 월매출 × 12이며 연간 실적이 아님. 앤스로픽 10월 상장 후 분기 공시 예정</div>
 </div>
-</div></details>
 
 
 <footer>
-Source: getdeploying.com(제공업체 가격 집계), Vast.ai 공개 API, FRED(금리·신용스프레드),
+Source: getdeploying.com(제공업체 가격 집계), FRED(금리·신용스프레드),
 Bloomberg SDH100RT·블랙웰지수·CRWV CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도).<br>
 Note: 블룸버그 3개 계열은 차트 판독값으로 <b>오차 약 ±1%의 잠정치</b> (평균·고점·저점을 원 차트와 대조 검증).
-계층 분류는 제공업체명 기준 자동 판정.<br>
+오라클 CDS·프론티어 랩 매출은 보도 시점만 있는 이산 데이터라 점 사이는 직선 연결.<br>
 정보 제공 목적이며 투자 권유가 아닙니다. Generated automatically via GitHub Actions.
 </footer>
 </div></body></html>"""
