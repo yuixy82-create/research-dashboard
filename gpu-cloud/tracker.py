@@ -2666,6 +2666,137 @@ def collect_basket():
 
 
 # ============================================================
+# 3-A2. 수집 — Silicon Data 공식 지수 (블룸버그 SDH100RT 등, 무료 공개 페이지)
+#   업체 정가(호가)와 달리 관측 기반 지수다. 네오클라우드 95%·하이퍼스케일러
+#   100%를 커버하고 사양·계약조건·지역을 표준화한 뒤 이상치를 제거한다.
+#   지금까지 PDF로 수동 판독하던 바로 그 지수를 매일 자동으로 받는다.
+# ============================================================
+SD_URL = "https://www.silicondata.com/products/silicon-index"
+SD_MODELS = ["H100", "H200", "A100", "B200", "MI300X"]
+_MONS = {m: i + 1 for i, m in enumerate(
+    ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])}
+
+
+def _asof(seg):
+    m = re.search(r"As of\s*\|?\s*([A-Z][a-z]{2})\s*(\d{1,2}),\s*(\d{4})", seg)
+    if not m:
+        return None
+    try:
+        return date(int(m.group(3)), _MONS[m.group(1)], int(m.group(2))).isoformat()
+    except Exception:
+        return None
+
+
+def collect_silicondata():
+    """{'SD_H100_NEO': {'2026-08-19': 2.68}, ...} 형태로 반환."""
+    page = http_get(SD_URL)
+    if not page:
+        print("  [warn] Silicon Data: 페이지 수집 실패")
+        return {}
+    text = html_to_text(page)
+    out = {}
+    for model in SD_MODELS:
+        m = re.search(model + r"\s*\|?\s*Rental Price Index", text)
+        if not m:
+            continue
+        seg = text[m.end(): m.end() + 500]
+        nxt = re.search(r"Rental Price Index", seg)
+        if nxt:
+            seg = seg[:nxt.start()]
+        d = _asof(seg)
+        if not d:
+            continue
+        pairs = [
+            ("NEO", r"Neo-Cloud[^$]{0,40}\$\s*([\d.]+)"),
+            ("HYP", r"Hyperscaler[^$]{0,40}\$\s*([\d.]+)"),
+            ("ALL", r"Rental price[^$]{0,40}\$\s*([\d.]+)"),
+        ]
+        for suffix, pat in pairs:
+            g = re.search(pat, seg, re.I)
+            if not g:
+                continue
+            try:
+                v = round(float(g.group(1)), 4)
+            except ValueError:
+                continue
+            if 0.05 <= v <= 100:
+                out.setdefault(f"SD_{model}_{suffix}", {})[d] = v
+    for k in sorted(out):
+        d = sorted(out[k])[-1]
+        print(f"  {k:16s} {d}  ${out[k][d]}")
+    if not out:
+        print("  [warn] Silicon Data: 지수 파싱 실패")
+    return out
+
+
+# ============================================================
+# 3-A3. 수집 — SemiAnalysis 1년 계약가 범위 (무료 공개)
+#   공개된 자료 중 '체결가'에 가장 가까운 시계열.
+#   정가는 몇 달씩 안 움직여도 계약가는 움직인다 — 그 괴리를 보기 위한 축.
+# ============================================================
+SA_URL = "https://gpu-index.semianalysis.com/"
+SA_PERIOD = re.compile(
+    r"((?:[1-4]Q|1H|2H)\s*\d{4}"
+    r"|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s*\d{4})")
+SA_RANGE = re.compile(r"\$\s*([\d.]+)\s*[-–]\s*([\d.]+)")
+_QEND = {"1Q": (3, 31), "2Q": (6, 30), "3Q": (9, 30), "4Q": (12, 31),
+         "1H": (6, 30), "2H": (12, 31)}
+_MEND = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+
+def _sa_date(label):
+    lab = re.sub(r"\s+", " ", label).strip()
+    head, year = lab.split(" ")[0], int(lab.split(" ")[-1])
+    if head in _QEND:
+        mm, dd = _QEND[head]
+    elif head in _MONS:
+        mm = _MONS[head]
+        dd = 29 if (mm == 2 and year % 4 == 0) else _MEND[mm - 1]
+    else:
+        return None
+    return date(year, mm, dd).isoformat()
+
+
+def collect_semianalysis():
+    """{'SA_CT_LO': {날짜: 값}, 'SA_CT_HI': ..., 'SA_CT_MID': ...}"""
+    page = http_get(SA_URL)
+    if not page:
+        print("  [warn] SemiAnalysis: 페이지 수집 실패")
+        return {}
+    text = html_to_text(page)
+    a = text.find("Detailed Pricing History")
+    if a < 0:
+        print("  [warn] SemiAnalysis: 계약가 표를 못 찾음")
+        return {}
+    t = text[a:]
+    marks = list(SA_PERIOD.finditer(t))
+    lo_s, hi_s, mid_s = {}, {}, {}
+    for i, m in enumerate(marks):
+        stop = marks[i + 1].start() if i + 1 < len(marks) else min(len(t), m.end() + 250)
+        seg = t[m.end():stop]
+        rngs = SA_RANGE.findall(seg)
+        if not rngs:
+            continue
+        try:
+            lo, hi = float(rngs[-1][0]), float(rngs[-1][1])   # 마지막 범위 = 1년 계약가
+        except ValueError:
+            continue
+        d = _sa_date(m.group(1))
+        if not d or not (0.3 <= lo <= hi <= 30):
+            continue
+        lo_s[d], hi_s[d] = round(lo, 3), round(hi, 3)
+        mid_s[d] = round((lo + hi) / 2, 3)
+    if not mid_s:
+        print("  [warn] SemiAnalysis: 계약가 파싱 실패")
+        return {}
+    last = sorted(mid_s)[-1]
+    print(f"  1년 계약가 {last}  ${lo_s[last]}~${hi_s[last]} (중간 ${mid_s[last]})"
+          f"  총 {len(mid_s)}개 구간")
+    return {"SA_CT_LO": lo_s, "SA_CT_HI": hi_s, "SA_CT_MID": mid_s}
+
+
+# ============================================================
 # 3-B. 수집 — FRED (미국 세인트루이스 연준). 인증키 불필요, 과거치 포함
 # ============================================================
 FRED = {
@@ -3076,9 +3207,14 @@ def build_html():
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M KST")
     n_days = len(cache.get("daily", {}))
 
-    h_neo = daily_series(cache, bk("H100"))
-    sdh = seed_series("sdh100rt")
-    bw_seed = seed_series("blackwell")
+    h_list = daily_series(cache, bk("H100"))            # 업체 공시 정가(호가)
+    # 공식 지수: PDF로 읽어둔 과거치 + 오늘부터의 자동 수집을 이어붙인다 (같은 지수)
+    sdh = sorted({**dict(seed_series("sdh100rt")),
+                  **dict(hist_series(cache, "SD_H100_NEO"))}.items())
+    sd_hyp = hist_series(cache, "SD_H100_HYP")
+    sa_mid = hist_series(cache, "SA_CT_MID")             # 1년 계약가 중간값
+    bw_seed = sorted({**dict(seed_series("blackwell")),
+                      **dict(hist_series(cache, "SD_B200_ALL"))}.items())
     cds = seed_series("cds")
     ora_cds = seed_series("oracle_cds")
     cw_mgn = seed_series("crwv_margin")
@@ -3108,7 +3244,7 @@ def build_html():
     # 자동 수집이 30일 이상 쌓이면 자동 계열로 판정 (수동 계열은 갱신이 멈춰 신호가 얼어붙음)
     def span_days(pts):
         return (d2o(pts[-1][0]) - d2o(pts[0][0])) if len(pts) > 1 else 0
-    price_ref = h_neo if span_days(h_neo) >= 30 else sdh
+    price_ref = sdh
     ref_date = price_ref[-1][0] if price_ref else None
     _, p_pct = change_over(price_ref, 30)
     hy_abs, _ = change_over(hy, 30)
@@ -3150,18 +3286,20 @@ def build_html():
                + sig_card("종합 판정", vc, vs, vd))
 
     # ---------- KPI ----------
-    v_neo, d_neo = last_of(h_neo)
+    v_neo, d_neo = last_of(h_list)
     v_sdh, d_sdh = last_of(sdh)
+    v_ct, d_ct = last_of(sa_mid)
     v_gb3, d_gb3 = last_of(gb300)
     v_hy, d_hy = last_of(hy)
     v_sofr, _ = last_of(sofr)
     v_cds, d_cds = last_of(cds)
     v_10y, _ = last_of(ust["UST10Y"])
     v_ig_yld, _ = last_of(ig_yld)
-    dl_neo = (h_neo[-1][1] - h_neo[-2][1]) if len(h_neo) > 1 else None
+    dl_sdh = (sdh[-1][1] - sdh[-2][1]) if len(sdh) > 1 else None
     kpis = [
-        kpi("H100 담보 바스켓", v_neo, "네오클라우드 공시가 중위, " + (fmt_kr(d_neo) if d_neo else "대기"), "$/hr", dl_neo),
-        kpi("SDH100RT 정식지수", v_sdh, "Bloomberg, " + (fmt_kr(d_sdh) if d_sdh else "—"), "$/hr"),
+        kpi("H100 지수 SDH100RT", v_sdh, "Silicon Data 자동수집, " + (fmt_kr(d_sdh) if d_sdh else "—"), "$/hr", dl_sdh),
+        kpi("H100 1년 계약가", v_ct, "SemiAnalysis 중간값, " + (fmt_kr(d_ct) if d_ct else "대기"), "$/hr"),
+        kpi("H100 업체 정가", v_neo, "6개사 공시 중위, " + (fmt_kr(d_neo) if d_neo else "대기"), "$/hr"),
         kpi("GB300", v_gb3, "베르다·오라클 공시, " + (fmt_kr(d_gb3) if d_gb3 else "대기"), "$/hr"),
         kpi("하이일드 스프레드", v_hy, "FRED, " + (fmt_kr(d_hy) if d_hy else "대기"), "%"),
         kpi("회사채 금리(투자등급)", v_ig_yld, "FRED — 하이퍼스케일러 조달선", "%"),
@@ -3175,9 +3313,10 @@ def build_html():
 
     # ---------- 차트 ----------
     c_h100 = svg_chart([
-        {"label": "네오클라우드", "color": T["primary"], "width": 2.8, "points": h_neo},
-        {"label": "SDH100RT", "color": T["gold"], "width": 2.0, "points": sdh},
-    ], h=280)
+        {"label": "SDH100RT 지수", "color": T["primary"], "width": 2.8, "points": sdh},
+        {"label": "1년 계약가", "color": T["red"], "width": 2.2, "markers": True, "points": sa_mid},
+        {"label": "업체 정가", "color": T["chartGray"], "width": 1.6, "points": h_list},
+    ], h=290)
     c_spread = svg_chart([
         {"label": "하이일드", "color": T["red"], "width": 2.4, "points": hy},
         {"label": "투자등급", "color": T["chartGray"], "width": 1.3, "points": ig},
@@ -3194,9 +3333,9 @@ def build_html():
         {"label": "30년", "color": T["chartGray"], "width": 1.2, "points": ust["UST30Y"]},
     ], h=230, yfmt=lambda v: "%.2f%%" % v)
     c_next = svg_chart([
-        {"label": "GB300", "color": T["primary"], "width": 2.6, "points": gb300},
-        {"label": "B200 바스켓", "color": T["teal"], "width": 2.0, "points": b200v},
-        {"label": "블랙웰 지수", "color": T["gold"], "width": 1.9, "points": bw_seed},
+        {"label": "SDB200RT 지수", "color": T["primary"], "width": 2.6, "points": bw_seed},
+        {"label": "GB300 정가", "color": T["teal"], "width": 2.0, "points": gb300},
+        {"label": "B200 정가", "color": T["chartGray"], "width": 1.5, "points": b200v},
     ], h=260)
     c_cds = svg_chart([
         {"label": "코어위브", "color": T["red"], "width": 2.4, "points": cds},
@@ -3236,12 +3375,12 @@ def build_html():
 <div class="kpi-row">""" + "".join(kpis) + """</div>
 
 <div class="card-sec">
-<span class="banner">① H100 임대가 ($/GPU-시간) <span class="u">올리브 = 담보 바스켓 · 금색 = Bloomberg</span></span>
+<span class="banner">① H100 임대가 ($/GPU-시간) <span class="u">올리브 = 공식지수 · 빨강 = 계약가 · 회색 = 정가</span></span>
 """ + c_h100 + """
 <div class="note"><span class="key">H100 = 이미 나간 대출의 담보. 재계약가가 무너지면 기존 담보부터 깨지므로 가장 중요한 축임</span><br>
-담보 바스켓 = <b>코어위브·네비우스·크루소·람다·투게더·베르다 6곳의 공식 공시가 중위값</b>(26.08.20부터). 블룸버그 SDH100RT는 유료라 대체 추적하는 것이고,
-<b>산정 방식이 달라 레벨은 다름 — 방향을 봄</b><br>
-공시가는 온디맨드 정가임. 실제 매출은 대부분 take-or-pay 장기계약이고 계약가는 상승 중 — 코어위브 26.07 전 SKU +25%, 네비우스 구세대 +30% QoQ</div>
+<b>SDH100RT</b> = Silicon Data 공식 지수(네오클라우드 95%·하이퍼스케일러 100% 관측, 사양·계약조건 표준화). 블룸버그 티커와 동일한 값을 무료 페이지에서 매일 자동 수집<br>
+<span class="key">회색(업체 정가)은 호가일 뿐임 — 코어위브는 26.07 전 SKU 25% 인상을 발표했으나 공식 페이지 가격은 25.09부터 안 움직임</span><br>
+빨강(1년 계약가)이 실제 체결에 가장 가까움. 26.10.05 CME에 이 지수 선물이 상장되면 거래소 정산가로 대체 예정</div>
 
 </div>
 
@@ -3250,7 +3389,7 @@ def build_html():
 """ + c_next + """
 <div class="note">최신 세대 = <b>신규 수요 온도계</b> / H100 = <b>기존 담보</b>. 역할이 달라 둘 다 봐야 함<br>
 <b>지금부터 나가는 대출의 담보는 GB300·루빈이라, 앞으로의 무게중심은 이쪽임</b><br>
-<span class="key">GB300 온디맨드 정가를 공시하는 곳은 베르다·오라클 둘뿐 — 나머지는 전부 "문의 요망"이라 표본이 얇음</span></div>
+올리브 = SDB200RT 공식 지수(자동수집). <span class="key">GB300 정가를 공시하는 곳은 베르다·오라클 둘뿐이라 표본이 얇음</span></div>
 </div>
 
 <div class="card-sec">
@@ -3297,9 +3436,10 @@ def build_html():
 
 
 <footer>
-Source: 코어위브·네비우스·크루소·람다·투게더·베르다·하이퍼스택·런팟 공식 가격 페이지 + 오라클 OCI 공개 가격 API(직접 수집), FRED(금리·신용스프레드),
-Bloomberg SDH100RT·블랙웰지수·CRWV CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도).<br>
-Note: 블룸버그 3개 계열은 차트 판독값으로 <b>오차 약 ±1%의 잠정치</b> (평균·고점·저점을 원 차트와 대조 검증).
+Source: Silicon Data 공식 지수(SDH100RT·SDB200RT 등, 무료 공개 페이지 자동수집), SemiAnalysis 1년 계약가 범위(자동수집),
+코어위브·네비우스·크루소·람다·투게더·베르다 등 공식 가격 페이지 + 오라클 OCI 공개 가격 API(자동수집), FRED(금리·신용스프레드),
+CRWV·ORCL CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도), 코어위브 분기 실적(SEC 공시).<br>
+Note: 지수의 26.08.19 이전 구간은 PDF 차트 판독값(<b>오차 약 ±1%</b>)이고 이후는 자동수집값이라 이어붙인 계열임.
 오라클 CDS·프론티어 랩 매출은 보도 시점만 있는 이산 데이터라 점 사이는 직선 연결.<br>
 정보 제공 목적이며 투자 권유가 아닙니다. Generated automatically via GitHub Actions.
 </footer>
@@ -3322,7 +3462,7 @@ def main():
     print("== %s 수집 시작 ==" % day)
 
     snap = {}
-    print("[1/2] 담보 바스켓 (업체 공식 가격 페이지 직접 수집)")
+    print("[1/4] 업체 정가 바스켓 (업체 공식 가격 페이지 직접 수집)")
     b = collect_basket()
     if b.get("providers"):
         snap["basket"] = b
@@ -3330,7 +3470,15 @@ def main():
     if snap:
         cache["daily"][day] = snap
 
-    print("[2/2] FRED (금리·신용스프레드)")
+    print("[2/4] Silicon Data 공식 지수 (SDH100RT 등)")
+    for k, v in collect_silicondata().items():
+        cache["series"].setdefault(k, {}).update(v)
+
+    print("[3/4] SemiAnalysis 1년 계약가 범위")
+    for k, v in collect_semianalysis().items():
+        cache["series"].setdefault(k, {}).update(v)
+
+    print("[4/4] FRED (금리·신용스프레드)")
     for k, s in collect_fred(since).items():
         cache["series"].setdefault(k, {}).update(s)
 
