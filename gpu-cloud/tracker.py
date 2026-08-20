@@ -2522,18 +2522,22 @@ NEXT_RE = re.compile(
     r"|MI355|GH200|Storage|CPU-only|Serverless", re.I)
 PRICE_RE = re.compile(r"\$\s*([0-9][0-9,]*(?:\.[0-9]+)?)")
 
-# (키, 표시명, URL, 계층, 모델별 인스턴스당 GPU 수)
-#   코어위브만 인스턴스 단위로 표기해 GPU 수로 나눠야 한다
+# (키, 표시명, URL, 계층, 모델별 인스턴스당 GPU 수, 온디맨드 표 시작 문구)
+#   코어위브만 인스턴스 단위로 표기해 GPU 수로 나눈다.
+#   람다·투게더는 한 페이지에 클러스터 계약표가 먼저 나와서, 온디맨드 표부터
+#   읽도록 시작 지점을 지정한다. 그 문구가 사라지면 값을 내지 않고 넘어간다.
 BASKET = [
     ("coreweave",  "코어위브",   "https://www.coreweave.com/pricing",        "neocloud",
-     {"H100": 8, "B200": 8, "B300": 8, "GB200": 4, "GB300": 4}),
-    ("nebius",     "네비우스",   "https://nebius.com/prices",                "neocloud", {}),
-    ("crusoe",     "크루소",     "https://www.crusoe.ai/cloud/pricing",      "neocloud", {}),
-    ("lambda",     "람다",       "https://lambda.ai/pricing",                "neocloud", {}),
-    ("together",   "투게더",     "https://www.together.ai/pricing",          "neocloud", {}),
-    ("verda",      "베르다",     "https://verda.com/pricing",                "neocloud", {}),
-    ("hyperstack", "하이퍼스택", "https://www.hyperstack.cloud/gpu-pricing", "retail",   {}),
-    ("runpod",     "런팟",       "https://www.runpod.io/pricing",            "retail",   {}),
+     {"H100": 8, "B200": 8, "B300": 8, "GB200": 4, "GB300": 4}, None),
+    ("nebius",     "네비우스",   "https://nebius.com/prices",                "neocloud", {}, None),
+    ("crusoe",     "크루소",     "https://www.crusoe.ai/cloud/pricing",      "neocloud", {}, None),
+    ("lambda",     "람다",       "https://lambda.ai/pricing",                "neocloud", {},
+     r"Instances\s+pricing"),
+    ("together",   "투게더",     "https://www.together.ai/pricing",          "neocloud", {},
+     r"On-demand hourly rates and reserved capacity"),
+    ("verda",      "베르다",     "https://verda.com/pricing",                "neocloud", {}, None),
+    ("hyperstack", "하이퍼스택", "https://www.hyperstack.cloud/gpu-pricing", "retail",   {}, None),
+    ("runpod",     "런팟",       "https://www.runpod.io/pricing",            "retail",   {}, None),
 ]
 
 ORACLE_API = ("https://apexapps.oracle.com/pls/apex/cetools/api/v1/"
@@ -2613,12 +2617,18 @@ def collect_oracle():
 def collect_basket():
     """바스켓 전체 수집 → 업체별 원값 + 네오클라우드 중위가."""
     res = {"providers": {}, "median": {}, "n": {}}
-    for key, name, url, tier, divs in BASKET:
+    for key, name, url, tier, divs, anchor in BASKET:
         page = http_get(url)
         if not page:
             print(f"  [warn] {name}: 페이지 수집 실패 ({url})")
             continue
         text = html_to_text(page)
+        if anchor:
+            a = re.search(anchor, text, re.I)
+            if not a:
+                print(f"  [warn] {name}: 온디맨드 표를 못 찾음 — 이번 회차 건너뜀")
+                continue
+            text = text[a.end():]
         got = {}
         for model in MODEL_PAT:
             v = _extract(text, model, divs.get(model, 1))
