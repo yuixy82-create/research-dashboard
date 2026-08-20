@@ -2495,140 +2495,164 @@ def save_json(path, obj):
 
 
 # ============================================================
-# 3-A. 수집 — getdeploying.com (클라우드 제공업체 가격 집계)
-#      ★ 제공업체를 3계층으로 나눠 각각 중위가를 낸다
-#        하이퍼스케일러 / 네오클라우드 / 장터
+# 3-A. 수집 — 담보 바스켓 (각 업체 공식 가격 페이지를 직접 읽는다)
+#   getdeploying은 53곳 중 서버가 20줄만 내려줘 코어위브·네비우스가 아예 빠졌고,
+#   소형 업체의 중복 행 개수가 매번 달라져 중위가가 하루에도 ±20% 튀었다.
+#   → 담보로 잡히는 네오클라우드의 공시가를 원천에서 직접 읽는 방식으로 교체.
 # ============================================================
-BASE = "https://getdeploying.com"
-MODELS = {
-    "H100": "nvidia-h100", "H200": "nvidia-h200", "B200": "nvidia-b200",
-    "B300": "nvidia-b300", "GB200": "nvidia-gb200", "GB300": "nvidia-gb300",
+MODEL_PAT = {
+    "H100":  r"H100",
+    "B200":  r"(?<![A-Z])B200",
+    "B300":  r"(?<![A-Z])B300",
+    "GB200": r"GB200",
+    "GB300": r"GB300",
 }
+# 모델별 $/GPU-시간 상식 범위. 벗어나면 파싱 실패로 보고 버린다
+SANE = {"H100": (1.0, 16.0), "B200": (3.0, 22.0), "B300": (3.0, 26.0),
+        "GB200": (5.0, 30.0), "GB300": (5.0, 34.0)}
+# 중위가를 내기 위한 최소 업체 수 (GB급은 공시하는 곳 자체가 적음)
+MIN_N = {"H100": 4, "B200": 3, "B300": 1, "GB200": 1, "GB300": 1}
+# 같은 행 안에서 이 단어가 금액 앞에 붙어 있으면 온디맨드가 아니므로 제외
+SKIP_RE = re.compile(r"spot|preempt|serverless|interrupt|contact|inference|reserv", re.I)
+# 금액이 나오기 전에 이 단어가 나오면 그 행은 가격 미공시("문의 요망")
+NOPRICE_RE = re.compile(r"contact|custom|request|quote", re.I)
+# 다음 제품 행이 시작되는 지점 — 여기서 끊어 한 행만 본다
+NEXT_RE = re.compile(
+    r"H100|H200|B200|B300|GB200|GB300|A100|A40|L40|V100|RTX|MI300|MI325|MI350"
+    r"|MI355|GH200|Storage|CPU-only|Serverless", re.I)
+PRICE_RE = re.compile(r"\$\s*([0-9][0-9,]*(?:\.[0-9]+)?)")
 
-# 하이퍼스케일러: 대기업 종합 클라우드. 부가서비스·기업할인 탓에 정가가 높다
-HYPERSCALER = ("aws", "amazon", "google", "gcp", "azure", "microsoft",
-               "oracle", "oci", "ibm", "alibaba", "tencent")
-# 장터: 개인·소규모 호스트가 유휴 GPU를 내놓는 곳. SLA·InfiniBand 없음
-MARKETPLACE = ("vast", "salad", "akash", "io.net", "ionet", "clore",
-               "spheron", "tensordock", "runpod community", "prime intellect")
+# (키, 표시명, URL, 계층, 모델별 인스턴스당 GPU 수)
+#   코어위브만 인스턴스 단위로 표기해 GPU 수로 나눠야 한다
+BASKET = [
+    ("coreweave",  "코어위브",   "https://www.coreweave.com/pricing",        "neocloud",
+     {"H100": 8, "B200": 8, "B300": 8, "GB200": 4, "GB300": 4}),
+    ("nebius",     "네비우스",   "https://nebius.com/prices",                "neocloud", {}),
+    ("crusoe",     "크루소",     "https://www.crusoe.ai/cloud/pricing",      "neocloud", {}),
+    ("lambda",     "람다",       "https://lambda.ai/pricing",                "neocloud", {}),
+    ("together",   "투게더",     "https://www.together.ai/pricing",          "neocloud", {}),
+    ("verda",      "베르다",     "https://verda.com/pricing",                "neocloud", {}),
+    ("hyperstack", "하이퍼스택", "https://www.hyperstack.cloud/gpu-pricing", "retail",   {}),
+    ("runpod",     "런팟",       "https://www.runpod.io/pricing",            "retail",   {}),
+]
 
-
-def _tier(provider: str) -> str:
-    p = provider.lower()
-    if any(k in p for k in HYPERSCALER):
-        return "hyperscaler"
-    if any(k in p for k in MARKETPLACE):
-        return "marketplace"
-    return "neocloud"
-
-
-class TableExtractor(HTMLParser):
-    """HTML 안의 모든 <table>을 [[셀,...], ...] 로 뽑는다."""
-
-    def __init__(self):
-        super().__init__()
-        self.tables, self._t, self._r, self._c, self._d = [], None, None, None, 0
-
-    def handle_starttag(self, tag, attrs):
-        if tag == "table":
-            self._d += 1
-            if self._d == 1:
-                self._t = []
-        elif self._d >= 1 and tag == "tr":
-            self._r = []
-        elif self._d >= 1 and tag in ("td", "th"):
-            self._c = []
-
-    def handle_endtag(self, tag):
-        if tag == "table" and self._d >= 1:
-            self._d -= 1
-            if self._d == 0 and self._t is not None:
-                self.tables.append(self._t)
-                self._t = None
-        elif tag in ("td", "th") and self._c is not None and self._r is not None:
-            self._r.append(re.sub(r"\s+", " ", " ".join(self._c)).strip())
-            self._c = None
-        elif tag == "tr" and self._r is not None and self._t is not None:
-            if self._r:
-                self._t.append(self._r)
-            self._r = None
-
-    def handle_data(self, data):
-        if self._c is not None:
-            self._c.append(data)
+ORACLE_API = ("https://apexapps.oracle.com/pls/apex/cetools/api/v1/"
+              "products/?currencyCode=USD")
 
 
-def parse_tables(html):
-    p = TableExtractor()
-    p.feed(html)
-    return p.tables
+def html_to_text(html):
+    """태그를 구분자로 바꿔 한 줄 텍스트로. 표 구조를 몰라도 읽히게 한다."""
+    t = re.sub(r"(?is)<(script|style|noscript)[^>]*>.*?</\1>", " ", html)
+    t = re.sub(r"(?s)<[^>]+>", " | ", t)
+    t = htmlmod.unescape(t)
+    t = re.sub(r"\s+", " ", t)
+    return re.sub(r"(?:\|\s*){2,}", "| ", t)
 
 
-def money(cell):
-    m = re.search(r"\$\s*([\d,]+(?:\.\d+)?)", cell)
-    return float(m.group(1).replace(",", "")) if m else None
+def _extract(text, model, per_instance=1):
+    """모델명이 나온 '그 행' 안의 온디맨드 정가.
 
-
-def find_col(header, *keywords):
-    for i, h in enumerate(header):
-        hl = h.lower()
-        if all(k.lower() in hl for k in keywords):
-            return i
+    업체마다 열 순서가 달라(네비우스는 예약가가 먼저, 코어위브는 온디맨드가 먼저)
+    '첫 금액'을 쓰면 틀린다. 한 행 안의 금액 중 최댓값이 온디맨드다
+    — 스팟·예약·선점형은 언제나 정가보다 싸기 때문.
+    """
+    lo, hi = SANE[model]
+    for m in re.finditer(MODEL_PAT[model], text):
+        seg = text[m.end(): m.end() + 500]
+        nx = NEXT_RE.search(seg, 3)          # 다음 제품 행에서 끊는다
+        if nx:
+            seg = seg[:nx.start()]
+        f = PRICE_RE.search(seg)
+        if not f:
+            continue
+        if NOPRICE_RE.search(seg[:f.start()]):
+            continue                          # "문의 요망" 행
+        vals = []
+        for pm in PRICE_RE.finditer(seg):
+            if SKIP_RE.search(seg[max(0, pm.start() - 70):pm.start()]):
+                continue                      # 스팟·예약·추론단가 열
+            try:
+                v = float(pm.group(1).replace(",", "")) / (per_instance or 1)
+            except ValueError:
+                continue
+            if lo <= v <= hi:
+                vals.append(v)
+        if vals:
+            return round(max(vals), 3)
     return None
 
 
-def collect_model_detail(model, slug):
-    """모델 상세 페이지 → 계층별 온디맨드 $/GPU/h."""
-    html = http_get(f"{BASE}/gpus/{slug}")
-    if not html:
-        return None
-    best = None
-    for table in parse_tables(html):
-        if len(table) < 2:
+def collect_oracle():
+    """오라클 OCI 공개 가격 API(인증 불필요). 하이퍼스케일러 기준선."""
+    txt = http_get(ORACLE_API)
+    if not txt:
+        return {}
+    try:
+        items = json.loads(txt).get("items", [])
+    except Exception:
+        return {}
+    out = {}
+    for it in items:
+        name = it.get("displayName", "") or ""
+        if "enterprise" in name.lower() or "GPU" not in name.upper():
             continue
-        header = table[0]
-        pi = find_col(header, "/gpu")
-        if pi is None:
+        try:
+            loc = it["currencyCodeLocalizations"][0]["prices"][0]["value"]
+            v = float(loc)
+        except Exception:
             continue
-        bi = find_col(header, "billing")
-        rows = []
-        for row in table[1:]:
-            if len(row) <= pi:
+        for model, pat in MODEL_PAT.items():
+            if model in out or not re.search(pat, name):
                 continue
-            price = money(row[pi])
-            if not price or price <= 0:
-                continue
-            billing = row[bi] if bi is not None and len(row) > bi else ""
-            rows.append({"provider": row[0][:40], "billing": billing,
-                         "usd_hr": price, "tier": _tier(row[0])})
-        if rows and (best is None or len(rows) > len(best)):
-            best = rows
-    if not best:
-        return None
-    od = [r for r in best if not re.search(r"spot|reserved|month", r["billing"], re.I)]
-    pool = od or best
-    out = {"min": min(r["usd_hr"] for r in pool),
-           "median": median([r["usd_hr"] for r in pool]),
-           "n_offers": len(best),
-           "providers": sorted(pool, key=lambda r: r["usd_hr"])[:14]}
-    for tier in ("neocloud", "hyperscaler", "marketplace"):
-        sub = [r["usd_hr"] for r in pool if r["tier"] == tier]
-        if sub:
-            out[tier] = {"median": median(sub), "min": min(sub), "n": len(sub)}
+            lo, hi = SANE[model]
+            if lo <= v <= hi:
+                out[model] = round(v, 3)
     return out
 
 
-def collect_getdeploying():
-    result = {"models": {}}
-    for model, slug in MODELS.items():
-        d = collect_model_detail(model, slug)
-        if d:
-            result["models"][model] = d
-            neo = d.get("neocloud", {}).get("median")
-            print(f"  {model:6s} 전체중위 ${d['median']:<7} 네오클라우드 ${neo}  ({d['n_offers']}건)")
+def collect_basket():
+    """바스켓 전체 수집 → 업체별 원값 + 네오클라우드 중위가."""
+    res = {"providers": {}, "median": {}, "n": {}}
+    for key, name, url, tier, divs in BASKET:
+        page = http_get(url)
+        if not page:
+            print(f"  [warn] {name}: 페이지 수집 실패 ({url})")
+            continue
+        text = html_to_text(page)
+        got = {}
+        for model in MODEL_PAT:
+            v = _extract(text, model, divs.get(model, 1))
+            if v is not None:
+                got[model] = v
+        if got:
+            rec = {"name": name, "tier": tier}
+            rec.update(got)
+            res["providers"][key] = rec
+            print("  %-10s %s" % (name, "  ".join("%s $%s" % (k, got[k])
+                                                  for k in sorted(got))))
         else:
-            print(f"  [warn] {model}: 수집 실패")
-    return result
+            print(f"  [warn] {name}: 가격 파싱 실패")
+
+    o = collect_oracle()
+    if o:
+        rec = {"name": "오라클 OCI", "tier": "hyperscaler"}
+        rec.update(o)
+        res["providers"]["oracle"] = rec
+        print("  %-10s %s" % ("오라클OCI", "  ".join("%s $%s" % (k, o[k])
+                                                    for k in sorted(o))))
+    else:
+        print("  [warn] 오라클 OCI: 수집 실패")
+
+    for model in MODEL_PAT:
+        vals = [p[model] for p in res["providers"].values()
+                if p.get("tier") == "neocloud" and model in p]
+        res["n"][model] = len(vals)
+        if len(vals) >= MIN_N[model]:
+            res["median"][model] = round(median(vals), 3)
+            print(f"  → {model} 네오클라우드 중위가 ${res['median'][model]} (n={len(vals)})")
+        elif vals:
+            print(f"  → {model} 표본 {len(vals)}곳뿐 — 최소 {MIN_N[model]}곳 필요, 보류")
+    return res
 
 
 # ============================================================
@@ -2891,6 +2915,19 @@ def gd(model, field):
     return f
 
 
+def bk(model):
+    """담보 바스켓 접근자 — 네오클라우드 공시가 중위값."""
+    def f(snap):
+        return ((snap.get("basket", {}) or {}).get("median", {}) or {}).get(model)
+    return f
+
+
+def bk_n(model):
+    def f(snap):
+        return ((snap.get("basket", {}) or {}).get("n", {}) or {}).get(model)
+    return f
+
+
 def kpi(label, value, sub, unit="", delta=None, digits=2):
     d = ""
     if delta:
@@ -3029,8 +3066,7 @@ def build_html():
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M KST")
     n_days = len(cache.get("daily", {}))
 
-    h_neo = daily_series(cache, gd("H100", ("neocloud", "median")))
-    h_all = daily_series(cache, gd("H100", "median"))
+    h_neo = daily_series(cache, bk("H100"))
     sdh = seed_series("sdh100rt")
     bw_seed = seed_series("blackwell")
     cds = seed_series("cds")
@@ -3039,9 +3075,8 @@ def build_html():
     cw_int = seed_series("crwv_interest")
     ant_rev = seed_series("anthropic_rev")
     oai_rev = seed_series("openai_rev")
-    gb300 = daily_series(cache, gd("GB300", ("neocloud", "median")))
-    b200 = daily_series(cache, gd("B200", ("neocloud", "median")))
-    b300 = daily_series(cache, gd("B300", ("neocloud", "median")))
+    gb300 = daily_series(cache, bk("GB300"))
+    b200v = daily_series(cache, bk("B200"))
 
     # 하이일드 스프레드: FRED 자동수집 + 시드 과거치 병합 (FRED 차단 시에도 1년치 유지)
     hy = sorted({**{d: v for d, v in seed_series("hy_oas")},
@@ -3115,9 +3150,9 @@ def build_html():
     v_ig_yld, _ = last_of(ig_yld)
     dl_neo = (h_neo[-1][1] - h_neo[-2][1]) if len(h_neo) > 1 else None
     kpis = [
-        kpi("H100 네오클라우드", v_neo, "getdeploying, " + (fmt_kr(d_neo) if d_neo else "대기"), "$/hr", dl_neo),
+        kpi("H100 담보 바스켓", v_neo, "네오클라우드 공시가 중위, " + (fmt_kr(d_neo) if d_neo else "대기"), "$/hr", dl_neo),
         kpi("SDH100RT 정식지수", v_sdh, "Bloomberg, " + (fmt_kr(d_sdh) if d_sdh else "—"), "$/hr"),
-        kpi("GB300", v_gb3, "getdeploying, " + (fmt_kr(d_gb3) if d_gb3 else "대기"), "$/hr"),
+        kpi("GB300", v_gb3, "베르다·오라클 공시, " + (fmt_kr(d_gb3) if d_gb3 else "대기"), "$/hr"),
         kpi("하이일드 스프레드", v_hy, "FRED, " + (fmt_kr(d_hy) if d_hy else "대기"), "%"),
         kpi("회사채 금리(투자등급)", v_ig_yld, "FRED — 하이퍼스케일러 조달선", "%"),
         kpi("국채 10년", v_10y, "FRED — 사이클의 대표 축", "%"),
@@ -3150,9 +3185,8 @@ def build_html():
     ], h=230, yfmt=lambda v: "%.2f%%" % v)
     c_next = svg_chart([
         {"label": "GB300", "color": T["primary"], "width": 2.6, "points": gb300},
+        {"label": "B200 바스켓", "color": T["teal"], "width": 2.0, "points": b200v},
         {"label": "블랙웰 지수", "color": T["gold"], "width": 1.9, "points": bw_seed},
-        {"label": "B300", "color": T["chartGray"], "width": 1.3, "points": b300},
-        {"label": "B200", "color": T["peer"], "width": 1.3, "points": b200},
     ], h=260)
     c_cds = svg_chart([
         {"label": "코어위브", "color": T["red"], "width": 2.4, "points": cds},
@@ -3192,20 +3226,21 @@ def build_html():
 <div class="kpi-row">""" + "".join(kpis) + """</div>
 
 <div class="card-sec">
-<span class="banner">① H100 임대가 ($/GPU-시간) <span class="u">올리브 = 네오클라우드(담보 기준) · 금색 = Bloomberg</span></span>
+<span class="banner">① H100 임대가 ($/GPU-시간) <span class="u">올리브 = 담보 바스켓 · 금색 = Bloomberg</span></span>
 """ + c_h100 + """
-<div class="note">정식 지수(SDH100RT)는 블룸버그 유료 자료라 <b>getdeploying 네오클라우드 중위가로 26.08.19부터 대체 추적</b><br>
-<span class="key">H100 = 이미 나간 대출의 담보. 재계약가가 무너지면 기존 담보부터 깨지므로 가장 중요한 축임</span><br>
-단, 이 값은 스팟·온디맨드임. 네오클라우드 매출은 대부분 take-or-pay 장기계약임. 계약가는 상승 중 — 코어위브 26.07 전 SKU +25%, 네비우스 구세대 +30% QoQ, 1년 계약가 $1.70(25.10)→$2.35(26.03)</div>
+<div class="note"><span class="key">H100 = 이미 나간 대출의 담보. 재계약가가 무너지면 기존 담보부터 깨지므로 가장 중요한 축임</span><br>
+담보 바스켓 = <b>코어위브·네비우스·크루소·람다·투게더·베르다 6곳의 공식 공시가 중위값</b>(26.08.20부터). 블룸버그 SDH100RT는 유료라 대체 추적하는 것이고,
+<b>산정 방식이 달라 레벨은 다름 — 방향을 봄</b><br>
+공시가는 온디맨드 정가임. 실제 매출은 대부분 take-or-pay 장기계약이고 계약가는 상승 중 — 코어위브 26.07 전 SKU +25%, 네비우스 구세대 +30% QoQ</div>
 
 </div>
 
 <div class="card-sec">
 <span class="banner">② 블랙웰 · GB300 임대가 ($/GPU-시간) <span class="u">차세대 담보</span></span>
 """ + c_next + """
-<div class="note">블랙웰 지수도 블룸버그 유료 자료라 <b>GB300 중위가(getdeploying)로 26.08.19부터 대체 추적</b><br>
-최신 세대 = <b>신규 수요 온도계</b> / H100 = <b>기존 담보</b>. 역할이 달라 둘 다 봐야 함<br>
-<b>지금부터 나가는 대출의 담보는 GB300·루빈이라, 앞으로의 무게중심은 이쪽임</b></div>
+<div class="note">최신 세대 = <b>신규 수요 온도계</b> / H100 = <b>기존 담보</b>. 역할이 달라 둘 다 봐야 함<br>
+<b>지금부터 나가는 대출의 담보는 GB300·루빈이라, 앞으로의 무게중심은 이쪽임</b><br>
+<span class="key">GB300 온디맨드 정가를 공시하는 곳은 베르다·오라클 둘뿐 — 나머지는 전부 "문의 요망"이라 표본이 얇음</span></div>
 </div>
 
 <div class="card-sec">
@@ -3252,7 +3287,7 @@ def build_html():
 
 
 <footer>
-Source: getdeploying.com(제공업체 가격 집계), FRED(금리·신용스프레드),
+Source: 코어위브·네비우스·크루소·람다·투게더·베르다·하이퍼스택·런팟 공식 가격 페이지 + 오라클 OCI 공개 가격 API(직접 수집), FRED(금리·신용스프레드),
 Bloomberg SDH100RT·블랙웰지수·CRWV CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도).<br>
 Note: 블룸버그 3개 계열은 차트 판독값으로 <b>오차 약 ±1%의 잠정치</b> (평균·고점·저점을 원 차트와 대조 검증).
 오라클 CDS·프론티어 랩 매출은 보도 시점만 있는 이산 데이터라 점 사이는 직선 연결.<br>
@@ -3277,10 +3312,10 @@ def main():
     print("== %s 수집 시작 ==" % day)
 
     snap = {}
-    print("[1/2] getdeploying.com (계층별)")
-    g = collect_getdeploying()
-    if g.get("models"):
-        snap["getdeploying"] = g
+    print("[1/2] 담보 바스켓 (업체 공식 가격 페이지 직접 수집)")
+    b = collect_basket()
+    if b.get("providers"):
+        snap["basket"] = b
 
     if snap:
         cache["daily"][day] = snap
