@@ -2797,6 +2797,38 @@ def collect_semianalysis():
 
 
 # ============================================================
+# 3-A4. 수집 — Price of Compute (무료 공개 API, 인증 불필요)
+#   16개 업체를 매일 긁어 업체별 중위 → 업체간 중위로 낸 온디맨드 중위가.
+#   블랙웰(B200·B300) 표본이 가장 두껍다. 정가 기반인 점은 동일하나
+#   업체 수가 많아 한 곳이 튀어도 중위수가 흡수한다.
+# ============================================================
+POC_SKUS = ["h100", "b200", "b300"]
+
+
+def collect_priceofcompute():
+    out = {}
+    for sku in POC_SKUS:
+        txt = http_get("https://priceofcompute.com/api/v1/prices/" + sku)
+        if not txt:
+            print(f"  [warn] Price of Compute {sku.upper()}: 수집 실패")
+            continue
+        try:
+            j = json.loads(txt)
+            day = j["day"]
+            od = j["prices"]["on_demand"]
+            v, n = float(od["usd_per_gpu_hr"]), int(od.get("providers", 0))
+        except Exception:
+            print(f"  [warn] Price of Compute {sku.upper()}: 파싱 실패")
+            continue
+        if n >= 3 and 0.1 <= v <= 60:
+            out.setdefault("POC_%s_OD" % sku.upper(), {})[day] = round(v, 3)
+            print(f"  POC {sku.upper():5s} {day}  온디맨드 중위 ${v}  ({n}개사)")
+        else:
+            print(f"  [warn] POC {sku.upper()}: 표본 {n}개뿐 — 보류")
+    return out
+
+
+# ============================================================
 # 3-B. 수집 — FRED (미국 세인트루이스 연준). 인증키 불필요, 과거치 포함
 # ============================================================
 FRED = {
@@ -3215,6 +3247,7 @@ def build_html():
     sa_mid = hist_series(cache, "SA_CT_MID")             # 1년 계약가 중간값
     bw_seed = sorted({**dict(seed_series("blackwell")),
                       **dict(hist_series(cache, "SD_B200_ALL"))}.items())
+    poc_b300 = hist_series(cache, "POC_B300_OD")
     cds = seed_series("cds")
     ora_cds = seed_series("oracle_cds")
     cw_mgn = seed_series("crwv_margin")
@@ -3299,8 +3332,7 @@ def build_html():
     kpis = [
         kpi("H100 지수 SDH100RT", v_sdh, "Silicon Data 자동수집, " + (fmt_kr(d_sdh) if d_sdh else "—"), "$/hr", dl_sdh),
         kpi("H100 1년 계약가", v_ct, "SemiAnalysis 중간값, " + (fmt_kr(d_ct) if d_ct else "대기"), "$/hr"),
-        kpi("H100 업체 정가", v_neo, "6개사 공시 중위, " + (fmt_kr(d_neo) if d_neo else "대기"), "$/hr"),
-        kpi("GB300", v_gb3, "베르다·오라클 공시, " + (fmt_kr(d_gb3) if d_gb3 else "대기"), "$/hr"),
+        kpi("GB300", v_gb3, "베르다 공시 — 세계 유일 공개, " + (fmt_kr(d_gb3) if d_gb3 else "대기"), "$/hr"),
         kpi("하이일드 스프레드", v_hy, "FRED, " + (fmt_kr(d_hy) if d_hy else "대기"), "%"),
         kpi("회사채 금리(투자등급)", v_ig_yld, "FRED — 하이퍼스케일러 조달선", "%"),
         kpi("국채 10년", v_10y, "FRED — 사이클의 대표 축", "%"),
@@ -3315,7 +3347,6 @@ def build_html():
     c_h100 = svg_chart([
         {"label": "SDH100RT 지수", "color": T["primary"], "width": 2.8, "points": sdh},
         {"label": "1년 계약가", "color": T["red"], "width": 2.2, "markers": True, "points": sa_mid},
-        {"label": "업체 정가", "color": T["chartGray"], "width": 1.6, "points": h_list},
     ], h=290)
     c_spread = svg_chart([
         {"label": "하이일드", "color": T["red"], "width": 2.4, "points": hy},
@@ -3334,8 +3365,8 @@ def build_html():
     ], h=230, yfmt=lambda v: "%.2f%%" % v)
     c_next = svg_chart([
         {"label": "SDB200RT 지수", "color": T["primary"], "width": 2.6, "points": bw_seed},
-        {"label": "GB300 정가", "color": T["teal"], "width": 2.0, "points": gb300},
-        {"label": "B200 정가", "color": T["chartGray"], "width": 1.5, "points": b200v},
+        {"label": "B300 중위", "color": T["teal"], "width": 2.2, "points": poc_b300},
+        {"label": "GB300", "color": T["chartGray"], "width": 1.6, "points": gb300},
     ], h=260)
     c_cds = svg_chart([
         {"label": "코어위브", "color": T["red"], "width": 2.4, "points": cds},
@@ -3377,10 +3408,11 @@ def build_html():
 <div class="card-sec">
 <span class="banner">① H100 임대가 ($/GPU-시간) <span class="u">올리브 = 공식지수 · 빨강 = 계약가 · 회색 = 정가</span></span>
 """ + c_h100 + """
-<div class="note"><span class="key">H100 = 이미 나간 대출의 담보. 재계약가가 무너지면 기존 담보부터 깨지므로 가장 중요한 축임</span><br>
-<b>SDH100RT</b> = Silicon Data 공식 지수(네오클라우드 95%·하이퍼스케일러 100% 관측, 사양·계약조건 표준화). 블룸버그 티커와 동일한 값을 무료 페이지에서 매일 자동 수집<br>
-<span class="key">회색(업체 정가)은 호가일 뿐임 — 코어위브는 26.07 전 SKU 25% 인상을 발표했으나 공식 페이지 가격은 25.09부터 안 움직임</span><br>
-빨강(1년 계약가)이 실제 체결에 가장 가까움. 26.10.05 CME에 이 지수 선물이 상장되면 거래소 정산가로 대체 예정</div>
+<div class="note">H100 = 이미 나간 대출의 담보<br>
+<b>SDH100RT</b> = Silicon Data 공식 지수(네오클라우드 95%·하이퍼스케일러 100% 관측, 사양·계약조건 표준화). 블룸버그 티커와 같은 값을 무료 페이지에서 매일 자동 수집.
+26.08.19 이전은 PDF 판독분(오차 ±1%), 이후는 자동수집분<br>
+<span class="key">빨강(1년 계약가)이 실제 체결에 가장 가까움. SemiAnalysis 무료 공개분이 26.04까지라 최근 구간은 비어 있음</span><br>
+26.10.05 CME에 이 지수 선물이 상장되면 거래소 정산가로 대체 예정</div>
 
 </div>
 
@@ -3389,7 +3421,9 @@ def build_html():
 """ + c_next + """
 <div class="note">최신 세대 = <b>신규 수요 온도계</b> / H100 = <b>기존 담보</b>. 역할이 달라 둘 다 봐야 함<br>
 <b>지금부터 나가는 대출의 담보는 GB300·루빈이라, 앞으로의 무게중심은 이쪽임</b><br>
-올리브 = SDB200RT 공식 지수(자동수집). <span class="key">GB300 정가를 공시하는 곳은 베르다·오라클 둘뿐이라 표본이 얇음</span></div>
+올리브 = SDB200RT 공식 지수 / 청록 = B300 온디맨드 중위(Price of Compute, 9~11개사 매일)<br>
+<span class="key">GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라클 API 포함해도 2곳). 지수도 계약가도 아직 없음</span><br>
+루빈은 전 업체가 "문의 요망"이라 수집 가능한 가격이 아예 없음</div>
 </div>
 
 <div class="card-sec">
@@ -3436,7 +3470,7 @@ def build_html():
 
 
 <footer>
-Source: Silicon Data 공식 지수(SDH100RT·SDB200RT 등, 무료 공개 페이지 자동수집), SemiAnalysis 1년 계약가 범위(자동수집),
+Source: Silicon Data 공식 지수(SDH100RT·SDB200RT 등, 무료 공개 페이지 자동수집), SemiAnalysis 1년 계약가 범위(자동수집), Price of Compute 공개 API(블랙웰 중위가),
 코어위브·네비우스·크루소·람다·투게더·베르다 등 공식 가격 페이지 + 오라클 OCI 공개 가격 API(자동수집), FRED(금리·신용스프레드),
 CRWV·ORCL CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도), 코어위브 분기 실적(SEC 공시).<br>
 Note: 지수의 26.08.19 이전 구간은 PDF 차트 판독값(<b>오차 약 ±1%</b>)이고 이후는 자동수집값이라 이어붙인 계열임.
@@ -3462,7 +3496,7 @@ def main():
     print("== %s 수집 시작 ==" % day)
 
     snap = {}
-    print("[1/4] 업체 정가 바스켓 (업체 공식 가격 페이지 직접 수집)")
+    print("[1/5] 업체 정가 바스켓 (업체 공식 가격 페이지 직접 수집)")
     b = collect_basket()
     if b.get("providers"):
         snap["basket"] = b
@@ -3470,15 +3504,19 @@ def main():
     if snap:
         cache["daily"][day] = snap
 
-    print("[2/4] Silicon Data 공식 지수 (SDH100RT 등)")
+    print("[2/5] Silicon Data 공식 지수 (SDH100RT 등)")
     for k, v in collect_silicondata().items():
         cache["series"].setdefault(k, {}).update(v)
 
-    print("[3/4] SemiAnalysis 1년 계약가 범위")
+    print("[3/5] Price of Compute (블랙웰 온디맨드 중위가)")
+    for k, v in collect_priceofcompute().items():
+        cache["series"].setdefault(k, {}).update(v)
+
+    print("[4/5] SemiAnalysis 1년 계약가 범위")
     for k, v in collect_semianalysis().items():
         cache["series"].setdefault(k, {}).update(v)
 
-    print("[4/4] FRED (금리·신용스프레드)")
+    print("[5/5] FRED (금리·신용스프레드)")
     for k, s in collect_fred(since).items():
         cache["series"].setdefault(k, {}).update(s)
 
