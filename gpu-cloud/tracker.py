@@ -2993,6 +2993,65 @@ def collect_yahoo_ust(existing):
     return out
 
 
+# ETF 실시간 가격 → 신용 지표 당일 추정 (듀레이션 환산)
+# HYG 유효 듀레이션 ~3.1년, LQD ~8.4년 (분기마다 서서히 변함 — 추정 오차 수 bp 수준)
+ETF_CREDIT = {"HY": ("HYG", 3.1, "UST5Y", ("HY_YLD", "HY_OAS")),
+              "IG": ("LQD", 8.4, "UST10Y", ("IG_YLD", "IG_OAS"))}
+
+
+def _yahoo_last2(tk):
+    """야후에서 (직전 종가, 최신가, 최신 날짜(미 동부)) — 실패 시 None"""
+    raw = http_get("https://query1.finance.yahoo.com/v8/finance/chart/"
+                   + tk + "?interval=1d&range=5d")
+    if not raw:
+        return None
+    try:
+        res = json.loads(raw)["chart"]["result"][0]
+        pairs = [(t, c) for t, c in
+                 zip(res["timestamp"], res["indicators"]["quote"][0]["close"])
+                 if c is not None]
+        if len(pairs) < 2:
+            return None
+        d = (datetime.fromtimestamp(pairs[-1][0], timezone.utc)
+             - timedelta(hours=5)).strftime("%Y-%m-%d")
+        return pairs[-2][1], pairs[-1][1], d
+    except Exception:
+        return None
+
+
+def collect_etf_credit_proxy(existing):
+    """HYG·LQD 실시간 가격으로 하이일드/투자등급 수익률·스프레드의 당일 점을 추정 보충.
+    Δ수익률 ≈ -가격변화율/듀레이션. 스프레드는 국채 당일 변화분을 차감.
+    공식 이력이 없으면 건드리지 않고, 다음 날 FRED 공식치가 자동 교체."""
+    out = {}
+    for grade, (tk, dur, ust_key, (yld_key, oas_key)) in ETF_CREDIT.items():
+        got = _yahoo_last2(tk)
+        if not got:
+            continue
+        prev, last, d = got
+        dy = -(last / prev - 1) / dur * 100          # %p 단위 수익률 변화 추정
+        if abs(dy) > 0.5:
+            print(f"  [warn] {tk}: 추정 변화 {dy:+.2f}%p 과대 — 제외")
+            continue
+        for key, adj in ((yld_key, dy), (oas_key, None)):
+            base = existing.get(key) or {}
+            if not base or d <= max(base):
+                continue
+            ref = base[max(base)]
+            if adj is None:                          # 스프레드: 국채 당일 변화분 차감
+                ust = existing.get(ust_key) or {}
+                if d not in ust or len(ust) < 2:
+                    continue
+                prev_ust = ust[max(k for k in ust if k < d)]
+                adj = dy - (ust[d] - prev_ust)
+            v = round(ref + adj, 2)
+            if v <= 0:
+                continue
+            out[key] = {d: v}
+            print(f"  {key:7s} {v:>6.2f} ({d})  {tk} 프록시 추정")
+    return out
+
+
 
 
 
@@ -3486,7 +3545,7 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <div class="card-sec">
 <span class="banner">⑤ 조달비용 — 회사채 실제 발행금리 (%) <span class="u">올리브 = 하이퍼스케일러 · 빨강 = 네오클라우드</span></span>
 """ + c_margin + """
-<div class="note">국채금리+신용스프레드가 합산된 실제 발행금리(ICE BofA 유효수익률). <b>빨강이 올리브에서 벌어지면 등급별 조달 분화</b><br>
+<div class="note">국채금리+신용스프레드가 합산된 실제 발행금리(ICE BofA 유효수익률). 당일 점은 HYG·LQD 가격 기반 추정치이며 다음 날 공식치로 자동 교체. <b>빨강이 올리브에서 벌어지면 등급별 조달 분화</b><br>
 <span class="key">26.08.10 코어위브 DDTL 5.5 $26억: SOFR+425~450bp 제시 → 최종 SOFR+550bp(+100bp), DSCR 1.35배 커버넌트</span><br>
 대출 5년 vs 계약 3년 — <b>재계약가·잔존가치 리스크를 대주가 처음으로 직접 떠안은 딜.</b> 100bp가 그 대가임<br>
 회사가 강조한 "조달금리 300bp 하락"은 IG 담보부(DDTL 4.0 SOFR+225bp) 기준이고, 비IG 트랜치는 반대로 벌어지는 중</div>
@@ -3567,6 +3626,10 @@ def main():
 
     print("[+] 야후 국채 당일치 보충 (FRED 발표 전 최신 점)")
     for k, s in collect_yahoo_ust(cache["series"]).items():
+        cache["series"].setdefault(k, {}).update(s)
+
+    print("[+] HYG·LQD 프록시로 신용 지표 당일 추정 보충")
+    for k, s in collect_etf_credit_proxy(cache["series"]).items():
         cache["series"].setdefault(k, {}).update(s)
 
     for k in list(cache["series"]):
