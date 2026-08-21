@@ -2982,7 +2982,7 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False):
     if not series:
         return ('<div style="color:%s;font-size:12px;padding:26px 4px">'
                 '데이터 수집 대기 중 — 자동 수집이 쌓이면 그려집니다</div>' % T["faint"])
-    ml, mr, mt, mb = 54, 132, 12, 26
+    ml, mr, mt, mb = 54, 192, 12, 26
     pw, ph = w - ml - mr, h - mt - mb
     xs = [d2o(p[0]) for s in series for p in s["points"]]
     ys = [p[1] for s in series for p in s["points"]]
@@ -3031,8 +3031,8 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False):
         o.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s" stroke="#fff" '
                  'stroke-width="1"/>' % (co[-1][0], co[-1][1], s["color"]))
         ends.append([co[-1][0] + 7, co[-1][1] + 3, s["color"],
-                     "%s %s \u00b7 %s" % (s["label"], yfmt(pts[-1][1]),
-                                          date.fromisoformat(pts[-1][0]).strftime("%m.%d"))])
+                     "%s %s (%s)" % (s["label"], yfmt(pts[-1][1]),
+                                     date.fromisoformat(pts[-1][0]).strftime("%y.%m.%d"))])
     ends.sort(key=lambda e: e[1])
     for i in range(1, len(ends)):
         if ends[i][1] - ends[i - 1][1] < 13:
