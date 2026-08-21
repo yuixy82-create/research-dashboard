@@ -3028,8 +3028,11 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False):
             for cx, cy in co:
                 o.append('<circle cx="%.1f" cy="%.1f" r="3" fill="%s" stroke="#fff" '
                          'stroke-width="1.2"/>' % (cx, cy, s["color"]))
+        o.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s" stroke="#fff" '
+                 'stroke-width="1"/>' % (co[-1][0], co[-1][1], s["color"]))
         ends.append([co[-1][0] + 7, co[-1][1] + 3, s["color"],
-                     "%s %s" % (s["label"], yfmt(pts[-1][1]))])
+                     "%s %s \u00b7 %s" % (s["label"], yfmt(pts[-1][1]),
+                                          date.fromisoformat(pts[-1][0]).strftime("%m.%d"))])
     ends.sort(key=lambda e: e[1])
     for i in range(1, len(ends)):
         if ends[i][1] - ends[i - 1][1] < 13:
