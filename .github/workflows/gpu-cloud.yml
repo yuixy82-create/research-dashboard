@@ -2,7 +2,8 @@ name: GPU cloud tracker (daily)
 
 on:
   schedule:
-    - cron: "30 22 * * *"
+    - cron: "30 22 * * *"   # 07:30 KST — 아침 갱신
+    - cron: "0 13 * * *"    # 22:00 KST — 미국 전일 금리 반영분 갱신
   workflow_dispatch: {}
 
 permissions:
