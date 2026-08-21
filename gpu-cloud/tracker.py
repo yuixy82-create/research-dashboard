@@ -2951,6 +2951,48 @@ def collect_fred(since):
     return out
 
 
+YAHOO_UST = {"UST5Y": "%5EFVX", "UST10Y": "%5ETNX", "UST30Y": "%5ETYX"}
+
+
+def collect_yahoo_ust(existing):
+    """야후 파이낸스 국채 지수(15분 지연 시세)로 FRED 공식 발표 전의 최신 점 하나를 보충.
+    - FRED 공식치가 이미 있는 날짜는 절대 덮어쓰지 않음 (다음 날 공식치가 야후 점을 자동 교체)
+    - 스케일 자동 보정(^TNX류 10배 표기 대응) + 직전 공식치 대비 ±1%p 이상이면 이상치로 버림
+    existing: cache["series"]"""
+    out = {}
+    for key, tk in YAHOO_UST.items():
+        raw = http_get("https://query1.finance.yahoo.com/v8/finance/chart/"
+                       + tk + "?interval=1d&range=5d")
+        if not raw:
+            continue
+        try:
+            res = json.loads(raw)["chart"]["result"][0]
+            pairs = [(t, c) for t, c in
+                     zip(res["timestamp"], res["indicators"]["quote"][0]["close"])
+                     if c is not None]
+            if not pairs:
+                continue
+            t, v = pairs[-1]
+            d = (datetime.fromtimestamp(t, timezone.utc)
+                 - timedelta(hours=5)).strftime("%Y-%m-%d")   # 미국 동부 기준 날짜
+            base = existing.get(key) or {}
+            if not base:
+                continue  # 보충 전용: FRED 공식 이력이 없으면 손대지 않음
+            ref = base[max(base)]
+            if ref and v / ref > 5:
+                v = v / 10.0
+            if abs(v - ref) > 1.0:
+                print(f"  [warn] Yahoo {key}: {v:.2f} vs 공식 {ref:.2f} 괴리 커서 제외")
+                continue
+            if d <= max(base):
+                continue
+            out[key] = {d: round(v, 2)}
+            print(f"  {key:7s} {v:>7.2f} ({d})  야후 당일치 보충")
+        except Exception as e:
+            print(f"  [warn] Yahoo {tk}: {e}")
+    return out
+
+
 
 
 
@@ -3521,6 +3563,10 @@ def main():
 
     print("[5/5] FRED (금리·신용스프레드)")
     for k, s in collect_fred(since).items():
+        cache["series"].setdefault(k, {}).update(s)
+
+    print("[+] 야후 국채 당일치 보충 (FRED 발표 전 최신 점)")
+    for k, s in collect_yahoo_ust(cache["series"]).items():
         cache["series"].setdefault(k, {}).update(s)
 
     for k in list(cache["series"]):
