@@ -1,0 +1,62 @@
+# AI 트래커: Google Drive의 news.json을 저장소에 자동 반영
+# - 매일 08:45 KST(23:45 UTC)에 실행 + Actions 탭에서 수동 실행(Run workflow) 가능
+# - 드라이브 공개 폴더(gpu-cloud-news)에서 최신 news_YYYYMMDD.json을 받아
+#   내용이 바뀐 경우에만 gpu-cloud/news.json으로 커밋한다
+name: Update news.json from Drive
+
+on:
+  schedule:
+    - cron: '45 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch latest news JSON from public Drive folder
+        run: |
+          python3 - <<'EOF'
+          import json, re, sys, urllib.request
+
+          FOLDER = "1eqjmV0Z7Fm-Vr9SQbA0z4OAH0LkYvhmN"  # gpu-cloud-news (공개 폴더)
+          url = f"https://drive.google.com/embeddedfolderview?id={FOLDER}"
+          html = urllib.request.urlopen(url, timeout=30).read().decode("utf-8", "replace")
+
+          pairs = re.findall(r'id="entry-([-\w]+)".*?flip-entry-title">([^<]+)<', html, re.S)
+          cands = sorted((t, i) for i, t in pairs if re.fullmatch(r"news_\d{8}\.json", t))
+          if not cands:
+              sys.exit("ERROR: 폴더에서 news_YYYYMMDD.json을 찾지 못함 (폴더가 공개인지 확인)")
+
+          name, fid = cands[-1]
+          raw = urllib.request.urlopen(
+              f"https://drive.google.com/uc?export=download&id={fid}", timeout=30
+          ).read().decode("utf-8", "replace")
+
+          data = json.loads(raw)  # JSON 파싱 실패 시 여기서 중단 (깨진 파일 커밋 방지)
+          for key in ("anthropic_rev", "openai_rev", "cds"):
+              if key not in data:
+                  sys.exit(f"ERROR: 필수 키 누락: {key}")
+
+          with open("/tmp/news_new.json", "w", encoding="utf-8") as f:
+              json.dump(data, f, ensure_ascii=False)
+          print(f"OK: {name} ({len(raw)} bytes)")
+          EOF
+
+      - name: Commit if changed
+        run: |
+          mkdir -p gpu-cloud
+          if cmp -s /tmp/news_new.json gpu-cloud/news.json; then
+            echo "변경 없음 — 커밋 생략"
+            exit 0
+          fi
+          cp /tmp/news_new.json gpu-cloud/news.json
+          git config user.name "news-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add gpu-cloud/news.json
+          git commit -m "chore: news.json 자동 갱신 ($(date -u +%Y-%m-%d))"
+          git push
