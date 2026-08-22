@@ -2271,6 +2271,24 @@ SEED = {
             ]
         ]
     },
+    "openai_agent_wau": {
+        "label": "오픈AI 에이전트 주간 사용자 (백만명)",
+        "source": "OpenAI 공식 공개·CNBC 보도 (ARK Invest 집계 방식과 동일 계열: ChatGPT Work + Codex WAU)",
+        "note": "공개 시점 기준. 1/1·2/5 값은 역산치(ARK). 앤스로픽은 사용자 수를 정기 공개하지 않음",
+        "points": [
+            ["2026-01-01", 0.2], ["2026-02-05", 0.81], ["2026-02-12", 1.3],
+            ["2026-02-27", 1.6], ["2026-03-16", 2], ["2026-04-08", 3],
+            ["2026-04-21", 4], ["2026-05-31", 5], ["2026-07-13", 6],
+            ["2026-07-16", 7], ["2026-07-18", 8], ["2026-07-21", 10],
+            ["2026-08-12", 15], ["2026-08-19", 20]
+        ]
+    },
+    "anthropic_agent_wau": {
+        "label": "앤스로픽 에이전트 사용자 (백만명) — 공식 공개 시에만",
+        "source": "Anthropic 공식 공개 대기",
+        "note": "앤스로픽은 사용자 지표를 정기 공개하지 않음. 공개가 나오면 예약 작업이 추가",
+        "points": []
+    },
     "openai_rev": {
         "label": "오픈AI 연환산 매출 run-rate ($B)",
         "source": "Reuters·The Information·Bloomberg·Epoch AI",
@@ -3144,6 +3162,8 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False):
                 dtxt = "%+.0fbp" % ((last - prev) * 100)
             elif "$" in f and prev:
                 dtxt = "%+.1f%%" % ((last / prev - 1) * 100)
+            elif "M" in f:
+                dtxt = "%+.1fM" % (last - prev)
             else:
                 dtxt = "%+.2f" % (last - prev)
             dtxt += " " + suffix
@@ -3353,7 +3373,8 @@ def sig_card(title, cls, state, desc):
 
 def build_html():
     # news.json: 예약 작업(Claude)이 언론 보도 값을 자동 추가하는 파일.
-    # 형식 {"anthropic_rev": [["2026-09-30", 80]], "openai_rev": [...], "cds": [...]}
+    # 형식 {"anthropic_rev": [["2026-09-30", 80]], "openai_rev": [...], "cds": [...],
+    #      "openai_agent_wau": [["날짜", 백만명]], "anthropic_agent_wau": [...]}
     news = load_json(os.path.join(ROOT, "news.json"), {})
     for k, pts in news.items():
         if k in SEED and isinstance(pts, list):
@@ -3380,6 +3401,8 @@ def build_html():
     cw_int = seed_series("crwv_interest")
     ant_rev = seed_series("anthropic_rev")
     oai_rev = seed_series("openai_rev")
+    agent_wau = seed_series("openai_agent_wau")
+    ant_wau = seed_series("anthropic_agent_wau")
     gb300 = daily_series(cache, bk("GB300"))
     b200v = daily_series(cache, bk("B200"))
 
@@ -3506,6 +3529,12 @@ def build_html():
         {"label": "앤스로픽", "color": T["primary"], "width": 2.4, "markers": True, "points": ant_rev},
         {"label": "오픈AI", "color": T["teal"], "width": 2.4, "markers": True, "points": oai_rev},
     ], h=250, yfmt=lambda v: "$%.0fB" % v)
+    c_agent = svg_chart([
+        {"label": "오픈AI 에이전트", "color": T["teal"], "width": 2.4, "markers": True,
+         "points": agent_wau},
+        {"label": "앤스로픽", "color": T["primary"], "width": 2.4, "markers": True,
+         "points": ant_wau},
+    ], h=250, yfmt=lambda v: ("%.1fM" % v) if v < 3 else ("%.0fM" % v), zero_base=True)
 
     thesis = "".join("<li>%s</li>" % p for p in ANALYSIS["thesis"])
 
@@ -3592,6 +3621,13 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 """ + c_rev + """
 <div class="note">클라우드 가격을 떠받치는 최종 수요.<br>
 <span class="key">연환산(run-rate) 기준: 해당 시점 월매출 × 12이며 연간 실적이 아님</span><br>앤스로픽 10월 상장 후 분기 공시 예정</div>
+</div>
+
+<div class="card-sec">
+<span class="banner">⑨ 에이전트 사용자 (주간, 백만명) <span class="u">토큰 소비 = 클라우드 수요의 선행지표</span></span>
+""" + c_agent + """
+<div class="note">오픈AI = ChatGPT Work + Codex 주간 사용자(공식 공개·CNBC 집계). 공개 시점 기준<br>
+<span class="key">앤스로픽은 사용자 수를 정기 공개하지 않음 — 매출 run-rate(⑧)가 사실상의 대용 지표. 공식 공개가 나오면 여기에 자동 추가</span></div>
 </div>
 
 
