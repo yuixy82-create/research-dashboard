@@ -3131,16 +3131,38 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False):
                          'stroke-width="1.2"/>' % (cx, cy, s["color"]))
         o.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s" stroke="#fff" '
                  'stroke-width="1"/>' % (co[-1][0], co[-1][1], s["color"]))
+        dtxt = ""
+        if len(pts) > 1:
+            prev, last = pts[-2][1], pts[-1][1]
+            days = d2o(pts[-1][0]) - d2o(pts[-2][0])
+            suffix = "전일比" if days <= 3 else (
+                date.fromisoformat(pts[-2][0]).strftime("%m.%d") + "比")
+            f = yfmt(last)
+            if "bp" in f:
+                dtxt = "%+.0fbp" % (last - prev)
+            elif "%" in f:
+                dtxt = "%+.0fbp" % ((last - prev) * 100)
+            elif "$" in f and prev:
+                dtxt = "%+.1f%%" % ((last / prev - 1) * 100)
+            else:
+                dtxt = "%+.2f" % (last - prev)
+            dtxt += " " + suffix
         ends.append([co[-1][0] + 7, co[-1][1] + 3, s["color"],
                      "%s %s (%s)" % (s["label"], yfmt(pts[-1][1]),
-                                     date.fromisoformat(pts[-1][0]).strftime("%y.%m.%d"))])
+                                     date.fromisoformat(pts[-1][0]).strftime("%y.%m.%d")),
+                     dtxt])
     ends.sort(key=lambda e: e[1])
+    gap = 24 if any(e[4] for e in ends) else 13
     for i in range(1, len(ends)):
-        if ends[i][1] - ends[i - 1][1] < 13:
-            ends[i][1] = ends[i - 1][1] + 13
-    for ex, ey, col, txt in ends:
+        if ends[i][1] - ends[i - 1][1] < gap:
+            ends[i][1] = ends[i - 1][1] + gap
+    for ex, ey, col, txt, dtxt in ends:
+        yy = min(ey, h - 24)
         o.append('<text x="%.1f" y="%.1f" font-size="10" font-weight="700" fill="%s">%s</text>'
-                 % (ex, min(ey, h - 14), col, htmlmod.escape(txt)))
+                 % (ex, yy, col, htmlmod.escape(txt)))
+        if dtxt:
+            o.append('<text x="%.1f" y="%.1f" font-size="9" fill="%s" opacity="0.75">'
+                     '%s</text>' % (ex, yy + 11, col, htmlmod.escape(dtxt)))
     o.append("</svg>")
     return "".join(o)
 
