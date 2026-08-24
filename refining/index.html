@@ -1,0 +1,1341 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정제·정유 트래커</title>
+<meta name="description" content="디젤·윤활기유 공급 쇼크 추적: 부문별 이익 지표, 리포트 요약, 기업 분석, 정유 산업 기초.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#FBFBF6; --surface:#FFFFFF; --surface-2:#F3F4EA;
+  --text:#2E3122; --muted:#6B6E5E; --faint:#9B9D8E;
+  --hairline:#DEDFD2; --rowline:#EFEFE9;
+  --star:#4A5228; --star-2:#5F6C2C; --star-soft:#8F9678; --star-pale:#BDC0B0;
+  --star-tint:#E3E6D2;
+  --band:#4A5228; --band-text:#FFFFFF;
+  --graybar:#C6C6BC;
+  --teal:#2E97A7; --teal-bg:#E6F2F4;
+  --gold:#D9A62E; --gold-bg:#FAF3E0;
+  --red:#B7332B; --red-bg:#FBEDEA;
+  --shadow:0 1px 3px rgba(46,49,34,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14160F; --surface:#1C1F16; --surface-2:#22261A;
+    --text:#E9EBDD; --muted:#A2A593; --faint:#7B7E6D;
+    --hairline:#343829; --rowline:#282C1F;
+    --star:#A2B84A; --star-2:#B9CC66; --star-soft:#7C8757; --star-pale:#5A6142;
+    --star-tint:#2B3119;
+    --band:#5F6C2C; --band-text:#F4F6E8;
+    --graybar:#585C4C;
+    --teal:#5FBACA; --teal-bg:#123037;
+    --gold:#E0B554; --gold-bg:#33290F;
+    --red:#E8837A; --red-bg:#341F1C;
+    --shadow:0 1px 3px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14160F; --surface:#1C1F16; --surface-2:#22261A;
+  --text:#E9EBDD; --muted:#A2A593; --faint:#7B7E6D;
+  --hairline:#343829; --rowline:#282C1F;
+  --star:#A2B84A; --star-2:#B9CC66; --star-soft:#7C8757; --star-pale:#5A6142;
+  --star-tint:#2B3119;
+  --band:#5F6C2C; --band-text:#F4F6E8;
+  --graybar:#585C4C;
+  --teal:#5FBACA; --teal-bg:#123037;
+  --gold:#E0B554; --gold-bg:#33290F;
+  --red:#E8837A; --red-bg:#341F1C;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:56px}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"IBM Plex Sans KR","Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased; line-height:1.62;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+
+/* ---- 상단 내비 ---- */
+nav{
+  position:sticky; top:0; z-index:20; background:var(--bg);
+  border-bottom:1px solid var(--hairline); overflow-x:auto;
+}
+nav ul{
+  margin:0 auto; padding:0 20px; max-width:1040px; list-style:none;
+  display:flex; gap:2px; align-items:center; height:48px; white-space:nowrap;
+}
+nav a{
+  display:block; padding:6px 11px; font-size:12.5px; font-weight:500;
+  color:var(--muted); text-decoration:none; border-radius:3px;
+}
+nav a:hover, nav a:focus-visible{background:var(--surface-2); color:var(--star-2)}
+nav li:first-child a{font-weight:700; color:var(--star-2); padding-left:0}
+
+.wrap{max-width:1040px; margin:0 auto; padding:36px 20px 80px; display:flex; flex-direction:column; gap:44px}
+
+/* ---- 표지 ---- */
+.cover{display:flex; flex-direction:column; gap:10px}
+.kicker{font-size:11px; font-weight:600; letter-spacing:.14em; color:var(--star-2); text-transform:uppercase}
+h1{margin:0; font-size:clamp(28px,4.4vw,42px); font-weight:700; letter-spacing:-.025em; line-height:1.16; text-wrap:balance}
+.cover .sub{margin:0; font-size:16px; color:var(--muted)}
+.rule{height:3px; background:var(--star); border:0; margin:8px 0 0; width:88px}
+.stampline{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:6px; font-size:11.5px; color:var(--faint)}
+.scenario{
+  display:inline-flex; align-items:center; gap:8px; background:var(--star-tint);
+  border:1px solid var(--star-soft); border-radius:3px; padding:4px 12px;
+  font-size:12.5px; font-weight:600; color:var(--star-2);
+}
+
+/* ---- KPI 타일 ---- */
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:10px}
+.kpi{
+  background:var(--surface); border:1px solid var(--hairline); border-radius:3px;
+  padding:13px 14px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:3px;
+}
+.kpi .lbl{font-size:11.5px; color:var(--muted); font-weight:500; line-height:1.35}
+.kpi .val{font-size:24px; font-weight:600; color:var(--star-2); letter-spacing:-.02em; line-height:1.2}
+.kpi .val.empty{color:var(--faint); font-size:17px}
+.kpi .meta{font-size:10.5px; color:var(--faint)}
+.kpi .u{font-size:12px; color:var(--muted); font-weight:500; margin-left:3px}
+
+/* ---- 섹션 ---- */
+section{display:flex; flex-direction:column; gap:14px; scroll-margin-top:56px}
+.band{
+  background:var(--band); color:var(--band-text); font-size:14.5px; font-weight:600;
+  letter-spacing:-.01em; padding:8px 14px; display:flex; align-items:baseline; gap:12px;
+}
+.band .n{font-size:11.5px; font-weight:600; opacity:.72; letter-spacing:.06em}
+h3{margin:16px 0 0; font-size:14.5px; font-weight:700; color:var(--star-2)}
+h3:first-of-type{margin-top:0}
+p{margin:0; font-size:14.5px; max-width:72ch; line-height:1.7}
+ul.body{margin:0; padding-left:19px; display:flex; flex-direction:column; gap:7px}
+ul.body li{font-size:14.5px; line-height:1.65}
+b{font-weight:600}
+.hl{font-weight:600; color:var(--star-2)}
+.mark{background:var(--gold-bg); box-shadow:0 0 0 3px var(--gold-bg); border-bottom:1.5px solid var(--gold); font-weight:600}
+p + figure, p + .tablewrap, figure + p, .tablewrap + p, .tablewrap + figure,
+figure + .tablewrap, ul.body + .tablewrap, .tablewrap + ul.body,
+p + details, details + p, .tablewrap + details, details + details{margin-top:16px}
+h3 + .tablewrap, h3 + figure, h3 + p, h3 + ul.body, h3 + details{margin-top:0}
+
+/* ---- 표 ---- */
+.tablewrap{overflow-x:auto; box-shadow:var(--shadow); border-radius:3px}
+table{width:100%; border-collapse:collapse; font-size:13px; background:var(--surface); min-width:560px}
+thead th{background:var(--band); color:var(--band-text); font-weight:600; padding:7px 12px; text-align:left; white-space:nowrap}
+td{padding:7px 12px; border-bottom:1px solid var(--rowline); vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+td.num, th.num{text-align:right; font-family:"IBM Plex Mono",ui-monospace,monospace; white-space:nowrap}
+td.rank{text-align:center; font-family:"IBM Plex Mono",ui-monospace,monospace; color:var(--star-2); font-weight:600; width:34px}
+tr.total td{font-weight:700; border-top:1.5px solid var(--star); background:var(--star-tint); color:var(--star-2)}
+tr.sub td{background:var(--surface-2)}
+td.key{font-weight:600}
+.badge{display:inline-block; font-size:10px; font-weight:600; padding:1px 6px; border-radius:2px; white-space:nowrap}
+.badge.auto{background:var(--teal-bg); color:var(--teal)}
+.badge.manual{background:var(--gold-bg); color:var(--gold)}
+.badge.paid{background:var(--red-bg); color:var(--red)}
+
+/* ---- 접이식 ---- */
+details{
+  background:var(--surface); border:1px solid var(--hairline); border-radius:3px;
+  box-shadow:var(--shadow); overflow:hidden;
+}
+summary{
+  cursor:pointer; padding:11px 14px; font-size:13.5px; font-weight:600; color:var(--star-2);
+  list-style:none; display:flex; align-items:center; gap:9px; user-select:none;
+}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸"; font-size:11px; color:var(--star-soft); transition:transform .15s}
+details[open] summary::before{transform:rotate(90deg)}
+summary:hover{background:var(--surface-2)}
+summary .cnt{font-size:11px; font-weight:500; color:var(--faint); margin-left:auto}
+.dbody{padding:0 14px 14px; display:flex; flex-direction:column; gap:12px}
+.dbody .tablewrap{box-shadow:none; border:1px solid var(--hairline)}
+.dbody table{min-width:520px}
+.dbody h4{margin:8px 0 0; font-size:12.5px; font-weight:700; color:var(--star-2)}
+
+/* ---- 차트 ---- */
+.charts{display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:12px}
+.chart{background:var(--surface); border:1px solid var(--hairline); border-radius:3px; box-shadow:var(--shadow); display:flex; flex-direction:column}
+.chead{display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding:12px 14px 6px}
+.ctitle{font-size:13.5px; font-weight:700; color:var(--star-2)}
+.cunit{font-size:11px; font-weight:500; color:var(--faint); margin-left:5px}
+.clast{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:17px; font-weight:600; color:var(--text); white-space:nowrap}
+.clast.none{font-size:12.5px; color:var(--faint); font-weight:500}
+.cdemo{display:inline-block; font-size:9.5px; font-weight:600; padding:1px 5px; border-radius:2px; background:var(--gold-bg); color:var(--gold); margin-left:6px; vertical-align:middle}
+.cplot{padding:0 6px}
+.cplot svg{min-width:0; width:100%; height:auto}
+.cempty{padding:34px 14px; text-align:center; font-size:12px; color:var(--faint); background:var(--surface-2); margin:0 8px; border-radius:3px}
+.cmeta{margin:0; padding:10px 14px 13px; border-top:1px solid var(--rowline); display:flex; flex-direction:column; gap:5px}
+.cmeta > div{display:flex; gap:9px; font-size:11.5px; line-height:1.5}
+.cmeta dt{flex:0 0 30px; color:var(--faint); font-weight:600}
+.cmeta dd{margin:0; color:var(--muted)}
+.cmeta dd b{color:var(--text)}
+
+/* ---- 카드 ---- */
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px}
+.card{background:var(--surface); border:1px solid var(--hairline); border-radius:3px; padding:14px 16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:7px}
+.card h4{margin:0; font-size:13.5px; font-weight:700; color:var(--star-2)}
+.card .cond{font-size:12.5px; color:var(--muted); line-height:1.55}
+.card .impl{font-size:13px; font-weight:600; line-height:1.5; border-top:1px solid var(--rowline); padding-top:8px}
+.card.base{border-color:var(--star-soft); background:var(--star-tint)}
+.card.base h4, .card.base .cond{color:var(--star-2)}
+
+/* ---- 콜아웃 ---- */
+.callout{background:var(--surface-2); border-left:3px solid var(--star); padding:13px 16px; font-size:14px; line-height:1.65}
+.callout.warn{background:var(--red-bg); border-left-color:var(--red); color:var(--red); font-weight:600}
+.callout.pend{background:var(--gold-bg); border-left-color:var(--gold); font-size:13px; color:var(--text)}
+
+/* ---- 그림 ---- */
+figure{margin:0; display:flex; flex-direction:column; gap:10px}
+.canvas{background:var(--surface); border:1px solid var(--hairline); border-radius:3px; padding:18px 16px; overflow-x:auto; box-shadow:var(--shadow)}
+svg{display:block; width:100%; height:auto; min-width:600px; color:var(--text)}
+figcaption{font-size:12px; color:var(--muted); line-height:1.6; max-width:72ch; padding-left:11px; border-left:2px solid var(--star-pale)}
+
+/* ---- 다운로드 ---- */
+.dl{
+  display:inline-flex; align-items:center; gap:10px; align-self:flex-start;
+  background:var(--star); color:var(--band-text); text-decoration:none;
+  padding:11px 18px; border-radius:3px; font-size:13.5px; font-weight:600;
+  box-shadow:var(--shadow);
+}
+.dl:hover{background:var(--star-2)}
+.dl .sz{font-size:11px; opacity:.75; font-weight:500}
+
+/* ---- 각주 ---- */
+.foot{border-top:1px solid var(--hairline); padding-top:16px; font-size:11.5px; color:var(--faint); line-height:1.7; display:flex; flex-direction:column; gap:5px}
+.foot b{color:var(--muted)}
+a{color:var(--star-2)}
+:focus-visible{outline:2px solid var(--star-2); outline-offset:2px}
+</style>
+</head>
+<body>
+
+<nav>
+  <ul>
+    <li><a href="#top">정제·정유 트래커</a></li>
+    <li><a href="#ch1">1장 팔로우업</a></li>
+    <li><a href="#ch2">2장 리포트</a></li>
+    <li><a href="#ch3">3장 기업</a></li>
+    <li><a href="#ch4">4장 자료</a></li>
+    <li><a href="#ch5">5장 산업 기초</a></li>
+  </ul>
+</nav>
+
+<div class="wrap" id="top">
+
+  <!-- ================= 0장 ================= -->
+  <header class="cover">
+    <div class="kicker mono">Energy &amp; Refining Tracker</div>
+    <h1>정제·정유 트래커</h1>
+    <p class="sub">디젤 · 윤활기유 공급 쇼크와 국내 정유 4사</p>
+    <hr class="rule">
+    <div class="stampline">
+      <span class="scenario">시나리오 · <span data-ind="scenario">불완전한 회복</span></span>
+      <span class="mono">기준일 <span data-ind="baseDate">2026.08.18</span></span>
+      <span class="mono" data-ind="autoStamp">자동 수집 미연결</span>
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="lbl">디젤 1:1 크랙</div>
+      <div class="val" data-kpi="diesel_crack_1_1">102.2<span class="u">$/bbl</span></div>
+      <div class="meta" data-kpi-meta="diesel_crack_1_1">26.08.17 장중</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">싱가포르 복합정제마진</div>
+      <div class="val empty" data-kpi="sing_grm">—</div>
+      <div class="meta" data-kpi-meta="sing_grm">수치 확보 필요</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Group III 기유</div>
+      <div class="val" data-kpi="group3_price">4,000<span class="u">$/t</span></div>
+      <div class="meta" data-kpi-meta="group3_price">26.08 · 전쟁 전 약 3배</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">미국 중간유분 재고</div>
+      <div class="val" data-kpi="us_distillate_stock">107.1<span class="u">mb</span></div>
+      <div class="meta" data-kpi-meta="us_distillate_stock">26.08.07 · 1996년 이후 최저</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">러시아 디젤 해상수출</div>
+      <div class="val" data-kpi="russia_diesel_export">75<span class="u">만톤</span></div>
+      <div class="meta" data-kpi-meta="russia_diesel_export">26.07 · 전월 −60%</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">PX − 나프타 스프레드</div>
+      <div class="val empty" data-kpi="px_naphtha_spread">—</div>
+      <div class="meta" data-kpi-meta="px_naphtha_spread">수치 확보 필요</div>
+    </div>
+  </div>
+
+  <!-- ================= 1장 ================= -->
+  <section id="ch1">
+    <div class="band"><span class="n mono">1장</span> 팔로우업</div>
+
+    <p>
+      추적 목적은 <b>부문별 이익의 방향 확인</b>임:
+      국내 정유사 이익은 정유 · 윤활 · 석유화학 세 부문에서 나오며 각 부문의 사이클이 다름.
+      지표는 이익 직결도 순으로 배열함.
+    </p>
+
+    <h3>1.1 코어 지표</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="num">#</th><th>지표</th><th>추적 대상</th>
+            <th class="num">현재</th><th>주기</th><th>수집</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rank">1</td>
+            <td class="key">디젤 1:1 크랙</td>
+            <td>사이클 강도<br><span style="color:var(--faint);font-size:11.5px">중간유분 수급의 헤드라인 지표</span></td>
+            <td class="num">$102.20<br><span style="color:var(--faint);font-size:11px">26.08.17</span></td>
+            <td>일간</td>
+            <td><span class="badge auto">자동 가능</span></td>
+          </tr>
+          <tr class="sub">
+            <td class="rank">2</td>
+            <td class="key">싱가포르 복합정제마진</td>
+            <td><b>정유이익</b><br><span style="color:var(--faint);font-size:11.5px">국내 4사 정유부문 실적의 1차 함수</span></td>
+            <td class="num">—</td>
+            <td>주간</td>
+            <td><span class="badge paid">유료</span></td>
+          </tr>
+          <tr class="sub">
+            <td class="rank">3</td>
+            <td class="key">Group III 기유 스프레드</td>
+            <td><b>윤활이익</b><br><span style="color:var(--faint);font-size:11.5px">기유가 − 원료가. S-OIL 2Q26 이익의 49.5%</span></td>
+            <td class="num">$4,000/t<br><span style="color:var(--faint);font-size:11px">기유가 기준</span></td>
+            <td>주간</td>
+            <td><span class="badge paid">유료</span></td>
+          </tr>
+          <tr>
+            <td class="rank">4</td>
+            <td class="key">미국 중간유분 재고</td>
+            <td>사이클 전환 신호<br><span style="color:var(--faint);font-size:11.5px">가격보다 재고가 먼저 방향을 바꿈</span></td>
+            <td class="num">107.1 mb<br><span style="color:var(--faint);font-size:11px">26.08.07</span></td>
+            <td>주간 (수)</td>
+            <td><span class="badge auto">자동 가능</span></td>
+          </tr>
+          <tr>
+            <td class="rank">5</td>
+            <td class="key">러시아 디젤·가스오일 해상수출</td>
+            <td>공급 충격 진원<br><span style="color:var(--faint);font-size:11.5px">이 값의 반등이 크랙 하락의 출발점</span></td>
+            <td class="num">75만톤<br><span style="color:var(--faint);font-size:11px">26.07 · −60%</span></td>
+            <td>월간</td>
+            <td><span class="badge manual">수동</span></td>
+          </tr>
+          <tr class="sub">
+            <td class="rank">6</td>
+            <td class="key">PX · 에틸렌 − 나프타 스프레드</td>
+            <td><b>석화이익</b><br><span style="color:var(--faint);font-size:11.5px">S-OIL은 PX, SK·GS는 올레핀 비중</span></td>
+            <td class="num">—</td>
+            <td>주간</td>
+            <td><span class="badge paid">유료</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      회색 배경 3개가 <b>부문 이익 직결 지표</b>임:
+      2번은 정유, 3번은 윤활, 6번은 석유화학에 각각 대응함.
+      1 · 4 · 5번은 사이클의 강도와 전환 시점을 읽는 지표임.
+    </p>
+
+    <details>
+      <summary>확장 지표 <span class="cnt">8개</span></summary>
+      <div class="dbody">
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>지표</th><th>보는 이유</th><th>주기</th><th>수집</th></tr></thead>
+            <tbody>
+              <tr><td class="key">3-2-1 크랙</td><td>미국 정유사 마진 기준. 미국 정유주와 비교할 때 사용</td><td>일간</td><td><span class="badge auto">자동</span></td></tr>
+              <tr><td class="key">가스오일 선물 시간 스프레드</td><td>백워데이션 폭: 재고가 늘기 전에 먼저 꺾임</td><td>일간</td><td><span class="badge auto">자동</span></td></tr>
+              <tr><td class="key">Brent − Dubai EFS</td><td>경질·중질 원유 격차. 고도화설비 프리미엄</td><td>일간</td><td><span class="badge paid">유료</span></td></tr>
+              <tr><td class="key">걸프 수출량 · 호르무즈 통항</td><td>물리적 공급의 관문. 전쟁 전 약 20mb/d 대비 회복률</td><td>월간</td><td><span class="badge manual">수동</span></td></tr>
+              <tr><td class="key">중국 제품수출</td><td>아시아 크랙 상단을 제한. 26.07 465만톤, 전년 −12.9%</td><td>월간</td><td><span class="badge manual">수동</span></td></tr>
+              <tr><td class="key">ARA · 싱가포르 재고</td><td>미국 외 지역 재고. 지역 간 편차 확인</td><td>주간</td><td><span class="badge manual">수동</span></td></tr>
+              <tr><td class="key">사우디 OSP</td><td>공식판매가격: 원가에 1~2개월 시차로 반영. 매월 5일 전후 발표</td><td>월간</td><td><span class="badge manual">수동</span></td></tr>
+              <tr><td class="key">원/달러 환율</td><td>외화부채 · 원료비 부담. 재고평가손익과 함께 실적 변동 요인</td><td>일간</td><td><span class="badge auto">자동</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>전체 지표 목록 <span class="cnt">트랙 A~G</span></summary>
+      <div class="dbody">
+        <h4>A. 물류 · 통항 (선행)</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">호르무즈 통항량</td><td>전쟁 전 약 20mb/d 대비 회복률</td></tr>
+          <tr><td class="key">걸프 지역 선적량</td><td>26.07 기준 15.0mb/d, 전월 −2.1</td></tr>
+          <tr><td class="key">전쟁보험료</td><td>선체가액 대비 %. 통항량보다 먼저 움직임</td></tr>
+          <tr><td class="key">제품선 운임 (BCTI · TC2 · TC5)</td><td>크랙에서 실현마진을 갉아먹는 항목</td></tr>
+          <tr><td class="key">VLCC 원유 운임 (TD3C)</td><td>중동 → 중국. 원유 조달 비용</td></tr>
+          <tr><td class="key">홍해 · 수에즈 통항 척수</td><td>희망봉 우회 비율</td></tr>
+        </tbody></table></div>
+
+        <h4>B. 정제 · 생산 (선행)</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">러시아 원유 처리량</td><td>2Q26 저점 4.8mb/d에서 회복 여부</td></tr>
+          <tr><td class="key">러시아 개별 정유소 재가동</td><td>Ryazan · Kirishi · Volgograd · NORSI · Orsk</td></tr>
+          <tr><td class="key">Orsk 복구</td><td>제재로 부품 조달 난항: 수리 최대 6개월 전망</td></tr>
+          <tr><td class="key">Pearl GTL Train 2 복구</td><td>1Q27 예상. Group III 정상화의 열쇠</td></tr>
+          <tr><td class="key">중동 설비 복구</td><td>Ruwais · Sitra · Kuwait Mina · Ras Tanura</td></tr>
+          <tr><td class="key">세계 정유 처리량</td><td>26.07 기준 80.9mb/d, 전년 대비 −5</td></tr>
+          <tr><td class="key">가을 정기보수 일정</td><td>계절적 가동률 하락 구간</td></tr>
+        </tbody></table></div>
+
+        <h4>C. 재고 (동행)</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">미국 중간유분 재고</td><td>26.08.07 기준 107.1mb, 1996년 이후 동기 최저</td></tr>
+          <tr><td class="key">ARA 가스오일 재고</td><td>암스테르담 · 로테르담 · 앤트워프</td></tr>
+          <tr><td class="key">싱가포르 중간유분 재고</td><td>아시아 현물 수급</td></tr>
+          <tr><td class="key">재고 커버일수</td><td>절대량보다 수요 대비 여유를 반영</td></tr>
+          <tr><td class="key">미국 SPR 방출 · 재매입</td><td>전략비축유 정책 변수</td></tr>
+        </tbody></table></div>
+
+        <h4>D. 가격 · 스프레드</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">3개 지역 크랙 격차</td><td>미국 · 유럽 · 아시아. 격차 축소는 물류 정상화 신호</td></tr>
+          <tr><td class="key">가스오일 백워데이션 폭</td><td>현물 타이트함의 최선행 지표</td></tr>
+          <tr><td class="key">항공유 크랙</td><td>같은 중간유분 풀을 놓고 경쟁</td></tr>
+          <tr><td class="key">휘발유 크랙</td><td>3-2-1의 나머지 구성</td></tr>
+          <tr><td class="key">Group III 4 · 6 · 8cSt</td><td>점도별로 타이트함이 다름</td></tr>
+          <tr><td class="key">Group II − Group III 스프레드</td><td>대체 압력의 크기</td></tr>
+        </tbody></table></div>
+
+        <h4>E. 수요 (반증)</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">미국 디젤 공급량</td><td>EIA 주간. 실수요 대용치</td></tr>
+          <tr><td class="key">미국 트럭 톤수 지수</td><td>화물 물동량</td></tr>
+          <tr><td class="key">유럽 화물 물동량</td><td>—</td></tr>
+          <tr><td class="key">항공 여객 · 화물</td><td>항공유 수요</td></tr>
+          <tr><td class="key">북반구 난방 시즌</td><td>10월 이후 난방유가 중간유분 풀을 잠식</td></tr>
+        </tbody></table></div>
+
+        <h4>F. 정책 · 제도</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">사우디 OSP</td><td>매월 5일 전후. 원가에 시차 반영</td></tr>
+          <tr><td class="key">중국 제품 수출쿼터</td><td>배치별 발급량과 실제 수출량</td></tr>
+          <tr><td class="key">러시아 수출금지</td><td>2027년 1월 말까지 연장</td></tr>
+          <tr><td class="key">미국 RIN 가격 · RVO</td><td>바이오연료 의무혼합 비용</td></tr>
+          <tr><td class="key">EU 러시아산 정제품 제재</td><td>제3국 우회 규제</td></tr>
+          <tr><td class="key">국내 유류세 · 가격상한제</td><td>보전금 규모와 지급 시점</td></tr>
+          <tr><td class="key">API 긴급 임시 라이선스(EPL)</td><td>Group II의 Group III 대체 허용 폭</td></tr>
+        </tbody></table></div>
+
+        <h4>G. 시장 반응</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">정유주 주가 vs 크랙 괴리</td><td>크랙 상승에도 주가가 정체하면 시장이 이미 고점을 반영한 상태</td></tr>
+          <tr><td class="key">증권사 2027년 추정치 분산</td><td>현재 2.11조~4.25조. 좁혀지는 방향이 컨센서스</td></tr>
+        </tbody></table></div>
+      </div>
+    </details>
+
+    <h3>1.2 공급망 6단계</h3>
+
+    <figure>
+      <div class="canvas">
+        <svg viewBox="0 0 980 190" role="img" aria-label="공급망 6단계 흐름도. 통항·물류, 정유 가동, 수출 물량, 소비지 재고, 크랙·현물가, 정유사 실적 순으로 이어지며 앞 단계가 풀려야 뒤 단계가 움직인다. 소비지 재고가 전환 신호 단계다.">
+          <defs>
+            <marker id="ch" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--star-soft)"/>
+            </marker>
+          </defs>
+          <text x="15" y="18" font-size="12" fill="var(--muted)">복구는 왼쪽부터 진행됨: 앞 단계가 풀리지 않으면 뒤 단계는 움직이지 않음</text>
+
+          <g font-size="12.5" text-anchor="middle">
+            <rect x="15"  y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
+            <text x="85"  y="62" font-weight="600" fill="currentColor">통항 · 물류</text>
+            <text x="85"  y="82" font-size="10.5" fill="var(--faint)">보험료 · 운임</text>
+
+            <rect x="177" y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
+            <text x="247" y="62" font-weight="600" fill="currentColor">정유 가동</text>
+            <text x="247" y="82" font-size="10.5" fill="var(--faint)">러시아 · 중동 처리량</text>
+
+            <rect x="339" y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
+            <text x="409" y="62" font-weight="600" fill="currentColor">수출 물량</text>
+            <text x="409" y="82" font-size="10.5" fill="var(--faint)">디젤 해상수출</text>
+
+            <rect x="501" y="36" width="140" height="62" rx="3" fill="var(--star-tint)" stroke="var(--star-soft)" stroke-width="1.5"/>
+            <text x="571" y="62" font-weight="600" fill="var(--star-2)">소비지 재고</text>
+            <text x="571" y="82" font-size="10.5" fill="var(--muted)">미국 · ARA · 싱가포르</text>
+
+            <rect x="663" y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
+            <text x="733" y="62" font-weight="600" fill="currentColor">크랙 · 현물가</text>
+            <text x="733" y="82" font-size="10.5" fill="var(--faint)">디젤 · Group III</text>
+
+            <rect x="825" y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
+            <text x="895" y="62" font-weight="600" fill="currentColor">정유사 실적</text>
+            <text x="895" y="82" font-size="10.5" fill="var(--faint)">가동률 · OSP</text>
+          </g>
+
+          <g stroke="var(--star-soft)" stroke-width="1.4" marker-end="url(#ch)">
+            <line x1="157" y1="67" x2="173" y2="67"/>
+            <line x1="319" y1="67" x2="335" y2="67"/>
+            <line x1="481" y1="67" x2="497" y2="67"/>
+            <line x1="643" y1="67" x2="659" y2="67"/>
+            <line x1="805" y1="67" x2="821" y2="67"/>
+          </g>
+
+          <line x1="15" y1="122" x2="965" y2="122" stroke="var(--hairline)"/>
+          <g font-size="11.5" text-anchor="middle" fill="var(--muted)">
+            <text x="247" y="142">선행</text>
+            <text x="652" y="142">동행</text>
+            <text x="895" y="142">후행</text>
+          </g>
+          <g stroke="var(--star-pale)" stroke-width="1.2">
+            <line x1="15" y1="128" x2="15" y2="134"/><line x1="479" y1="128" x2="479" y2="134"/>
+            <line x1="501" y1="128" x2="501" y2="134"/><line x1="803" y1="128" x2="803" y2="134"/>
+            <line x1="825" y1="128" x2="825" y2="134"/><line x1="965" y1="128" x2="965" y2="134"/>
+            <line x1="15" y1="131" x2="479" y2="131"/><line x1="501" y1="131" x2="803" y2="131"/>
+            <line x1="825" y1="131" x2="965" y2="131"/>
+          </g>
+          <text x="571" y="172" font-size="11.5" text-anchor="middle" fill="var(--star-2)" font-weight="600">재고 방향 전환이 가격 전환에 선행함</text>
+        </svg>
+      </div>
+      <figcaption>
+        설비 재가동 발표는 3단계에 해당함:
+        재개 물량이 현지 수요와 장기계약 고객을 먼저 채우므로 4단계 재고 증가까지 시차가 있음.
+      </figcaption>
+    </figure>
+
+    <h3>1.3 지표 추이</h3>
+
+    <div class="charts">
+      <div class="chart" data-series="diesel_crack_1_1">
+        <div class="chead">
+          <div class="ctitle">디젤 1:1 크랙<span class="cunit">$/bbl</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>경유 1배럴 가격 − 원유 1배럴 가격</dd></div>
+          <div><dt>출처</dt><dd>EIA ULSD · WTI 스팟 기반 산출 · 일간 · <span class="badge auto">자동</span></dd></div>
+          <div><dt>의미</dt><dd>상승은 <b>중간유분 부족 심화</b>. 하락은 공급 회복 또는 수요 둔화</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="sing_grm">
+        <div class="chead">
+          <div class="ctitle">싱가포르 복합정제마진<span class="cunit">$/bbl</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>아시아 정유공장 산출 구성 전체를 반영한 배럴당 마진</dd></div>
+          <div><dt>출처</dt><dd>오피넷 국제제품가 + 두바이유 근사 산출 · 일간 · <span class="badge auto">자동 근사</span></dd></div>
+          <div><dt>의미</dt><dd><b>정유부문 이익의 1차 함수</b>. 손익분기 위아래가 흑자 · 적자 경계</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="group3_spread">
+        <div class="chead">
+          <div class="ctitle">Group III 기유 스프레드<span class="cunit">$/t</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>윤활기유 가격 − 원료 가격</dd></div>
+          <div><dt>출처</dt><dd>관세청 윤활유 수출단가 − 싱가포르 HSFO · 월간 · <span class="badge auto">자동 근사</span></dd></div>
+          <div><dt>의미</dt><dd><b>윤활부문 이익의 방향</b>. 절대값보다 전월 대비 변화율을 봄</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="us_distillate_stock">
+        <div class="chead">
+          <div class="ctitle">미국 중간유분 재고<span class="cunit">mb</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>미국 내 경유 · 난방유 재고 총량</dd></div>
+          <div><dt>출처</dt><dd>EIA Weekly Petroleum Status Report · 주간(수) · <span class="badge auto">자동</span></dd></div>
+          <div><dt>의미</dt><dd><b>4주 연속 증가는 사이클 전환 신호</b>. 가격보다 먼저 방향을 바꿈</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="russia_diesel_export">
+        <div class="chead">
+          <div class="ctitle">러시아 디젤·가스오일 해상수출<span class="cunit">만톤</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>러시아 항만에서 선적된 월간 물량</dd></div>
+          <div><dt>출처</dt><dd>Reuters 집계 인용 · 월간 · <span class="badge manual">수동</span></dd></div>
+          <div><dt>의미</dt><dd><b>반등 시작이 크랙 하락의 출발점</b>. 정체는 쇼티지 연장</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="px_naphtha_spread">
+        <div class="chead">
+          <div class="ctitle">PX − 나프타 스프레드<span class="cunit">$/t</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>파라자일렌 가격 − 나프타 가격</dd></div>
+          <div><dt>출처</dt><dd>관세청 HS 2902.43 · 2710.12 수출단가 · 월간 · <span class="badge auto">자동 근사</span></dd></div>
+          <div><dt>의미</dt><dd><b>석유화학 부문 손익</b>. 손익분기 아래면 적자 지속</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--muted)">
+      계열 데이터는 <code>data/series/*.json</code>에 누적함:
+      수집이 붙기 전 항목은 빈 상태로 표시됨.
+    </p>
+
+    <h3>1.4 시나리오 판정</h3>
+
+    <div class="cards">
+      <div class="card">
+        <h4>빠른 완화</h4>
+        <div class="cond">미·이란 합의, 호르무즈 정상 재개, 러시아 공격 감소, 중국 수출 정상화</div>
+        <div class="impl">한국 정유주 고점 통과 우려</div>
+      </div>
+      <div class="card base">
+        <h4>불완전한 회복 · 기준</h4>
+        <div class="cond">통항 부분 회복, 공격 · 보험 리스크 지속, 러시아 정제 복구 지연</div>
+        <div class="impl">S-OIL · SK엔무브 이익 강세 연장</div>
+      </div>
+      <div class="card">
+        <h4>재격화</h4>
+        <div class="cond">추가 피격, 홍해 봉쇄 강화, 러시아 수출금지 유지</div>
+        <div class="impl">마진 수혜보다 원료 · 가동 리스크 확대</div>
+      </div>
+    </div>
+
+    <p>
+      <span class="mark">★ 재격화 국면에서 국내 4사의 수혜 순위가 바뀜: 사우디 원유 의존도가 높은 S-OIL의 조달 위험이 먼저 커짐.</span>
+    </p>
+
+    <h3>1.5 반증 지표</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>관측</th><th>의미</th></tr></thead>
+        <tbody>
+          <tr><td class="key">크랙 상승에도 정유주 주가 정체</td><td>시장이 이미 고점 통과를 반영한 상태</td></tr>
+          <tr><td class="key">미국 디젤 공급량 감소</td><td>수요 파괴 진행: 가격이 소비를 억제하기 시작</td></tr>
+          <tr><td class="key">중국 수출쿼터 대폭 확대</td><td>아시아 크랙 상단이 빠르게 낮아짐</td></tr>
+          <tr><td class="key">Pearl GTL Train 2 조기 복구</td><td>Group III 프리미엄 축소 시점이 앞당겨짐</td></tr>
+          <tr><td class="key">미국 중간유분 재고 4주 연속 증가</td><td>사이클 전환 확인</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>1.6 확인 캘린더</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>시점 (KST)</th><th>확인 대상</th></tr></thead>
+        <tbody>
+          <tr><td class="key">매일</td><td>디젤 크랙 · 3-2-1 크랙 · 환율 · 정유 4사 주가</td></tr>
+          <tr><td class="key">매주 목 새벽</td><td>EIA 주간 재고 (수요일 10:30 ET 발표)</td></tr>
+          <tr><td class="key">매월 5일 전후</td><td>사우디 OSP</td></tr>
+          <tr><td class="key">매월 중순</td><td>IEA Oil Market Report · OPEC MOMR</td></tr>
+          <tr><td class="key">매월 하순</td><td>중국 해관총서 제품수출 · 러시아 해상수출 집계</td></tr>
+          <tr><td class="key">분기</td><td>정유 4사 실적 발표 및 컨퍼런스콜</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= 2장 ================= -->
+  <section id="ch2">
+    <div class="band"><span class="n mono">2장</span> 두 개의 전쟁이 만든 글로벌 정제제품 쇼크 · 수민이형 정리</div>
+
+    <p>
+      미국 · 이란 전쟁과 러시아 · 우크라이나 전쟁이 디젤 및 윤활기유 정제마진에 미치는 영향을 다룬 리포트임 (26.08.18 기준).
+      핵심 논지는 <b>원유 부족보다 정제능력과 수출 가능한 석유제품의 부족이 더 오래 간다</b>는 것.
+    </p>
+
+    <a class="dl" href="./files/refining-shock-report-20260818.pdf" download>
+      원문 PDF 내려받기 <span class="sz">21p · 7.4MB</span>
+    </a>
+
+    <h3>2.1 핵심 수치</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>지표</th><th class="num">수준</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td class="key">미국 디젤 크랙</td><td class="num">$102.20</td><td>26.08.17 장중 사상 최고</td></tr>
+          <tr><td class="key">세계 정유 처리량</td><td class="num">80.9 mb/d</td><td>26.07, 전년 대비 −5</td></tr>
+          <tr><td class="key">디젤 수출 공백</td><td class="num">−1.3 mb/d</td><td>러시아 · 중동 · 아시아 합계, 전년 대비</td></tr>
+          <tr><td class="key">걸프 지역 수출</td><td class="num">15.0 mb/d</td><td>26.07, 전월 대비 −2.1</td></tr>
+          <tr><td class="key">미국 중간유분 재고</td><td class="num">107.1 mb</td><td>26.08.07, 1996년 이후 동기 최저</td></tr>
+          <tr><td class="key">Group III 현물가</td><td class="num">약 $4,000/t</td><td>26.08, 전쟁 전 대비 약 3배</td></tr>
+          <tr class="sub"><td class="key">S-OIL 윤활 영업이익</td><td class="num">4,774억원</td><td>2Q26, 전분기 대비 +186.7%</td></tr>
+          <tr class="sub"><td class="key">SK엔무브 영업이익</td><td class="num">6,919억원</td><td>2Q26, 전분기 대비 +267%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>2.2 두 전쟁의 충격 경로</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>축</th><th>전달 경로</th><th>시장 결과</th></tr></thead>
+        <tbody>
+          <tr><td class="key">미국 · 이란</td><td>호르무즈 사실상 폐쇄, 중동 정유 · GTL 설비 공격, 전쟁보험 · 운임 급등</td><td>원유 · 디젤 · 항공유 · Group III 동시 부족</td></tr>
+          <tr><td class="key">러시아 · 우크라이나</td><td>러시아 정유소 · 파이프라인 · 항만에 대한 장거리 드론 공격</td><td>원유 수출은 증가 가능하나 디젤 · 휘발유 수출은 감소</td></tr>
+          <tr><td class="key">중국 정책</td><td>3~6월 제품 수출 규제 후 7~8월 완화</td><td>단기 완충. 26.07 수출은 전년 대비 −12.9%</td></tr>
+          <tr><td class="key">재고 · 계절성</td><td>농업 · 발전 · 물류용 디젤 수요와 겨울 난방유 비축</td><td>증산에도 재고가 회복되지 않는 구조</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      러시아 정유소가 멈추면 처리하지 못한 원유 일부가 해상시장으로 나옴:
+      <b>원유 가격에는 하방 압력이, 디젤 · 항공유 가격에는 상방 압력이 동시에 발생함.</b>
+      브렌트유는 전쟁 중 배럴당 약 126달러까지 상승한 뒤 26.08.17 약 88달러로 하락했으나 제품 크랙은 확대를 지속함.
+    </p>
+
+    <h3>2.3 공급 손실과 대체 공급</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>제품</th><th>공급 손실</th><th>대체 공급</th></tr></thead>
+        <tbody>
+          <tr><td class="key">디젤</td><td>러시아 · 중동 걸프 · 호르무즈 물류</td><td>인도(Jamnagar 1.36mb/d) · 중국 · 한국 · 미국</td></tr>
+          <tr><td class="key">Group III</td><td>Pearl GTL(카타르) · 걸프 물류 · Bahrain · UAE</td><td>한국(SK엔무브 · S-OIL) · ILBOC 카르타헤나 · Petronas · 인도 · 중국 · Exxon</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Group III는 대체 공급처가 존재하나 <b>디젤보다 정상화가 느림</b>:
+      물리적 설비 복구뿐 아니라 재고 재축적, 배합 변경, OEM 승인까지 필요하기 때문임.
+      상세는 <a href="#ch5">5.8장</a> 참조.
+    </p>
+
+    <h3>2.4 리포트 결론</h3>
+
+    <div class="callout">
+      디젤 마진은 전쟁의 속보에 민감하지만, Group III 기유 마진은 설비 복구와 산업 인증의 속도에 의해 결정됨.
+    </div>
+  </section>
+
+  <!-- ================= 3장 ================= -->
+  <section id="ch3">
+    <div class="band"><span class="n mono">3장</span> 기업 분석</div>
+
+    <h3>3.1 국내 4사 비교</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>기업</th><th>생산 기반</th><th>수혜 논리</th><th>상쇄 요인</th><th>노출도</th></tr></thead>
+        <tbody>
+          <tr class="sub">
+            <td class="key">S-OIL</td>
+            <td>정제 669kb/d<br>기유 44.7kb/d (Group III 31kb/d)</td>
+            <td>디젤 · Group III 동시 노출. 사업구조가 단순해 마진이 실적에 직결</td>
+            <td>2Q CDU 가동률 76%, 사우디 원유 · 호르무즈 물류 의존</td>
+            <td><b>가장 직접적</b></td>
+          </tr>
+          <tr>
+            <td class="key">SK이노베이션</td>
+            <td>SK에너지 840kb/d<br>SK엔무브 글로벌 Group III</td>
+            <td>글로벌 생산거점으로 공급 전환 가능. Group III 이익 규모 최대</td>
+            <td>배터리 · E&amp;S 등 비정유 손실이 연결 실적을 희석</td>
+            <td>수혜 규모 최대</td>
+          </tr>
+          <tr>
+            <td class="key">GS</td>
+            <td>GS칼텍스 정제 약 800kb/d<br>기유 26kb/d</td>
+            <td>디젤 · Group II 중심 수혜. 높은 고도화 능력</td>
+            <td>지주사 할인, Group III 직접성 낮음</td>
+            <td>중상</td>
+          </tr>
+          <tr>
+            <td class="key">HD현대</td>
+            <td>오일뱅크 정유<br>현대쉘 Group II 약 25kb/d</td>
+            <td>디젤 및 Group II 대체 수요 수혜</td>
+            <td>Group III 상업생산은 2027년 목표</td>
+            <td>중간</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3.2 S-OIL</h3>
+
+    <p>
+      국내 상장사 중 사업구조가 가장 직관적임:
+      2Q26 연결 영업이익 9,650억원으로 전년 동기 3,440억원 적자에서 흑자 전환.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>부문</th><th class="num">매출</th><th class="num">영업이익</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td class="key">정유</td><td class="num">9조 293억</td><td class="num">5,324억</td><td>전년 동기 적자에서 흑자 전환</td></tr>
+          <tr class="sub"><td class="key">윤활</td><td class="num">1조 3,017억</td><td class="num">4,774억</td><td>OPM 36.7%. 분기 기준 역대 최대. 전체 영업이익의 49.5%</td></tr>
+          <tr><td class="key">석유화학</td><td class="num">1조 125억</td><td class="num">−448억</td><td>유일한 손실 부문</td></tr>
+          <tr class="total"><td>합계</td><td class="num">—</td><td class="num">9,650억</td><td>2Q26 연결 기준</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <span class="mark">★ 2Q26 이익의 절반을 윤활 부문이 만들었음: 정유사 실적 추적에 기유 스프레드가 크랙만큼 중요해진 이유임.</span>
+    </p>
+
+    <p>
+      CDU 가동률은 <b>정기보수로 전분기 대비 9%p 하락해 76%를 기록함</b> (1Q 85%).
+      가동률은 마진을 실적으로 전환하는 계수이므로, 보수 종료 후 3Q 회복 여부가 확인 대상임.
+      샤힌 프로젝트(9.2조원 규모 석유화학 단지)는 26년 상반기 기계적 완공, 27년 초 상업가동 목표로 진행 중임.
+    </p>
+
+    <h3>3.3 SK이노베이션 · SK온 · SK엔무브</h3>
+
+    <p>
+      SK엔무브는 <b>25.11.01자로 SK온에 흡수합병되어 CIC(사내독립기업) 부문으로 전환됨</b>:
+      별도 법인이 아니므로 2Q26 영업이익 6,919억원은 SK온 내 윤활유 사업부문 실적으로 읽어야 함.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>시점</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td class="key">25.07.30</td><td>SK이노베이션, SK온 · SK엔무브 합병 결정. SK온 FI 보유 전환우선주 전량을 3조 5,880억원에 매입</td></tr>
+          <tr><td class="key">25.10.31</td><td>SK온 보통주 2,181만주 추가 취득 (약 1,596억원). SK이노베이션 지분율 85.91% → <b>89.33%</b></td></tr>
+          <tr class="sub"><td class="key">25.11.01</td><td>합병 발효. 합병비율 1:1.6616742, 존속법인 SK온. SK엔무브는 CIC로 개편</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      지배구조: SK이노베이션 → (약 89%) SK온 → SK엔무브 CIC · SK트레이딩인터내셔널 CIC · 배터리 사업<br>
+      <b>윤활기유에서 번 이익이 배터리 부문 적자를 메우는 구조 안에 있음.</b>
+    </div>
+
+    <p>
+      회사는 합병 효과로 자본 1조 7,000억원 개선과 EBITDA 8,000억원 규모의 재무구조 개선을 제시함.
+      기유 마진 상승이 주당순이익으로 직결되지 않는 구조이므로,
+      <b>SK이노베이션 추적 시 윤활 이익과 배터리 적자를 함께 봐야 함.</b>
+    </p>
+
+    <p style="font-size:13px;color:var(--muted)">
+      합병 신주 발행으로 지분율이 소폭 변동했을 수 있음:
+      확정치는 26.05.15 제출 분기보고서의 종속회사 현황에서 확인 대상.
+    </p>
+
+    <h3>3.4 증권사 추정치 분산</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>증권사</th><th class="num">3Q26E</th><th class="num">2026E</th><th class="num">2027E</th><th class="num">목표가</th><th>핵심 가정</th></tr></thead>
+        <tbody>
+          <tr><td class="key">하나</td><td class="num">1.08</td><td class="num">4.522</td><td class="num">4.254</td><td class="num">22.0만</td><td>기유 강세 · OSP 약세 · 가격상한제 종료</td></tr>
+          <tr><td class="key">DB</td><td class="num">1.211</td><td class="num">4.430</td><td class="num">3.614</td><td class="num">19.0만</td><td>재고손실보다 크랙 · 기유 스프레드 우세</td></tr>
+          <tr><td class="key">신영</td><td class="num">0.873</td><td class="num">4.349</td><td class="num">3.590</td><td class="num">18.0만</td><td>종전 뒤 공급 복구 6~12개월</td></tr>
+          <tr><td class="key">신한</td><td class="num">1.177</td><td class="num">4.432</td><td class="num">2.995</td><td class="num">18.0만</td><td>낮은 제품재고 · Group III 부족</td></tr>
+          <tr><td class="key">NH</td><td class="num">1.200</td><td class="num">3.998</td><td class="num">2.511</td><td class="num">16.5만</td><td>OSP 하락 · 2027년 배당 확대</td></tr>
+          <tr><td class="key">KB</td><td class="num">0.886</td><td class="num">4.379</td><td class="num">2.392</td><td class="num">16.7만</td><td>8월 말 봉쇄 해제 · 4Q 보전금 일부</td></tr>
+          <tr><td class="key">삼성</td><td class="num">0.813</td><td class="num">3.637</td><td class="num">2.285</td><td class="num">16.5만</td><td>유가 하락 재고효과를 크랙이 상쇄</td></tr>
+          <tr><td class="key">미래에셋</td><td class="num">0.692</td><td class="num">4.555</td><td class="num">2.107</td><td class="num">15.0만</td><td>3Q 정제마진 보수적, OSP 효과는 4Q</td></tr>
+          <tr class="total"><td>중앙값</td><td class="num">약 0.98</td><td class="num">약 4.36</td><td class="num">약 2.75</td><td class="num">—</td><td>2027년 범위 2.11~4.25로 두 배 이상 분산</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size:13px;color:var(--muted)">
+      단위 조원. S-OIL 기준. 각 증권사 발간 시점 26.08.03~08.04.
+      목표주가는 발간 당시 제시값이며 투자 권유가 아님.
+      2Q26 실적은 확정치이나 3Q26 이후는 각사 가정을 반영한 전망치임.
+    </p>
+
+    <h3>3.5 기업 추적 지표</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>지표</th><th>보는 이유</th><th>기준점</th><th>주기</th></tr></thead>
+        <tbody>
+          <tr><td class="key">S-OIL CDU 가동률</td><td>마진을 실적으로 전환하는 계수</td><td>76% (2Q26)</td><td>분기</td></tr>
+          <tr><td class="key">각사 정기보수 일정</td><td>가동률 하락 구간 예측</td><td>—</td><td>분기</td></tr>
+          <tr><td class="key">샤힌 프로젝트 진행</td><td>27년 이후 S-OIL 석화 원가 구조</td><td>27년 초 상업가동 목표</td><td>분기</td></tr>
+          <tr><td class="key">SK온 배터리 부문 적자</td><td>윤활 이익 잠식 규모</td><td>—</td><td>분기</td></tr>
+          <tr><td class="key">재고평가손익</td><td>유가 방향 × 재고 규모</td><td>—</td><td>분기</td></tr>
+          <tr><td class="key">원/달러 환율</td><td>외화부채 · 원료비 부담</td><td>—</td><td>일간</td></tr>
+          <tr><td class="key">배당 · 자사주 정책</td><td>현금 급증분의 사용처</td><td>—</td><td>분기</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= 4장 ================= -->
+  <section id="ch4">
+    <div class="band"><span class="n mono">4장</span> 자료 · 방법론</div>
+
+    <h3>4.1 데이터 소스</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>등급</th><th>소스</th><th>얻는 것</th><th>비용</th></tr></thead>
+        <tbody>
+          <tr><td class="key">A</td><td>EIA API v2</td><td>미국 재고 · 디젤 · 휘발유 · WTI 스팟 · 공급량 · SPR</td><td><span class="badge auto">무료</span></td></tr>
+          <tr><td class="key">A</td><td>FRED API</td><td>EIA 시리즈 미러 · 환율 · 금리</td><td><span class="badge auto">무료</span></td></tr>
+          <tr><td class="key">A</td><td>한국은행 ECOS API</td><td>원/달러 환율</td><td><span class="badge auto">무료</span></td></tr>
+          <tr><td class="key">A</td><td>DART Open API</td><td>국내 정유 4사 공시 · 실적</td><td><span class="badge auto">무료</span></td></tr>
+          <tr><td class="key">B</td><td>중국 해관총서</td><td>월간 제품수출</td><td><span class="badge manual">스크래핑</span></td></tr>
+          <tr><td class="key">B</td><td>Insights Global · Enterprise Singapore</td><td>ARA · 싱가포르 재고</td><td><span class="badge manual">스크래핑</span></td></tr>
+          <tr><td class="key">B</td><td>IEA Oil Market Report</td><td>세계 수급 · 처리량 · 통항량</td><td><span class="badge manual">월간 수동</span></td></tr>
+          <tr><td class="key">C</td><td>Argus · ICIS</td><td>Group III 기유 · PX · 에틸렌 평가가격</td><td><span class="badge paid">유료</span></td></tr>
+          <tr><td class="key">C</td><td>Platts</td><td>싱가포르 복합정제마진 · 아시아 가스오일 · Brent-Dubai EFS</td><td><span class="badge paid">유료</span></td></tr>
+          <tr><td class="key">C</td><td>Kpler · Vortexa</td><td>러시아 해상수출 · 호르무즈 통항</td><td><span class="badge paid">유료</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      C급 항목은 뉴스 인용치를 <code>data/manual.json</code>에 수동 입력함:
+      각 지표에 마지막 갱신일과 수집 방식 배지를 표시해 신선도를 구분함.
+    </p>
+
+    <h3>4.2 표기 원칙</h3>
+
+    <ul class="body">
+      <li><b>확정치</b>는 회사 발표 및 정부 · 국제기구 공식 통계로 한정함.</li>
+      <li><b>추정치</b>는 발간처와 발간일을 함께 표기함: 컨센서스가 아니며 확률 예측도 아님.</li>
+      <li><b>시나리오</b>는 방향성 분석임: 목표가나 수익률 보장이 아님.</li>
+      <li>정제능력은 명목능력 기준이며 실제 생산량과 다를 수 있음.</li>
+      <li>아시아 가스오일 현물 프리미엄과 미국 디젤 선물 크랙은 정의가 달라 절대값 직접 비교 불가.</li>
+    </ul>
+
+    <div class="callout warn">
+      본 자료는 개인 학습 및 기록 목적임: 특정 종목의 매수 · 매도 권유가 아님.
+    </div>
+  </section>
+
+  <!-- ================= 5장 ================= -->
+  <section id="ch5">
+    <div class="band"><span class="n mono">5장</span> 정유 산업 기초</div>
+
+    <h3>5.1 원유 한 배럴의 계보도</h3>
+
+    <p>정유공장은 원유를 끓는점 순서로 분리함: 위로 갈수록 가볍고 아래로 갈수록 무거움.</p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>끓는점</th><th>유분</th><th>나오는 설비</th><th>용도</th></tr></thead>
+        <tbody>
+          <tr><td class="num">~0°C</td><td class="key">LPG</td><td>CDU</td><td>취사 · 난방 · 석유화학 원료</td></tr>
+          <tr><td class="num">30~170</td><td class="key">나프타</td><td>CDU</td><td>석유화학 원료 · 휘발유 배합</td></tr>
+          <tr><td class="num">30~200</td><td class="key">휘발유</td><td>CDU + 개질</td><td>승용차</td></tr>
+          <tr class="sub"><td class="num">150~250</td><td class="key">등유 · 항공유</td><td>CDU</td><td>항공기 · 난방 &nbsp;<span style="color:var(--star-2);font-weight:600">중간유분</span></td></tr>
+          <tr class="sub"><td class="num">250~380</td><td class="key">경유</td><td>CDU</td><td>트럭 · 선박 · 농기계 &nbsp;<span style="color:var(--star-2);font-weight:600">중간유분</span></td></tr>
+          <tr><td class="num">380+</td><td class="key">상압잔사유 (AR)</td><td>CDU 바닥</td><td>감압증류로 이송</td></tr>
+          <tr class="sub"><td class="num">380~550</td><td class="key">VGO (감압가스오일)</td><td>VDU</td><td><span style="color:var(--star-2);font-weight:600">윤활기유 원료</span> 또는 고도화설비 투입</td></tr>
+          <tr><td class="num">550+</td><td class="key">감압잔사유 (VR)</td><td>VDU 바닥</td><td>Bright Stock(고점도 기유) · 아스팔트 · 코크스</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <b>중간유분(Middle Distillate)은 등유 · 항공유 · 경유임: 연료.</b><br>
+      <b>윤활기유(Base Oil)는 VGO 구간임: 연료가 아니라 윤활제.</b><br>
+      같은 원유의 서로 다른 층이며 섞이지 않음.
+    </p>
+
+    <p>
+      VGO는 두 갈래로 갈림:
+      고도화설비로 보내면 휘발유 · 경유가 되고, 기유설비로 보내면 Group I · II · III가 됨.
+      <span class="mark">★ 디젤 마진이 높으면 VGO가 연료 쪽으로 배분되므로 기유 공급이 감소함.</span>
+    </p>
+
+    <h3>5.2 정유 · 석유화학 · 윤활</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>구분</th><th>정유</th><th>석유화학</th></tr></thead>
+        <tbody>
+          <tr><td class="key">원료</td><td>원유</td><td>나프타 (정유 산출물)</td></tr>
+          <tr><td class="key">공정</td><td>끓여서 분리 + 불순물 제거</td><td>열로 분해해 분자를 재조립</td></tr>
+          <tr><td class="key">핵심 설비</td><td>CDU · 고도화설비</td><td>NCC (나프타분해설비)</td></tr>
+          <tr><td class="key">산출물</td><td>휘발유 · 경유 · 항공유</td><td>에틸렌 · 프로필렌 · BTX → 플라스틱 · 합성섬유</td></tr>
+          <tr><td class="key">판매 단위</td><td>배럴 (bbl)</td><td>톤 (t)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      정유가 상류, 석유화학이 하류임:
+      정유사에게 나프타는 제품이고 석유화학사에게는 원료임.
+    </p>
+
+    <h4 style="margin:16px 0 0;font-size:13.5px;font-weight:700;color:var(--star-2)">석유화학이 구조적 적자인 이유</h4>
+
+    <ul class="body">
+      <li><b>중국의 대규모 증설:</b> 2020년 이후 NCC 신증설로 자급을 넘어 수출국으로 전환됨. 최대 고객이 경쟁자가 됨.</li>
+      <li><b>원료 열위:</b> 미국 · 중동은 에탄(셰일가스 · 수반가스) 기반, 한국 · 일본은 나프타(원유) 기반. 유가 상승 시 한국만 원가가 오름.</li>
+      <li><b>범용품 특성:</b> PE · PP는 제조사와 무관하게 동일 물성. 가격 외 경쟁 수단이 없음.</li>
+      <li><b>긴 사이클:</b> NCC 건설에 4~5년. 호황기에 착공한 설비가 동시에 완공되어 과잉이 장기화됨.</li>
+      <li><b>수요 둔화:</b> 성장률 하락과 탈플라스틱 규제.</li>
+    </ul>
+
+    <p>
+      S-OIL 샤힌 프로젝트는 나프타를 거치지 않고 <b>원유를 직접 분해(TC2C)</b>하는 방식임:
+      나프타 단계를 건너뛰어 원가를 낮추는 구조이며, 27년 이후 실적의 주요 변수임.
+    </p>
+
+    <h3>5.3 정유사 이익 공식</h3>
+
+    <div class="callout">
+      정유 영업이익 ≈ (제품가 − 원유가 − 운영비) × 처리량 × 가동률 ± 재고평가손익
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th class="num">#</th><th>레버</th><th>내용</th><th>확인 방법</th></tr></thead>
+        <tbody>
+          <tr><td class="rank">1</td><td class="key">크랙 스프레드</td><td>배럴당 마진</td><td>일간 시세. 5.4장</td></tr>
+          <tr><td class="rank">2</td><td class="key">원유 조달 조건</td><td>OSP(공식판매가격), 유종 선택 폭</td><td>매월 5일 전후 아람코 발표, Brent-Dubai 스프레드</td></tr>
+          <tr><td class="rank">3</td><td class="key">가동률</td><td>판매량 결정</td><td>분기 실적 · 컨퍼런스콜, 정기보수 일정</td></tr>
+          <tr><td class="rank">4</td><td class="key">고도화율</td><td>중질유를 경질 제품으로 전환하는 능력</td><td>넬슨 복잡도 지수, 고도화설비 비중</td></tr>
+          <tr><td class="rank">5</td><td class="key">재고평가손익 · 환율</td><td>회계상 변동</td><td>유가 방향 × 재고 규모, 원/달러</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>5.4 정제마진 지표</h3>
+
+    <p>
+      <b>디젤 1:1 크랙:</b> 경유 1배럴 가격에서 원유 1배럴 가격을 차감한 값.
+      실제 산출 비율 대신 1:1 전환을 가정해 계산을 단순화한 지표임.
+      중간유분 수급이 타이트할수록 값이 커지며, 뉴스에 인용되는 “디젤 크랙”은 대부분 이 지표임.
+    </p>
+
+    <p>
+      <b>3-2-1 크랙:</b> 원유 3배럴을 정제해 휘발유 2배럴과 경유 1배럴을 생산한다고 가정한 배럴당 이론 마진.
+      미국 정유공장 평균 산출 구성에 근접하도록 설계된 비율이며, 미국 정유사 실적 추정의 표준 지표임.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>구분</th><th>디젤 1:1 크랙</th><th>3-2-1 크랙</th></tr></thead>
+        <tbody>
+          <tr><td class="key">측정 대상</td><td>경유 1개 제품</td><td>휘발유 · 경유 합산</td></tr>
+          <tr><td class="key">산정 배럴 수</td><td>원유 1배럴</td><td>원유 3배럴</td></tr>
+          <tr><td class="key">산식</td><td>경유 − 원유</td><td>(휘발유×2 + 경유×1 − 원유×3) ÷ 3</td></tr>
+          <tr class="sub"><td class="key">예시 결과</td><td>$102 / bbl</td><td>$55 / bbl</td></tr>
+          <tr><td class="key">주 용도</td><td>중간유분 수급 판단</td><td>정유사 실적 추정</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      3-2-1 크랙은 제품별 크랙의 <b>배럴 수 가중평균임</b>:
+      원유 $88 · 휘발유 $120 · 경유 $190 전제에서 경유 크랙 $102와 휘발유 크랙 $32를 1:2 비중으로 평균하면 $55가 산출됨.
+    </p>
+
+    <figure>
+      <div class="canvas">
+        <svg viewBox="0 0 900 320" role="img" aria-label="가중평균 도식: 경유 1배럴의 크랙 102달러와 휘발유 2배럴의 크랙 32달러를 배럴 수로 가중평균하면 배럴당 55달러가 된다.">
+          <line x1="80" y1="280" x2="820" y2="280" stroke="var(--hairline)"/>
+          <g stroke="var(--hairline)" stroke-dasharray="2 4">
+            <line x1="80" y1="225.5" x2="820" y2="225.5"/><line x1="80" y1="170.9" x2="820" y2="170.9"/>
+            <line x1="80" y1="116.4" x2="820" y2="116.4"/><line x1="80" y1="61.8" x2="820" y2="61.8"/>
+          </g>
+          <g font-size="10.5" text-anchor="end" fill="var(--faint)" font-family="'IBM Plex Mono',monospace">
+            <text x="72" y="284">0</text><text x="72" y="229.5">25</text><text x="72" y="174.9">50</text>
+            <text x="72" y="120.4">75</text><text x="72" y="65.8">100</text>
+          </g>
+          <text x="80" y="26" font-size="11" fill="var(--faint)">배럴당 크랙 ($/bbl)</text>
+          <rect x="80" y="57.5" width="246.7" height="222.5" fill="var(--star)"/>
+          <rect x="326.7" y="210.2" width="493.3" height="69.8" fill="var(--graybar)"/>
+          <line x1="326.7" y1="57.5" x2="326.7" y2="280" stroke="var(--surface)" stroke-width="2"/>
+          <text x="203" y="48" font-size="15" font-weight="600" text-anchor="middle" fill="var(--star-2)" font-family="'IBM Plex Mono',monospace">$102</text>
+          <text x="573.3" y="201" font-size="15" font-weight="600" text-anchor="middle" fill="var(--muted)" font-family="'IBM Plex Mono',monospace">$32</text>
+          <line x1="80" y1="159.3" x2="820" y2="159.3" stroke="var(--star-2)" stroke-width="1.6" stroke-dasharray="7 4"/>
+          <text x="828" y="155" font-size="12.5" font-weight="600" fill="var(--star-2)" font-family="'IBM Plex Mono',monospace">$55</text>
+          <text x="828" y="171" font-size="10.5" fill="var(--muted)">3-2-1</text>
+          <g stroke="var(--hairline)"><line x1="203" y1="280" x2="203" y2="290"/><line x1="573.3" y1="280" x2="573.3" y2="290"/></g>
+          <g font-size="12" text-anchor="middle" fill="currentColor">
+            <text x="203" y="306" font-weight="600" fill="var(--star-2)">경유 1배럴</text>
+            <text x="573.3" y="306">휘발유 2배럴</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>막대 너비 = 산정 배럴 수, 막대 높이 = 배럴당 크랙. 점선은 전체 면적을 3배럴로 나눈 가중평균값.</figcaption>
+    </figure>
+
+    <p>
+      크랙은 원유 매입가만 차감한 값임:
+      정유공장 운영 비용은 별도로 차감함.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>단계</th><th>내용</th><th class="num">$/bbl</th></tr></thead>
+        <tbody>
+          <tr><td class="key">3-2-1 크랙</td><td>제품 판매가 − 원유 매입가</td><td class="num">55</td></tr>
+          <tr><td class="key">RIN 비용</td><td>Renewable Identification Number(재생연료 인증서): 미국 바이오연료 의무혼합 미이행분 구매</td><td class="num">−6</td></tr>
+          <tr><td class="key">정제 · 물류 · 에너지</td><td>공장 가동 에너지, 인건비, 제품 수송비</td><td class="num">−12</td></tr>
+          <tr><td class="key">정기보수</td><td>Turnaround(대정비): 3~5년 주기 촉매 교체 및 설비 점검</td><td class="num">−5</td></tr>
+          <tr><td class="key">가동률 손실</td><td>가동률 하락 시 배럴당 고정비 부담 증가</td><td class="num">−8</td></tr>
+          <tr class="total"><td>현금마진</td><td>실제 정유사 귀속분</td><td class="num">24</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      동일 시점의 세 지표 관계는 <b>$102.20 → $55 → $24</b>.
+      차감 항목별 금액은 계산 구조 설명을 위한 예시 배분이며, 구성비는 정유사 · 시점 · 지역에 따라 변동함.
+    </p>
+
+    <h3>5.5 디젤을 먼저 보는 이유</h3>
+
+    <ul class="body">
+      <li><b>수요가 비탄력적임:</b> 트럭 · 선박 · 농기계 · 건설장비 · 비상발전이 주 용도. 가격이 올라도 단기간에 사용량을 줄이기 어려움.</li>
+      <li><b>단일 글로벌 시장임:</b> 황 10ppm 초저유황(ULSD) 규격으로 표준화되어 전 세계로 교역됨. 한 지역의 공급 충격이 전 지역 가격에 전파됨.</li>
+      <li><b>국내 정유사 실적에 직결됨:</b> 수출 비중이 크고 고도화설비 비중이 높아 디젤 산출량이 많음.</li>
+      <li><b>경기 지표임:</b> 디젤 소비량은 화물 운송량과 직결되어 실물경기를 반영함.</li>
+    </ul>
+
+    <h3>5.6 윤활기유</h3>
+
+    <div class="callout">
+      완성품 엔진오일 = 윤활기유(Base Oil) 70~90% + 첨가제(Additive) 10~30%
+    </div>
+
+    <p>
+      원유의 무거운 층인 VGO를 정제해 생산함:
+      정유공장 안에서 나오는 제품이므로 정유사가 윤활유 사업을 병행함.
+      완제품 엔진오일의 대부분을 차지하는 원료임.
+    </p>
+
+    <h3>5.7 Group I ~ V</h3>
+
+    <p>
+      API(American Petroleum Institute, 미국석유협회)가 정한 <b>윤활기유 등급임</b>:
+      포화분(Saturates) · 황 함량(Sulfur) · 점도지수(VI, Viscosity Index)를 기준으로 분류함.
+      VI는 온도 변화에 따른 점도 변화의 작음을 나타내며 높을수록 우수함.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>등급</th><th class="num">포화분</th><th class="num">황</th><th class="num">VI</th><th>공정</th><th>주 용도</th></tr></thead>
+        <tbody>
+          <tr><td class="key">Group I</td><td class="num">&lt;90%</td><td class="num">&gt;0.03%</td><td class="num">80~120</td><td>용제정제</td><td>산업유 · 선박유 · 고점도유</td></tr>
+          <tr><td class="key">Group II</td><td class="num">≥90%</td><td class="num">≤0.03%</td><td class="num">80~120</td><td>수첨정제</td><td>범용 엔진오일</td></tr>
+          <tr class="sub"><td class="key">Group III</td><td class="num">≥90%</td><td class="num">≤0.03%</td><td class="num">≥120</td><td>고도 수첨분해 · 이성화</td><td>0W-20 등 합성 엔진오일 · ATF</td></tr>
+          <tr><td class="key">Group IV</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>PAO 화학합성</td><td>최고급 합성유</td></tr>
+          <tr><td class="key">Group V</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>기타 전부</td><td>에스터 · 나프텐계 · 첨가제</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      GTL(Gas-to-Liquids, 천연가스 액화)은 원유가 아닌 천연가스로 만드는 고순도 기유임:
+      카타르 Shell Pearl GTL이 세계 최대급이며 등급상 Group III 이상에 해당함.
+    </p>
+
+    <p>
+      자동차 연비 · 배출 규제 강화로 저점도 엔진오일(0W-20 · 0W-16)이 표준이 됨:
+      묽으면서 고온 안정성을 유지하려면 높은 VI가 필요하므로 <b>Group III가 사실상 유일한 선택지임.</b>
+    </p>
+
+    <h3>5.8 Group III 쇼티지가 오래 가는 이유</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>구분</th><th>디젤</th><th>Group III 기유</th></tr></thead>
+        <tbody>
+          <tr><td class="key">시장</td><td>ICE Gasoil · NYMEX ULSD 선물 상장</td><td>선물 없음. 장기계약 + 현물 협상</td></tr>
+          <tr><td class="key">가격 형성</td><td>초 단위. 헤드라인에 즉시 반응</td><td>Argus · ICIS 평가가격. 주 단위</td></tr>
+          <tr><td class="key">공급처</td><td>인도 · 중국 · 미국 · 한국 · 중동</td><td>Pearl GTL · Ruwais · Sitra · SK엔무브 · S-OIL · ILBOC</td></tr>
+          <tr><td class="key">규격</td><td>황 10ppm으로 표준화. 산지 무관 대체 가능</td><td>브랜드 · OEM별로 승인이 묶임</td></tr>
+          <tr class="sub"><td class="key">가격 반응</td><td>휴전 뉴스에 즉시 하락 가능</td><td>실제 물량이 시장에 나와야 하락</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      여기에 되먹임이 하나 더해짐:
+      디젤 마진이 높으면 기유 원료인 VGO가 연료 생산으로 배분되므로 기유 공급이 추가로 감소함.
+    </p>
+
+    <h4 style="margin:16px 0 0;font-size:13.5px;font-weight:700;color:var(--star-2)">정상화 5단계</h4>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th class="num">단계</th><th>관문</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td class="rank">1</td><td class="key">해상 통항</td><td>기뢰 · 공격 위험 제거, 보험 복구, 선박 재배치</td></tr>
+          <tr><td class="rank">2</td><td class="key">설비 복구</td><td>Pearl 손상 트레인, Ruwais · Sitra 정유 및 기유 설비 점검 · 수리</td></tr>
+          <tr><td class="rank">3</td><td class="key">재고 복원</td><td>생산 재개 물량이 현지 · 계약 고객과 고갈 재고를 먼저 채움</td></tr>
+          <tr><td class="rank">4</td><td class="key">고객 승인</td><td>대체 공급자의 배합 · OEM · API 승인과 장기계약 재조정</td></tr>
+          <tr><td class="rank">5</td><td class="key">현물 정상화</td><td>잉여 수출이 발생해야 미국 · 유럽 현물가격이 본격 하락</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <span class="mark">★ 디젤은 1~2단계만 풀려도 가격이 하락하지만, Group III는 4단계까지 완료되어야 하락함.</span>
+    </p>
+
+    <h3>5.9 용어집</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>용어</th><th>풀이</th></tr></thead>
+        <tbody>
+          <tr><td class="key">CDU</td><td>Crude Distillation Unit(상압증류탑): 원유가 처음 투입되는 1차 증류설비. 가동률이 곧 처리량</td></tr>
+          <tr><td class="key">VDU</td><td>Vacuum Distillation Unit(감압증류탑): 상압잔사유를 진공에서 추가 분리</td></tr>
+          <tr><td class="key">VGO</td><td>Vacuum Gas Oil(감압가스오일): 윤활기유 원료 또는 고도화설비 투입분</td></tr>
+          <tr><td class="key">중간유분</td><td>Middle Distillate: 등유 · 항공유 · 경유의 총칭</td></tr>
+          <tr><td class="key">크랙</td><td>Crack Spread(정제마진): 제품 가격 − 원유 가격</td></tr>
+          <tr><td class="key">GRM</td><td>Gross Refining Margin(복합정제마진): 제품 구성 전체를 반영한 배럴당 마진</td></tr>
+          <tr><td class="key">OSP</td><td>Official Selling Price(공식판매가격): 아람코가 매월 발표하는 원유 판매 조건</td></tr>
+          <tr><td class="key">RIN</td><td>Renewable Identification Number(재생연료 인증서): 미국 바이오연료 의무혼합 이행 증서</td></tr>
+          <tr><td class="key">Turnaround</td><td>대정비: 3~5년 주기의 계획된 공장 전면 정지 및 점검</td></tr>
+          <tr><td class="key">ULSD</td><td>Ultra Low Sulfur Diesel(초저유황 경유): 황 10ppm 이하 규격</td></tr>
+          <tr><td class="key">넬슨 복잡도 지수</td><td>Nelson Complexity Index: 정유공장의 고도화 수준을 나타내는 지표</td></tr>
+          <tr><td class="key">NCC</td><td>Naphtha Cracking Center(나프타분해설비): 석유화학의 핵심 설비</td></tr>
+          <tr><td class="key">PX</td><td>Para-Xylene(파라자일렌): 폴리에스터 원료. 아로마틱 계열 핵심 제품</td></tr>
+          <tr><td class="key">CIC</td><td>Company-in-Company(사내독립기업): 법인격 없이 독립 경영하는 사업부문</td></tr>
+          <tr><td class="key">백워데이션</td><td>Backwardation: 근월 선물이 원월보다 비싼 상태. 현물 부족의 신호</td></tr>
+          <tr><td class="key">EFS</td><td>Exchange of Futures for Swaps: Brent-Dubai 격차. 경질 · 중질 원유 스프레드</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div><b>Source</b> — 「두 개의 전쟁이 만든 글로벌 정제제품 쇼크」(26.08.18); IEA Oil Market Report; EIA; Reuters; Argus; S-OIL 2Q26 실적발표; SK이노베이션 공시; 국내 증권사 리포트 8건(26.08.03~08.04).</div>
+    <div><b>Note 1</b> — 크랙 예시 가격 $88 · $120 · $190은 계산 구조 설명을 위한 값이며 특정일 실거래가가 아님.</div>
+    <div><b>Note 2</b> — 원유 산출 비율과 유분 끓는점은 원유 유종 · 설비 구성 · 계절에 따라 변동하는 대략치임.</div>
+    <div><b>Note 3</b> — 본 자료는 개인 학습 및 기록 목적임: 특정 종목의 매수 · 매도 권유가 아님.</div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var fmt = function(v){
+    if (v === null || v === undefined) return null;
+    return (typeof v === 'number') ? v.toLocaleString('en-US',{maximumFractionDigits:2}) : String(v);
+  };
+  var apply = function(data){
+    if (!data) return;
+    if (data.baseDate) {
+      var el = document.querySelector('[data-ind="baseDate"]');
+      if (el) el.textContent = data.baseDate.replace(/-/g,'.');
+    }
+    if (data.scenario && data.scenario.current) {
+      var s = document.querySelector('[data-ind="scenario"]');
+      if (s) s.textContent = data.scenario.current;
+    }
+    var inds = data.indicators || {};
+    Object.keys(inds).forEach(function(k){
+      var d = inds[k];
+      var v = document.querySelector('[data-kpi="'+k+'"]');
+      if (v && d && d.value !== null && d.value !== undefined) {
+        var u = v.querySelector('.u');
+        v.classList.remove('empty');
+        v.textContent = fmt(d.value);
+        if (u) v.appendChild(u);
+        else if (d.unit) { var sp=document.createElement('span'); sp.className='u'; sp.textContent=d.unit; v.appendChild(sp); }
+      }
+      var m = document.querySelector('[data-kpi-meta="'+k+'"]');
+      if (m && d && d.asOf) {
+        m.textContent = d.asOf.slice(2).replace(/-/g,'.') + (d.note ? ' · ' + d.note : '');
+      }
+    });
+  };
+  var merge = function(base, over){
+    if (!over) return base;
+    var out = JSON.parse(JSON.stringify(base || {}));
+    out.indicators = out.indicators || {};
+    Object.keys(over.indicators || {}).forEach(function(k){ out.indicators[k] = over.indicators[k]; });
+    if (over.updatedAt) out.updatedAt = over.updatedAt;
+    return out;
+  };
+  var get = function(u){
+    return fetch(u, {cache:'no-store'}).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
+  };
+
+  // ---- 시계열 차트 ----
+  var esc = function(t){ return String(t).replace(/[&<>"]/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); };
+  var dshort = function(d){ return String(d).slice(2).replace(/-/g,'.'); };
+  var num = function(v){ return v.toLocaleString('en-US',{maximumFractionDigits: Math.abs(v)>=100?0:1}); };
+
+  var drawChart = function(box, s){
+    var plot = box.querySelector('.cplot');
+    var last = box.querySelector('.clast');
+    var pts = ((s && s.points) || []).filter(function(p){ return p && typeof p.v === 'number'; });
+    if (!pts.length){
+      plot.innerHTML = '<div class="cempty">시계열 수집 전</div>';
+      return;
+    }
+    var W = 620, H = 152, PL = 10, PR = 46, PT = 18, PB = 24;
+    var vals = pts.map(function(p){ return p.v; });
+    var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+    if (mn === mx){ mn -= 1; mx += 1; }
+    var pad = (mx - mn) * 0.14; mn -= pad; mx += pad;
+    var X = function(i){ return PL + (W - PL - PR) * (pts.length === 1 ? 0.5 : i / (pts.length - 1)); };
+    var Y = function(v){ return PT + (H - PT - PB) * (1 - (v - mn) / (mx - mn)); };
+
+    var d = pts.map(function(p, i){ return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(p.v).toFixed(1); }).join(' ');
+    var area = d + ' L' + X(pts.length - 1).toFixed(1) + ' ' + (H - PB) + ' L' + X(0).toFixed(1) + ' ' + (H - PB) + ' Z';
+    var li = pts.length - 1;
+    var lo = vals.indexOf(Math.min.apply(null, vals));
+    var hi = vals.indexOf(Math.max.apply(null, vals));
+
+    var svg = ''
+      + '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(s.label || '') + ' 추이. '
+      +   dshort(pts[0].d) + ' ' + num(pts[0].v) + '에서 ' + dshort(pts[li].d) + ' ' + num(pts[li].v) + '까지.">'
+      + '<line x1="' + PL + '" y1="' + (H - PB) + '" x2="' + (W - PR) + '" y2="' + (H - PB) + '" stroke="var(--hairline)"/>'
+      + '<path d="' + area + '" fill="var(--star-tint)"/>'
+      + '<path d="' + d + '" fill="none" stroke="var(--star)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>'
+      + '<circle cx="' + X(li).toFixed(1) + '" cy="' + Y(pts[li].v).toFixed(1) + '" r="3.4" fill="var(--star)"/>'
+      + '<text x="' + (X(li) + 7).toFixed(1) + '" y="' + (Y(pts[li].v) + 4).toFixed(1) + '" font-size="11" font-weight="600" fill="var(--star-2)" font-family="ui-monospace,monospace">' + num(pts[li].v) + '</text>'
+      + '<text x="' + PL + '" y="' + (H - 8) + '" font-size="10" fill="var(--faint)" font-family="ui-monospace,monospace">' + dshort(pts[0].d) + '</text>'
+      + '<text x="' + (W - PR) + '" y="' + (H - 8) + '" font-size="10" text-anchor="end" fill="var(--faint)" font-family="ui-monospace,monospace">' + dshort(pts[li].d) + '</text>'
+      + (hi !== li ? '<text x="' + X(hi).toFixed(1) + '" y="' + (Y(vals[hi]) - 6).toFixed(1) + '" font-size="10" text-anchor="middle" fill="var(--muted)" font-family="ui-monospace,monospace">' + num(vals[hi]) + '</text>' : '')
+      + (lo !== li && lo !== hi ? '<text x="' + X(lo).toFixed(1) + '" y="' + (Y(vals[lo]) + 13).toFixed(1) + '" font-size="10" text-anchor="middle" fill="var(--faint)" font-family="ui-monospace,monospace">' + num(vals[lo]) + '</text>' : '')
+      + '</svg>';
+    plot.innerHTML = svg;
+
+    last.classList.remove('none');
+    last.innerHTML = num(pts[li].v) + (s.demo ? '<span class="cdemo">예시</span>' : '');
+    if (s.demo && s.note){
+      var dl = box.querySelector('.cmeta');
+      var row = document.createElement('div');
+      row.innerHTML = '<dt>주의</dt><dd>' + esc(s.note) + '</dd>';
+      dl.appendChild(row);
+    }
+  };
+
+  Array.prototype.forEach.call(document.querySelectorAll('.chart[data-series]'), function(box){
+    var k = box.getAttribute('data-series');
+    get('./data/series/' + k + '.json').then(function(s){ drawChart(box, s); });
+  });
+
+  Promise.all([get('./data/manual.json'), get('./data/auto.json')]).then(function(res){
+    var merged = merge(res[0], res[1]);
+    apply(merged);
+    var stamp = document.querySelector('[data-ind="autoStamp"]');
+    if (stamp) {
+      stamp.textContent = (res[1] && res[1].updatedAt)
+        ? '자동 수집 ' + String(res[1].updatedAt).slice(0,16).replace('T',' ')
+        : '자동 수집 미연결';
+    }
+  });
+})();
+</script>
+</body>
+</html>
