@@ -41,22 +41,20 @@ _ERR = []
 
 # ────────────────────────────── 공통 ──────────────────────────────
 
-def get(url, ua=UA_WEB, timeout=30, retries=2, accept="*/*"):
+def get(url, ua=UA_WEB, timeout=30, retries=2, accept="*/*", plain=False):
+    """plain=True면 위장 헤더 없이 최소 헤더로 보낸다. 일부 API는 이쪽을 더 잘 받는다."""
     last = None
     for i in range(retries + 1):
         try:
-            req = urllib.request.Request(url, headers={
-                "User-Agent": ua,
-                "Accept": accept,
-                "Accept-Encoding": "identity",
-                "Accept-Language": "en-US,en;q=0.9",
-                "Referer": "https://www.google.com/",
-                "Sec-Fetch-Dest": "empty",
-                "Sec-Fetch-Mode": "cors",
-                "Sec-Fetch-Site": "same-origin",
-                "Cache-Control": "no-cache",
-                "Connection": "keep-alive",
-            })
+            h = {"User-Agent": ua, "Accept": accept, "Accept-Encoding": "identity"}
+            if not plain:
+                h.update({
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Referer": "https://www.google.com/",
+                    "Cache-Control": "no-cache",
+                    "Connection": "keep-alive",
+                })
+            req = urllib.request.Request(url, headers=h)
             ctx = ssl.create_default_context()
             with urllib.request.urlopen(req, timeout=timeout, context=ctx) as r:
                 return r.read().decode("utf-8", "replace")
@@ -66,8 +64,9 @@ def get(url, ua=UA_WEB, timeout=30, retries=2, accept="*/*"):
     raise last
 
 
-def get_json(url, ua=UA_WEB, timeout=30):
-    return json.loads(get(url, ua=ua, timeout=timeout, accept="application/json"))
+def get_json(url, ua=UA_WEB, timeout=30, plain=False):
+    return json.loads(get(url, ua=ua, timeout=timeout,
+                          accept="application/json", plain=plain))
 
 
 def load(path, default):
@@ -259,10 +258,15 @@ def f_ctgov():
                "&fields=NCTId,BriefTitle,OverallStatus,LastUpdatePostDate,"
                "EnrollmentCount,EnrollmentType,PrimaryCompletionDate"
                % urllib.parse.quote(spon))
-        try:
-            j = get_json(url)
-        except Exception as e:                       # noqa: BLE001
-            _ERR.append("%s: %s" % (spon, e))
+        j = None
+        for plain in (True, False):
+            try:
+                j = get_json(url, ua="python-urllib/3 CNSY Tracker", plain=plain) if plain \
+                    else get_json(url)
+                break
+            except Exception as e:                   # noqa: BLE001
+                _ERR.append("%s(plain=%s): %s" % (spon, plain, e))
+        if j is None:
             continue
         for s in j.get("studies", []):
             p = s.get("protocolSection", {})
