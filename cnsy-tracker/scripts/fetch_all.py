@@ -482,7 +482,14 @@ def main():
     cur["cms"] = section("cms", f_cms, prev.get("cms"))
 
     new_events = diff(prev, cur)
-    log = new_events + (prev.get("log") or [])
+    base = prev.get("log") or (load(SEED, {}).get("log") or [])   # 첫 실행이면 수기 기록에서 이어붙임
+    seen, log = set(), []
+    for e in new_events + base:
+        k = (e.get("date"), e.get("text"))
+        if k in seen:
+            continue
+        seen.add(k)
+        log.append(e)
     cur["log"] = log[:LOG_MAX]
 
     cur["meta"] = {
