@@ -35,10 +35,13 @@ jobs:
         run: |
           git config user.name  "cnsy-bot"
           git config user.email "actions@github.com"
-          if [ -n "$(git status --porcelain cnsy-tracker/data)" ]; then
-            git add cnsy-tracker/data
-            git commit -m "cnsy: data $(date -u +%Y-%m-%d\ %H:%M)Z"
-            git push
-          else
-            echo "변화 없음"
+          if [ -z "$(git status --porcelain cnsy-tracker/data)" ]; then
+            echo "변화 없음"; exit 0
           fi
+          git add cnsy-tracker/data
+          git commit -m "cnsy: data $(date -u +%Y-%m-%d\ %H:%M)Z"
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main && git push && exit 0
+            echo "push 재시도 $i"; sleep 5
+          done
+          echo "push 실패"; exit 1
