@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cerenome (CNSY) 추적</title>
+<style>
+:root{
+  --brand-primary:#4A5228; --brand-primary-deep:#3E461F;
+  --brand-heading:#5F6C2C; --brand-bright:#819434; --brand-vivid:#A2B84A;
+  --brand-mid:#8F9678; --brand-soft:#BDC0B0;
+  --brand-fill-light:#E3E6D2; --brand-bg-tint:#F3F4EA;
+  --accent-teal:#2E97A7;  --accent-teal-bg:#E6F2F4;
+  --accent-blue:#4587B2;  --accent-blue-bg:#E3EEF5;
+  --accent-red:#B7332B;   --accent-red-bg:#FBEDEA;
+  --accent-gold:#D9A62E;  --accent-gold-bg:#FAF3E0;
+  --text:#3A3A3A; --muted:#6E6E6E; --faint:#9B9B9B;
+  --hairline:#D8D8D8; --rowline:#EFEFEF; --compare-gray:#ABABAB;
+  --paper:#FFFFFF; --page:#F7F7F2;
+  --shadow:0 1px 3px rgba(58,58,58,.09);
+  --font-sans:"Pretendard","Pretendard Variable","Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --gap-chapter:156px; --gap-band:130px; --gap-section:48px; --gap-para:26px; --gap-block:20px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --brand-heading:#B9CC66; --brand-primary:#5F6C2C;
+    --brand-fill-light:#2B3119; --brand-bg-tint:#22261A;
+    --brand-soft:#5A6142; --brand-mid:#7C8757;
+    --accent-gold:#E0B554; --accent-gold-bg:#33290F;
+    --accent-red:#E8837A;  --accent-red-bg:#341F1C;
+    --accent-teal:#6FC2CE; --accent-teal-bg:#122A2E;
+    --accent-blue:#7FB3D5; --accent-blue-bg:#16232C;
+    --text:#E9EBDD; --muted:#A2A593; --faint:#7B7E6D;
+    --hairline:#343829; --rowline:#282C1F; --compare-gray:#6E7161;
+    --paper:#1C1F16; --page:#14160F;
+    --shadow:0 1px 3px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --brand-heading:#B9CC66; --brand-primary:#5F6C2C;
+  --brand-fill-light:#2B3119; --brand-bg-tint:#22261A;
+  --brand-soft:#5A6142; --brand-mid:#7C8757;
+  --accent-gold:#E0B554; --accent-gold-bg:#33290F;
+  --accent-red:#E8837A;  --accent-red-bg:#341F1C;
+  --accent-teal:#6FC2CE; --accent-teal-bg:#122A2E;
+  --accent-blue:#7FB3D5; --accent-blue-bg:#16232C;
+  --text:#E9EBDD; --muted:#A2A593; --faint:#7B7E6D;
+  --hairline:#343829; --rowline:#282C1F; --compare-gray:#6E7161;
+  --paper:#1C1F16; --page:#14160F;
+  --shadow:0 1px 3px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font-family:var(--font-sans);
+     font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;line-height:1.7}
+.doc{max-width:1000px;margin:0 auto;padding:44px 24px 96px;background:var(--paper)}
+.doc-header{margin-bottom:20px}
+.kicker{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.14em;
+        text-transform:uppercase;color:var(--brand-heading);margin-bottom:8px}
+.page-title{margin:2px 0 4px;font-size:30px;font-weight:800;letter-spacing:-.02em;
+            line-height:1.2;color:var(--brand-heading);text-wrap:balance}
+.page-sub{margin:0;font-size:16px;color:var(--muted)}
+.title-rule{border:0;border-top:3px solid var(--brand-primary);width:88px;margin:12px 0 0}
+.stamp{font-family:var(--font-mono);font-size:11.5px;color:var(--faint);margin-top:10px}
+.sec{margin-top:var(--gap-chapter);margin-bottom:8px;font-size:23px;font-weight:800;
+     letter-spacing:-.015em;color:var(--brand-heading)}
+.sec .no{color:var(--brand-primary);margin-right:8px}
+.sec-rule{border:0;border-top:1.5px solid var(--brand-heading);margin:0 0 12px}
+.doc-header + .sec, .lead + .sec{margin-top:64px}
+.sub-h{margin:var(--gap-section) 0 10px;font-size:15px;font-weight:800;color:var(--text)}
+p{margin:var(--gap-para) 0 10px;font-size:15px;line-height:1.75;max-width:74ch}
+.lead{margin:12px 0 0;font-size:15px;color:var(--muted);max-width:74ch}
+.tablewrap,.chartbox,.callout,.cards,.banner,figure,details{margin-top:var(--gap-block)}
+.banner + .tablewrap,.banner + .chartbox,.sub-h + .tablewrap,.sub-h + .chartbox,
+.sub-h + .banner,.sub-h + .cards{margin-top:0}
+.tablewrap + .note,.chartbox + .note,.tablewrap + .src,.chartbox + .src{margin-top:8px}
+b,strong{font-weight:700}
+.hl{color:var(--brand-heading);font-weight:700}
+.mark{background:var(--accent-gold-bg);padding:1px 4px;font-weight:800;border-radius:2px;
+      box-shadow:0 0 0 1px var(--accent-gold-bg)}
+.star{color:var(--accent-gold);font-weight:800;margin-right:4px}
+.pos{color:var(--accent-teal);font-weight:700}
+.neg{color:var(--accent-red);font-weight:700}
+.ref{color:var(--accent-blue);font-weight:700}
+.tablewrap{overflow-x:auto;border-radius:3px;box-shadow:var(--shadow)}
+table.data{width:100%;min-width:520px;border-collapse:collapse;background:var(--paper);font-size:13.5px}
+table.data thead th{background:var(--brand-primary);color:#fff;font-weight:700;font-size:12.5px;
+                    padding:7px 9px;text-align:left;white-space:nowrap}
+table.data td{padding:8px 10px;border-bottom:1px solid var(--rowline);vertical-align:top}
+table.data tbody tr:last-child td{border-bottom:0}
+table.data td.num,table.data th.num{text-align:right;font-family:var(--font-mono);white-space:nowrap}
+table.data td.key{font-weight:700;white-space:nowrap}
+table.data tr.sub td{background:var(--brand-fill-light)}
+table.data tr.total td{font-weight:800;border-top:1.5px solid var(--text)}
+table.data tr.warn td{background:var(--accent-red-bg)}
+.callout{padding:14px 18px;font-size:14px;line-height:1.65;border-left:3px solid}
+.callout.olive{background:var(--brand-bg-tint);border-color:var(--brand-primary);color:var(--text)}
+.callout.teal{background:var(--accent-teal-bg);border-color:var(--accent-teal)}
+.callout.red{background:var(--accent-red-bg);border-color:var(--accent-red)}
+.callout.gold{background:var(--accent-gold-bg);border-color:var(--accent-gold)}
+.banner{background:var(--brand-primary);color:#fff;font-size:14px;font-weight:700;padding:6px 12px;display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.card{background:var(--paper);border:1px solid var(--hairline);border-radius:3px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .lbl{font-size:11.5px;color:var(--muted);font-weight:600}
+.kpi .num{font-size:26px;font-weight:800;color:var(--brand-heading);font-family:var(--font-mono);line-height:1.25}
+.kpi .cap{font-size:10.5px;color:var(--faint);margin-top:4px}
+.note,.src{margin-top:8px;padding-top:6px;border-top:1px solid var(--hairline);
+           font-size:10px;line-height:1.7;color:var(--faint)}
+.note b,.src b{color:var(--muted)}
+.doc-foot{margin-top:72px;padding-top:16px;border-top:1px solid var(--hairline);
+          font-size:11.5px;line-height:1.7;color:var(--faint);display:flex;flex-direction:column;gap:5px}
+details{border:1px solid var(--hairline);border-radius:3px;background:var(--paper)}
+details summary{padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer;color:var(--brand-heading)}
+details[open] summary{border-bottom:1px solid var(--hairline)}
+details .inner{padding:14px}
+a{color:var(--brand-heading)}
+/* 변화 로그 */
+.logtable td.lv{white-space:nowrap;font-weight:800;font-size:12px}
+.lv-red{color:var(--accent-red)}
+.lv-orange{color:var(--accent-gold)}
+.lv-yellow{color:var(--compare-gray)}
+.axis{display:inline-block;font-size:11px;font-weight:700;color:var(--muted);
+      border:1px solid var(--hairline);border-radius:2px;padding:0 5px;white-space:nowrap}
+@media (max-width:640px){
+  :root{--gap-chapter:104px;--gap-band:88px;--gap-section:36px}
+  .doc{padding:28px 16px 64px}
+  .page-title{font-size:25px}
+  .sec{font-size:20px}
+}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header class="doc-header">
+    <div class="kicker">CNS Oncology · 종목 추적</div>
+    <h1 class="page-title">Cerenome (CNSY) 추적</h1>
+    <p class="page-sub">진단 CNSide · 치료제 REYOBIQ · 자본구조</p>
+    <hr class="title-rule">
+    <div class="stamp">기준일 2026.08.24 · 자동 갱신 <span id="stamp-auto">—</span></div>
+  </header>
+
+  <p class="lead">
+    구 Plus Therapeutics(PSTV). (26.08.03) 사명 Cerenome, 티커 CNSY로 전환됨.
+    CIK 0001095981은 불변이므로 추적은 티커가 아니라 CIK 기준으로 함.
+  </p>
+
+
+  <!-- ══════════ 0장 ══════════ -->
+  <h2 class="sec"><span class="no">0장</span>지표</h2>
+  <hr class="sec-rule">
+
+  <div class="cards" id="kpi">
+    <div class="card kpi"><div class="lbl">주가</div><div class="num" id="k-price">—</div><div class="cap" id="k-price-cap">—</div></div>
+    <div class="card kpi"><div class="lbl">시가총액</div><div class="num" id="k-mcap">—</div><div class="cap">주가 × 발행주식수</div></div>
+    <div class="card kpi"><div class="lbl">발행주식수</div><div class="num" id="k-shares">—</div><div class="cap" id="k-shares-cap">—</div></div>
+    <div class="card kpi"><div class="lbl">현금 · 투자</div><div class="num">8.6</div><div class="cap">$M · 26.06.30 · 분기 소진 6.7</div></div>
+    <div class="card kpi"><div class="lbl">LM 투여</div><div class="num" id="k-lm">—</div><div class="cap">명 · respect-trials</div></div>
+    <div class="card kpi"><div class="lbl">GBM 투여</div><div class="num" id="k-gbm">—</div><div class="cap">명 · respect-trials</div></div>
+  </div>
+  <div class="note">
+    <b>Source</b> — 주가 Yahoo Finance · 발행주식수 SEC XBRL(dei) · 현금 10-Q(26.06.30) · 투여 환자수 respect-trials.com ·
+    <b>Note</b> — 발행주식수는 10-Q · 10-K 표지 기준이라 최신 ATM 인출이 며칠 늦게 반영됨. 시가총액은 그만큼 과소 계상될 수 있음.
+  </div>
+
+
+  <!-- ══════════ 1장 ══════════ -->
+  <h2 class="sec"><span class="no">1장</span>지금 상태</h2>
+  <hr class="sec-rule">
+
+  <p>
+    사업 진척과 재무 체력이 반대로 벌어져 있음.
+    커버드 라이프는 연말 목표 1.5억명을 (26.08.13) 초과 달성했고,
+    수가는 갭필이 아닌 크로스워크로 권고되어 27년 1월 전국단가 경로가 열림.
+    임상은 두 건 모두 독성 없이 진행 중.
+  </p>
+
+  <p>
+    반대편에서 현금·투자는 (26.06.30) $8.6M, 분기 영업현금유출 $6.7M.
+    10-Q에 <span class="neg">계속기업 불확실성</span>이 기재됨.
+    베이비셸프 한도는 시가총액 하락으로 $7~8M 수준까지 축소되어,
+    ATM만으로는 다음 분기를 넘기기 어려운 구조임.
+  </p>
+
+  <p>
+    <span class="star">★</span><span class="mark">임상 리드아웃 2건과 현금 소진이 같은 분기에 몰려 있어: 데이터 자체보다 데이터를 어떤 조달 조건과 묶어 내놓는지가 주가를 지배함</span>
+  </p>
+
+
+  <!-- ══════════ 2장 ══════════ -->
+  <h2 class="sec"><span class="no">2장</span>사업 현황</h2>
+  <hr class="sec-rule">
+
+  <p>
+    진단과 치료제 2개 축으로 구성됨.
+    진단은 상업화 단계, 치료제는 전부 1~2상 단계임.
+  </p>
+
+  <div class="sub-h">진단: CNSide</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead>
+        <tr><th>항목</th><th>현재</th><th>다음 판정점</th></tr>
+      </thead>
+      <tbody>
+        <tr class="sub"><td class="key">커버드 라이프</td><td><b>1.53억명</b> (26.08.13, 목표 1.5억 조기 초과)</td><td>Aetna · Cigna · Kaiser · Centene</td></tr>
+        <tr><td class="key">청구 코드</td><td>PLA 0640U 발효 (26.07.01)</td><td>Category I 승격은 사용량 누적 후</td></tr>
+        <tr class="sub"><td class="key">수가</td><td>Novitas 재량가 · <b>CDLT 패널 크로스워크 권고 12표 대 0표</b> (26.07.14)</td><td>CMS 예비결정 26.09 · 최종 26.11 · 적용 27.01.01</td></tr>
+        <tr><td class="key">메디케어 커버리지</td><td>미확보. PTAN만 취득 (26.05.07)</td><td>Novitas LCD 등재 여부</td></tr>
+        <tr><td class="key">검사 볼륨</td><td>상반기 232건 (6월 72건)</td><td>연 1,250건 런레이트 (12월 기준)</td></tr>
+        <tr><td class="key">매출 인식</td><td>사실상 0. 전액 충당금</td><td>3분기 실적 (26.11 중순)</td></tr>
+        <tr><td class="key">어세이 확장</td><td>GTC NGS 파트너십 (26.07.16). 3분기 약속 3종 미출시</td><td>3분기 마감 (26.09.30)</td></tr>
+        <tr><td class="key">랩 인증</td><td>CLIA · CAP (26.06.04) · 캘리포니아 라이선스</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Source</b> — 회사 보도자료 · 10-Q(26.06.30) · CMS CDLT 자문패널 투표결과(26.08.07 공개) ·
+    <b>Note</b> — 크로스워크 대상 0338U는 혈액 CTC 검사(CELLSEARCH HER2)로, 준용 단가가 회사가 언급한 기대범위에 못 미칠 여지가 있음.
+  </div>
+
+  <p>
+    계약 확보와 대금 수납은 별개임.
+    상반기에 232건을 실제로 수행했으나 매출 인식액은 사실상 없었음.
+    (26.08.04) XiFin RCM 도입이 이 구간을 겨냥한 것임.
+  </p>
+
+  <div class="sub-h">치료제: REYOBIQ</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead>
+        <tr><th>임상</th><th>단계 · 투여</th><th>등록</th><th>현재</th><th>다음 판정점</th></tr>
+      </thead>
+      <tbody>
+        <tr class="sub">
+          <td class="key">ReSPECT-LM<br>다회투여</td>
+          <td>1상 · Ommaya 뇌실내<br>13.2mCi × 3회</td>
+          <td>목표 12~18명<br>중 약 1/3</td>
+          <td>Cohort 1a(56일 간격) DLT 없이 통과 (26.08.13)</td>
+          <td><b>연말까지 RP2D · 투여간격 확정</b> → 개정 프로토콜 FDA 정렬 → pivotal</td>
+        </tr>
+        <tr>
+          <td class="key">ReSPECT-GBM<br>2상</td>
+          <td>2상 · CED 종양내<br>22.3mCi 단회</td>
+          <td>31 / 34<br>(26.06.30)</td>
+          <td>사이트 3곳 가동</td>
+          <td>26년 내 완전등록 → <b>데이터 27년 1분기</b> → EOP2 미팅</td>
+        </tr>
+        <tr>
+          <td class="key">ReSPECT-PBC<br>소아</td>
+          <td>1/2a · CED<br>0.5~1.0mCi/mL</td>
+          <td>0명</td>
+          <td>Lurie 아동병원 사이트 활성화 중</td>
+          <td>첫 투여 3분기 예정 (미발표)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Source</b> — 2분기 실적 보도자료(26.08.14) · 중간 업데이트(26.06.30) · SNO/ASCO CNS Metastases 발표(26.08.20) ·
+    <b>Note</b> — ClinicalTrials.gov 등재분은 25년 3~8월 이후 갱신이 없어 회사 발표와 어긋남. 등록 수치는 회사 발표를 우선함.
+  </div>
+
+  <p>
+    단회투여 1상에서 RP2D 44.1mCi 기준 mOS 9개월, 영상반응률 76%, Grade 3+ 독성 낮음.
+    LM 표준치료 mOS 2~6개월 대비 의미 있는 격차임.
+    GBM 1상은 100Gy 이상 흡수군 mOS 17개월, 미만군 6개월로 용량-반응 관계가 확인됨.
+  </p>
+
+  <div class="sub-h">규제 자산과 제약</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>항목</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td class="key">희귀의약품 지정</td><td>LM · GBM · 소아 악성교종 전부 확보. 소아는 신청 범위를 넘어 진행성 상피세포종까지 확대 지정 (26.04.08)</td></tr>
+        <tr><td class="key">패스트트랙</td><td>GBM</td></tr>
+        <tr><td class="key">보조금</td><td>CPRIT $17.6M(LM) · NCI(GBM) · 국방부 $3M(소아)</td></tr>
+        <tr class="sub"><td class="key">FDA 방향 (26.01.08)</td><td>1차 지표는 OS 권고 · 척수강내 화학요법 대조 무작위배정 · 신경학적 기능과 환자보고 결과를 2차로 장려 · 가속승인 가능성 언급</td></tr>
+        <tr><td class="key">제조</td><td>Radiomedix + SpectronRx 2개 GMP 사이트. 26년 말 스케일업 완료 목표. 신규 CDMO 감사 4분기 예정</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>Source</b> — FDA Type B 미팅 결과 발표(26.01.08) · SpectronRx MSA(26.04.23) · 소아 ODD(26.04.08)</div>
+
+  <p>
+    같은 미팅에서 <span class="mark">FDA는 CTC를 중간 대리지표로 쓰기에는 데이터가 불충분하다고 명시함</span>.
+    진단과 치료제를 묶어 허가 기간을 줄이는 경로는 규제 단계에서 닫혀 있음.
+    상업 단계의 결합 판매는 별개로 유효함.
+  </p>
+
+
+  <!-- ══════════ 3장 ══════════ -->
+  <h2 class="sec"><span class="no">3장</span>추후 일정</h2>
+  <hr class="sec-rule">
+
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>시점</th><th>이벤트</th><th>확인할 것</th></tr></thead>
+      <tbody>
+        <tr class="sub"><td class="key">26.09 상반기</td><td>CMS CY2027 CLFS 예비 가격결정</td><td><b>0640U 준용 단가</b>. 진단부문 밸류의 절반이 여기서 확정됨</td></tr>
+        <tr><td class="key">26.09.30</td><td>3분기 마감</td><td>추가 CSF 어세이 3종 출시 여부 · 소아 첫 투여</td></tr>
+        <tr><td class="key">26.10 초</td><td>CMS 예비결정 의견수렴 마감</td><td>회사 의견 제출 여부</td></tr>
+        <tr class="sub"><td class="key">26.11 중순</td><td>3분기 실적 · 10-Q</td><td><b>진단 매출 첫 인식 여부</b> · 현금 잔액 · 자기자본 요건</td></tr>
+        <tr><td class="key">26.11</td><td>SNO 연례총회 · CMS 최종 가격결정</td><td>LM 다회투여 추가 데이터 · 확정 단가</td></tr>
+        <tr><td class="key">26.12</td><td>SABCS</td><td>유방암 유래 LM 하위분석</td></tr>
+        <tr class="sub"><td class="key">26년 내</td><td>LM RP2D · 투여간격 확정</td><td>개정 프로토콜에 대한 FDA 정렬 발표</td></tr>
+        <tr><td class="key">27.01.01</td><td>CY2027 CLFS 적용</td><td>실제 청구 · 수납 개시</td></tr>
+        <tr><td class="key">27.1분기</td><td>GBM 2상 데이터</td><td>mOS · 고선량 도달률 → EOP2 미팅</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>Source</b> — CMS 연방관보 공고(26.05.01) · 회사 2026 목표(26.08.14 재확인)</div>
+
+  <p>
+    가장 가까운 것은 <span class="mark">9월 상반기 CMS 예비 가격결정: 0640U 단가가 처음 숫자로 공개되는 자리</span>임.
+    크로스워크 권고로 갭필 지연은 피했으나, 준용 단가 수준은 아직 미확인 상태임.
+  </p>
+
+  <div class="sub-h">임상 데이터 판정 기준</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>지표</th><th>미달</th><th>부합</th><th>기대 이상</th></tr></thead>
+      <tbody>
+        <tr><td class="key">LM 다회투여 mOS</td><td>9개월 미만</td><td>9~12개월</td><td>12개월 초과</td></tr>
+        <tr><td class="key">LM 안전성</td><td>Grade 3+ 발생</td><td>1~2등급 위주</td><td>단회 대비 개선</td></tr>
+        <tr><td class="key">LM 영상반응률</td><td>50% 미만</td><td>50~76%</td><td>76% 초과</td></tr>
+        <tr><td class="key">GBM 2상 mOS</td><td>12개월 미만</td><td>12~17개월</td><td>17개월 초과</td></tr>
+        <tr><td class="key">GBM 고선량 도달률</td><td>60% 미만</td><td>60~80%</td><td>80% 초과</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Note</b> — 비교 기준선: 단회투여 mOS 9개월 · LM 표준치료 2~6개월 · GBM 표준치료 7~9개월 ·
+    경쟁 참조선: BLOSSOM(오시머티닙 80mg) 15.6개월 · TBCRC049(투카티닙 3제) 10개월.
+    표적 가능 환자에서는 이미 이 수준이 존재하므로 LM 데이터는 표적 소진 후 라인 기준으로 읽음.
+  </div>
+
+
+  <!-- ══════════ 4장 ══════════ -->
+  <h2 class="sec"><span class="no">4장</span>진행 경과</h2>
+  <hr class="sec-rule">
+
+  <p>
+    자동 수집분과 수기 기록이 함께 쌓임. 최신이 위.
+    레딧발 항목은 등급 회색으로 남고, 1차 출처에서 확인되기 전까지 사실로 취급하지 않음.
+  </p>
+
+  <div class="banner">변화 로그</div>
+  <div class="tablewrap">
+    <table class="data logtable">
+      <thead><tr><th>날짜</th><th>등급</th><th>축</th><th>내용</th></tr></thead>
+      <tbody id="logbody"><tr><td colspan="4">불러오는 중</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>등급</b> — 적색: 테제를 바꾸는 사건(조달 · 상장요건 · 탑라인 · 확정 단가) ·
+    황색: 축의 진척(페이어 계약 · 예비 단가 · 임상 등록 변화 · 매출 인식) ·
+    회색: 참고 및 미확인(레딧 · 인사 · 경쟁사)
+  </div>
+
+  <div class="sub-h">SEC 제출물</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>제출일</th><th>양식</th><th>Item</th><th>문서</th></tr></thead>
+      <tbody id="filingbody"><tr><td colspan="4">불러오는 중</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note"><b>Source</b> — SEC EDGAR submissions API, CIK 0001095981</div>
+
+  <div class="sub-h">발행주식수</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>기준일</th><th class="num">발행주식수</th><th class="num">증감</th><th>비고</th></tr></thead>
+      <tbody id="sharebody"><tr><td colspan="4">불러오는 중</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Source</b> — SEC XBRL dei:EntityCommonStockSharesOutstanding ·
+    <b>Note</b> — 워런트 1,817,714주 별도(26.06.30). 발행주식 대비 약 24%.
+  </div>
+
+  <div class="sub-h">임상 등록 현황</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>NCT</th><th>임상</th><th>상태</th><th class="num">등록</th><th>등재 갱신</th></tr></thead>
+      <tbody id="ctbody"><tr><td colspan="5">불러오는 중</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note"><b>Source</b> — ClinicalTrials.gov API v2. 스폰서명이 구 사명으로 남아 있어 Cerenome · Plus Therapeutics 양쪽으로 조회함</div>
+
+
+  <!-- ══════════ 5장 ══════════ -->
+  <h2 class="sec"><span class="no">5장</span>아직 안 나온 것</h2>
+  <hr class="sec-rule">
+
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>질문</th><th>해소 시점</th></tr></thead>
+      <tbody>
+        <tr class="sub"><td class="key">0640U 준용 단가 수준</td><td>CMS 예비결정 26.09 상반기</td></tr>
+        <tr><td class="key">LM 다회투여 실제 등록 인원</td><td>회사가 "목표의 약 1/3"만 반복. 3분기 실적 또는 SNO 초록</td></tr>
+        <tr><td class="key">GBM 데이터 시점: 4분기 대 27년 1분기</td><td>보도자료는 27년 1분기로 일관됨. 컨콜 원문 대조 필요</td></tr>
+        <tr><td class="key">7~8월 발행주식 27.9만주 증가분의 출처</td><td>3분기 10-Q</td></tr>
+        <tr><td class="key">나스닥 자기자본 모니터링(26.08.22) 후속</td><td>8-K 또는 3분기 10-Q</td></tr>
+        <tr><td class="key">소아 첫 투여</td><td>3분기 마감 26.09.30</td></tr>
+        <tr><td class="key">추가 CSF 어세이 3종 출시</td><td>3분기 마감 26.09.30</td></tr>
+        <tr><td class="key">진단 매출 첫 인식</td><td>3분기 실적 26.11 중순</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    등재 카운터가 <span class="mark">LM 37명 · GBM 53명으로 (26.06.09) 이후 움직이지 않음</span>:
+    페이지 자체는 (26.08.19~20) 수정되었으므로 갱신 누락보다는 실제 정체일 가능성이 있음.
+    연말 RP2D 확정 목표와 배치되는 지점이라 매일 감시 대상에 둠.
+  </p>
+
+
+  <!-- ══════════ 6장 ══════════ -->
+  <h2 class="sec"><span class="no">6장</span>짚어둘 점</h2>
+  <hr class="sec-rule">
+
+  <div class="sub-h">주식수의 정지와 재개가 데이터 타이밍의 선행지표임</div>
+  <p>
+    ATM은 회사가 미공개 중요정보를 보유한 기간에 매도가 금지됨.
+    <span class="mark">주식수 증가가 멈추면 데이터를 손에 쥔 신호이고, 발표 직후 다시 늘면 발표를 조달 창구로 쓴 것임</span>.
+    희석 추적이 곧 임상 일정 추적이 되는 구조임.
+  </p>
+
+  <div class="sub-h">메디케어 경로는 MolDX가 아님</div>
+  <p>
+    랩이 텍사스 휴스턴에 있어 관할 MAC은 Novitas(JH)이고, Novitas는 MolDX 참여 MAC이 아님.
+    회사 자료에 MolDX가 단 한 번도 등장하지 않는 것과 정합적임.
+    Z-code · 기술평가 통과를 기다리는 대신 Novitas LCD와 CLFS 단가를 봄.
+  </p>
+
+  <div class="sub-h">커버드 라이프는 후행지표가 됨</div>
+  <p>
+    목표를 4개월 앞당겨 초과 달성했으므로 추가 계약의 한계 정보량이 낮아짐.
+    Aetna · Cigna · Kaiser · Centene 급이 아니면 주가 재료로 보지 않음.
+    같은 자리를 검사 건수와 매출 인식이 대신함.
+  </p>
+
+  <div class="sub-h">경쟁 지형은 한 곳을 빼고 완화됨</div>
+  <p>
+    GBM 국소전달 최대 경쟁자였던 Medicenna는 현금 $5.7M로 3상 미개시 · 파트너 미확보 상태임.
+    LM 쪽 Quadriga는 (25.12.03) 이후 발표가 없음.
+    진단에서는 Belay Diagnostics만 활발하고, (26.06.17) NCCN에 CSF 유전체 프로파일링이 등재됨.
+  </p>
+
+  <div class="callout olive">
+    투자 판단의 축은 다음 순서로 둠:
+    ① 임상 리드아웃 2건 → ② 희석 속도 → ③ 조달 조건 → ④ 0640U 단가 → ⑤ 진단 매출 인식.
+    ①과 ③이 같은 분기에 겹치므로 둘을 따로 보지 않음.
+  </div>
+
+
+  <!-- ══════════ 7장 ══════════ -->
+  <h2 class="sec"><span class="no">7장</span>자료 · 방법론</h2>
+  <hr class="sec-rule">
+
+  <div class="sub-h">수집 소스</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>소스</th><th>주기</th><th>잡는 것</th></tr></thead>
+      <tbody>
+        <tr><td class="key">SEC submissions API</td><td>일 2회</td><td>제출물 신규</td></tr>
+        <tr class="sub"><td class="key">SEC XBRL dei</td><td>일 2회</td><td>발행주식수 → 희석</td></tr>
+        <tr><td class="key">ir.cerenome.com RSS</td><td>일 2회</td><td>보도자료 · 공시</td></tr>
+        <tr class="sub"><td class="key">respect-trials.com</td><td>일 2회</td><td>투여 환자수 카운터</td></tr>
+        <tr><td class="key">cnside-dx.com</td><td>일 2회</td><td>제품 · 랩 소식</td></tr>
+        <tr><td class="key">ClinicalTrials.gov v2</td><td>일 2회</td><td>등록자수 · 상태</td></tr>
+        <tr><td class="key">Yahoo Finance</td><td>일 2회</td><td>주가</td></tr>
+        <tr><td class="key">CMS CLFS</td><td>일 2회</td><td>CY2027 가격결정 파일 등장</td></tr>
+        <tr><td class="key">레딧</td><td>일 2회</td><td>미확인 신호</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>Note</b> — 소스 하나가 실패해도 나머지는 갱신됨. 실패한 소스는 직전 값을 유지하며 수집 상태에 기록됨</div>
+
+  <div class="sub-h">레딧 취급 규칙</div>
+  <p>
+    소식은 빠르나 보유자 편향이 있음.
+    ① 감지되면 회색 등급으로만 기록함
+    ② 1차 출처에서 확인되면 그때 등급을 올리고 출처를 교체함
+    ③ 72시간 내 미확인이면 폐기하되 기록은 남김.
+  </p>
+
+  <details>
+    <summary>용어</summary>
+    <div class="inner">
+      <p style="margin-top:0">
+        LM(Leptomeningeal Metastases, 뇌수막 전이): 암세포가 뇌·척수를 감싸는 연수막과 뇌척수액으로 퍼진 상태.<br>
+        GBM(Glioblastoma, 교모세포종): 가장 흔하고 예후가 나쁜 원발성 뇌종양.<br>
+        CSF(Cerebrospinal Fluid, 뇌척수액) · CTC(Circulating Tumor Cell, 순환종양세포).<br>
+        CED(Convection Enhanced Delivery, 대류강화전달): 카테터로 종양에 약물을 압력 주입하는 방식.<br>
+        Ommaya(오마야 저장소): 두피 아래에 심어 뇌실로 약물을 넣는 장치.<br>
+        mOS(median Overall Survival, 중앙 전체생존기간) · RP2D(2상 권장용량) · DLT(용량제한독성).<br>
+        ODD(Orphan Drug Designation, 희귀의약품 지정) · EOP2(End-of-Phase 2, 2상 종료 FDA 미팅).<br>
+        PLA(Proprietary Laboratory Analyses, 단일 회사 전용 검사 청구코드) · CLFS(Clinical Laboratory Fee Schedule, 메디케어 검사 수가표).<br>
+        MAC(Medicare Administrative Contractor, 메디케어 심사 위탁사) · LCD(Local Coverage Determination, 지역 보장결정).<br>
+        MolDX(분자진단 기술평가 프로그램) · 크로스워크(기존 유사검사 가격 준용) · 갭필(1년간 지역 단가를 모아 익년 전국단가 확정).<br>
+        ATM(At-the-Market, 시장가 분할 발행) · 베이비셸프(시가총액 $75M 미만 발행사의 12개월 조달 한도 규정).<br>
+        RCM(Revenue Cycle Management, 청구·수납 관리) · NGS(차세대 염기서열분석).
+      </p>
+    </div>
+  </details>
+
+  <div class="doc-foot">
+    <div><b>Source</b> — SEC EDGAR · ir.cerenome.com · cnside-dx.com · respect-trials.com · ClinicalTrials.gov · CMS CLFS · Yahoo Finance</div>
+    <div><b>Note 1</b> — 지표 타일과 표 일부는 자동 수집분이며 갱신 시각은 표지에 표시됨. 수집 실패 시 직전 값이 유지됨.</div>
+    <div><b>Note 2</b> — 회사 발표 수치와 ClinicalTrials.gov 등재 수치가 어긋나는 경우 회사 발표를 우선함.</div>
+    <div><b>Note 3</b> — 본 자료는 개인 기록 목적이며 특정 종목의 매수 · 매도 권유가 아님.</div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var LV = {red:['적색','lv-red'], orange:['황색','lv-orange'], yellow:['회색','lv-yellow']};
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function n(x){ return x==null ? '—' : Number(x).toLocaleString('en-US'); }
+  function put(id, v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+  function rows(id, html){ var e=document.getElementById(id); if(e) e.innerHTML = html || '<tr><td colspan="5">자료 없음</td></tr>'; }
+
+  function render(d){
+    var m = d.meta || {};
+    put('stamp-auto', m.updated || '—');
+
+    var q = d.quote || {}, sh = (d.shares||{}).latest || {};
+    if(q.price!=null){
+      put('k-price', '$' + Number(q.price).toFixed(2));
+      var ch = (q.prev!=null && q.prev) ? ((q.price-q.prev)/q.prev*100) : null;
+      put('k-price-cap', (ch==null?'':(ch>=0?'+':'') + ch.toFixed(1) + '% · ')
+          + '52주 ' + (q.low52!=null?('$'+Number(q.low52).toFixed(2)):'—')
+          + '~' + (q.high52!=null?('$'+Number(q.high52).toFixed(2)):'—'));
+    }
+    if(sh.shares){
+      put('k-shares', n(sh.shares));
+      put('k-shares-cap', sh.date + ' 기준');
+      if(q.price!=null) put('k-mcap', '$' + (q.price*sh.shares/1e6).toFixed(1) + 'M');
+    }
+    var t = d.trials || {};
+    function ctr(k){ var v=t[k]; if(!v) return null;
+      var c=v.counters||{}; for(var key in c){ if(/Patients Treated/i.test(key)) return c[key]; }
+      for(var k2 in c) return c[k2]; return null; }
+    var lm = ctr('lm'), gbm = ctr('gbm');
+    if(lm!=null) put('k-lm', lm);
+    if(gbm!=null) put('k-gbm', gbm);
+
+    rows('logbody', (d.log||[]).slice(0,60).map(function(e){
+      var lv = LV[e.level] || LV.yellow;
+      var txt = e.link ? '<a href="'+esc(e.link)+'" target="_blank" rel="noopener">'+esc(e.text)+'</a>' : esc(e.text);
+      return '<tr><td class="num">'+esc(e.date)+'</td>'
+           + '<td class="lv '+lv[1]+'">'+lv[0]+'</td>'
+           + '<td><span class="axis">'+esc(e.axis)+'</span></td>'
+           + '<td>'+txt+'</td></tr>';
+    }).join(''));
+
+    rows('filingbody', ((d.filings||{}).list||[]).slice(0,15).map(function(f){
+      return '<tr><td class="num">'+esc(f.filed)+'</td><td class="key">'+esc(f.form)+'</td>'
+           + '<td>'+esc(f.items||'')+'</td>'
+           + '<td><a href="'+esc(f.url)+'" target="_blank" rel="noopener">원문</a></td></tr>';
+    }).join(''));
+
+    var ser = ((d.shares||{}).series||[]).slice(-14);
+    rows('sharebody', ser.map(function(s,i){
+      var prev = i>0 ? ser[i-1].shares : null;
+      var delta = prev ? (s.shares - prev) : null;
+      var pct = (prev && delta) ? (delta/prev*100) : null;
+      return '<tr><td class="num">'+esc(s.date)+'</td>'
+           + '<td class="num">'+n(s.shares)+'</td>'
+           + '<td class="num">'+(delta==null?'—':((delta>0?'+':'')+n(delta)+(pct!=null?(' ('+(pct>0?'+':'')+pct.toFixed(1)+'%)'):'')))+'</td>'
+           + '<td>'+(delta&&delta>0?'증가':'')+'</td></tr>';
+    }).reverse().join(''));
+
+    rows('ctbody', (d.ctgov||[]).map(function(s){
+      return '<tr><td class="key"><a href="https://clinicaltrials.gov/study/'+esc(s.nct)+'" target="_blank" rel="noopener">'+esc(s.nct)+'</a></td>'
+           + '<td>'+esc(s.title)+'</td><td>'+esc(s.status)+'</td>'
+           + '<td class="num">'+(s.enroll==null?'—':s.enroll)+(s.enrollType==='ACTUAL'?' 실제':'')+'</td>'
+           + '<td class="num">'+esc(s.updated)+'</td></tr>';
+    }).join(''));
+  }
+
+  function grab(url){ return fetch(url + '?v=' + Date.now()).then(function(r){
+    if(!r.ok) throw new Error(r.status); return r.json(); }); }
+
+  grab('./data/cache.json')
+    .catch(function(){ return grab('./data/seed.json'); })
+    .then(render)
+    .catch(function(e){ put('stamp-auto', '수집 데이터 없음'); console.error(e); });
+})();
+</script>
+</body>
+</html>
