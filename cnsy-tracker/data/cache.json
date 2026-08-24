@@ -453,7 +453,7 @@
   }
  },
  "quote": {
-  "price": 3.03,
+  "price": 3.07,
   "prev": 7.0,
   "high52": 23.5,
   "low52": 2.9,
@@ -960,25 +960,71 @@
    },
    {
     "date": "2026-08-24",
-    "close": 3.03
+    "close": 3.07
    }
   ]
  },
  "trials": {
   "lm": {
-   "modified": "",
+   "modified": "2026-08-20T03:03:23",
    "counters": {
-    "Patients Treated to Date": 1
+    "Patients Treated to Date": 37
    }
   },
   "gbm": {
-   "modified": "",
+   "modified": "2026-08-19T19:15:56",
    "counters": {
-    "Patients Treated to Date": 1
+    "Patients Treated to Date": 53
    }
   }
  },
- "ctgov": null,
+ "ctgov": [
+  {
+   "nct": "NCT01906385",
+   "title": "ReSPECT-GBM Phase 1/2",
+   "status": "RECRUITING",
+   "updated": "2025-03-26",
+   "enroll": 55,
+   "enrollType": "ESTIMATED",
+   "primaryCompletion": "2025-12"
+  },
+  {
+   "nct": "NCT05034497",
+   "title": "ReSPECT-LM 단회투여 Phase 1",
+   "status": "ACTIVE_NOT_RECRUITING",
+   "updated": "2025-03-26",
+   "enroll": 18,
+   "enrollType": "ESTIMATED",
+   "primaryCompletion": "2025-12-21"
+  },
+  {
+   "nct": "NCT05460507",
+   "title": "ReSPECT-GBM 재투여 Phase 1",
+   "status": "RECRUITING",
+   "updated": "2025-03-26",
+   "enroll": null,
+   "enrollType": "",
+   "primaryCompletion": ""
+  },
+  {
+   "nct": "NCT07061626",
+   "title": "ReSPECT-PBC 소아 Phase 1/2a",
+   "status": "NOT_YET_RECRUITING",
+   "updated": "2025-07-11",
+   "enroll": 56,
+   "enrollType": "ESTIMATED",
+   "primaryCompletion": "2027-03"
+  },
+  {
+   "nct": "NCT07098806",
+   "title": "ReSPECT-LM 다회투여 Phase 1",
+   "status": "RECRUITING",
+   "updated": "2025-08-01",
+   "enroll": 24,
+   "enrollType": "ESTIMATED",
+   "primaryCompletion": "2026-10-02"
+  }
+ ],
  "news": [
   {
    "title": "Cerenome Highlights Presentations at the 2026 SNO/ASCO CNS Metastases Conference Demonstrating Progress in Both Therapeutics and Diagnostics Business Lines",
@@ -1178,9 +1224,24 @@
   "cy2027_files": [],
   "checked": "2026-08-24"
  },
- "log": [],
+ "log": [
+  {
+   "date": "2026-08-24",
+   "level": "orange",
+   "axis": "임상",
+   "text": "LM Patients Treated to Date: 1 → 37명",
+   "link": "https://www.respect-trials.com/lm/"
+  },
+  {
+   "date": "2026-08-24",
+   "level": "orange",
+   "axis": "임상",
+   "text": "GBM Patients Treated to Date: 1 → 53명",
+   "link": "https://www.respect-trials.com/gbm/"
+  }
+ ],
  "meta": {
-  "updated": "2026-08-24 23:31",
+  "updated": "2026-08-24 23:37",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1194,6 +1255,6 @@
    "reddit": "ok",
    "cms": "ok"
   },
-  "new_events": 0
+  "new_events": 2
  }
 }
