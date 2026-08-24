@@ -51,6 +51,11 @@ def get(url, ua=UA_WEB, timeout=30, retries=2, accept="*/*"):
                 "Accept-Encoding": "identity",
                 "Accept-Language": "en-US,en;q=0.9",
                 "Referer": "https://www.google.com/",
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-origin",
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
             })
             ctx = ssl.create_default_context()
             with urllib.request.urlopen(req, timeout=timeout, context=ctx) as r:
@@ -81,16 +86,24 @@ def today_kst():
     return datetime.now(KST).strftime("%Y-%m-%d")
 
 
+_SEED = None
+
+
 def section(name, fn, prev):
-    """소스 하나를 수집한다. 실패하면 직전 값을 그대로 물려준다."""
+    """소스 하나를 수집한다. 실패하면 직전 값을, 직전 값도 없으면 seed 값을 물려준다."""
+    global _SEED
     try:
         out = fn()
         STATUS[name] = "ok"
         return out
     except Exception as e:                           # noqa: BLE001
-        STATUS[name] = "fail: %s" % str(e)[:120]
+        STATUS[name] = "fail: %s" % str(e)[:140]
         print("  [fail] %s : %s" % (name, e), file=sys.stderr)
-        return prev
+        if prev:
+            return prev
+        if _SEED is None:
+            _SEED = load(SEED, {})
+        return _SEED.get(name)
 
 
 def strip_tags(s):
@@ -172,26 +185,32 @@ def f_quote():
 
 
 def _dig(html):
+    """Divi 숫자 카운터에서 제목과 값을 뽑는다. 숏코드형과 렌더형 둘 다 지원."""
     nums = {}
+    # ① WP API가 돌려주는 숏코드형
     for m in re.finditer(r'et_pb_number_counter([^\]]*)\]', html):
         blk = m.group(1)
         t = re.search(r'title="([^"]*)"', blk)
         n = re.search(r'number="(\d+)"', blk)
         if t and n:
             nums[t.group(1).strip()] = int(n.group(1))
-    if not nums:
-        m = re.search(r'number-counter[^>]*data-number-value="(\d+)"', html)
-        if m:
-            nums["Patients Treated to Date"] = int(m.group(1))
-    if not nums:
-        m = re.search(r'Patients Treated to Date.{0,600}?>\s*(\d{1,4})\s*<', html, flags=re.S)
-        if m:
-            nums["Patients Treated to Date"] = int(m.group(1))
-    if not nums:
-        m = re.search(r'>\s*(\d{1,4})\s*<.{0,600}?Patients Treated to Date', html, flags=re.S)
-        if m:
-            nums["Patients Treated to Date"] = int(m.group(1))
+    if nums:
+        return nums
+    # ② 렌더된 HTML형: class="... et_pb_number_counter ..." data-number-value="37"
+    for m in re.finditer(r'et_pb_number_counter[^>]*data-number-value="(\d+)"', html):
+        val = int(m.group(1))
+        tail = html[m.end():m.end() + 800]
+        t = re.search(r'<span[^>]*id="[^"]*"[^>]*>([^<]{3,80})</span>', tail)
+        key = t.group(1).strip() if t else "Patients Treated to Date"
+        nums[key] = val
     return nums
+
+
+def _modified(html):
+    m = re.search(r'property="article:modified_time"\s+content="([^"]+)"', html)
+    if not m:
+        m = re.search(r'"dateModified"\s*:\s*"([^"]+)"', html)
+    return m.group(1)[:19] if m else ""
 
 
 def _counters(host, slug):
@@ -206,7 +225,7 @@ def _counters(host, slug):
     except Exception as e:                               # noqa: BLE001
         _ERR.append("wp %s: %s" % (slug, e))
     html = get("%s/%s/" % (host, slug))
-    return {"modified": "", "counters": _dig(html)}
+    return {"modified": _modified(html), "counters": _dig(html)}
 
 
 
