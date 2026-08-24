@@ -36,19 +36,21 @@ UA_WEB = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 
 LOG_MAX = 300
 STATUS = {}
+_ERR = []
 
 
 # ────────────────────────────── 공통 ──────────────────────────────
 
-def get(url, ua=UA_WEB, timeout=30, retries=2):
+def get(url, ua=UA_WEB, timeout=30, retries=2, accept="*/*"):
     last = None
     for i in range(retries + 1):
         try:
             req = urllib.request.Request(url, headers={
                 "User-Agent": ua,
-                "Accept": "*/*",
+                "Accept": accept,
                 "Accept-Encoding": "identity",
                 "Accept-Language": "en-US,en;q=0.9",
+                "Referer": "https://www.google.com/",
             })
             ctx = ssl.create_default_context()
             with urllib.request.urlopen(req, timeout=timeout, context=ctx) as r:
@@ -60,7 +62,7 @@ def get(url, ua=UA_WEB, timeout=30, retries=2):
 
 
 def get_json(url, ua=UA_WEB, timeout=30):
-    return json.loads(get(url, ua=ua, timeout=timeout))
+    return json.loads(get(url, ua=ua, timeout=timeout, accept="application/json"))
 
 
 def load(path, default):
@@ -169,12 +171,7 @@ def f_quote():
     }
 
 
-def _counters(host, slug):
-    """워드프레스 Divi number_counter 위젯에서 숫자를 뽑는다."""
-    j = get_json("%s/wp-json/wp/v2/pages?slug=%s&_fields=slug,modified,content" % (host, slug))
-    if not j:
-        return None
-    html = j[0].get("content", {}).get("rendered", "") or ""
+def _dig(html):
     nums = {}
     for m in re.finditer(r'et_pb_number_counter([^\]]*)\]', html):
         blk = m.group(1)
@@ -182,29 +179,60 @@ def _counters(host, slug):
         n = re.search(r'number="(\d+)"', blk)
         if t and n:
             nums[t.group(1).strip()] = int(n.group(1))
-    if not nums:                      # 렌더된 HTML 형태일 때의 폴백
-        m = re.search(r'Patients Treated to Date.{0,400}?>(\d{1,4})<', html, flags=re.S)
+    if not nums:
+        m = re.search(r'number-counter[^>]*data-number-value="(\d+)"', html)
         if m:
             nums["Patients Treated to Date"] = int(m.group(1))
-    return {"modified": j[0].get("modified", ""), "counters": nums}
+    if not nums:
+        m = re.search(r'Patients Treated to Date.{0,600}?>\s*(\d{1,4})\s*<', html, flags=re.S)
+        if m:
+            nums["Patients Treated to Date"] = int(m.group(1))
+    if not nums:
+        m = re.search(r'>\s*(\d{1,4})\s*<.{0,600}?Patients Treated to Date', html, flags=re.S)
+        if m:
+            nums["Patients Treated to Date"] = int(m.group(1))
+    return nums
+
+
+def _counters(host, slug):
+    """워드프레스 Divi number_counter 위젯에서 숫자를 뽑는다. API가 막히면 페이지 원문으로 폴백."""
+    try:
+        j = get_json("%s/wp-json/wp/v2/pages?slug=%s&_fields=slug,modified,content" % (host, slug))
+        if j:
+            html = j[0].get("content", {}).get("rendered", "") or ""
+            nums = _dig(html)
+            if nums:
+                return {"modified": j[0].get("modified", ""), "counters": nums}
+    except Exception as e:                               # noqa: BLE001
+        _ERR.append("wp %s: %s" % (slug, e))
+    html = get("%s/%s/" % (host, slug))
+    return {"modified": "", "counters": _dig(html)}
+
+
 
 
 def f_trials():
-    host = "https://www.respect-trials.com"
+    del _ERR[:]
     out = {}
-    for slug in ("lm", "gbm", "pbc", "pediatric-brain-cancer"):
-        try:
-            r = _counters(host, slug)
-            if r and r["counters"]:
-                out[slug] = r
-        except Exception:                            # noqa: BLE001
-            continue
+    for host in ("https://www.respect-trials.com", "https://respect-trials.com"):
+        for slug in ("lm", "gbm", "pbc", "pediatric-brain-cancer"):
+            if slug in out:
+                continue
+            try:
+                r = _counters(host, slug)
+                if r and r["counters"]:
+                    out[slug] = r
+            except Exception as e:                   # noqa: BLE001
+                _ERR.append("%s: %s" % (slug, e))
+        if out:
+            break
     if not out:
-        raise RuntimeError("no counters found")
+        raise RuntimeError("카운터 없음 · " + " | ".join(_ERR[:4]))
     return out
 
 
 def f_ctgov():
+    del _ERR[:]
     out, seen = [], set()
     for spon in ("Cerenome", "Plus Therapeutics"):
         url = ("https://clinicaltrials.gov/api/v2/studies"
@@ -214,7 +242,8 @@ def f_ctgov():
                % urllib.parse.quote(spon))
         try:
             j = get_json(url)
-        except Exception:                            # noqa: BLE001
+        except Exception as e:                       # noqa: BLE001
+            _ERR.append("%s: %s" % (spon, e))
             continue
         for s in j.get("studies", []):
             p = s.get("protocolSection", {})
@@ -234,7 +263,7 @@ def f_ctgov():
                 "primaryCompletion": st.get("primaryCompletionDateStruct", {}).get("date", ""),
             })
     if not out:
-        raise RuntimeError("no studies")
+        raise RuntimeError("임상 없음 · " + " | ".join(_ERR[:3]))
     return sorted(out, key=lambda x: x["nct"])
 
 
