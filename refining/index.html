@@ -211,6 +211,37 @@ figcaption{font-size:12px; color:var(--muted); line-height:1.6; max-width:72ch; 
 .foot b{color:var(--muted)}
 a{color:var(--star-2)}
 :focus-visible{outline:2px solid var(--star-2); outline-offset:2px}
+
+/* ===== 시인성 규격 (github-report v1.1) ===== */
+.wrap{gap:0}
+.wrap > section{margin-top:156px}
+.wrap > section:first-of-type{margin-top:56px}
+.band{font-size:21px; font-weight:800; padding:15px 20px; letter-spacing:-.02em}
+.band .n{font-size:13px; opacity:.66}
+h3{margin:52px 0 0; font-size:15.5px; font-weight:800; letter-spacing:-.01em}
+h3:first-of-type{margin-top:24px}
+p{margin:26px 0 0; font-size:15px; line-height:1.78}
+.band + p{margin-top:20px}
+.tablewrap, .charts, .cards, figure, details, .callout, .note, .grp{margin-top:20px}
+h3 + .tablewrap, h3 + .charts, h3 + figure, h3 + p,
+h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
+.tablewrap + .note, .charts + .note, figure + .note{margin-top:8px}
+.grp + .charts{margin-top:10px}
+/* 주기 그룹 라벨 */
+.grp{
+  display:flex; align-items:center; gap:10px;
+  font-size:13px; font-weight:700; color:var(--muted);
+  padding-bottom:7px; border-bottom:1px solid var(--hairline);
+}
+.grp .gk{
+  font-size:12px; font-weight:800; color:var(--band-text,#fff); background:var(--band,#4A5228);
+  padding:2px 9px; border-radius:2px; letter-spacing:.02em;
+}
+@media (max-width:640px){
+  .wrap > section{margin-top:104px}
+  .band{font-size:18px; padding:12px 15px}
+  h3{margin-top:38px}
+}
 </style>
 </head>
 <body>
@@ -281,171 +312,184 @@ a{color:var(--star-2)}
     <p>
       추적 목적은 <b>부문별 이익의 방향 확인</b>임:
       국내 정유사 이익은 정유 · 윤활 · 석유화학 세 부문에서 나오며 각 부문의 사이클이 다름.
-      지표는 이익 직결도 순으로 배열함.
     </p>
 
-    <h3>1.1 코어 지표</h3>
+    <p>
+      지표는 <b>확인 주기별로 묶음</b>: 발표 일정이 정해져 있으므로 보는 리듬이 그대로 화면 순서가 됨.
+      분기 지표는 3장, 참고 지표 전체는 4장에 있음.
+    </p>
+
+    <h3>1-1 지표</h3>
+
+    <div class="grp"><span class="gk">주간</span>목 새벽 · EIA 주간 재고 발표 직후</div>
+    <div class="charts">
+      <div class="chart" data-series="diesel_crack_1_1">
+        <div class="chead">
+          <div class="ctitle">디젤 1:1 크랙<span class="cunit">$/bbl</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>경유 1배럴 가격 − 원유 1배럴 가격</dd></div>
+          <div><dt>출처</dt><dd>EIA ULSD · WTI 스팟 기반 산출 · 일간 · <span class="badge auto">자동</span></dd></div>
+          <div><dt>의미</dt><dd>상승은 <b>중간유분 부족 심화</b>. 하락은 공급 회복 또는 수요 둔화</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="us_distillate_stock">
+        <div class="chead">
+          <div class="ctitle">미국 중간유분 재고<span class="cunit">mb</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>미국 내 경유 · 난방유 재고 총량</dd></div>
+          <div><dt>출처</dt><dd>EIA Weekly Petroleum Status Report · 주간(수) · <span class="badge auto">자동</span></dd></div>
+          <div><dt>의미</dt><dd><b>4주 연속 증가는 사이클 전환 신호</b>. 가격보다 먼저 방향을 바꿈</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="sing_grm">
+        <div class="chead">
+          <div class="ctitle">싱가포르 복합정제마진<span class="cunit">$/bbl</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>아시아 정유공장 산출 구성 전체를 반영한 배럴당 마진</dd></div>
+          <div><dt>출처</dt><dd>오피넷 국제제품가 + 두바이유 근사 산출 · 일간 · <span class="badge auto">자동 근사</span></dd></div>
+          <div><dt>의미</dt><dd><b>정유부문 이익의 1차 함수</b>. 손익분기 위아래가 흑자 · 적자 경계</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="grp"><span class="gk">월간</span>5일 전후 · 중순 · 하순</div>
+    <div class="charts">
+      <div class="chart" data-series="group3_spread">
+        <div class="chead">
+          <div class="ctitle">Group III 기유 스프레드<span class="cunit">$/t</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>윤활기유 가격 − 원료 가격</dd></div>
+          <div><dt>출처</dt><dd>관세청 윤활유 수출단가 − 싱가포르 HSFO · 월간 · <span class="badge auto">자동 근사</span></dd></div>
+          <div><dt>의미</dt><dd><b>윤활부문 이익의 방향</b>. 절대값보다 전월 대비 변화율을 봄</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="px_naphtha_spread">
+        <div class="chead">
+          <div class="ctitle">PX − 나프타 스프레드<span class="cunit">$/t</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>파라자일렌 가격 − 나프타 가격</dd></div>
+          <div><dt>출처</dt><dd>관세청 HS 2902.43 · 2710.12 수출단가 · 월간 · <span class="badge auto">자동 근사</span></dd></div>
+          <div><dt>의미</dt><dd><b>석유화학 부문 손익</b>. 손익분기 아래면 적자 지속</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="russia_diesel_export">
+        <div class="chead">
+          <div class="ctitle">러시아 디젤·가스오일 해상수출<span class="cunit">만톤</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>러시아 항만에서 선적된 월간 물량</dd></div>
+          <div><dt>출처</dt><dd>Reuters 집계 인용 · 월간 · <span class="badge manual">수동</span></dd></div>
+          <div><dt>의미</dt><dd><b>반등 시작이 크랙 하락의 출발점</b>. 정체는 쇼티지 연장</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <h3>1-2 추후 일정</h3>
 
     <div class="tablewrap">
       <table>
-        <thead>
-          <tr>
-            <th class="num">#</th><th>지표</th><th>추적 대상</th>
-            <th class="num">현재</th><th>주기</th><th>수집</th>
-          </tr>
-        </thead>
+        <thead><tr><th>시점</th><th>이벤트</th><th>확인할 것</th></tr></thead>
         <tbody>
-          <tr>
-            <td class="rank">1</td>
-            <td class="key">디젤 1:1 크랙</td>
-            <td>사이클 강도<br><span style="color:var(--faint);font-size:11.5px">중간유분 수급의 헤드라인 지표</span></td>
-            <td class="num">$102.20<br><span style="color:var(--faint);font-size:11px">26.08.17</span></td>
-            <td>일간</td>
-            <td><span class="badge auto">자동 가능</span></td>
-          </tr>
-          <tr class="sub">
-            <td class="rank">2</td>
-            <td class="key">싱가포르 복합정제마진</td>
-            <td><b>정유이익</b><br><span style="color:var(--faint);font-size:11.5px">국내 4사 정유부문 실적의 1차 함수</span></td>
-            <td class="num">—</td>
-            <td>주간</td>
-            <td><span class="badge paid">유료</span></td>
-          </tr>
-          <tr class="sub">
-            <td class="rank">3</td>
-            <td class="key">Group III 기유 스프레드</td>
-            <td><b>윤활이익</b><br><span style="color:var(--faint);font-size:11.5px">기유가 − 원료가. S-OIL 2Q26 이익의 49.5%</span></td>
-            <td class="num">$4,000/t<br><span style="color:var(--faint);font-size:11px">기유가 기준</span></td>
-            <td>주간</td>
-            <td><span class="badge paid">유료</span></td>
-          </tr>
-          <tr>
-            <td class="rank">4</td>
-            <td class="key">미국 중간유분 재고</td>
-            <td>사이클 전환 신호<br><span style="color:var(--faint);font-size:11.5px">가격보다 재고가 먼저 방향을 바꿈</span></td>
-            <td class="num">107.1 mb<br><span style="color:var(--faint);font-size:11px">26.08.07</span></td>
-            <td>주간 (수)</td>
-            <td><span class="badge auto">자동 가능</span></td>
-          </tr>
-          <tr>
-            <td class="rank">5</td>
-            <td class="key">러시아 디젤·가스오일 해상수출</td>
-            <td>공급 충격 진원<br><span style="color:var(--faint);font-size:11.5px">이 값의 반등이 크랙 하락의 출발점</span></td>
-            <td class="num">75만톤<br><span style="color:var(--faint);font-size:11px">26.07 · −60%</span></td>
-            <td>월간</td>
-            <td><span class="badge manual">수동</span></td>
-          </tr>
-          <tr class="sub">
-            <td class="rank">6</td>
-            <td class="key">PX · 에틸렌 − 나프타 스프레드</td>
-            <td><b>석화이익</b><br><span style="color:var(--faint);font-size:11.5px">S-OIL은 PX, SK·GS는 올레핀 비중</span></td>
-            <td class="num">—</td>
-            <td>주간</td>
-            <td><span class="badge paid">유료</span></td>
-          </tr>
+          <tr><td class="key">매주 목 새벽</td><td>EIA 주간 재고</td><td>4주 연속 증가 여부</td></tr>
+          <tr><td class="key">매월 5일 전후</td><td>사우디 OSP</td><td>인하 폭 → 4Q 마진</td></tr>
+          <tr><td class="key">매월 중순</td><td>IEA Oil Market Report · OPEC MOMR</td><td>세계 정유 처리량</td></tr>
+          <tr><td class="key">매월 하순</td><td>중국 해관총서 · 러시아 해상수출 집계</td><td>465만톤 · 75만톤에서 반등 여부</td></tr>
+          <tr><td class="key">26.09</td><td>러시아 생산자 수출 규제 예외 시행</td><td>디젤 수출 반등 여부</td></tr>
+          <tr class="sub"><td class="key">26.11</td><td>정유 4사 3Q 실적</td><td>S-OIL CDU 76%에서 회복 여부</td></tr>
+          <tr><td class="key">26.4Q</td><td>샤힌 프로젝트 시운전</td><td>가동률 영향</td></tr>
+          <tr class="sub"><td class="key">1Q27</td><td>Pearl GTL Train 2 복구</td><td>Group III 정상화 출발점</td></tr>
+          <tr><td class="key">미정</td><td>중동 설비 복구 (Ruwais · Sitra · Kuwait · Ras Tanura)</td><td>IEA Gulf runs</td></tr>
+          <tr><td class="key">미정</td><td>호르무즈 통항 정상화</td><td>전쟁 전 약 20mb/d 대비 회복률</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">이벤트가 실제로 열리면 이 표에서 지우고 1-3으로 옮김.</div>
+
+    <h3>1-3 진행 경과</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>날짜</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td class="key">26.08.18</td><td>리포트 발간 「두 개의 전쟁이 만든 글로벌 정제제품 쇼크」</td></tr>
+          <tr class="sub"><td class="key">26.08.17</td><td>미국 디젤 크랙 $102.20, 장중 사상 최고</td></tr>
+          <tr><td class="key">26.08.07</td><td>미국 중간유분 재고 107.1mb, 1996년 이후 동기 최저</td></tr>
+          <tr><td class="key">26.07</td><td>러시아 디젤 · 가스오일 해상수출 75만톤, 전월 대비 약 −60%</td></tr>
+          <tr><td class="key">26.07</td><td>중국 제품수출 465만톤, YoY −12.9%</td></tr>
+          <tr><td class="key">26.07</td><td>걸프 수출 15.0mb/d, 전월 대비 −2.1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">최신이 위. 새 이벤트는 맨 위에 추가함.</div>
+  </section>
+  <section id="ch2">
+    <div class="band"><span class="n mono">2장</span> 두 개의 전쟁이 만든 글로벌 정제제품 쇼크 · 수민이형 정리</div>
+
+    <p>
+      미국 · 이란 전쟁과 러시아 · 우크라이나 전쟁이 디젤 및 윤활기유 정제마진에 미치는 영향을 다룬 리포트임 (26.08.18 기준).
+      핵심 논지는 <b>원유 부족보다 정제능력과 수출 가능한 석유제품의 부족이 더 오래 간다</b>는 것.
+    </p>
+
+    <a class="dl" href="./files/refining-shock-report-20260818.pdf" download>
+      원문 PDF 내려받기 <span class="sz">21p · 7.4MB</span>
+    </a>
+
+    <h3>2.1 핵심 수치</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>지표</th><th class="num">수준</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td class="key">미국 디젤 크랙</td><td class="num">$102.20</td><td>26.08.17 장중 사상 최고</td></tr>
+          <tr><td class="key">세계 정유 처리량</td><td class="num">80.9 mb/d</td><td>26.07, 전년 대비 −5</td></tr>
+          <tr><td class="key">디젤 수출 공백</td><td class="num">−1.3 mb/d</td><td>러시아 · 중동 · 아시아 합계, 전년 대비</td></tr>
+          <tr><td class="key">걸프 지역 수출</td><td class="num">15.0 mb/d</td><td>26.07, 전월 대비 −2.1</td></tr>
+          <tr><td class="key">미국 중간유분 재고</td><td class="num">107.1 mb</td><td>26.08.07, 1996년 이후 동기 최저</td></tr>
+          <tr><td class="key">Group III 현물가</td><td class="num">약 $4,000/t</td><td>26.08, 전쟁 전 대비 약 3배</td></tr>
+          <tr class="sub"><td class="key">S-OIL 윤활 영업이익</td><td class="num">4,774억원</td><td>2Q26, 전분기 대비 +186.7%</td></tr>
+          <tr class="sub"><td class="key">SK엔무브 영업이익</td><td class="num">6,919억원</td><td>2Q26, 전분기 대비 +267%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>2.2 두 전쟁의 충격 경로</h3>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>축</th><th>전달 경로</th><th>시장 결과</th></tr></thead>
+        <tbody>
+          <tr><td class="key">미국 · 이란</td><td>호르무즈 사실상 폐쇄, 중동 정유 · GTL 설비 공격, 전쟁보험 · 운임 급등</td><td>원유 · 디젤 · 항공유 · Group III 동시 부족</td></tr>
+          <tr><td class="key">러시아 · 우크라이나</td><td>러시아 정유소 · 파이프라인 · 항만에 대한 장거리 드론 공격</td><td>원유 수출은 증가 가능하나 디젤 · 휘발유 수출은 감소</td></tr>
+          <tr><td class="key">중국 정책</td><td>3~6월 제품 수출 규제 후 7~8월 완화</td><td>단기 완충. 26.07 수출은 전년 대비 −12.9%</td></tr>
+          <tr><td class="key">재고 · 계절성</td><td>농업 · 발전 · 물류용 디젤 수요와 겨울 난방유 비축</td><td>증산에도 재고가 회복되지 않는 구조</td></tr>
         </tbody>
       </table>
     </div>
 
     <p>
-      회색 배경 3개가 <b>부문 이익 직결 지표</b>임:
-      2번은 정유, 3번은 윤활, 6번은 석유화학에 각각 대응함.
-      1 · 4 · 5번은 사이클의 강도와 전환 시점을 읽는 지표임.
+      러시아 정유소가 멈추면 처리하지 못한 원유 일부가 해상시장으로 나옴:
+      <b>원유 가격에는 하방 압력이, 디젤 · 항공유 가격에는 상방 압력이 동시에 발생함.</b>
+      브렌트유는 전쟁 중 배럴당 약 126달러까지 상승한 뒤 26.08.17 약 88달러로 하락했으나 제품 크랙은 확대를 지속함.
     </p>
 
-    <details>
-      <summary>확장 지표 <span class="cnt">8개</span></summary>
-      <div class="dbody">
-        <div class="tablewrap">
-          <table>
-            <thead><tr><th>지표</th><th>보는 이유</th><th>주기</th><th>수집</th></tr></thead>
-            <tbody>
-              <tr><td class="key">3-2-1 크랙</td><td>미국 정유사 마진 기준. 미국 정유주와 비교할 때 사용</td><td>일간</td><td><span class="badge auto">자동</span></td></tr>
-              <tr><td class="key">가스오일 선물 시간 스프레드</td><td>백워데이션 폭: 재고가 늘기 전에 먼저 꺾임</td><td>일간</td><td><span class="badge auto">자동</span></td></tr>
-              <tr><td class="key">Brent − Dubai EFS</td><td>경질·중질 원유 격차. 고도화설비 프리미엄</td><td>일간</td><td><span class="badge paid">유료</span></td></tr>
-              <tr><td class="key">걸프 수출량 · 호르무즈 통항</td><td>물리적 공급의 관문. 전쟁 전 약 20mb/d 대비 회복률</td><td>월간</td><td><span class="badge manual">수동</span></td></tr>
-              <tr><td class="key">중국 제품수출</td><td>아시아 크랙 상단을 제한. 26.07 465만톤, 전년 −12.9%</td><td>월간</td><td><span class="badge manual">수동</span></td></tr>
-              <tr><td class="key">ARA · 싱가포르 재고</td><td>미국 외 지역 재고. 지역 간 편차 확인</td><td>주간</td><td><span class="badge manual">수동</span></td></tr>
-              <tr><td class="key">사우디 OSP</td><td>공식판매가격: 원가에 1~2개월 시차로 반영. 매월 5일 전후 발표</td><td>월간</td><td><span class="badge manual">수동</span></td></tr>
-              <tr><td class="key">원/달러 환율</td><td>외화부채 · 원료비 부담. 재고평가손익과 함께 실적 변동 요인</td><td>일간</td><td><span class="badge auto">자동</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </details>
-
-    <details>
-      <summary>전체 지표 목록 <span class="cnt">트랙 A~G</span></summary>
-      <div class="dbody">
-        <h4>A. 물류 · 통항 (선행)</h4>
-        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
-          <tr><td class="key">호르무즈 통항량</td><td>전쟁 전 약 20mb/d 대비 회복률</td></tr>
-          <tr><td class="key">걸프 지역 선적량</td><td>26.07 기준 15.0mb/d, 전월 −2.1</td></tr>
-          <tr><td class="key">전쟁보험료</td><td>선체가액 대비 %. 통항량보다 먼저 움직임</td></tr>
-          <tr><td class="key">제품선 운임 (BCTI · TC2 · TC5)</td><td>크랙에서 실현마진을 갉아먹는 항목</td></tr>
-          <tr><td class="key">VLCC 원유 운임 (TD3C)</td><td>중동 → 중국. 원유 조달 비용</td></tr>
-          <tr><td class="key">홍해 · 수에즈 통항 척수</td><td>희망봉 우회 비율</td></tr>
-        </tbody></table></div>
-
-        <h4>B. 정제 · 생산 (선행)</h4>
-        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
-          <tr><td class="key">러시아 원유 처리량</td><td>2Q26 저점 4.8mb/d에서 회복 여부</td></tr>
-          <tr><td class="key">러시아 개별 정유소 재가동</td><td>Ryazan · Kirishi · Volgograd · NORSI · Orsk</td></tr>
-          <tr><td class="key">Orsk 복구</td><td>제재로 부품 조달 난항: 수리 최대 6개월 전망</td></tr>
-          <tr><td class="key">Pearl GTL Train 2 복구</td><td>1Q27 예상. Group III 정상화의 열쇠</td></tr>
-          <tr><td class="key">중동 설비 복구</td><td>Ruwais · Sitra · Kuwait Mina · Ras Tanura</td></tr>
-          <tr><td class="key">세계 정유 처리량</td><td>26.07 기준 80.9mb/d, 전년 대비 −5</td></tr>
-          <tr><td class="key">가을 정기보수 일정</td><td>계절적 가동률 하락 구간</td></tr>
-        </tbody></table></div>
-
-        <h4>C. 재고 (동행)</h4>
-        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
-          <tr><td class="key">미국 중간유분 재고</td><td>26.08.07 기준 107.1mb, 1996년 이후 동기 최저</td></tr>
-          <tr><td class="key">ARA 가스오일 재고</td><td>암스테르담 · 로테르담 · 앤트워프</td></tr>
-          <tr><td class="key">싱가포르 중간유분 재고</td><td>아시아 현물 수급</td></tr>
-          <tr><td class="key">재고 커버일수</td><td>절대량보다 수요 대비 여유를 반영</td></tr>
-          <tr><td class="key">미국 SPR 방출 · 재매입</td><td>전략비축유 정책 변수</td></tr>
-        </tbody></table></div>
-
-        <h4>D. 가격 · 스프레드</h4>
-        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
-          <tr><td class="key">3개 지역 크랙 격차</td><td>미국 · 유럽 · 아시아. 격차 축소는 물류 정상화 신호</td></tr>
-          <tr><td class="key">가스오일 백워데이션 폭</td><td>현물 타이트함의 최선행 지표</td></tr>
-          <tr><td class="key">항공유 크랙</td><td>같은 중간유분 풀을 놓고 경쟁</td></tr>
-          <tr><td class="key">휘발유 크랙</td><td>3-2-1의 나머지 구성</td></tr>
-          <tr><td class="key">Group III 4 · 6 · 8cSt</td><td>점도별로 타이트함이 다름</td></tr>
-          <tr><td class="key">Group II − Group III 스프레드</td><td>대체 압력의 크기</td></tr>
-        </tbody></table></div>
-
-        <h4>E. 수요 (반증)</h4>
-        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
-          <tr><td class="key">미국 디젤 공급량</td><td>EIA 주간. 실수요 대용치</td></tr>
-          <tr><td class="key">미국 트럭 톤수 지수</td><td>화물 물동량</td></tr>
-          <tr><td class="key">유럽 화물 물동량</td><td>—</td></tr>
-          <tr><td class="key">항공 여객 · 화물</td><td>항공유 수요</td></tr>
-          <tr><td class="key">북반구 난방 시즌</td><td>10월 이후 난방유가 중간유분 풀을 잠식</td></tr>
-        </tbody></table></div>
-
-        <h4>F. 정책 · 제도</h4>
-        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
-          <tr><td class="key">사우디 OSP</td><td>매월 5일 전후. 원가에 시차 반영</td></tr>
-          <tr><td class="key">중국 제품 수출쿼터</td><td>배치별 발급량과 실제 수출량</td></tr>
-          <tr><td class="key">러시아 수출금지</td><td>2027년 1월 말까지 연장</td></tr>
-          <tr><td class="key">미국 RIN 가격 · RVO</td><td>바이오연료 의무혼합 비용</td></tr>
-          <tr><td class="key">EU 러시아산 정제품 제재</td><td>제3국 우회 규제</td></tr>
-          <tr><td class="key">국내 유류세 · 가격상한제</td><td>보전금 규모와 지급 시점</td></tr>
-          <tr><td class="key">API 긴급 임시 라이선스(EPL)</td><td>Group II의 Group III 대체 허용 폭</td></tr>
-        </tbody></table></div>
-
-        <h4>G. 시장 반응</h4>
-        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
-          <tr><td class="key">정유주 주가 vs 크랙 괴리</td><td>크랙 상승에도 주가가 정체하면 시장이 이미 고점을 반영한 상태</td></tr>
-          <tr><td class="key">증권사 2027년 추정치 분산</td><td>현재 2.11조~4.25조. 좁혀지는 방향이 컨센서스</td></tr>
-        </tbody></table></div>
-      </div>
-    </details>
-
-    <h3>1.2 공급망 6단계</h3>
+    <h3>2.3 공급망 6단계 정상화 순서</h3>
 
     <figure>
       <div class="canvas">
@@ -513,89 +557,25 @@ a{color:var(--star-2)}
       </figcaption>
     </figure>
 
-    <h3>1.3 지표 추이</h3>
+    <h3>2.4 공급 손실과 대체 공급</h3>
 
-    <div class="charts">
-      <div class="chart" data-series="diesel_crack_1_1">
-        <div class="chead">
-          <div class="ctitle">디젤 1:1 크랙<span class="cunit">$/bbl</span></div>
-          <div class="clast none">—</div>
-        </div>
-        <div class="cplot"></div>
-        <dl class="cmeta">
-          <div><dt>정의</dt><dd>경유 1배럴 가격 − 원유 1배럴 가격</dd></div>
-          <div><dt>출처</dt><dd>EIA ULSD · WTI 스팟 기반 산출 · 일간 · <span class="badge auto">자동</span></dd></div>
-          <div><dt>의미</dt><dd>상승은 <b>중간유분 부족 심화</b>. 하락은 공급 회복 또는 수요 둔화</dd></div>
-        </dl>
-      </div>
-      <div class="chart" data-series="sing_grm">
-        <div class="chead">
-          <div class="ctitle">싱가포르 복합정제마진<span class="cunit">$/bbl</span></div>
-          <div class="clast none">—</div>
-        </div>
-        <div class="cplot"></div>
-        <dl class="cmeta">
-          <div><dt>정의</dt><dd>아시아 정유공장 산출 구성 전체를 반영한 배럴당 마진</dd></div>
-          <div><dt>출처</dt><dd>오피넷 국제제품가 + 두바이유 근사 산출 · 일간 · <span class="badge auto">자동 근사</span></dd></div>
-          <div><dt>의미</dt><dd><b>정유부문 이익의 1차 함수</b>. 손익분기 위아래가 흑자 · 적자 경계</dd></div>
-        </dl>
-      </div>
-      <div class="chart" data-series="group3_spread">
-        <div class="chead">
-          <div class="ctitle">Group III 기유 스프레드<span class="cunit">$/t</span></div>
-          <div class="clast none">—</div>
-        </div>
-        <div class="cplot"></div>
-        <dl class="cmeta">
-          <div><dt>정의</dt><dd>윤활기유 가격 − 원료 가격</dd></div>
-          <div><dt>출처</dt><dd>관세청 윤활유 수출단가 − 싱가포르 HSFO · 월간 · <span class="badge auto">자동 근사</span></dd></div>
-          <div><dt>의미</dt><dd><b>윤활부문 이익의 방향</b>. 절대값보다 전월 대비 변화율을 봄</dd></div>
-        </dl>
-      </div>
-      <div class="chart" data-series="us_distillate_stock">
-        <div class="chead">
-          <div class="ctitle">미국 중간유분 재고<span class="cunit">mb</span></div>
-          <div class="clast none">—</div>
-        </div>
-        <div class="cplot"></div>
-        <dl class="cmeta">
-          <div><dt>정의</dt><dd>미국 내 경유 · 난방유 재고 총량</dd></div>
-          <div><dt>출처</dt><dd>EIA Weekly Petroleum Status Report · 주간(수) · <span class="badge auto">자동</span></dd></div>
-          <div><dt>의미</dt><dd><b>4주 연속 증가는 사이클 전환 신호</b>. 가격보다 먼저 방향을 바꿈</dd></div>
-        </dl>
-      </div>
-      <div class="chart" data-series="russia_diesel_export">
-        <div class="chead">
-          <div class="ctitle">러시아 디젤·가스오일 해상수출<span class="cunit">만톤</span></div>
-          <div class="clast none">—</div>
-        </div>
-        <div class="cplot"></div>
-        <dl class="cmeta">
-          <div><dt>정의</dt><dd>러시아 항만에서 선적된 월간 물량</dd></div>
-          <div><dt>출처</dt><dd>Reuters 집계 인용 · 월간 · <span class="badge manual">수동</span></dd></div>
-          <div><dt>의미</dt><dd><b>반등 시작이 크랙 하락의 출발점</b>. 정체는 쇼티지 연장</dd></div>
-        </dl>
-      </div>
-      <div class="chart" data-series="px_naphtha_spread">
-        <div class="chead">
-          <div class="ctitle">PX − 나프타 스프레드<span class="cunit">$/t</span></div>
-          <div class="clast none">—</div>
-        </div>
-        <div class="cplot"></div>
-        <dl class="cmeta">
-          <div><dt>정의</dt><dd>파라자일렌 가격 − 나프타 가격</dd></div>
-          <div><dt>출처</dt><dd>관세청 HS 2902.43 · 2710.12 수출단가 · 월간 · <span class="badge auto">자동 근사</span></dd></div>
-          <div><dt>의미</dt><dd><b>석유화학 부문 손익</b>. 손익분기 아래면 적자 지속</dd></div>
-        </dl>
-      </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>제품</th><th>공급 손실</th><th>대체 공급</th></tr></thead>
+        <tbody>
+          <tr><td class="key">디젤</td><td>러시아 · 중동 걸프 · 호르무즈 물류</td><td>인도(Jamnagar 1.36mb/d) · 중국 · 한국 · 미국</td></tr>
+          <tr><td class="key">Group III</td><td>Pearl GTL(카타르) · 걸프 물류 · Bahrain · UAE</td><td>한국(SK엔무브 · S-OIL) · ILBOC 카르타헤나 · Petronas · 인도 · 중국 · Exxon</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <p style="font-size:13px;color:var(--muted)">
-      계열 데이터는 <code>data/series/*.json</code>에 누적함:
-      수집이 붙기 전 항목은 빈 상태로 표시됨.
+    <p>
+      Group III는 대체 공급처가 존재하나 <b>디젤보다 정상화가 느림</b>:
+      물리적 설비 복구뿐 아니라 재고 재축적, 배합 변경, OEM 승인까지 필요하기 때문임.
+      상세는 <a href="#ch5">5.8장</a> 참조.
     </p>
 
-    <h3>1.4 시나리오 판정</h3>
+    <h3>2.5 시나리오 판정</h3>
 
     <div class="cards">
       <div class="card">
@@ -619,7 +599,7 @@ a{color:var(--star-2)}
       <span class="mark">★ 재격화 국면에서 국내 4사의 수혜 순위가 바뀜: 사우디 원유 의존도가 높은 S-OIL의 조달 위험이 먼저 커짐.</span>
     </p>
 
-    <h3>1.5 반증 지표</h3>
+    <h3>2.6 반증 지표</h3>
 
     <div class="tablewrap">
       <table>
@@ -634,93 +614,7 @@ a{color:var(--star-2)}
       </table>
     </div>
 
-    <h3>1.6 확인 캘린더</h3>
-
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>시점 (KST)</th><th>확인 대상</th></tr></thead>
-        <tbody>
-          <tr><td class="key">매일</td><td>디젤 크랙 · 3-2-1 크랙 · 환율 · 정유 4사 주가</td></tr>
-          <tr><td class="key">매주 목 새벽</td><td>EIA 주간 재고 (수요일 10:30 ET 발표)</td></tr>
-          <tr><td class="key">매월 5일 전후</td><td>사우디 OSP</td></tr>
-          <tr><td class="key">매월 중순</td><td>IEA Oil Market Report · OPEC MOMR</td></tr>
-          <tr><td class="key">매월 하순</td><td>중국 해관총서 제품수출 · 러시아 해상수출 집계</td></tr>
-          <tr><td class="key">분기</td><td>정유 4사 실적 발표 및 컨퍼런스콜</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ================= 2장 ================= -->
-  <section id="ch2">
-    <div class="band"><span class="n mono">2장</span> 두 개의 전쟁이 만든 글로벌 정제제품 쇼크 · 수민이형 정리</div>
-
-    <p>
-      미국 · 이란 전쟁과 러시아 · 우크라이나 전쟁이 디젤 및 윤활기유 정제마진에 미치는 영향을 다룬 리포트임 (26.08.18 기준).
-      핵심 논지는 <b>원유 부족보다 정제능력과 수출 가능한 석유제품의 부족이 더 오래 간다</b>는 것.
-    </p>
-
-    <a class="dl" href="./files/refining-shock-report-20260818.pdf" download>
-      원문 PDF 내려받기 <span class="sz">21p · 7.4MB</span>
-    </a>
-
-    <h3>2.1 핵심 수치</h3>
-
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>지표</th><th class="num">수준</th><th>내용</th></tr></thead>
-        <tbody>
-          <tr><td class="key">미국 디젤 크랙</td><td class="num">$102.20</td><td>26.08.17 장중 사상 최고</td></tr>
-          <tr><td class="key">세계 정유 처리량</td><td class="num">80.9 mb/d</td><td>26.07, 전년 대비 −5</td></tr>
-          <tr><td class="key">디젤 수출 공백</td><td class="num">−1.3 mb/d</td><td>러시아 · 중동 · 아시아 합계, 전년 대비</td></tr>
-          <tr><td class="key">걸프 지역 수출</td><td class="num">15.0 mb/d</td><td>26.07, 전월 대비 −2.1</td></tr>
-          <tr><td class="key">미국 중간유분 재고</td><td class="num">107.1 mb</td><td>26.08.07, 1996년 이후 동기 최저</td></tr>
-          <tr><td class="key">Group III 현물가</td><td class="num">약 $4,000/t</td><td>26.08, 전쟁 전 대비 약 3배</td></tr>
-          <tr class="sub"><td class="key">S-OIL 윤활 영업이익</td><td class="num">4,774억원</td><td>2Q26, 전분기 대비 +186.7%</td></tr>
-          <tr class="sub"><td class="key">SK엔무브 영업이익</td><td class="num">6,919억원</td><td>2Q26, 전분기 대비 +267%</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3>2.2 두 전쟁의 충격 경로</h3>
-
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>축</th><th>전달 경로</th><th>시장 결과</th></tr></thead>
-        <tbody>
-          <tr><td class="key">미국 · 이란</td><td>호르무즈 사실상 폐쇄, 중동 정유 · GTL 설비 공격, 전쟁보험 · 운임 급등</td><td>원유 · 디젤 · 항공유 · Group III 동시 부족</td></tr>
-          <tr><td class="key">러시아 · 우크라이나</td><td>러시아 정유소 · 파이프라인 · 항만에 대한 장거리 드론 공격</td><td>원유 수출은 증가 가능하나 디젤 · 휘발유 수출은 감소</td></tr>
-          <tr><td class="key">중국 정책</td><td>3~6월 제품 수출 규제 후 7~8월 완화</td><td>단기 완충. 26.07 수출은 전년 대비 −12.9%</td></tr>
-          <tr><td class="key">재고 · 계절성</td><td>농업 · 발전 · 물류용 디젤 수요와 겨울 난방유 비축</td><td>증산에도 재고가 회복되지 않는 구조</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <p>
-      러시아 정유소가 멈추면 처리하지 못한 원유 일부가 해상시장으로 나옴:
-      <b>원유 가격에는 하방 압력이, 디젤 · 항공유 가격에는 상방 압력이 동시에 발생함.</b>
-      브렌트유는 전쟁 중 배럴당 약 126달러까지 상승한 뒤 26.08.17 약 88달러로 하락했으나 제품 크랙은 확대를 지속함.
-    </p>
-
-    <h3>2.3 공급 손실과 대체 공급</h3>
-
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>제품</th><th>공급 손실</th><th>대체 공급</th></tr></thead>
-        <tbody>
-          <tr><td class="key">디젤</td><td>러시아 · 중동 걸프 · 호르무즈 물류</td><td>인도(Jamnagar 1.36mb/d) · 중국 · 한국 · 미국</td></tr>
-          <tr><td class="key">Group III</td><td>Pearl GTL(카타르) · 걸프 물류 · Bahrain · UAE</td><td>한국(SK엔무브 · S-OIL) · ILBOC 카르타헤나 · Petronas · 인도 · 중국 · Exxon</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <p>
-      Group III는 대체 공급처가 존재하나 <b>디젤보다 정상화가 느림</b>:
-      물리적 설비 복구뿐 아니라 재고 재축적, 배합 변경, OEM 승인까지 필요하기 때문임.
-      상세는 <a href="#ch5">5.8장</a> 참조.
-    </p>
-
-    <h3>2.4 리포트 결론</h3>
+    <h3>2.7 리포트 결론</h3>
 
     <div class="callout">
       디젤 마진은 전쟁의 속보에 민감하지만, Group III 기유 마진은 설비 복구와 산업 인증의 속도에 의해 결정됨.
@@ -857,7 +751,7 @@ a{color:var(--star-2)}
       2Q26 실적은 확정치이나 3Q26 이후는 각사 가정을 반영한 전망치임.
     </p>
 
-    <h3>3.5 기업 추적 지표</h3>
+    <h3>3.5 분기 추적 지표</h3>
 
     <div class="tablewrap">
       <table>
@@ -904,7 +798,102 @@ a{color:var(--star-2)}
       각 지표에 마지막 갱신일과 수집 방식 배지를 표시해 신선도를 구분함.
     </p>
 
-    <h3>4.2 표기 원칙</h3>
+    <h3>4.2 참고 지표 전체</h3>
+
+    <p>1장 지표로 올릴 후보와, 이 산업을 볼 때 참고할 지표 전체임.</p>
+
+    <details>
+      <summary>확장 지표 <span class="cnt">8개</span></summary>
+      <div class="dbody">
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>지표</th><th>보는 이유</th><th>주기</th><th>수집</th></tr></thead>
+            <tbody>
+              <tr><td class="key">3-2-1 크랙</td><td>미국 정유사 마진 기준. 미국 정유주와 비교할 때 사용</td><td>일간</td><td><span class="badge auto">자동</span></td></tr>
+              <tr><td class="key">가스오일 선물 시간 스프레드</td><td>백워데이션 폭: 재고가 늘기 전에 먼저 꺾임</td><td>일간</td><td><span class="badge auto">자동</span></td></tr>
+              <tr><td class="key">Brent − Dubai EFS</td><td>경질·중질 원유 격차. 고도화설비 프리미엄</td><td>일간</td><td><span class="badge paid">유료</span></td></tr>
+              <tr><td class="key">걸프 수출량 · 호르무즈 통항</td><td>물리적 공급의 관문. 전쟁 전 약 20mb/d 대비 회복률</td><td>월간</td><td><span class="badge manual">수동</span></td></tr>
+              <tr><td class="key">중국 제품수출</td><td>아시아 크랙 상단을 제한. 26.07 465만톤, 전년 −12.9%</td><td>월간</td><td><span class="badge manual">수동</span></td></tr>
+              <tr><td class="key">ARA · 싱가포르 재고</td><td>미국 외 지역 재고. 지역 간 편차 확인</td><td>주간</td><td><span class="badge manual">수동</span></td></tr>
+              <tr><td class="key">사우디 OSP</td><td>공식판매가격: 원가에 1~2개월 시차로 반영. 매월 5일 전후 발표</td><td>월간</td><td><span class="badge manual">수동</span></td></tr>
+              <tr><td class="key">원/달러 환율</td><td>외화부채 · 원료비 부담. 재고평가손익과 함께 실적 변동 요인</td><td>일간</td><td><span class="badge auto">자동</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+    <details>
+      <summary>전체 지표 목록 <span class="cnt">트랙 A~G</span></summary>
+      <div class="dbody">
+        <h4>A. 물류 · 통항 (선행)</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">호르무즈 통항량</td><td>전쟁 전 약 20mb/d 대비 회복률</td></tr>
+          <tr><td class="key">걸프 지역 선적량</td><td>26.07 기준 15.0mb/d, 전월 −2.1</td></tr>
+          <tr><td class="key">전쟁보험료</td><td>선체가액 대비 %. 통항량보다 먼저 움직임</td></tr>
+          <tr><td class="key">제품선 운임 (BCTI · TC2 · TC5)</td><td>크랙에서 실현마진을 갉아먹는 항목</td></tr>
+          <tr><td class="key">VLCC 원유 운임 (TD3C)</td><td>중동 → 중국. 원유 조달 비용</td></tr>
+          <tr><td class="key">홍해 · 수에즈 통항 척수</td><td>희망봉 우회 비율</td></tr>
+        </tbody></table></div>
+
+        <h4>B. 정제 · 생산 (선행)</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">러시아 원유 처리량</td><td>2Q26 저점 4.8mb/d에서 회복 여부</td></tr>
+          <tr><td class="key">러시아 개별 정유소 재가동</td><td>Ryazan · Kirishi · Volgograd · NORSI · Orsk</td></tr>
+          <tr><td class="key">Orsk 복구</td><td>제재로 부품 조달 난항: 수리 최대 6개월 전망</td></tr>
+          <tr><td class="key">Pearl GTL Train 2 복구</td><td>1Q27 예상. Group III 정상화의 열쇠</td></tr>
+          <tr><td class="key">중동 설비 복구</td><td>Ruwais · Sitra · Kuwait Mina · Ras Tanura</td></tr>
+          <tr><td class="key">세계 정유 처리량</td><td>26.07 기준 80.9mb/d, 전년 대비 −5</td></tr>
+          <tr><td class="key">가을 정기보수 일정</td><td>계절적 가동률 하락 구간</td></tr>
+        </tbody></table></div>
+
+        <h4>C. 재고 (동행)</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">미국 중간유분 재고</td><td>26.08.07 기준 107.1mb, 1996년 이후 동기 최저</td></tr>
+          <tr><td class="key">ARA 가스오일 재고</td><td>암스테르담 · 로테르담 · 앤트워프</td></tr>
+          <tr><td class="key">싱가포르 중간유분 재고</td><td>아시아 현물 수급</td></tr>
+          <tr><td class="key">재고 커버일수</td><td>절대량보다 수요 대비 여유를 반영</td></tr>
+          <tr><td class="key">미국 SPR 방출 · 재매입</td><td>전략비축유 정책 변수</td></tr>
+        </tbody></table></div>
+
+        <h4>D. 가격 · 스프레드</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">3개 지역 크랙 격차</td><td>미국 · 유럽 · 아시아. 격차 축소는 물류 정상화 신호</td></tr>
+          <tr><td class="key">가스오일 백워데이션 폭</td><td>현물 타이트함의 최선행 지표</td></tr>
+          <tr><td class="key">항공유 크랙</td><td>같은 중간유분 풀을 놓고 경쟁</td></tr>
+          <tr><td class="key">휘발유 크랙</td><td>3-2-1의 나머지 구성</td></tr>
+          <tr><td class="key">Group III 4 · 6 · 8cSt</td><td>점도별로 타이트함이 다름</td></tr>
+          <tr><td class="key">Group II − Group III 스프레드</td><td>대체 압력의 크기</td></tr>
+        </tbody></table></div>
+
+        <h4>E. 수요 (반증)</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">미국 디젤 공급량</td><td>EIA 주간. 실수요 대용치</td></tr>
+          <tr><td class="key">미국 트럭 톤수 지수</td><td>화물 물동량</td></tr>
+          <tr><td class="key">유럽 화물 물동량</td><td>—</td></tr>
+          <tr><td class="key">항공 여객 · 화물</td><td>항공유 수요</td></tr>
+          <tr><td class="key">북반구 난방 시즌</td><td>10월 이후 난방유가 중간유분 풀을 잠식</td></tr>
+        </tbody></table></div>
+
+        <h4>F. 정책 · 제도</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">사우디 OSP</td><td>매월 5일 전후. 원가에 시차 반영</td></tr>
+          <tr><td class="key">중국 제품 수출쿼터</td><td>배치별 발급량과 실제 수출량</td></tr>
+          <tr><td class="key">러시아 수출금지</td><td>2027년 1월 말까지 연장</td></tr>
+          <tr><td class="key">미국 RIN 가격 · RVO</td><td>바이오연료 의무혼합 비용</td></tr>
+          <tr><td class="key">EU 러시아산 정제품 제재</td><td>제3국 우회 규제</td></tr>
+          <tr><td class="key">국내 유류세 · 가격상한제</td><td>보전금 규모와 지급 시점</td></tr>
+          <tr><td class="key">API 긴급 임시 라이선스(EPL)</td><td>Group II의 Group III 대체 허용 폭</td></tr>
+        </tbody></table></div>
+
+        <h4>G. 시장 반응</h4>
+        <div class="tablewrap"><table><thead><tr><th>지표</th><th>보는 이유</th></tr></thead><tbody>
+          <tr><td class="key">정유주 주가 vs 크랙 괴리</td><td>크랙 상승에도 주가가 정체하면 시장이 이미 고점을 반영한 상태</td></tr>
+          <tr><td class="key">증권사 2027년 추정치 분산</td><td>현재 2.11조~4.25조. 좁혀지는 방향이 컨센서스</td></tr>
+        </tbody></table></div>
+      </div>
+    </details>
+
+    <h3>4.3 표기 원칙</h3>
 
     <ul class="body">
       <li><b>확정치</b>는 회사 발표 및 정부 · 국제기구 공식 통계로 한정함.</li>
@@ -1328,6 +1317,19 @@ a{color:var(--star-2)}
   Promise.all([get('./data/manual.json'), get('./data/auto.json')]).then(function(res){
     var merged = merge(res[0], res[1]);
     apply(merged);
+    window.__IND = (merged && merged.indicators) || {};
+    Array.prototype.forEach.call(document.querySelectorAll('.chart[data-series]'), function(box){
+      var last = box.querySelector('.clast');
+      if (!last || !last.classList.contains('none')) return;
+      var d = window.__IND[box.getAttribute('data-series')];
+      if (d && d.value !== null && d.value !== undefined){
+        last.classList.remove('none');
+        last.textContent = d.value.toLocaleString('en-US');
+        var dl = box.querySelector('.cmeta'), row = document.createElement('div');
+        row.innerHTML = '<dt>현재</dt><dd>' + (d.asOf ? String(d.asOf).slice(2).replace(/-/g,'.') + ' · ' : '') + (d.note || '') + '</dd>';
+        if (dl) dl.appendChild(row);
+      }
+    });
     var stamp = document.querySelector('[data-ind="autoStamp"]');
     if (stamp) {
       stamp.textContent = (res[1] && res[1].updatedAt)
