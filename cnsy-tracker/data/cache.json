@@ -453,7 +453,7 @@
   }
  },
  "quote": {
-  "price": 3.07,
+  "price": 3.03,
   "prev": 7.0,
   "high52": 23.5,
   "low52": 2.9,
@@ -960,11 +960,24 @@
    },
    {
     "date": "2026-08-24",
-    "close": 3.07
+    "close": 3.03
    }
   ]
  },
- "trials": null,
+ "trials": {
+  "lm": {
+   "modified": "",
+   "counters": {
+    "Patients Treated to Date": 1
+   }
+  },
+  "gbm": {
+   "modified": "",
+   "counters": {
+    "Patients Treated to Date": 1
+   }
+  }
+ },
  "ctgov": null,
  "news": [
   {
@@ -1167,15 +1180,15 @@
  },
  "log": [],
  "meta": {
-  "updated": "2026-08-24 23:23",
+  "updated": "2026-08-24 23:31",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
    "filings": "ok",
    "shares": "ok",
    "quote": "ok",
-   "trials": "fail: no counters found",
-   "ctgov": "fail: no studies",
+   "trials": "ok",
+   "ctgov": "fail: 임상 없음 · Cerenome: HTTP Error 403: Forbidden | Plus Therapeutics: HTTP Error 403: Forbidden",
    "news": "ok",
    "cnside": "ok",
    "reddit": "ok",
