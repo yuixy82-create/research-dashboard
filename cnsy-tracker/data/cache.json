@@ -1241,7 +1241,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-08-24 23:37",
+  "updated": "2026-08-24 23:41",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1249,12 +1249,12 @@
    "shares": "ok",
    "quote": "ok",
    "trials": "ok",
-   "ctgov": "fail: 임상 없음 · Cerenome: HTTP Error 403: Forbidden | Plus Therapeutics: HTTP Error 403: Forbidden",
+   "ctgov": "fail: 임상 없음 · Cerenome(plain=True): HTTP Error 403: Forbidden | Cerenome(plain=False): HTTP Error 403: Forbidden | Plus Therapeutics(plain=True): ",
    "news": "ok",
    "cnside": "ok",
    "reddit": "ok",
    "cms": "ok"
   },
-  "new_events": 2
+  "new_events": 0
  }
 }
