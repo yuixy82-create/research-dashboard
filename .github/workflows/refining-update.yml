@@ -1,0 +1,38 @@
+name: refining-update
+
+# 시리즈 ID 확정 전까지 스케줄 비활성. 수동 실행으로만 테스트할 것.
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "0 21 * * *"   # 매일 06:00 KST — 가격류
+  #   - cron: "0 16 * * 3"   # 매주 목 01:00 KST — EIA 주간 재고
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch EIA
+        env:
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+        run: python3 refining/scripts/fetch_eia.py
+        continue-on-error: true
+
+      - name: Commit if changed
+        run: |
+          if [ -n "$(git status --porcelain refining/data)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add refining/data
+            git commit -m "refining: daily update"
+            git push
+          else
+            echo "변경 없음"
+          fi
