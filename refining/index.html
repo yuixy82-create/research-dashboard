@@ -216,10 +216,10 @@ a{color:var(--star-2)}
 .wrap{gap:0}
 .wrap > section{margin-top:156px}
 .wrap > section:first-of-type{margin-top:56px}
-.band{font-size:21px; font-weight:800; padding:15px 20px; letter-spacing:-.02em}
-.band .n{font-size:13px; opacity:.66}
-h3{margin:52px 0 0; font-size:15.5px; font-weight:800; letter-spacing:-.01em}
-h3:first-of-type{margin-top:24px}
+.band{font-size:25px; font-weight:800; padding:18px 22px; letter-spacing:-.025em}
+.band .n{font-size:14px; opacity:.66}
+h3{margin:56px 0 0; font-size:18.5px; font-weight:800; letter-spacing:-.015em}
+h3:first-of-type{margin-top:26px}
 p{margin:26px 0 0; font-size:15px; line-height:1.78}
 .band + p{margin-top:20px}
 .tablewrap, .charts, .cards, figure, details, .callout, .note, .grp{margin-top:20px}
@@ -228,19 +228,25 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
 .tablewrap + .note, .charts + .note, figure + .note{margin-top:8px}
 .grp + .charts{margin-top:10px}
 /* 주기 그룹 라벨 */
+.charts{grid-template-columns:1fr !important; gap:20px}
+.chart .cplot{padding:0 10px}
+.chart .ctitle{font-size:16px}
+.chart .clast{font-size:22px}
+.chart .cmeta > div{font-size:12.5px}
+.chart .cmeta dt{flex:0 0 34px}
 .grp{
   display:flex; align-items:center; gap:10px;
-  font-size:13px; font-weight:700; color:var(--muted);
+  font-size:14px; font-weight:700; color:var(--muted);
   padding-bottom:7px; border-bottom:1px solid var(--hairline);
 }
 .grp .gk{
-  font-size:12px; font-weight:800; color:var(--band-text,#fff); background:var(--band,#4A5228);
+  font-size:13px; font-weight:800; color:var(--band-text,#fff); background:var(--band,#4A5228);
   padding:2px 9px; border-radius:2px; letter-spacing:.02em;
 }
 @media (max-width:640px){
   .wrap > section{margin-top:104px}
-  .band{font-size:18px; padding:12px 15px}
-  h3{margin-top:38px}
+  .band{font-size:20px; padding:14px 16px}
+  h3{margin-top:40px; font-size:17px}
 }
 </style>
 </head>
@@ -460,20 +466,20 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
       </div>
     </details>
   </section>
-  <section id="ch2">
-    <div class="band"><span class="n mono">2장</span> 두 개의 전쟁이 만든 글로벌 정제제품 쇼크 · 수민이형 정리</div>
+    <section id="ch2">
+    <div class="band"><span class="n mono">2장</span> 두 개의 전쟁이 만든 글로벌 정제제품 쇼크 (수민이형 정리)</div>
 
     <p>
       미국 · 이란 전쟁과 러시아 · 우크라이나 전쟁이<br>
-      디젤 및 윤활기유 정제마진에 미치는 영향을 다룬 리포트임 (26.08.18 기준).<br>
-      핵심 논지는 <b>원유 부족보다 정제능력과 수출 가능한 석유제품의 부족이 더 오래 간다</b>는 것.
+      디젤 및 윤활기유 정제마진에 미치는 영향을 다룬 리포트임 (26.08.18 기준).
     </p>
 
-    <a class="dl" href="./files/refining-shock-report-20260818.pdf" download>
-      원문 PDF 내려받기 <span class="sz">21p · 7.4MB</span>
-    </a>
+    <p>
+      <span class="star">★</span><span class="mark">원유 부족보다 정제능력과 수출 가능한 석유제품의 부족이 더 오래 감.</span>
+    </p>
 
     <h3>2-1 핵심 수치</h3>
+
 
     <div class="tablewrap">
       <table>
@@ -491,141 +497,37 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
       </table>
     </div>
 
-    <h3>2-2 공급 충격의 실체</h3>
-
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>축</th><th>전달 경로</th><th>시장 결과</th></tr></thead>
-        <tbody>
-          <tr><td class="key">미국 · 이란</td><td>호르무즈 사실상 폐쇄, 중동 정유 · GTL 설비 공격, 전쟁보험 · 운임 급등</td><td>원유 · 디젤 · 항공유 · Group III 동시 부족</td></tr>
-          <tr><td class="key">러시아 · 우크라이나</td><td>러시아 정유소 · 파이프라인 · 항만에 대한 장거리 드론 공격</td><td>원유 수출은 증가 가능하나 디젤 · 휘발유 수출은 감소</td></tr>
-          <tr><td class="key">중국 정책</td><td>3~6월 제품 수출 규제 후 7~8월 완화</td><td>단기 완충. 26.07 수출은 전년 대비 −12.9%</td></tr>
-          <tr><td class="key">재고 · 계절성</td><td>농업 · 발전 · 물류용 디젤 수요와 겨울 난방유 비축</td><td>증산에도 재고가 회복되지 않는 구조</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <h3>2-2 논지</h3>
 
     <p>
-      러시아 정유소가 멈추면 처리하지 못한 원유 일부가 해상시장으로 나옴:<br>
-      <b>원유 가격에는 하방 압력이, 디젤 · 항공유 가격에는 상방 압력이 동시에 발생함.</b><br>
-      브렌트유는 전쟁 중 배럴당 약 126달러까지 상승한 뒤<br>
-      26.08.17 약 88달러로 하락했으나 제품 크랙은 확대를 지속함.
+      <b>병목은 정제 → 저장 → 수출 → 해상운송 전체 공급망에 있음</b>:<br>
+      러시아 정유설비 피격과 중동 물류 차질로 디젤 · Group III 공급이 동시에 줄었음.
     </p>
-
-    
-
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>제품</th><th>공급 손실</th><th>대체 공급</th></tr></thead>
-        <tbody>
-          <tr><td class="key">디젤</td><td>러시아 · 중동 걸프 · 호르무즈 물류</td><td>인도(Jamnagar 1.36mb/d) · 중국 · 한국 · 미국</td></tr>
-          <tr><td class="key">Group III</td><td>Pearl GTL(카타르) · 걸프 물류 · Bahrain · UAE</td><td>한국(SK엔무브 · S-OIL) · ILBOC 카르타헤나 · Petronas · 인도 · 중국 · Exxon</td></tr>
-        </tbody>
-      </table>
-    </div>
 
     <p>
-      Group III는 대체 공급처가 존재하나 <b>디젤보다 정상화가 느림</b>:<br>
-      물리적 설비 복구뿐 아니라 재고 재축적, 배합 변경, OEM 승인까지 필요하기 때문임.<br>
-      상세는 <a href="#ch5">5.8장</a> 참조.
+      <b>마진이 높아도 신규 정제능력은 늘지 않음</b>:<br>
+      투자 판단 기준이 5~8년 뒤 완공 시점 마진이고,<br>
+      지금 마진에는 전쟁 프리미엄이 상당 부분 포함돼 있기 때문임.
     </p>
-
-    <h3>2-3 왜 공급이 안 늘어나는가</h3>
 
     <p>
-      마진이 높아도 신규 정제능력은 빠르게 늘지 않음:<br>
-      투자 판단 기준이 <b>지금의 크랙이 아니라 5~8년 뒤 완공 시점의 마진</b>이기 때문임.
+      그래서 정유사는 자사주 매입과 브라운필드 증설을 택함:<br>
+      정제능력은 늘지 않으므로 공급 부족이 더 길어짐.
     </p>
-
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>제약</th><th>내용</th></tr></thead>
-        <tbody>
-          <tr><td class="key">자본 · 기간</td><td>하루 10만 배럴 신규 공장 약 30억 달러, 대형 그린필드는 5년 이상</td></tr>
-          <tr class="sub"><td class="key">전쟁 프리미엄</td><td>현재 마진에 러시아 피격 · 중동 인프라 피해 · 호르무즈 차질 · 보험료 · 운임 상승분이 포함됨</td></tr>
-          <tr><td class="key">완공 시점 위험</td><td>러시아 복구와 중동 항로 정상화 시 초과 마진 소멸. 가장 비싼 시기에 지어 낮아진 마진을 맞는 구조</td></tr>
-          <tr><td class="key">대안 선택</td><td>자사주 매입과 브라운필드 증설을 선호. 기존 항만 · 배관 · 탱크 · 인허가 · 고객망을 그대로 씀</td></tr>
-          <tr><td class="key">수요 전망</td><td>IEA 기준 세계 정제품 수요 2027년 정점 후 휘발유 · 경유 감소 가능성. 투자 요구수익률 상승</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="note"><b>Source</b> — 리포트 「두 개의 전쟁이 만든 글로벌 정제제품 쇼크」(26.08.18) · <b>Note</b> — 자사주 매입은 정제능력을 늘리지 않으므로 글로벌 신규 공급을 추가로 제한함.</div>
 
     <p>
-      <span class="star">★</span><span class="mark">공급의 가격 탄력성이 낮아 정제마진이 예상보다 높은 수준에서 오래 유지될 수 있음.</span>
+      <b>Group III는 디젤보다 늦게 풀림</b>:<br>
+      설비 복구 뒤에도 재고 재축적과 OEM 승인이 남아 있음.
     </p>
 
-<h3>2-4 정상화 순서와 시나리오</h3>
+    <p>
+      공급이 빨리 회복되지 않으면 가격 상승으로 조정됨:<br>
+      수요파괴가 강하게 진행되면 경기둔화로 이어질 수 있음.
+    </p>
 
-    <figure>
-      <div class="canvas">
-        <svg viewBox="0 0 980 190" role="img" aria-label="공급망 6단계 흐름도. 통항·물류, 정유 가동, 수출 물량, 소비지 재고, 크랙·현물가, 정유사 실적 순으로 이어지며 앞 단계가 풀려야 뒤 단계가 움직인다. 소비지 재고가 전환 신호 단계다.">
-          <defs>
-            <marker id="ch" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--star-soft)"/>
-            </marker>
-          </defs>
-          <text x="15" y="18" font-size="12" fill="var(--muted)">복구는 왼쪽부터 진행됨: 앞 단계가 풀리지 않으면 뒤 단계는 움직이지 않음</text>
+    <h3>2-3 시나리오</h3>
 
-          <g font-size="12.5" text-anchor="middle">
-            <rect x="15"  y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
-            <text x="85"  y="62" font-weight="600" fill="currentColor">통항 · 물류</text>
-            <text x="85"  y="82" font-size="10.5" fill="var(--faint)">보험료 · 운임</text>
-
-            <rect x="177" y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
-            <text x="247" y="62" font-weight="600" fill="currentColor">정유 가동</text>
-            <text x="247" y="82" font-size="10.5" fill="var(--faint)">러시아 · 중동 처리량</text>
-
-            <rect x="339" y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
-            <text x="409" y="62" font-weight="600" fill="currentColor">수출 물량</text>
-            <text x="409" y="82" font-size="10.5" fill="var(--faint)">디젤 해상수출</text>
-
-            <rect x="501" y="36" width="140" height="62" rx="3" fill="var(--star-tint)" stroke="var(--star-soft)" stroke-width="1.5"/>
-            <text x="571" y="62" font-weight="600" fill="var(--star-2)">소비지 재고</text>
-            <text x="571" y="82" font-size="10.5" fill="var(--muted)">미국 · ARA · 싱가포르</text>
-
-            <rect x="663" y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
-            <text x="733" y="62" font-weight="600" fill="currentColor">크랙 · 현물가</text>
-            <text x="733" y="82" font-size="10.5" fill="var(--faint)">디젤 · Group III</text>
-
-            <rect x="825" y="36" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--hairline)"/>
-            <text x="895" y="62" font-weight="600" fill="currentColor">정유사 실적</text>
-            <text x="895" y="82" font-size="10.5" fill="var(--faint)">가동률 · OSP</text>
-          </g>
-
-          <g stroke="var(--star-soft)" stroke-width="1.4" marker-end="url(#ch)">
-            <line x1="157" y1="67" x2="173" y2="67"/>
-            <line x1="319" y1="67" x2="335" y2="67"/>
-            <line x1="481" y1="67" x2="497" y2="67"/>
-            <line x1="643" y1="67" x2="659" y2="67"/>
-            <line x1="805" y1="67" x2="821" y2="67"/>
-          </g>
-
-          <line x1="15" y1="122" x2="965" y2="122" stroke="var(--hairline)"/>
-          <g font-size="11.5" text-anchor="middle" fill="var(--muted)">
-            <text x="247" y="142">선행</text>
-            <text x="652" y="142">동행</text>
-            <text x="895" y="142">후행</text>
-          </g>
-          <g stroke="var(--star-pale)" stroke-width="1.2">
-            <line x1="15" y1="128" x2="15" y2="134"/><line x1="479" y1="128" x2="479" y2="134"/>
-            <line x1="501" y1="128" x2="501" y2="134"/><line x1="803" y1="128" x2="803" y2="134"/>
-            <line x1="825" y1="128" x2="825" y2="134"/><line x1="965" y1="128" x2="965" y2="134"/>
-            <line x1="15" y1="131" x2="479" y2="131"/><line x1="501" y1="131" x2="803" y2="131"/>
-            <line x1="825" y1="131" x2="965" y2="131"/>
-          </g>
-          <text x="571" y="172" font-size="11.5" text-anchor="middle" fill="var(--star-2)" font-weight="600">재고 방향 전환이 가격 전환에 선행함</text>
-        </svg>
-      </div>
-      <figcaption>
-        설비 재가동 발표는 3단계에 해당함:
-        재개 물량이 현지 수요와 장기계약 고객을 먼저 채우므로 4단계 재고 증가까지 시차가 있음.
-      </figcaption>
-    </figure>
-
-    
-
-    <div class="cards">
+<div class="cards">
       <div class="card">
         <h4>빠른 완화</h4>
         <div class="cond">미·이란 합의, 호르무즈 정상 재개, 러시아 공격 감소, 중국 수출 정상화</div>
@@ -643,35 +545,12 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
       </div>
     </div>
 
-    <p>
-      <span class="mark">★ 재격화 국면에서 국내 4사의 수혜 순위가 바뀜:<br>
-      사우디 원유 의존도가 높은 S-OIL의 조달 위험이 먼저 커짐.</span>
-    </p>
-
-    <h3>2-5 반증 지표와 결론</h3>
-
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>관측</th><th>의미</th></tr></thead>
-        <tbody>
-          <tr><td class="key">크랙 상승에도 정유주 주가 정체</td><td>시장이 이미 고점 통과를 반영한 상태</td></tr>
-          <tr><td class="key">미국 디젤 공급량 감소</td><td>수요 파괴 진행: 가격이 소비를 억제하기 시작</td></tr>
-          <tr><td class="key">중국 수출쿼터 대폭 확대</td><td>아시아 크랙 상단이 빠르게 낮아짐</td></tr>
-          <tr><td class="key">Pearl GTL Train 2 조기 복구</td><td>Group III 프리미엄 축소 시점이 앞당겨짐</td></tr>
-          <tr><td class="key">미국 중간유분 재고 4주 연속 증가</td><td>사이클 전환 확인</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    
-
-    <div class="callout">
-      디젤 마진은 전쟁의 속보에 민감하지만, Group III 기유 마진은 설비 복구와 산업 인증의 속도에 의해 결정됨.
-    </div>
+    <a class="dl" href="./files/refining-shock-report-20260818.pdf" download>
+      원문 PDF 내려받기 <span class="sz">21p · 7.4MB</span>
+    </a>
   </section>
 
-  <!-- ================= 3장 ================= -->
-  <section id="ch3">
+<section id="ch3">
     <div class="band"><span class="n mono">3장</span> 기업 분석</div>
 
     <h3>3-1 국내 4사 비교</h3>
@@ -1239,7 +1118,7 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
       plot.innerHTML = '<div class="cempty">시계열 수집 전</div>';
       return;
     }
-    var W = 620, H = 152, PL = 10, PR = 46, PT = 18, PB = 24;
+    var W = 620, H = 205, PL = 12, PR = 50, PT = 22, PB = 30;
     var vals = pts.map(function(p){ return p.v; });
     var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
     if (mn === mx){ mn -= 1; mx += 1; }
