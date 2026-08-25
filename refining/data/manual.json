@@ -8,48 +8,92 @@
   },
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 102.20, "unit": "$/bbl", "asOf": "2026-08-17",
-      "note": "장중 사상 최고", "source": "Reuters", "mode": "manual"
-    },
-    "sing_grm": {
-      "value": null, "unit": "$/bbl", "asOf": null,
-      "note": "싱가포르 복합정제마진: 수치 확보 필요", "source": "Platts / 증권사 주간자료", "mode": "manual"
-    },
-    "group3_price": {
-      "value": 4000, "unit": "$/t", "asOf": "2026-08-18",
-      "note": "Group III 4cSt, 미국·유럽 약 $4,000/t", "source": "Argus", "mode": "manual"
-    },
-    "group3_spread": {
-      "value": null, "unit": "$/t", "asOf": null,
-      "note": "Group III − 두바이유 환산: 계산식 확정 후 산출", "source": "Argus + Platts", "mode": "manual"
-    },
-    "us_distillate_stock": {
-      "value": 107.1, "unit": "mb", "asOf": "2026-08-07",
-      "note": "1996년 이후 동기 최저", "source": "EIA Weekly", "mode": "auto-pending"
-    },
-    "russia_diesel_export": {
-      "value": 75, "unit": "만톤/월", "asOf": "2026-07-31",
-      "note": "전월 대비 약 −60%", "source": "Reuters", "mode": "manual"
-    },
-    "px_naphtha_spread": {
-      "value": null, "unit": "$/t", "asOf": null,
-      "note": "파라자일렌 − 나프타: 수치 확보 필요", "source": "ICIS / 증권사", "mode": "manual"
+      "value": 102.2,
+      "unit": "$/bbl",
+      "asOf": "2026-08-17",
+      "note": "장중 사상 최고",
+      "source": "Reuters",
+      "mode": "manual"
     },
     "crack_3_2_1": {
-      "value": null, "unit": "$/bbl", "asOf": null,
-      "note": "EIA 스팟가로 자동 산출 예정", "source": "EIA", "mode": "auto-pending"
+      "value": null,
+      "unit": "$/bbl",
+      "asOf": null,
+      "note": "휘발유 2 · 경유 1 가중. EIA 스팟가로 자동 산출 예정",
+      "source": "EIA",
+      "mode": "auto-pending"
+    },
+    "us_distillate_stock": {
+      "value": 107.1,
+      "unit": "mb",
+      "asOf": "2026-08-07",
+      "note": "1996년 이후 동기 최저",
+      "source": "EIA Weekly",
+      "mode": "auto-pending"
+    },
+    "sing_grm": {
+      "value": null,
+      "unit": "$/bbl",
+      "asOf": null,
+      "note": "싱가포르 복합정제마진: 수치 확보 필요",
+      "source": "Platts / 증권사 주간자료",
+      "mode": "manual"
+    },
+    "group3_spread": {
+      "value": null,
+      "unit": "$/t",
+      "asOf": null,
+      "note": "Group III − 두바이유 환산: 계산식 확정 후 산출",
+      "source": "Argus + Platts",
+      "mode": "manual"
+    },
+    "px_naphtha_spread": {
+      "value": null,
+      "unit": "$/t",
+      "asOf": null,
+      "note": "파라자일렌 − 나프타: 수치 확보 필요",
+      "source": "ICIS / 증권사",
+      "mode": "manual"
+    },
+    "russia_diesel_export": {
+      "value": 75,
+      "unit": "만톤/월",
+      "asOf": "2026-07-31",
+      "note": "전월 대비 약 −60%",
+      "source": "Reuters",
+      "mode": "manual"
+    },
+    "group3_price": {
+      "value": 4000,
+      "unit": "$/t",
+      "asOf": "2026-08-18",
+      "note": "Group III 4cSt, 미국·유럽 약 $4,000/t",
+      "source": "Argus",
+      "mode": "manual"
     },
     "gulf_exports": {
-      "value": 15.0, "unit": "mb/d", "asOf": "2026-07-31",
-      "note": "전월 대비 −2.1, 전쟁 전 약 20", "source": "IEA", "mode": "manual"
+      "value": 15.0,
+      "unit": "mb/d",
+      "asOf": "2026-07-31",
+      "note": "전월 대비 −2.1, 전쟁 전 약 20",
+      "source": "IEA",
+      "mode": "manual"
     },
     "china_product_export": {
-      "value": 465, "unit": "만톤/월", "asOf": "2026-07-31",
-      "note": "전년 동월 대비 −12.9%", "source": "중국 해관총서", "mode": "manual"
+      "value": 465,
+      "unit": "만톤/월",
+      "asOf": "2026-07-31",
+      "note": "전년 동월 대비 −12.9%",
+      "source": "중국 해관총서",
+      "mode": "manual"
     },
     "soil_cdu_util": {
-      "value": 76, "unit": "%", "asOf": "2026-06-30",
-      "note": "정기보수로 전분기 대비 −9%p", "source": "S-OIL 2Q26 실적", "mode": "manual"
+      "value": 76,
+      "unit": "%",
+      "asOf": "2026-06-30",
+      "note": "정기보수로 전분기 대비 −9%p",
+      "source": "S-OIL 2Q26 실적",
+      "mode": "manual"
     }
   }
 }
