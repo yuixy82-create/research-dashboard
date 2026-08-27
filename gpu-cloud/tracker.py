@@ -2744,7 +2744,39 @@ def collect_silicondata():
         d = sorted(out[k])[-1]
         print(f"  {k:16s} {d}  ${out[k][d]}")
     if not out:
-        print("  [warn] Silicon Data: 지수 파싱 실패")
+        # 26.08.27 페이지 개편 대응: 컴팩트 카드 형식 ("H100 Rental Price Index ... $2.67")
+        # as-of 날짜가 사라져서, 직전 미국 영업일로 기록 (지수는 영업일당 1회 발표)
+        et = datetime.now(timezone.utc) - timedelta(hours=5)
+        d0 = et.date()
+        if et.hour < 17:
+            d0 -= timedelta(days=1)
+        while d0.weekday() >= 5:
+            d0 -= timedelta(days=1)
+        d = d0.isoformat()
+        key_map = {"H100": "SD_H100_NEO", "B200": "SD_B200_ALL",
+                   "A100": "SD_A100_NEO", "MI300X": "SD_MI300X_ALL",
+                   "H200": "SD_H200_ALL"}
+        for model, key in key_map.items():
+            m2 = re.search(model + r"\s*Rental Price Index", text)
+            if not m2:
+                continue
+            seg = text[m2.end(): m2.end() + 300]
+            g = re.search(r"\$\s*([\d.]+)", seg)
+            if not g:
+                continue
+            try:
+                v = round(float(g.group(1)), 4)
+            except ValueError:
+                continue
+            if 0.05 <= v <= 100:
+                out.setdefault(key, {})[d] = v
+        if out:
+            print(f"  신형 카드 형식 파싱 성공 ({len(out)}종, 기록일 {d})")
+        for k in sorted(out):
+            dd = sorted(out[k])[-1]
+            print(f"  {k:16s} {dd}  ${out[k][dd]}")
+    if not out:
+        print("  [warn] Silicon Data: 지수 파싱 실패 (신·구 형식 모두)")
     return out
 
 
