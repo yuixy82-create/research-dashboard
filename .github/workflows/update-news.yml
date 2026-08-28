@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   update:
@@ -48,6 +49,7 @@ jobs:
           EOF
 
       - name: Commit if changed
+        id: commit
         run: |
           mkdir -p gpu-cloud
           if cmp -s /tmp/news_new.json gpu-cloud/news.json; then
@@ -60,3 +62,12 @@ jobs:
           git add gpu-cloud/news.json
           git commit -m "chore: news.json 자동 갱신 ($(date -u +%Y-%m-%d))"
           git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger tracker rebuild
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # news.json이 실제로 갱신된 날만 차트를 즉시 재생성
+          gh workflow run gpu-cloud.yml --repo ${{ github.repository }} || echo "재생성 트리거 실패 (다음 정기 실행에서 반영됨)"
