@@ -101,6 +101,20 @@
     "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526258388/d138711ds3a.htm"
    },
    {
+    "form": "CORRESP",
+    "filed": "2026-06-05",
+    "items": "",
+    "acc": "0001193125-26-258709",
+    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526258709/filename1.htm"
+   },
+   {
+    "form": "UPLOAD",
+    "filed": "2026-06-04",
+    "items": "",
+    "acc": "0000000000-26-005651",
+    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000000000026005651/filename1.pdf"
+   },
+   {
     "form": "S-3",
     "filed": "2026-06-02",
     "items": "",
@@ -267,20 +281,6 @@
     "items": "",
     "acc": "0001193125-26-134646",
     "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526134646/pstv-20260331.htm"
-   },
-   {
-    "form": "3",
-    "filed": "2026-03-30",
-    "items": "",
-    "acc": "0001193125-26-132171",
-    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526132171/xslF345X06/ownership.xml"
-   },
-   {
-    "form": "8-K",
-    "filed": "2026-03-26",
-    "items": "5.02",
-    "acc": "0001193125-26-125195",
-    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526125195/pstv-20260320.htm"
    }
   ]
  },
@@ -453,7 +453,7 @@
   }
  },
  "quote": {
-  "price": 3.1,
+  "price": 3.05,
   "prev": 7.5,
   "high52": 23.5,
   "low52": 2.9,
@@ -957,6 +957,10 @@
    {
     "date": "2026-08-27",
     "close": 3.1
+   },
+   {
+    "date": "2026-08-28",
+    "close": 3.05
    }
   ]
  },
@@ -1218,9 +1222,23 @@
  "reddit": [],
  "cms": {
   "cy2027_files": [],
-  "checked": "2026-08-28"
+  "checked": "2026-08-29"
  },
  "log": [
+  {
+   "date": "2026-08-29",
+   "level": "yellow",
+   "axis": "자본",
+   "text": "SEC CORRESP 제출 (2026-06-05)",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526258709/filename1.htm"
+  },
+  {
+   "date": "2026-08-29",
+   "level": "yellow",
+   "axis": "자본",
+   "text": "SEC UPLOAD 제출 (2026-06-04)",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000000000026005651/filename1.pdf"
+  },
   {
    "date": "2026-08-20",
    "level": "yellow",
@@ -1300,7 +1318,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-08-28 11:26",
+  "updated": "2026-08-29 06:51",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1314,6 +1332,6 @@
    "reddit": "ok",
    "cms": "ok"
   },
-  "new_events": 0
+  "new_events": 2
  }
 }
