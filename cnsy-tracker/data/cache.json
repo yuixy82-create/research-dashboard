@@ -1077,6 +1077,16 @@
    "date": "Tue, 30 Jun 2026 07:30:29 -0400"
   },
   {
+   "title": "UPLOAD: UPLOAD",
+   "link": "https://ir.cerenome.com/sec-filings/sec-filing/upload/0000000000-26-005651",
+   "date": "Sun, 30 Aug 2026 06:13:10 -0400"
+  },
+  {
+   "title": "CORRESP: CORRESP",
+   "link": "https://ir.cerenome.com/sec-filings/sec-filing/corresp/0001193125-26-258709",
+   "date": "Sun, 30 Aug 2026 06:13:10 -0400"
+  },
+  {
    "title": "10-Q: Quarterly report which provides a continuing view of a company's financial position",
    "link": "https://ir.cerenome.com/sec-filings/sec-filing/10-q/0001193125-26-352444",
    "date": "Fri, 14 Aug 2026 16:44:38 -0400"
@@ -1103,6 +1113,11 @@
   },
   {
    "title": "4: Statement of changes in beneficial ownership of securities",
+   "link": "https://ir.cerenome.com/sec-filings/sec-filing/4/0001193125-26-292642",
+   "date": "Wed, 01 Jul 2026 16:33:55 -0400"
+  },
+  {
+   "title": "4: Statement of changes in beneficial ownership of securities",
    "link": "https://ir.cerenome.com/sec-filings/sec-filing/4/0001193125-26-292643",
    "date": "Wed, 01 Jul 2026 16:33:55 -0400"
   },
@@ -1110,21 +1125,6 @@
    "title": "4: Statement of changes in beneficial ownership of securities",
    "link": "https://ir.cerenome.com/sec-filings/sec-filing/4/0001193125-26-292654",
    "date": "Wed, 01 Jul 2026 16:33:55 -0400"
-  },
-  {
-   "title": "4: Statement of changes in beneficial ownership of securities",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/4/0001193125-26-292644",
-   "date": "Wed, 01 Jul 2026 16:33:55 -0400"
-  },
-  {
-   "title": "4: Statement of changes in beneficial ownership of securities",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/4/0001193125-26-292642",
-   "date": "Wed, 01 Jul 2026 16:33:55 -0400"
-  },
-  {
-   "title": "4: Statement of changes in beneficial ownership of securities",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/4/0001193125-26-292649",
-   "date": "Wed, 01 Jul 2026 16:31:48 -0400"
   }
  ],
  "cnside": [
@@ -1226,6 +1226,20 @@
  },
  "log": [
   {
+   "date": "2026-08-30",
+   "level": "yellow",
+   "axis": "뉴스",
+   "text": "UPLOAD: UPLOAD",
+   "link": "https://ir.cerenome.com/sec-filings/sec-filing/upload/0000000000-26-005651"
+  },
+  {
+   "date": "2026-08-30",
+   "level": "yellow",
+   "axis": "뉴스",
+   "text": "CORRESP: CORRESP",
+   "link": "https://ir.cerenome.com/sec-filings/sec-filing/corresp/0001193125-26-258709"
+  },
+  {
    "date": "2026-08-29",
    "level": "yellow",
    "axis": "자본",
@@ -1318,7 +1332,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-08-30 06:05",
+  "updated": "2026-08-30 21:06",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1332,6 +1346,6 @@
    "reddit": "ok",
    "cms": "ok"
   },
-  "new_events": 0
+  "new_events": 2
  }
 }
