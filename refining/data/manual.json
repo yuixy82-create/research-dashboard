@@ -1,10 +1,10 @@
 {
   "_comment": "수동 입력 지표. 값을 바꾸고 asOf를 갱신할 것. 자동 수집이 붙으면 auto.json이 같은 key를 덮어씀.",
-  "baseDate": "2026-08-18",
+  "baseDate": "2026-08-28",
   "scenario": {
     "current": "불완전한 회복",
     "note": "통항 부분 회복, 공격·보험 리스크 지속, 러시아 정제 복구 지연",
-    "asOf": "2026-08-18"
+    "asOf": "2026-08-28"
   },
   "indicators": {
     "diesel_crack_1_1": {
@@ -32,11 +32,11 @@
       "mode": "auto-pending"
     },
     "sing_grm": {
-      "value": null,
+      "value": 32.8,
       "unit": "$/bbl",
-      "asOf": null,
-      "note": "싱가포르 복합정제마진: 수치 확보 필요",
-      "source": "Platts / 증권사 주간자료",
+      "asOf": "2026-08-28",
+      "note": "스팟 기준, 전주 대비 −4.9. 1개월 래깅은 35.0(−16.7)",
+      "source": "Petronet · iM증권 26.08.28 인용",
       "mode": "manual"
     },
     "group3_spread": {
@@ -51,8 +51,8 @@
       "value": null,
       "unit": "$/t",
       "asOf": null,
-      "note": "파라자일렌 − 나프타: 수치 확보 필요",
-      "source": "ICIS / 증권사",
+      "note": "26.08 4주차 PX +1.9% · 납사 +5.2% WoW → 스프레드 축소. 절대값 미확보",
+      "source": "Cischem · iM증권 26.08.28 인용",
       "mode": "manual"
     },
     "russia_diesel_export": {
@@ -66,7 +66,7 @@
     "group3_price": {
       "value": 4000,
       "unit": "$/t",
-      "asOf": "2026-08-18",
+      "asOf": "2026-08-28",
       "note": "Group III 4cSt, 미국·유럽 약 $4,000/t",
       "source": "Argus",
       "mode": "manual"
@@ -93,6 +93,62 @@
       "asOf": "2026-06-30",
       "note": "정기보수로 전분기 대비 −9%p",
       "source": "S-OIL 2Q26 실적",
+      "mode": "manual"
+    },
+    "gasoil_margin_sg": {
+      "value": 62.4,
+      "unit": "$/bbl",
+      "asOf": "2026-08-28",
+      "note": "싱가포르 경유 − 두바이. 전주 대비 −8.3. 미국 ULSD−WTI 크랙과 정의가 달라 비교 불가",
+      "source": "Petronet · iM증권 26.08.28 인용",
+      "mode": "manual"
+    },
+    "kero_margin_sg": {
+      "value": 53.7,
+      "unit": "$/bbl",
+      "asOf": "2026-08-28",
+      "note": "등유 마진, 전주 대비 −8.0",
+      "source": "Petronet · iM증권 26.08.28 인용",
+      "mode": "manual"
+    },
+    "gasoline_margin_sg": {
+      "value": 23.4,
+      "unit": "$/bbl",
+      "asOf": "2026-08-28",
+      "note": "휘발유 마진, 전주 대비 −1.4",
+      "source": "Petronet · iM증권 26.08.28 인용",
+      "mode": "manual"
+    },
+    "ural_dubai": {
+      "value": -11.82,
+      "unit": "$/bbl",
+      "asOf": "2026-08-28",
+      "note": "전주 대비 −5.13. 러시아산 할인 폭 확대",
+      "source": "Refinitiv · Petronet · iM증권 26.08.28 인용",
+      "mode": "manual"
+    },
+    "saudi_osp_light": {
+      "value": -12.0,
+      "unit": "$/bbl",
+      "asOf": "2026-09-01",
+      "note": "9월 Arab Light, 전월 대비 −0.5. Medium은 −2.0(+1.3)",
+      "source": "Saudi Aramco · iM증권 26.08.28 인용",
+      "mode": "manual"
+    },
+    "us_refinery_util": {
+      "value": 97.4,
+      "unit": "%",
+      "asOf": "2026-08-21",
+      "note": "전주 대비 +0.2%p",
+      "source": "EIA · iM증권 26.08.28 인용",
+      "mode": "manual"
+    },
+    "russia_refinery_hit": {
+      "value": 45,
+      "unit": "%",
+      "asOf": "2026-07-31",
+      "note": "명목 정제설비 중 피격 비중. 처리량은 다년 최저권",
+      "source": "FT · Bloomberg · iM증권 26.08.28 인용",
       "mode": "manual"
     }
   }
