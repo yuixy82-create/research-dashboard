@@ -8,15 +8,21 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
+# Pages 배포를 직접 하므로 다른 배포 워크플로와 같은 그룹을 씀
 concurrency:
-  group: refining-update
+  group: "pages"
   cancel-in-progress: false
 
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -41,12 +47,20 @@ jobs:
             echo "변경 없음"
           fi
 
+      # GITHUB_TOKEN으로 만든 커밋은 다른 워크플로를 깨우지 않음(재귀 실행 방지 규칙).
+      # static.yml에 기대면 데이터만 바뀌고 화면은 옛것이 남으므로 여기서 직접 배포함.
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
       - name: Report status
         run: |
           python3 - <<'PY'
           import json, pathlib, sys
-          p = pathlib.Path("refining/data/auto.json")
-          d = json.loads(p.read_text(encoding="utf-8"))
+          d = json.loads(pathlib.Path("refining/data/auto.json").read_text(encoding="utf-8"))
           print("status:", d.get("status"))
           for k, v in (d.get("indicators") or {}).items():
               print(f"  {k}: {v.get('value')} {v.get('unit')} ({v.get('asOf')})")
