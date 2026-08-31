@@ -292,8 +292,7 @@ def f_ctgov():
 
 def f_news():
     out = []
-    for u in ("https://ir.cerenome.com/rss/news-releases.xml",
-              "https://ir.cerenome.com/rss/sec-filings.xml"):
+    for u in ("https://ir.cerenome.com/rss/news-releases.xml",):
         try:
             out += parse_rss(get(u), limit=20)
         except Exception:                            # noqa: BLE001
@@ -495,7 +494,13 @@ def main():
     cur["cms"] = section("cms", f_cms, prev.get("cms"))
 
     # 임상 카운터 시계열 누적: 하루 한 점, 값이 바뀌면 갱신
-    hist = list(prev.get("trials_hist") or (load(SEED, {}).get("trials_hist") or []))
+    seed_all = load(SEED, {})
+    hist, seen_d = [], set()
+    for h in (seed_all.get("trials_hist") or []) + (prev.get("trials_hist") or []):
+        if h.get("date") in seen_d:
+            hist = [x for x in hist if x.get("date") != h.get("date")]
+        seen_d.add(h.get("date"))
+        hist.append(h)
     t = cur.get("trials") or {}
 
     def cnt(k):
@@ -516,11 +521,19 @@ def main():
             hist[-1] = {"date": d, "lm": lm, "gbm": gbm}
     cur["trials_hist"] = sorted(hist, key=lambda h: h["date"])[-200:]
 
-    cur["coverage"] = section("coverage", lambda: f_coverage(cur.get("news")),
-                              prev.get("coverage"))
+    cov = section("coverage", lambda: f_coverage(cur.get("news")), []) or []
+    merged, seen_c = [], set()
+    for c in cov + (prev.get("coverage") or []) + (seed_all.get("coverage") or []):
+        k = round(float(c.get("lives_m") or 0), 1)
+        if k in seen_c:
+            continue
+        seen_c.add(k)
+        merged.append(c)
+    cur["coverage"] = sorted(merged, key=lambda c: c.get("lives_m") or 0, reverse=True)
 
     new_events = diff(prev, cur)
-    base = prev.get("log") or (load(SEED, {}).get("log") or [])   # 첫 실행이면 수기 기록에서 이어붙임
+    base = prev.get("log") or (seed_all.get("log") or [])   # 첫 실행이면 수기 기록에서 이어붙임
+    base = [e for e in base if not re.match(r"^[A-Z0-9/\-]{1,12}:\s*[A-Z0-9/\-]{1,12}$", e.get("text", ""))]
     seen, log = set(), []
     for e in new_events + base:
         k = (e.get("date"), e.get("text"))
