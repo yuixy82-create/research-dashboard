@@ -348,6 +348,19 @@ def f_reddit():
     return ded[:20]
 
 
+def f_coverage(news):
+    """보도자료 제목에서 커버드 라이프 수치를 뽑아 시계열로 만든다."""
+    pat = re.compile(r"([\d]{1,3}(?:\.\d+)?)\s*million\s+(?:contracted\s+)?(?:covered\s+)?lives", re.I)
+    out = []
+    for n in news or []:
+        m = pat.search(n.get("title", ""))
+        if not m:
+            continue
+        out.append({"date": n.get("date", "")[:16], "lives_m": float(m.group(1)),
+                    "title": n.get("title", ""), "link": n.get("link", "")})
+    return out
+
+
 def f_cms():
     """CY2027 CLFS 신규코드 가격결정 파일이 올라오는 순간을 잡는다."""
     html = get("https://www.cms.gov/medicare/payment/fee-schedules/"
@@ -480,6 +493,31 @@ def main():
     cur["cnside"] = section("cnside", f_cnside, prev.get("cnside"))
     cur["reddit"] = section("reddit", f_reddit, prev.get("reddit"))
     cur["cms"] = section("cms", f_cms, prev.get("cms"))
+
+    # 임상 카운터 시계열 누적: 하루 한 점, 값이 바뀌면 갱신
+    hist = list(prev.get("trials_hist") or (load(SEED, {}).get("trials_hist") or []))
+    t = cur.get("trials") or {}
+
+    def cnt(k):
+        v = (t.get(k) or {}).get("counters") or {}
+        for key in v:
+            if "Patients Treated" in key:
+                return v[key]
+        return None
+
+    lm, gbm = cnt("lm"), cnt("gbm")
+    if lm is not None or gbm is not None:
+        d = today_kst()
+        hist = [h for h in hist if h.get("date") != d]
+        last = hist[-1] if hist else {}
+        if last.get("lm") != lm or last.get("gbm") != gbm or not hist:
+            hist.append({"date": d, "lm": lm, "gbm": gbm})
+        else:
+            hist[-1] = {"date": d, "lm": lm, "gbm": gbm}
+    cur["trials_hist"] = sorted(hist, key=lambda h: h["date"])[-200:]
+
+    cur["coverage"] = section("coverage", lambda: f_coverage(cur.get("news")),
+                              prev.get("coverage"))
 
     new_events = diff(prev, cur)
     base = prev.get("log") or (load(SEED, {}).get("log") or [])   # 첫 실행이면 수기 기록에서 이어붙임
