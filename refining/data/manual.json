@@ -83,8 +83,8 @@
       "value": 465,
       "unit": "만톤/월",
       "asOf": "2026-07-31",
-      "note": "전년 동월 대비 −12.9%",
-      "source": "중국 해관총서",
+      "note": "YoY −12.9%, MoM 반등 중",
+      "source": "중국 해관총서 · iM증권 26.08.28 인용",
       "mode": "manual"
     },
     "soil_cdu_util": {
@@ -131,7 +131,7 @@
       "value": -12.0,
       "unit": "$/bbl",
       "asOf": "2026-09-01",
-      "note": "9월 Arab Light, 전월 대비 −0.5. Medium은 −2.0(+1.3)",
+      "note": "9월분, 전월 −0.5",
       "source": "Saudi Aramco · iM증권 26.08.28 인용",
       "mode": "manual"
     },
