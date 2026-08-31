@@ -1,18 +1,22 @@
 name: refining-update
 
-# 시리즈 ID 확정 전까지 스케줄 비활성. 수동 실행으로만 테스트할 것.
 on:
-  workflow_dispatch:
-  # schedule:
-  #   - cron: "0 21 * * *"   # 매일 06:00 KST — 가격류
-  #   - cron: "0 16 * * 3"   # 매주 목 01:00 KST — EIA 주간 재고
+  schedule:
+    - cron: "30 22 * * *"   # 07:30 KST — 전일 미국 종가 반영분
+    - cron: "0 13 * * *"    # 22:00 KST — 미국 장중 반영분
+  workflow_dispatch: {}
 
 permissions:
   contents: write
 
+concurrency:
+  group: refining-update
+  cancel-in-progress: false
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,7 +32,7 @@ jobs:
       - name: Commit if changed
         run: |
           if [ -n "$(git status --porcelain refining/data)" ]; then
-            git config user.name  "github-actions[bot]"
+            git config user.name  "tracker-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add refining/data
             git commit -m "refining: daily update"
@@ -36,3 +40,17 @@ jobs:
           else
             echo "변경 없음"
           fi
+
+      - name: Report status
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, sys
+          p = pathlib.Path("refining/data/auto.json")
+          d = json.loads(p.read_text(encoding="utf-8"))
+          print("status:", d.get("status"))
+          for k, v in (d.get("indicators") or {}).items():
+              print(f"  {k}: {v.get('value')} {v.get('unit')} ({v.get('asOf')})")
+          for e in (d.get("errors") or []):
+              print("  ERR", e)
+          sys.exit(0 if d.get("status") == "ok" else 1)
+          PY
