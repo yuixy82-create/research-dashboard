@@ -1224,6 +1224,21 @@
   "cy2027_files": [],
   "checked": "2026-08-31"
  },
+ "trials_hist": [
+  {
+   "date": "2026-08-31",
+   "lm": 37,
+   "gbm": 53
+  }
+ ],
+ "coverage": [
+  {
+   "date": "Thu, 13 Aug 2026",
+   "lives_m": 150.0,
+   "title": "Cerenome Secures In-Network Agreement with Health Care Service Corporation, Expanding CNSide® Contracted Coverage to Over 150 Million Covered Lives",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-secures-network-agreement-health-care-service"
+  }
+ ],
  "log": [
   {
    "date": "2026-08-30",
@@ -1332,7 +1347,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-08-31 06:05",
+  "updated": "2026-08-31 10:13",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1344,7 +1359,8 @@
    "news": "ok",
    "cnside": "ok",
    "reddit": "ok",
-   "cms": "ok"
+   "cms": "ok",
+   "coverage": "ok"
   },
   "new_events": 0
  }
