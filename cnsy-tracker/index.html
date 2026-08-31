@@ -21,6 +21,7 @@
   --font-sans:"Pretendard","Pretendard Variable","Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --gap-chapter:156px; --gap-band:130px; --gap-section:48px; --gap-para:26px; --gap-block:20px;
+  --viz-1:#6E7F26; --viz-grid:#E4E4DE; --viz-surface:#FFFFFF; --viz-track:#E9EAE0;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -35,6 +36,7 @@
     --hairline:#343829; --rowline:#282C1F; --compare-gray:#6E7161;
     --paper:#1C1F16; --page:#14160F;
     --shadow:0 1px 3px rgba(0,0,0,.45);
+    --viz-1:#A2B84A; --viz-grid:#2E3323; --viz-surface:#1C1F16; --viz-track:#2B3119;
   }
 }
 :root[data-theme="dark"]{
@@ -49,6 +51,7 @@
   --hairline:#343829; --rowline:#282C1F; --compare-gray:#6E7161;
   --paper:#1C1F16; --page:#14160F;
   --shadow:0 1px 3px rgba(0,0,0,.45);
+  --viz-1:#A2B84A; --viz-grid:#2E3323; --viz-surface:#1C1F16; --viz-track:#2B3119;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--text);font-family:var(--font-sans);
@@ -114,6 +117,15 @@ details summary{padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer;
 details[open] summary{border-bottom:1px solid var(--hairline)}
 details .inner{padding:14px}
 a{color:var(--brand-heading)}
+/* 차트 */
+.chartbox svg{display:block;width:100%;height:auto}
+.viz-axis{fill:var(--muted);font-size:11px;font-family:var(--font-mono)}
+.viz-lab{fill:var(--text);font-size:12.5px;font-weight:700}
+.viz-grid{stroke:var(--viz-grid);stroke-width:1}
+.viz-line{fill:none;stroke:var(--viz-1);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.viz-dot{fill:var(--viz-1);stroke:var(--viz-surface);stroke-width:2}
+.viz-track{fill:var(--viz-track)}
+.viz-fill{fill:var(--viz-1)}
 /* 변화 로그 */
 .logtable td.lv{white-space:nowrap;font-weight:800;font-size:12px}
 .lv-red{color:var(--accent-red)}
@@ -165,7 +177,130 @@ a{color:var(--brand-heading)}
 
 
   <!-- ══════════ 1장 ══════════ -->
-  <h2 class="sec"><span class="no">1장</span>지금 상태</h2>
+  <h2 class="sec"><span class="no">1장</span>팔로업</h2>
+  <hr class="sec-rule">
+
+  <p>
+    매일 자동으로 갱신되는 항목만 이 장에 둠.
+    진행 중인 임상 2건과 CNSide로 나누고, 각 항목은 지금 값과 다음 관문을 함께 둠.
+  </p>
+
+  <div class="sub-h">임상 · ReSPECT-LM 다회투여</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>구분</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td class="key">시험번호</td><td><a href="https://clinicaltrials.gov/study/NCT07098806" target="_blank" rel="noopener">NCT07098806</a> · 프로토콜 CA-2024-LM-001</td></tr>
+        <tr class="sub"><td class="key">단계</td><td><b>Phase 1 · 용량과 투여간격 최적화 구간</b>. 선행한 단회투여 Phase 1은 29명으로 종료됨 (RP2D 44.1 mCi, MTD 66.14 mCi, mOS 9개월)</td></tr>
+        <tr><td class="key">투여</td><td>Ommaya 뇌실내 13.2 mCi × 3회</td></tr>
+        <tr><td class="key">코호트</td><td>1: 56일 간격 → 2: 28일 → 3: 14일, 최대 6회</td></tr>
+        <tr class="sub"><td class="key">현재</td><td><b>Cohort 1a DLT 없이 통과</b> (26.08.13 발표). 회사 표현은 목표의 약 1/3 등록</td></tr>
+        <tr><td class="key">목표 인원</td><td>RP2D 도출 12~18명 · 등재 목표 24명</td></tr>
+        <tr><td class="key">다음 관문</td><td>연말까지 RP2D·투여간격 확정 → 개정 프로토콜 FDA 정렬 → pivotal 개시</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Source</b> — 2분기 실적 보도자료(26.08.14) · SNO/ASCO CNS Metastases 발표(26.08.20) · SNO 2025 초록 CTNI-67 ·
+    <b>Note</b> — 등재 목표 24명과 회사가 말하는 12~18명은 다른 구간을 가리킴: 24명은 시험 전체, 12~18명은 RP2D 도출까지.
+  </div>
+
+  <div class="banner">ReSPECT-LM 다회투여 누적 투여 인원</div>
+  <div class="chartbox"><svg id="ch-lm" viewBox="0 0 880 250" role="img"
+    aria-label="ReSPECT-LM 다회투여 누적 투여 인원 추이"></svg></div>
+  <div class="note">
+    <b>Source</b> — respect-trials.com 투여 인원 카운터, 매일 수집 ·
+    <b>Note</b> — 카운터는 단회투여 29명을 포함한 ReSPECT-LM 누적치임. 다회투여 인원은 카운터에서 29를 뺀 값으로 산출함
+    (33−29=4, 36−29=7, 37−29=8로 회사 공개분과 일치).
+  </div>
+
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>확인일</th><th class="num">사이트 카운터</th><th class="num">다회투여</th><th class="num">증감</th></tr></thead>
+      <tbody id="lmbody"><tr><td colspan="4">불러오는 중</td></tr></tbody>
+    </table>
+  </div>
+
+  <p>
+    <span class="mark">카운터가 (26.06.09) 37명에서 두 달 반째 멈춰 있음</span>:
+    다회투여 8명에서 정체. 페이지 자체는 (26.08.20)에 수정되었으므로 갱신 누락으로 보기 어려움.
+    연말 RP2D 확정 목표와 어긋나는 지점이라 매일 확인 대상 1순위로 둠.
+  </p>
+
+  <div class="sub-h">임상 · ReSPECT-GBM</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>구분</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td class="key">시험번호</td><td><a href="https://clinicaltrials.gov/study/NCT01906385" target="_blank" rel="noopener">NCT01906385</a> Phase 1/2 중 2상 파트</td></tr>
+        <tr class="sub"><td class="key">단계</td><td><b>Phase 2 · 등록 마무리 구간</b>. Phase 1은 1.0~41.5 mCi 용량증량으로 종료 (100Gy 이상 흡수군 mOS 17개월, 미만군 6개월)</td></tr>
+        <tr><td class="key">투여</td><td>CED 종양내 직접 주입 22.3 mCi 단회 · 카테터 최대 4개</td></tr>
+        <tr><td class="key">현재</td><td>2상 등록 <b>31 / 34명</b> (26.06.30) · 활성 사이트 3곳</td></tr>
+        <tr class="sub"><td class="key">다음 관문</td><td>26년 내 완전등록 → <b>데이터 27년 1분기</b> → EOP2 미팅 → 등록임상</td></tr>
+        <tr><td class="key">제약</td><td>종양 부피 20 mL 이하 · CED 접근 가능 위치 · 베바시주맙 선행 투여 시 분포 저하</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>Source</b> — 중간 업데이트(26.06.30) · 2분기 실적 보도자료(26.08.14) · Nature Communications(25.03.07)</div>
+
+  <div class="banner">ReSPECT-GBM 2상 등록 진척</div>
+  <div class="chartbox"><svg id="ch-gbm" viewBox="0 0 880 76" role="img"
+    aria-label="ReSPECT-GBM 2상 등록 진척"></svg></div>
+  <div class="note">
+    <b>Source</b> — 등록 인원은 회사 발표(26.06.30) ·
+    <b>Note</b> — 사이트 카운터는 <b id="gbm-counter">—</b>명으로 1상과 2상을 합한 누적치라 2상 등록 인원과 직접 대응하지 않음. 진척 막대는 2상만 표시함.
+  </div>
+
+  <p>
+    GBM은 남은 3명이 채워지는 순간부터 데이터까지의 시간표가 고정됨.
+    등록 완료 발표가 나오면 EOP2 미팅 일정이 다음 확인 대상이 됨.
+  </p>
+
+  <div class="sub-h">CNSide</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>지표</th><th>지금</th><th>판정 기준</th><th>확인 경로</th></tr></thead>
+      <tbody>
+        <tr class="sub"><td class="key">0640U 단가</td><td>미정 · Novitas 재량가</td><td><b>$2,000 이상이면 진단부문 밸류 유지, $1,000 미만이면 절반으로</b></td><td>CMS 예비결정 26.09 · 최종 26.11</td></tr>
+        <tr><td class="key">진단 매출 인식</td><td>사실상 0 · 전액 충당금</td><td>첫 인식 자체가 전환점</td><td>분기 10-Q</td></tr>
+        <tr><td class="key">검사 건수</td><td>상반기 232건 · 6월 72건</td><td>12월 월 104건이어야 연 1,250건 런레이트</td><td>분기 실적 보도자료</td></tr>
+        <tr class="sub"><td class="key">커버드 라이프</td><td><b>1.53억명</b> (26.08.13)</td><td>Aetna · Cigna · Kaiser · Centene 급만 유효</td><td>IR 보도자료 제목에서 자동 추출</td></tr>
+        <tr><td class="key">메디케어 커버리지</td><td>미확보 · PTAN만 취득</td><td>Novitas LCD 등재</td><td>Medicare Coverage Database</td></tr>
+        <tr><td class="key">어세이 확장</td><td>NGS 파트너십 1건 · 3종 미출시</td><td>3분기 약속 이행 여부</td><td>IR 보도자료 · CNSide 사이트</td></tr>
+        <tr><td class="key">랩 자격</td><td>CLIA · CAP · 캘리포니아</td><td>뉴욕주 라이선스가 남은 관문</td><td>IR 보도자료</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>Note</b> — 0640U는 (26.07.14) CDLT 자문패널에서 0338U 크로스워크로 12표 대 0표 권고됨. 갭필로 인한 1년 지연은 피했으나 준용 단가 수준은 미확인</div>
+
+  <div class="banner">커버드 라이프 · 계약 이력</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>발표일</th><th class="num">누적</th><th>계약</th></tr></thead>
+      <tbody id="covbody"><tr><td colspan="3">불러오는 중</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note"><b>Source</b> — IR 보도자료 제목에서 자동 추출 · <b>Note</b> — 단위는 백만명. 회사가 제목에 수치를 넣지 않은 계약은 잡히지 않음</div>
+
+  <div class="banner">남은 대형 페이어</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>페이어</th><th class="num">커버리지</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td class="key">CVS Health · Aetna</td><td class="num">2,500만+</td><td>약국·진단 인프라 통합. 남은 최대어</td></tr>
+        <tr><td class="key">Centene</td><td class="num">2,400~2,800만</td><td>메디케이드 비중 높음</td></tr>
+        <tr><td class="key">Cigna</td><td class="num">1,500만</td><td>종양 상환에 비교적 우호적</td></tr>
+        <tr><td class="key">Kaiser Permanente</td><td class="num">1,250만</td><td>폐쇄형 8개주 한정</td></tr>
+        <tr><td class="key">Molina</td><td class="num">500만</td><td>—</td></tr>
+        <tr><td class="key">GuideWell · Florida Blue</td><td class="num">500만</td><td>BCBS 계열</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>Note</b> — 확보분: UnitedHealthcare · Humana · Highmark · Blue Shield of California · Elevance Health · Medical Mutual · HCSC</div>
+
+
+  <!-- ══════════ 2장 ══════════ -->
+  <h2 class="sec"><span class="no">2장</span>지금 상태</h2>
   <hr class="sec-rule">
 
   <p>
@@ -187,8 +322,8 @@ a{color:var(--brand-heading)}
   </p>
 
 
-  <!-- ══════════ 2장 ══════════ -->
-  <h2 class="sec"><span class="no">2장</span>사업 현황</h2>
+  <!-- ══════════ 3장 ══════════ -->
+  <h2 class="sec"><span class="no">3장</span>사업 현황</h2>
   <hr class="sec-rule">
 
   <p>
@@ -289,8 +424,8 @@ a{color:var(--brand-heading)}
   </p>
 
 
-  <!-- ══════════ 3장 ══════════ -->
-  <h2 class="sec"><span class="no">3장</span>추후 일정</h2>
+  <!-- ══════════ 4장 ══════════ -->
+  <h2 class="sec"><span class="no">4장</span>추후 일정</h2>
   <hr class="sec-rule">
 
   <div class="tablewrap">
@@ -336,8 +471,8 @@ a{color:var(--brand-heading)}
   </div>
 
 
-  <!-- ══════════ 4장 ══════════ -->
-  <h2 class="sec"><span class="no">4장</span>진행 경과</h2>
+  <!-- ══════════ 5장 ══════════ -->
+  <h2 class="sec"><span class="no">5장</span>진행 경과</h2>
   <hr class="sec-rule">
 
   <p>
@@ -389,8 +524,8 @@ a{color:var(--brand-heading)}
   <div class="note"><b>Source</b> — ClinicalTrials.gov API v2. 스폰서명이 구 사명으로 남아 있어 Cerenome · Plus Therapeutics 양쪽으로 조회함</div>
 
 
-  <!-- ══════════ 5장 ══════════ -->
-  <h2 class="sec"><span class="no">5장</span>아직 안 나온 것</h2>
+  <!-- ══════════ 6장 ══════════ -->
+  <h2 class="sec"><span class="no">6장</span>아직 안 나온 것</h2>
   <hr class="sec-rule">
 
   <div class="tablewrap">
@@ -416,8 +551,8 @@ a{color:var(--brand-heading)}
   </p>
 
 
-  <!-- ══════════ 6장 ══════════ -->
-  <h2 class="sec"><span class="no">6장</span>짚어둘 점</h2>
+  <!-- ══════════ 7장 ══════════ -->
+  <h2 class="sec"><span class="no">7장</span>짚어둘 점</h2>
   <hr class="sec-rule">
 
   <div class="sub-h">주식수의 정지와 재개가 데이터 타이밍의 선행지표임</div>
@@ -455,8 +590,8 @@ a{color:var(--brand-heading)}
   </div>
 
 
-  <!-- ══════════ 7장 ══════════ -->
-  <h2 class="sec"><span class="no">7장</span>자료 · 방법론</h2>
+  <!-- ══════════ 8장 ══════════ -->
+  <h2 class="sec"><span class="no">8장</span>자료 · 방법론</h2>
   <hr class="sec-rule">
 
   <div class="sub-h">수집 소스</div>
@@ -524,6 +659,78 @@ a{color:var(--brand-heading)}
   function put(id, v){ var e=document.getElementById(id); if(e) e.textContent=v; }
   function rows(id, html){ var e=document.getElementById(id); if(e) e.innerHTML = html || '<tr><td colspan="5">자료 없음</td></tr>'; }
 
+
+  var SINGLE_DOSE_LM = 29;   // 단회투여 Phase 1 종료 인원. 다회투여 = 카운터 - 29
+
+  function svgEl(tag, attrs, txt){
+    var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for(var k in attrs) e.setAttribute(k, attrs[k]);
+    if(txt != null) e.textContent = txt;
+    return e;
+  }
+  function scale(v){
+    var steps = [1,2,5,10,20,25,50,100,200], step = steps[steps.length-1];
+    for(var i=0;i<steps.length;i++){ if(v / steps[i] <= 5){ step = steps[i]; break; } }
+    var top = Math.max(step, Math.ceil(v * 1.1 / step) * step), out = [];
+    for(var t=0; t<=top+0.001; t+=step) out.push(t);
+    return {top: top, ticks: out};
+  }
+  function shortDate(d){ return String(d).slice(2).replace(/-/g, '.'); }
+
+  // 단일 계열 라인차트. 계열이 하나이므로 범례 없이 제목과 직접 라벨로 식별함
+  function lineChart(svg, pts, unit){
+    if(!svg) return;
+    svg.innerHTML = '';
+    if(!pts.length) { svg.appendChild(svgEl('text',{x:20,y:40,class:'viz-axis'},'자료 없음')); return; }
+    var W = 880, H = 250, L = 56, R = 88, T = 22, B = 38;
+    var t0 = new Date(pts[0].d).getTime(), t1 = new Date(pts[pts.length-1].d).getTime();
+    if(t1 === t0) t1 = t0 + 86400000;
+    var sc = scale(Math.max.apply(null, pts.map(function(p){return p.v;}))), vmax = sc.top;
+    var x = function(d){ return L + (new Date(d).getTime() - t0) / (t1 - t0) * (W - L - R); };
+    var y = function(v){ return H - B - v / vmax * (H - T - B); };
+
+    sc.ticks.forEach(function(v){
+      var yy = y(v);
+      svg.appendChild(svgEl('line',{x1:L, x2:W-R, y1:yy, y2:yy, class:'viz-grid'}));
+      svg.appendChild(svgEl('text',{x:L-10, y:yy+4, class:'viz-axis','text-anchor':'end'}, String(v)));
+    });
+    svg.appendChild(svgEl('path',{class:'viz-line', d: pts.map(function(p,i){
+      return (i?'L':'M') + x(p.d).toFixed(1) + ' ' + y(p.v).toFixed(1); }).join(' ')}));
+
+    var lastX = -999;
+    pts.forEach(function(p, i){
+      var g = svgEl('g',{});
+      g.appendChild(svgEl('title',{}, shortDate(p.d) + ' · ' + p.v + unit));
+      g.appendChild(svgEl('circle',{cx:x(p.d), cy:y(p.v), r:5, class:'viz-dot'}));
+      svg.appendChild(g);
+      var xx = x(p.d);
+      if(xx - lastX > 64 || i === pts.length-1){
+        svg.appendChild(svgEl('text',{x:xx, y:H-B+18, class:'viz-axis','text-anchor':'middle'}, shortDate(p.d)));
+        lastX = xx;
+      }
+    });
+    var lp = pts[pts.length-1];
+    svg.appendChild(svgEl('text',{x:x(lp.d)+12, y:y(lp.v)+5, class:'viz-lab'}, lp.v + unit));
+  }
+
+  // 진척 막대. 목표 대비 위치가 요점이므로 라인이 아니라 막대로 둠
+  function progress(svg, rows){
+    if(!svg) return;
+    svg.innerHTML = '';
+    var W = 880, L = 150, R = 96, BW = W - L - R;
+    rows.forEach(function(r, i){
+      var yy = 30 + i * 52;
+      svg.appendChild(svgEl('text',{x:0, y:yy+16, class:'viz-lab'}, r.label));
+      svg.appendChild(svgEl('rect',{x:L, y:yy, width:BW, height:22, rx:3, class:'viz-track'}));
+      var w = Math.max(2, BW * Math.min(1, r.value / r.max));
+      var g = svgEl('g',{});
+      g.appendChild(svgEl('title',{}, r.label + ' ' + r.value + ' / ' + r.max));
+      g.appendChild(svgEl('rect',{x:L, y:yy, width:w, height:22, rx:3, class:'viz-fill'}));
+      svg.appendChild(g);
+      svg.appendChild(svgEl('text',{x:L+BW+12, y:yy+16, class:'viz-lab'}, r.value + ' / ' + r.max + r.unit));
+    });
+  }
+
   function render(d){
     var m = d.meta || {};
     put('stamp-auto', m.updated || '—');
@@ -548,6 +755,28 @@ a{color:var(--brand-heading)}
     var lm = ctr('lm'), gbm = ctr('gbm');
     if(lm!=null) put('k-lm', lm);
     if(gbm!=null) put('k-gbm', gbm);
+
+    // 1장 · 임상 카운터
+    var hist = (d.trials_hist||[]).filter(function(h){return h.lm!=null;});
+    lineChart(document.getElementById('ch-lm'),
+      hist.map(function(h){ return {d:h.date, v:Math.max(0, h.lm - SINGLE_DOSE_LM)}; }), '명');
+    progress(document.getElementById('ch-gbm'), [
+      {label:'2상 등록', value:31, max:34, unit:'명'}
+    ]);
+    put('gbm-counter', (gbm!=null? gbm : '—'));
+    rows('lmbody', hist.slice().reverse().map(function(h, i, a){
+      var prev = a[i+1] ? a[i+1].lm : null;
+      var dlt = prev==null ? null : h.lm - prev;
+      return '<tr><td class="num">'+esc(h.date)+'</td>'
+           + '<td class="num">'+h.lm+'</td>'
+           + '<td class="num">'+Math.max(0, h.lm - SINGLE_DOSE_LM)+'</td>'
+           + '<td class="num">'+(dlt==null?'—':((dlt>0?'+':'')+dlt))+'</td></tr>';
+    }).join(''));
+    rows('covbody', (d.coverage||[]).map(function(c){
+      var t = c.link ? '<a href="'+esc(c.link)+'" target="_blank" rel="noopener">'+esc(c.title)+'</a>' : esc(c.title);
+      return '<tr><td class="num">'+esc(String(c.date).slice(0,16))+'</td>'
+           + '<td class="num">'+c.lives_m+'M</td><td>'+t+'</td></tr>';
+    }).join(''));
 
     rows('logbody', (d.log||[]).slice(0,60).map(function(e){
       var lv = LV[e.level] || LV.yellow;
