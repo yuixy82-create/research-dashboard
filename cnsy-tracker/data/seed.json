@@ -15,40 +15,228 @@
   "hist": []
  },
  "shares": {
-  "latest": { "date": "2026-08-05", "shares": 7589625 },
+  "latest": {
+   "date": "2026-08-05",
+   "shares": 7589625
+  },
   "series": [
-   { "date": "2026-01-02", "shares": 5555902 },
-   { "date": "2026-06-30", "shares": 7310008 },
-   { "date": "2026-08-05", "shares": 7589625 }
+   {
+    "date": "2026-01-02",
+    "shares": 5555902
+   },
+   {
+    "date": "2026-06-30",
+    "shares": 7310008
+   },
+   {
+    "date": "2026-08-05",
+    "shares": 7589625
+   }
   ]
  },
  "trials": {
-  "lm": { "modified": "2026-08-20", "counters": { "Patients Treated to Date": 37 } },
-  "gbm": { "modified": "2026-08-19", "counters": { "Patients Treated to Date": 53 } }
+  "lm": {
+   "modified": "2026-08-20",
+   "counters": {
+    "Patients Treated to Date": 37
+   }
+  },
+  "gbm": {
+   "modified": "2026-08-19",
+   "counters": {
+    "Patients Treated to Date": 53
+   }
+  }
  },
  "ctgov": [
-  { "nct": "NCT01906385", "title": "ReSPECT-GBM Phase 1/2", "status": "RECRUITING", "updated": "2025-03-26", "enroll": 55, "enrollType": "ESTIMATED", "primaryCompletion": "2025-12" },
-  { "nct": "NCT05034497", "title": "ReSPECT-LM 단회투여 Phase 1", "status": "ACTIVE_NOT_RECRUITING", "updated": "2025-03-26", "enroll": 18, "enrollType": "ESTIMATED", "primaryCompletion": "2025-12-21" },
-  { "nct": "NCT05460507", "title": "ReSPECT-GBM 재투여 Phase 1", "status": "RECRUITING", "updated": "2025-03-26", "enroll": null, "enrollType": "", "primaryCompletion": "" },
-  { "nct": "NCT07061626", "title": "ReSPECT-PBC 소아 Phase 1/2a", "status": "NOT_YET_RECRUITING", "updated": "2025-07-11", "enroll": 56, "enrollType": "ESTIMATED", "primaryCompletion": "2027-03" },
-  { "nct": "NCT07098806", "title": "ReSPECT-LM 다회투여 Phase 1", "status": "RECRUITING", "updated": "2025-08-01", "enroll": 24, "enrollType": "ESTIMATED", "primaryCompletion": "2026-10-02" }
+  {
+   "nct": "NCT01906385",
+   "title": "ReSPECT-GBM Phase 1/2",
+   "status": "RECRUITING",
+   "updated": "2025-03-26",
+   "enroll": 55,
+   "enrollType": "ESTIMATED",
+   "primaryCompletion": "2025-12"
+  },
+  {
+   "nct": "NCT05034497",
+   "title": "ReSPECT-LM 단회투여 Phase 1",
+   "status": "ACTIVE_NOT_RECRUITING",
+   "updated": "2025-03-26",
+   "enroll": 18,
+   "enrollType": "ESTIMATED",
+   "primaryCompletion": "2025-12-21"
+  },
+  {
+   "nct": "NCT05460507",
+   "title": "ReSPECT-GBM 재투여 Phase 1",
+   "status": "RECRUITING",
+   "updated": "2025-03-26",
+   "enroll": null,
+   "enrollType": "",
+   "primaryCompletion": ""
+  },
+  {
+   "nct": "NCT07061626",
+   "title": "ReSPECT-PBC 소아 Phase 1/2a",
+   "status": "NOT_YET_RECRUITING",
+   "updated": "2025-07-11",
+   "enroll": 56,
+   "enrollType": "ESTIMATED",
+   "primaryCompletion": "2027-03"
+  },
+  {
+   "nct": "NCT07098806",
+   "title": "ReSPECT-LM 다회투여 Phase 1",
+   "status": "RECRUITING",
+   "updated": "2025-08-01",
+   "enroll": 24,
+   "enrollType": "ESTIMATED",
+   "primaryCompletion": "2026-10-02"
+  }
  ],
- "filings": { "entity": "PLUS THERAPEUTICS, INC.", "list": [] },
+ "filings": {
+  "entity": "PLUS THERAPEUTICS, INC.",
+  "list": []
+ },
  "news": [],
  "cnside": [],
  "reddit": [],
- "cms": { "cy2027_files": [], "checked": "2026-08-24" },
+ "cms": {
+  "cy2027_files": [],
+  "checked": "2026-08-24"
+ },
  "log": [
-  { "date": "2026-08-20", "level": "yellow", "axis": "임상", "text": "SNO/ASCO CNS Metastases 발표 요약 공개: ReSPECT-LMM Cohort 1a DLT 없이 통과, 측뇌실 클리어런스 반감기 1.7시간", "link": "https://www.globenewswire.com/news-release/2026/08/20/3348259/0/en/cerenome-highlights-presentations-at-the-2026-sno-asco-cns-metastases-conference-demonstrating-progress-in-both-therapeutics-and-diagnostics-business-lines.html" },
-  { "date": "2026-08-14", "level": "red", "axis": "자본", "text": "2분기 실적: 현금·투자 $8.6M, 순손실 $9.0M, 계속기업 불확실성 기재", "link": "https://www.globenewswire.com/news-release/2026/08/14/3345619/0/en/cerenome-reports-second-quarter-2026-financial-results-and-business-update.html" },
-  { "date": "2026-08-13", "level": "orange", "axis": "진단", "text": "HCSC 인네트워크 계약: +2,730만명, 누적 커버드 라이프 1.53억명", "link": "https://www.globenewswire.com/news-release/2026/08/13/3344395/0/en/cerenome-secures-in-network-agreement-with-health-care-service-corporation-expanding-cnside-contracted-coverage-to-over-150-million-covered-lives.html" },
-  { "date": "2026-08-07", "level": "red", "axis": "수가", "text": "CDLT 자문패널 투표결과 공개: 0640U를 0338U에 크로스워크 권고, 12표 대 0표", "link": "https://www.cms.gov/files/document/clfs-advisory-recommendations-2026.pdf" },
-  { "date": "2026-08-04", "level": "orange", "axis": "자본", "text": "사명 Cerenome, Inc. 변경 8-K 제출, 티커 CNSY 전환 (26.08.03 발효)", "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526332939/pstv-20260803.htm" },
-  { "date": "2026-07-21", "level": "yellow", "axis": "진단", "text": "Medical Mutual 지역 계약: +120만명", "link": "https://www.globenewswire.com/news-release/2026/07/21/3330332/0/en/Plus-Therapeutics-Secures-Regional-Coverage-Agreement-with-Medical-Mutual-for-CNSide-Cerebrospinal-Fluid-Assay-for-Metastatic-CNS-Cancer.html" },
-  { "date": "2026-07-16", "level": "orange", "axis": "진단", "text": "Genomic Testing Cooperative와 NGS 통합 파트너십: CNSide가 lab of record 및 청구주체", "link": "https://www.globenewswire.com/news-release/2026/07/16/3328365/0/en/Plus-Therapeutics-and-Genomic-Testing-Cooperative-Partner-to-Integrate-Next-Generation-Sequencing-Into-the-CNSide-CSF-Assay-Platform.html" },
-  { "date": "2026-06-25", "level": "orange", "axis": "진단", "text": "Elevance Health 전국 계약: +4,540만명, 누적 1.26억명", "link": "https://www.globenewswire.com/news-release/2026/06/25/3317434/0/en/Plus-Therapeutics-Secures-National-Coverage-Agreement-with-Elevance-Health-for-CNSide-Cerebrospinal-Fluid-Assay-for-Metastatic-CNS-Cancer.html" },
-  { "date": "2026-06-05", "level": "red", "axis": "자본", "text": "$100M 선반등록 효력 발생, Canaccord Genuity ATM $17.35M 개시", "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526259703/pstv-20260601.htm" },
-  { "date": "2026-04-02", "level": "red", "axis": "희석", "text": "1대 25 액면병합 발효: 1억 7,155만주 → 686만주", "link": "https://www.globenewswire.com/news-release/2026/03/31/3265358/0/en/Plus-Therapeutics-Announces-Reverse-Stock-Split.html" },
-  { "date": "2026-01-08", "level": "red", "axis": "임상", "text": "FDA Type B 미팅 결과: 1차 지표 OS 권고, 척수강내 화학요법 대조 무작위배정, CTC의 중간 대리지표 사용 불인정", "link": "https://www.targetedonc.com/view/fda-type-b-meeting-offers-direction-for-rhenium-re-186-obisbemeda-in-lm" }
+  {
+   "date": "2026-08-20",
+   "level": "yellow",
+   "axis": "임상",
+   "text": "SNO/ASCO CNS Metastases 발표 요약 공개: ReSPECT-LMM Cohort 1a DLT 없이 통과, 측뇌실 클리어런스 반감기 1.7시간",
+   "link": "https://www.globenewswire.com/news-release/2026/08/20/3348259/0/en/cerenome-highlights-presentations-at-the-2026-sno-asco-cns-metastases-conference-demonstrating-progress-in-both-therapeutics-and-diagnostics-business-lines.html"
+  },
+  {
+   "date": "2026-08-14",
+   "level": "red",
+   "axis": "자본",
+   "text": "2분기 실적: 현금·투자 $8.6M, 순손실 $9.0M, 계속기업 불확실성 기재",
+   "link": "https://www.globenewswire.com/news-release/2026/08/14/3345619/0/en/cerenome-reports-second-quarter-2026-financial-results-and-business-update.html"
+  },
+  {
+   "date": "2026-08-13",
+   "level": "orange",
+   "axis": "진단",
+   "text": "HCSC 인네트워크 계약: +2,730만명, 누적 커버드 라이프 1.53억명",
+   "link": "https://www.globenewswire.com/news-release/2026/08/13/3344395/0/en/cerenome-secures-in-network-agreement-with-health-care-service-corporation-expanding-cnside-contracted-coverage-to-over-150-million-covered-lives.html"
+  },
+  {
+   "date": "2026-08-07",
+   "level": "red",
+   "axis": "수가",
+   "text": "CDLT 자문패널 투표결과 공개: 0640U를 0338U에 크로스워크 권고, 12표 대 0표",
+   "link": "https://www.cms.gov/files/document/clfs-advisory-recommendations-2026.pdf"
+  },
+  {
+   "date": "2026-08-04",
+   "level": "orange",
+   "axis": "자본",
+   "text": "사명 Cerenome, Inc. 변경 8-K 제출, 티커 CNSY 전환 (26.08.03 발효)",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526332939/pstv-20260803.htm"
+  },
+  {
+   "date": "2026-07-21",
+   "level": "yellow",
+   "axis": "진단",
+   "text": "Medical Mutual 지역 계약: +120만명",
+   "link": "https://www.globenewswire.com/news-release/2026/07/21/3330332/0/en/Plus-Therapeutics-Secures-Regional-Coverage-Agreement-with-Medical-Mutual-for-CNSide-Cerebrospinal-Fluid-Assay-for-Metastatic-CNS-Cancer.html"
+  },
+  {
+   "date": "2026-07-16",
+   "level": "orange",
+   "axis": "진단",
+   "text": "Genomic Testing Cooperative와 NGS 통합 파트너십: CNSide가 lab of record 및 청구주체",
+   "link": "https://www.globenewswire.com/news-release/2026/07/16/3328365/0/en/Plus-Therapeutics-and-Genomic-Testing-Cooperative-Partner-to-Integrate-Next-Generation-Sequencing-Into-the-CNSide-CSF-Assay-Platform.html"
+  },
+  {
+   "date": "2026-06-25",
+   "level": "orange",
+   "axis": "진단",
+   "text": "Elevance Health 전국 계약: +4,540만명, 누적 1.26억명",
+   "link": "https://www.globenewswire.com/news-release/2026/06/25/3317434/0/en/Plus-Therapeutics-Secures-National-Coverage-Agreement-with-Elevance-Health-for-CNSide-Cerebrospinal-Fluid-Assay-for-Metastatic-CNS-Cancer.html"
+  },
+  {
+   "date": "2026-06-05",
+   "level": "red",
+   "axis": "자본",
+   "text": "$100M 선반등록 효력 발생, Canaccord Genuity ATM $17.35M 개시",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526259703/pstv-20260601.htm"
+  },
+  {
+   "date": "2026-04-02",
+   "level": "red",
+   "axis": "희석",
+   "text": "1대 25 액면병합 발효: 1억 7,155만주 → 686만주",
+   "link": "https://www.globenewswire.com/news-release/2026/03/31/3265358/0/en/Plus-Therapeutics-Announces-Reverse-Stock-Split.html"
+  },
+  {
+   "date": "2026-01-08",
+   "level": "red",
+   "axis": "임상",
+   "text": "FDA Type B 미팅 결과: 1차 지표 OS 권고, 척수강내 화학요법 대조 무작위배정, CTC의 중간 대리지표 사용 불인정",
+   "link": "https://www.targetedonc.com/view/fda-type-b-meeting-offers-direction-for-rhenium-re-186-obisbemeda-in-lm"
+  }
+ ],
+ "trials_hist": [
+  {
+   "date": "2026-03-02",
+   "lm": 33,
+   "gbm": null
+  },
+  {
+   "date": "2026-03-16",
+   "lm": 36,
+   "gbm": null
+  },
+  {
+   "date": "2026-06-09",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
+   "date": "2026-08-24",
+   "lm": 37,
+   "gbm": 53
+  }
+ ],
+ "coverage": [
+  {
+   "date": "2026-08-13",
+   "lives_m": 150.0,
+   "title": "HCSC 인네트워크 계약",
+   "link": ""
+  },
+  {
+   "date": "2026-06-25",
+   "lives_m": 126.0,
+   "title": "Elevance Health 전국 계약",
+   "link": ""
+  },
+  {
+   "date": "2026-04-28",
+   "lives_m": 81.0,
+   "title": "Blue Shield of California",
+   "link": ""
+  },
+  {
+   "date": "2026-04-02",
+   "lives_m": 75.0,
+   "title": "Highmark",
+   "link": ""
+  },
+  {
+   "date": "2025-10-29",
+   "lives_m": 67.0,
+   "title": "Humana",
+   "link": ""
+  }
  ]
 }
