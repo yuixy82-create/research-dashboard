@@ -311,6 +311,16 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
       <div class="val empty" data-kpi="px_naphtha_spread">—</div>
       <div class="meta" data-kpi-meta="px_naphtha_spread">수치 확보 필요</div>
     </div>
+    <div class="kpi">
+      <div class="lbl">사우디 OSP (Arab Light)</div>
+      <div class="val" data-kpi="saudi_osp_light">−12.0<span class="u">$/bbl</span></div>
+      <div class="meta" data-kpi-meta="saudi_osp_light">26.09 · 전월 −0.5</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">중국 정제품 수출</div>
+      <div class="val" data-kpi="china_product_export">465<span class="u">만톤</span></div>
+      <div class="meta" data-kpi-meta="china_product_export">26.07 · YoY −12.9%</div>
+    </div>
   </div>
 
   <!-- ================= 1장 ================= -->
@@ -424,6 +434,32 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
           <div><dt>의미</dt><dd><b>반등 시작이 크랙 하락의 출발점</b>. 정체는 쇼티지 연장</dd></div>
         </dl>
       </div>
+      <div class="chart" data-series="saudi_osp_light">
+        <div class="chead">
+          <div class="ctitle">사우디 OSP (Arab Light)<span class="cunit">$/bbl</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>아람코가 아시아 인도분에 적용하는 공식 판매가. 두바이 기준 대비 할증 · 할인</dd></div>
+          <div><dt>출처</dt><dd>Saudi Aramco 월간 발표 · 매월 5일 전후 · <span class="badge manual">수동</span></dd></div>
+          <div><dt>의미</dt><dd><b>인하는 원가 하락, 인상은 마진 압박</b>. 크랙보다 먼저 움직이는 원가 축임</dd></div>
+          <div><dt>종목</dt><dd>S-OIL은 <b>사우디 원유 의존도가 높아 OSP가 원가에 직접 반영됨</b>:<br>선적에서 정제 · 판매까지 1~2개월 시차를 두고 손익에 나타남</dd></div>
+        </dl>
+      </div>
+      <div class="chart" data-series="china_product_export">
+        <div class="chead">
+          <div class="ctitle">중국 정제품 수출<span class="cunit">만톤</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>휘발유 · 등유 · 경유 월간 수출 합계</dd></div>
+          <div><dt>출처</dt><dd>중국 해관총서 · 월간 · <span class="badge manual">수동</span></dd></div>
+          <div><dt>의미</dt><dd><b>수출 쿼터 확대는 아시아 공급 회복</b>. 러시아 공백을 메우는 유일한 대체 물량임</dd></div>
+          <div><dt>종목</dt><dd>YoY는 감소지만 <b>26.07 휘발유 +320% · 경유 +144% MoM으로 이미 반등 중</b>:<br>러시아 수출금지 연장과 서로 상쇄되는 방향이라 둘을 같이 봐야 함</dd></div>
+        </dl>
+      </div>
     </div>
 
     <h3>1-2 추후 일정</h3>
@@ -468,7 +504,7 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
     <h3>1-4 지표 후보</h3>
 
     <details>
-      <summary>코어로 올릴 후보 5개</summary>
+      <summary>코어로 올릴 후보 3개</summary>
       <div class="dbody">
         <div class="tablewrap">
           <table>
@@ -476,9 +512,7 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
             <tbody>
               <tr><td class="key">호르무즈 통항 · 걸프 선적량</td><td>리포트 p.17 체크포인트</td><td>Reuters 월간 인용 확보</td></tr>
               <tr><td class="key">중동 정유 가동</td><td>리포트 p.17 체크포인트</td><td>IEA Gulf runs 확보</td></tr>
-              <tr><td class="key">중국 제품수출</td><td>리포트 p.17 체크포인트</td><td>해관총서 월간 수집</td></tr>
               <tr class="sub"><td class="key">가스오일 백워데이션</td><td>재고보다 먼저 꺾이는 선행 신호</td><td>무료 시세 확보</td></tr>
-              <tr><td class="key">사우디 OSP</td><td>원가에 1~2개월 시차 반영</td><td>매월 수동 입력</td></tr>
             </tbody>
           </table>
         </div>
@@ -1083,7 +1117,8 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
 (function(){
   var fmt = function(v){
     if (v === null || v === undefined) return null;
-    return (typeof v === 'number') ? v.toLocaleString('en-US',{maximumFractionDigits:2}) : String(v);
+    if (typeof v !== 'number') return String(v);
+    return v.toLocaleString('en-US',{maximumFractionDigits:2}).replace('-', '\u2212');
   };
   var apply = function(data){
     if (!data) return;
