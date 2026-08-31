@@ -71,6 +71,10 @@ body{margin:0;background:var(--page);color:var(--text);font-family:var(--font-sa
 .sec-rule{border:0;border-top:1.5px solid var(--brand-heading);margin:0 0 12px}
 .doc-header + .sec, .lead + .sec{margin-top:64px}
 .sub-h{margin:var(--gap-section) 0 10px;font-size:15px;font-weight:800;color:var(--text)}
+.grp-h{margin:92px 0 6px;font-size:19px;font-weight:800;letter-spacing:-.01em;color:var(--brand-heading)}
+.grp-rule{border:0;border-top:1px solid var(--brand-soft);margin:0 0 16px}
+.grp-rule + .tablewrap,.grp-rule + .banner,.grp-rule + .chartbox{margin-top:0}
+p + .grp-h{margin-top:92px}
 p{margin:var(--gap-para) 0 10px;font-size:15px;line-height:1.75;max-width:74ch}
 .lead{margin:12px 0 0;font-size:15px;color:var(--muted);max-width:74ch}
 .tablewrap,.chartbox,.callout,.cards,.banner,figure,details{margin-top:var(--gap-block)}
@@ -181,11 +185,22 @@ a{color:var(--brand-heading)}
   <hr class="sec-rule">
 
   <p>
-    매일 자동으로 갱신되는 항목만 이 장에 둠.
-    진행 중인 임상 2건과 CNSide로 나누고, 각 항목은 지금 값과 다음 관문을 함께 둠.
+    매일 자동으로 갱신되는 항목(LM 다회투여 · GBM · CNSide)만 이 장에 둠.
   </p>
 
-  <div class="sub-h">임상 · ReSPECT-LM 다회투여</div>
+  <div class="banner">한 줄 현황</div>
+  <div class="tablewrap">
+    <table class="data">
+      <tbody>
+        <tr><td class="key">LM 다회투여</td><td id="s-lm">—</td></tr>
+        <tr><td class="key">GBM</td><td id="s-gbm">—</td></tr>
+        <tr><td class="key">CNSide</td><td id="s-cov">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grp-h">임상 · ReSPECT-LM 다회투여</div>
+  <hr class="grp-rule">
   <div class="tablewrap">
     <table class="data">
       <thead><tr><th>구분</th><th>내용</th></tr></thead>
@@ -196,6 +211,7 @@ a{color:var(--brand-heading)}
         <tr><td class="key">코호트</td><td>1: 56일 간격 → 2: 28일 → 3: 14일, 최대 6회</td></tr>
         <tr class="sub"><td class="key">현재</td><td><b>Cohort 1a DLT 없이 통과</b> (26.08.13 발표). 회사 표현은 목표의 약 1/3 등록</td></tr>
         <tr><td class="key">목표 인원</td><td>RP2D 도출 12~18명 · 등재 목표 24명</td></tr>
+        <tr><td class="key">코호트 추정</td><td id="lm-cohort">—</td></tr>
         <tr><td class="key">다음 관문</td><td>연말까지 RP2D·투여간격 확정 → 개정 프로토콜 FDA 정렬 → pivotal 개시</td></tr>
       </tbody>
     </table>
@@ -205,13 +221,15 @@ a{color:var(--brand-heading)}
     <b>Note</b> — 등재 목표 24명과 회사가 말하는 12~18명은 다른 구간을 가리킴: 24명은 시험 전체, 12~18명은 RP2D 도출까지.
   </div>
 
-  <div class="banner">ReSPECT-LM 다회투여 누적 투여 인원</div>
+  <div class="banner">ReSPECT-LM 다회투여 누적 인원 (홈페이지)</div>
   <div class="chartbox"><svg id="ch-lm" viewBox="0 0 880 250" role="img"
     aria-label="ReSPECT-LM 다회투여 누적 투여 인원 추이"></svg></div>
   <div class="note">
-    <b>Source</b> — respect-trials.com 투여 인원 카운터, 매일 수집 ·
-    <b>Note</b> — 카운터는 단회투여 29명을 포함한 ReSPECT-LM 누적치임. 다회투여 인원은 카운터에서 29를 뺀 값으로 산출함
-    (33−29=4, 36−29=7, 37−29=8로 회사 공개분과 일치).
+    <b>Source</b> — <a href="https://www.respect-trials.com/lm/" target="_blank" rel="noopener">respect-trials.com/lm</a>
+    의 Patients Treated to Date 카운터, 매일 수집 ·
+    <b>Note 1</b> — 카운터는 단회투여 29명을 포함한 ReSPECT-LM 누적치임. 다회투여 인원은 카운터에서 29를 뺀 값으로 산출함
+    (33−29=4, 36−29=7, 37−29=8로 회사 공개분과 일치) ·
+    <b>Note 2</b> — 회사가 직접 관리하는 수치라 실제 투여보다 반영이 늦을 수 있음. 값이 멈춰 있다고 곧바로 등록 정체로 읽지 않음
   </div>
 
   <div class="tablewrap">
@@ -222,12 +240,21 @@ a{color:var(--brand-heading)}
   </div>
 
   <p>
-    <span class="mark">카운터가 (26.06.09) 37명에서 두 달 반째 멈춰 있음</span>:
-    다회투여 8명에서 정체. 페이지 자체는 (26.08.20)에 수정되었으므로 갱신 누락으로 보기 어려움.
-    연말 RP2D 확정 목표와 어긋나는 지점이라 매일 확인 대상 1순위로 둠.
+    코호트당 3명이고 DLT가 나오면 그 코호트가 6명으로 늘어나는 3+3 설계임.
+    DLT가 없었다는 회사 발표를 그대로 두면 누적 8명은 코호트1 3명, 코호트2 3명을 지나
+    <b>코호트3(14일 간격)의 2번째</b>에 해당함.
+    다만 회사가 (26.08.13) 쓴 표현은 Cohort 1a로, SNO 초록의 1·2·3 체계에 없는 하위 구분임:
+    실제 위치가 한 코호트 뒤일 가능성이 남음.
   </p>
 
-  <div class="sub-h">임상 · ReSPECT-GBM</div>
+  <p>
+    <span class="mark">카운터가 (26.06.09) 37명에서 두 달 넘게 멈춰 있음</span>:
+    다회투여 8명에서 변동 없음. 페이지 본문은 (26.08.20)에 수정되었으나 카운터 반영이 늦을 수 있어
+    등록 정체로 단정하지 않음. 연말 RP2D 확정 목표와 맞물리는 지점이라 매일 확인 대상 1순위로 둠.
+  </p>
+
+  <div class="grp-h">임상 · ReSPECT-GBM</div>
+  <hr class="grp-rule">
   <div class="tablewrap">
     <table class="data">
       <thead><tr><th>구분</th><th>내용</th></tr></thead>
@@ -256,7 +283,8 @@ a{color:var(--brand-heading)}
     등록 완료 발표가 나오면 EOP2 미팅 일정이 다음 확인 대상이 됨.
   </p>
 
-  <div class="sub-h">CNSide</div>
+  <div class="grp-h">CNSide</div>
+  <hr class="grp-rule">
   <div class="tablewrap">
     <table class="data">
       <thead><tr><th>지표</th><th>지금</th><th>판정 기준</th><th>확인 경로</th></tr></thead>
@@ -697,17 +725,24 @@ a{color:var(--brand-heading)}
     svg.appendChild(svgEl('path',{class:'viz-line', d: pts.map(function(p,i){
       return (i?'L':'M') + x(p.d).toFixed(1) + ' ' + y(p.v).toFixed(1); }).join(' ')}));
 
-    var lastX = -999;
-    pts.forEach(function(p, i){
+    pts.forEach(function(p){
       var g = svgEl('g',{});
       g.appendChild(svgEl('title',{}, shortDate(p.d) + ' · ' + p.v + unit));
       g.appendChild(svgEl('circle',{cx:x(p.d), cy:y(p.v), r:5, class:'viz-dot'}));
       svg.appendChild(g);
-      var xx = x(p.d);
-      if(xx - lastX > 64 || i === pts.length-1){
-        svg.appendChild(svgEl('text',{x:xx, y:H-B+18, class:'viz-axis','text-anchor':'middle'}, shortDate(p.d)));
-        lastX = xx;
-      }
+    });
+    var keep = [], right = 1e9;
+    for(var k = pts.length - 1; k >= 0; k--){
+      var xk = x(pts[k].d);
+      if(right - xk > 70 || k === pts.length - 1){ keep.push(k); right = xk; }
+    }
+    if(keep.indexOf(0) < 0){
+      keep = keep.filter(function(k){ return x(pts[k].d) - x(pts[0].d) > 70; });
+      keep.push(0);
+    }
+    keep.forEach(function(k){
+      svg.appendChild(svgEl('text',{x:x(pts[k].d), y:H-B+18, class:'viz-axis','text-anchor':'middle'},
+        shortDate(pts[k].d)));
     });
     var lp = pts[pts.length-1];
     svg.appendChild(svgEl('text',{x:x(lp.d)+12, y:y(lp.v)+5, class:'viz-lab'}, lp.v + unit));
@@ -764,6 +799,30 @@ a{color:var(--brand-heading)}
       {label:'2상 등록', value:31, max:34, unit:'명'}
     ]);
     put('gbm-counter', (gbm!=null? gbm : '—'));
+    var lmLast = hist.length ? hist[hist.length-1] : null;
+    if(lmLast){
+      var md = Math.max(0, lmLast.lm - SINGLE_DOSE_LM);
+      var co = Math.max(1, Math.ceil(md / 3));
+      var seat = md - (co - 1) * 3;
+      var gap = ['56일','28일','14일'][co-1] || '14일';
+      var el = document.getElementById('lm-cohort');
+      if(el) el.innerHTML = md === 0 ? '투여 전'
+        : ('다회투여 ' + md + '명 · 코호트당 3명 기준 <b>코호트 ' + co
+           + '(' + gap + ' 간격)의 ' + seat + '번째</b>로 추정');
+      var s1 = document.getElementById('s-lm');
+      if(s1) s1.innerHTML = '다회투여 <b>' + md + '명 · 코호트 ' + co + '의 ' + seat
+        + '번째 추정</b>, DLT 없음: 연말까지 RP2D·투여간격 확정이 목표';
+    }
+    var s2 = document.getElementById('s-gbm');
+    if(s2) s2.innerHTML = '2상 등록 <b>31 / 34명</b>, 사이트 누적 투여 '
+      + (gbm!=null?gbm:'—') + '명: 26년 내 완전등록 → 데이터 27년 1분기 → EOP2 미팅';
+    var topCov = (d.coverage||[])[0];
+    var s3 = document.getElementById('s-cov');
+    if(s3) s3.innerHTML = '커버드 라이프 <b>' + (topCov? (topCov.lives_m/100).toFixed(1) + '억명 이상' : '—')
+      + '</b>, 진단 매출 인식은 아직 0: 0640U 단가가 26.09 CMS 예비결정에서 처음 공개됨';
+    if(lmLast){
+    }
+
     rows('lmbody', hist.slice().reverse().map(function(h, i, a){
       var prev = a[i+1] ? a[i+1].lm : null;
       var dlt = prev==null ? null : h.lm - prev;
