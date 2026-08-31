@@ -140,7 +140,9 @@ def main():
     # --- 주간 재고 ---
     try:
         stock, unit = call("petroleum/stoc/wstk", STOCK_SERIES, "weekly", 220)
-        div = 1000.0 if "THOUSAND" in unit.upper() else 1.0   # 천배럴 -> 백만배럴
+        # EIA는 이 계열의 단위를 "MBBL"(천배럴)로 표기함. 문자열에 의존하면 놓치므로
+        # 값의 크기로 판정함: 백만배럴 기준이면 100~200대, 천배럴이면 10만대임.
+        div = 1000.0 if max(stock.values()) > 1000 else 1.0
         pts = [{"d": d, "v": round(v / div, 1)} for d, v in stock.items()]
         last = write_series("us_distillate_stock", "미국 중간유분 재고", "mb", pts, KEEP_WEEKLY)
         if last:
