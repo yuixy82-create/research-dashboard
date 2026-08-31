@@ -1075,56 +1075,6 @@
    "title": "Plus Therapeutics Provides Mid-Year Business Update Including Corporate Rebranding",
    "link": "https://ir.cerenome.com/news-releases/news-release-details/plus-therapeutics-provides-mid-year-business-update-including",
    "date": "Tue, 30 Jun 2026 07:30:29 -0400"
-  },
-  {
-   "title": "UPLOAD: UPLOAD",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/upload/0000000000-26-005651",
-   "date": "Sun, 30 Aug 2026 06:13:10 -0400"
-  },
-  {
-   "title": "CORRESP: CORRESP",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/corresp/0001193125-26-258709",
-   "date": "Sun, 30 Aug 2026 06:13:10 -0400"
-  },
-  {
-   "title": "10-Q: Quarterly report which provides a continuing view of a company's financial position",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/10-q/0001193125-26-352444",
-   "date": "Fri, 14 Aug 2026 16:44:38 -0400"
-  },
-  {
-   "title": "8-K: Report of unscheduled material events or corporate event",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/8-k/0001193125-26-352346",
-   "date": "Fri, 14 Aug 2026 16:29:40 -0400"
-  },
-  {
-   "title": "8-K: Report of unscheduled material events or corporate event",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/8-k/0001193125-26-332939",
-   "date": "Tue, 04 Aug 2026 16:33:48 -0400"
-  },
-  {
-   "title": "CORRESP: CORRESP",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/corresp/0001193125-26-009088",
-   "date": "Thu, 09 Jul 2026 06:10:19 -0400"
-  },
-  {
-   "title": "CORRESP: CORRESP",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/corresp/0001193125-26-009092",
-   "date": "Thu, 09 Jul 2026 06:10:03 -0400"
-  },
-  {
-   "title": "4: Statement of changes in beneficial ownership of securities",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/4/0001193125-26-292642",
-   "date": "Wed, 01 Jul 2026 16:33:55 -0400"
-  },
-  {
-   "title": "4: Statement of changes in beneficial ownership of securities",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/4/0001193125-26-292643",
-   "date": "Wed, 01 Jul 2026 16:33:55 -0400"
-  },
-  {
-   "title": "4: Statement of changes in beneficial ownership of securities",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/4/0001193125-26-292654",
-   "date": "Wed, 01 Jul 2026 16:33:55 -0400"
   }
  ],
  "cnside": [
@@ -1226,6 +1176,21 @@
  },
  "trials_hist": [
   {
+   "date": "2026-03-02",
+   "lm": 33,
+   "gbm": null
+  },
+  {
+   "date": "2026-03-16",
+   "lm": 36,
+   "gbm": null
+  },
+  {
+   "date": "2026-06-09",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
    "date": "2026-08-31",
    "lm": 37,
    "gbm": 53
@@ -1237,23 +1202,33 @@
    "lives_m": 150.0,
    "title": "Cerenome Secures In-Network Agreement with Health Care Service Corporation, Expanding CNSide® Contracted Coverage to Over 150 Million Covered Lives",
    "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-secures-network-agreement-health-care-service"
+  },
+  {
+   "date": "2026-06-25",
+   "lives_m": 126.0,
+   "title": "Elevance Health 전국 계약",
+   "link": ""
+  },
+  {
+   "date": "2026-04-28",
+   "lives_m": 81.0,
+   "title": "Blue Shield of California",
+   "link": ""
+  },
+  {
+   "date": "2026-04-02",
+   "lives_m": 75.0,
+   "title": "Highmark",
+   "link": ""
+  },
+  {
+   "date": "2025-10-29",
+   "lives_m": 67.0,
+   "title": "Humana",
+   "link": ""
   }
  ],
  "log": [
-  {
-   "date": "2026-08-30",
-   "level": "yellow",
-   "axis": "뉴스",
-   "text": "UPLOAD: UPLOAD",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/upload/0000000000-26-005651"
-  },
-  {
-   "date": "2026-08-30",
-   "level": "yellow",
-   "axis": "뉴스",
-   "text": "CORRESP: CORRESP",
-   "link": "https://ir.cerenome.com/sec-filings/sec-filing/corresp/0001193125-26-258709"
-  },
   {
    "date": "2026-08-29",
    "level": "yellow",
@@ -1347,7 +1322,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-08-31 10:13",
+  "updated": "2026-08-31 10:17",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
