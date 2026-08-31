@@ -1127,6 +1127,8 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
     return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); };
   var dshort = function(d){ return String(d).slice(2).replace(/-/g,'.'); };
   var num = function(v){ return v.toLocaleString('en-US',{maximumFractionDigits: Math.abs(v)>=100?0:1}); };
+  // 마지막 점 라벨은 KPI 타일과 같은 자릿수로 보여줌
+  var numP = function(v){ return v.toLocaleString('en-US',{maximumFractionDigits: Math.abs(v)>=1000?0:(Math.abs(v)>=100?1:2)}); };
 
   var drawChart = function(box, s){
     var plot = box.querySelector('.cplot');
@@ -1136,7 +1138,7 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
       plot.innerHTML = '<div class="cempty">시계열 수집 전</div>';
       return;
     }
-    var W = 620, H = 205, PL = 12, PR = 50, PT = 22, PB = 30;
+    var W = 620, H = 205, PL = 12, PR = 132, PT = 22, PB = 30;
     var vals = pts.map(function(p){ return p.v; });
     var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
     if (mn === mx){ mn -= 1; mx += 1; }
@@ -1150,6 +1152,19 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
     var lo = vals.indexOf(Math.min.apply(null, vals));
     var hi = vals.indexOf(Math.max.apply(null, vals));
 
+    // 마지막 점 옆에 값 + 수집일을 붙임. 두 줄이 위아래로 잘리지 않게 y를 가둠
+    var lastY = Math.min(Math.max(Y(pts[li].v), PT + 4), H - PB - 16);
+    var chg = '';
+    if (pts.length > 1){
+      var prev = pts[li - 1].v, diff = pts[li].v - prev;
+      var gapD = Math.round((new Date(pts[li].d) - new Date(pts[li - 1].d)) / 86400000);
+      var when = gapD <= 4 ? '전일 대비' : (gapD <= 10 ? '전주 대비' : '전월 대비');
+      var mag = Math.abs(prev) >= 0.5
+        ? Math.abs(diff / prev * 100).toFixed(1) + '%'
+        : num(Math.abs(diff));
+      chg = when + ' ' + (diff >= 0 ? '+' : '\u2212') + mag;
+    }
+
     var svg = ''
       + '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(s.label || '') + ' 추이. '
       +   dshort(pts[0].d) + ' ' + num(pts[0].v) + '에서 ' + dshort(pts[li].d) + ' ' + num(pts[li].v) + '까지.">'
@@ -1157,7 +1172,8 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
       + '<path d="' + area + '" fill="var(--star-tint)"/>'
       + '<path d="' + d + '" fill="none" stroke="var(--star)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>'
       + '<circle cx="' + X(li).toFixed(1) + '" cy="' + Y(pts[li].v).toFixed(1) + '" r="3.4" fill="var(--star)"/>'
-      + '<text x="' + (X(li) + 7).toFixed(1) + '" y="' + (Y(pts[li].v) + 4).toFixed(1) + '" font-size="11" font-weight="600" fill="var(--star-2)" font-family="ui-monospace,monospace">' + num(pts[li].v) + '</text>'
+      + '<text x="' + (X(li) + 8).toFixed(1) + '" y="' + (lastY + 3).toFixed(1) + '" font-size="10.5" font-weight="700" fill="var(--star-2)" font-family="ui-monospace,monospace">' + numP(pts[li].v) + ' (' + dshort(pts[li].d) + ')</text>'
+      + (chg ? '<text x="' + (X(li) + 8).toFixed(1) + '" y="' + (lastY + 15).toFixed(1) + '" font-size="9" fill="var(--muted)">' + chg + '</text>' : '')
       + '<text x="' + PL + '" y="' + (H - 8) + '" font-size="10" fill="var(--faint)" font-family="ui-monospace,monospace">' + dshort(pts[0].d) + '</text>'
       + '<text x="' + (W - PR) + '" y="' + (H - 8) + '" font-size="10" text-anchor="end" fill="var(--faint)" font-family="ui-monospace,monospace">' + dshort(pts[li].d) + '</text>'
       + (hi !== li ? '<text x="' + X(hi).toFixed(1) + '" y="' + (Y(vals[hi]) - 6).toFixed(1) + '" font-size="10" text-anchor="middle" fill="var(--muted)" font-family="ui-monospace,monospace">' + num(vals[hi]) + '</text>' : '')
@@ -1166,7 +1182,7 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
     plot.innerHTML = svg;
 
     last.classList.remove('none');
-    last.innerHTML = num(pts[li].v) + (s.demo ? '<span class="cdemo">예시</span>' : '');
+    last.innerHTML = numP(pts[li].v) + (s.demo ? '<span class="cdemo">예시</span>' : '');
     if (s.demo && s.note){
       var dl = box.querySelector('.cmeta');
       var row = document.createElement('div');
