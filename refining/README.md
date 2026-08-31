@@ -36,35 +36,49 @@ data/series/<key>.json    지표별 시계열. 차트 소스
 }
 ```
 
-`demo: true`이면 카드에 "예시" 배지가 붙음. 실제 수집이 붙으면 `false`로 바꿀 것.
-현재 `diesel_crack_1_1.json`만 예시 계열이며 나머지 5개는 빈 상태.
+`demo: true`이면 카드에 "예시" 배지가 붙음.
+자동 3종(`diesel_crack_1_1` · `crack_3_2_1` · `us_distillate_stock`)은 스크립트가 매 실행마다
+파일 전체를 다시 쓰므로 손대지 않음. 나머지 4종은 빈 상태이며 값이 생기면 손으로 채움.
 
-## 데이터 소스 계획
+## 데이터 소스
 
 | 지표 | 소스 | 상태 |
 |---|---|---|
-| 디젤 1:1 크랙 · 3-2-1 크랙 | EIA API v2 (ULSD · RBOB · WTI 스팟) | 시리즈 ID 확정 필요 |
-| 미국 중간유분 재고 | EIA API v2 (`WDISTUS1`) | 시리즈 ID 확정 필요 |
-| 싱가포르 복합정제마진 | 오피넷 유가정보 API + 두바이유 → 가중 근사 | 항목 확인 필요 |
-| Group III 기유 스프레드 | 관세청 품목별 수출입실적 API (HS 2710.19) − 싱가포르 HSFO | 스크립트 미작성 |
-| PX − 나프타 스프레드 | 관세청 (HS 2902.43 · 2710.12) | 스크립트 미작성 |
+| 디젤 1:1 크랙 | EIA `RWTC` · `EER_EPD2DXL0_PF4_RGC_DPG` | 자동 · 일간 |
+| 3-2-1 크랙 | 위 2종 + EIA `EER_EPMRU_PF4_RGC_DPG` | 자동 · 일간 |
+| 미국 중간유분 재고 | EIA `WDISTUS1` | 자동 · 주간(수) |
+| 싱가포르 복합정제마진 | Platts · 증권사 주간자료 | 수동 |
+| Group III 기유 스프레드 | Argus · ICIS | 수동 |
+| PX − 나프타 스프레드 | ICIS · 증권사 | 수동 |
 | 러시아 디젤 해상수출 | Reuters 인용 | 수동 |
 
-## 자동 수집 활성화 절차
-
-1. EIA API 키 발급 → 레포 Secrets에 `EIA_API_KEY` 등록
-2. 공공데이터포털 키 발급 → Secrets에 `DATA_GO_KR_KEY` 등록
-3. `scripts/fetch_eia.py`의 시리즈 ID 확정 후 단독 실행 검증
-4. 계산한 디젤 크랙을 Reuters 공시값과 대조
-5. `.github/workflows/refining-update.yml`의 `schedule` 주석 해제
+자동 3종은 전부 EIA 무료 API 하나로 끝남: 키 1개(`EIA_API_KEY`) 외에 다른 인증이 없음.
+나머지 4종은 유료 평가가격이거나 인용치이므로 `data/manual.json`에 손으로 넣음.
 
 산출식:
 
 ```
 디젤 1:1 크랙 = ULSD($/gal) × 42 − WTI($/bbl)
 3-2-1 크랙    = (RBOB × 42 × 2 + ULSD × 42 × 1 − WTI × 3) ÷ 3
-기유 스프레드  = 윤활유 수출단가($/t) − 싱가포르 HSFO($/t)
 ```
+
+세 스팟의 최신 날짜가 어긋날 수 있으므로 **날짜 교집합에서만** 계산함.
+매 실행마다 EIA 원본에서 구간 전체를 다시 만듦: 사후 수정된 값도 따라감.
+
+## 자동 수집
+
+`.github/workflows/refining-update.yml`
+
+| 항목 | 값 |
+|---|---|
+| 주기 | 매일 07:30 · 22:00 KST (UTC 22:30 · 13:00) |
+| 수동 실행 | Actions 탭 → refining-update → Run workflow |
+| 커밋 | `refining/data`에 변경이 있을 때만 |
+| 배포 | 커밋이 `static.yml`을 깨워 Pages 재배포 |
+| 실패 표시 | `auto.json`의 `status`가 `ok`가 아니면 워크플로가 빨간 X로 끝남 |
+
+키 등록: 저장소 Settings → Secrets and variables → Actions → New repository secret →
+이름 `EIA_API_KEY`, 값은 api.eia.gov/register에서 받은 키.
 
 ## 유의
 
