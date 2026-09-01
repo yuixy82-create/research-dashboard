@@ -97,12 +97,26 @@ def write_series(key, label, unit, points, keep):
     return points[-1] if points else None
 
 
+def merge_auto(new_ind, errors):
+    """auto.json을 통째로 덮지 않고 이 스크립트가 담당하는 key만 얹는다.
+    관세청 수집분(fetch_customs.py)이 지워지지 않게 하기 위함."""
+    try:
+        cur = json.loads(OUT.read_text(encoding="utf-8"))
+    except Exception:
+        cur = {}
+    cur.setdefault("_comment", "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.")
+    cur.setdefault("indicators", {})
+    cur["indicators"].update(new_ind)
+    prior = [e for e in (cur.get("errors") or []) if not e.startswith("eia:")]
+    cur["errors"] = prior + errors
+    cur["updatedAt"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    cur["status"] = "ok" if not cur["errors"] else ("partial" if cur["indicators"] else "error")
+    OUT.write_text(json.dumps(cur, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return cur
+
+
 def main():
-    out = {
-        "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-        "updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "status": "ok", "indicators": {}, "errors": [],
-    }
+    out = {"indicators": {}, "errors": []}
 
     # --- 스팟 3종 ---
     spot, units = {}, {}
@@ -110,7 +124,7 @@ def main():
         try:
             spot[name], units[name] = call("petroleum/pri/spt", cfg["series"], "daily", 400)
         except Exception as e:
-            out["errors"].append(f"{name}({cfg['series']}): {e}")
+            out["errors"].append(f"eia: {name}({cfg['series']}): {e}")
 
     if {"wti", "ulsd"} <= spot.keys():
         dates = sorted(set(spot["wti"]) & set(spot["ulsd"]))
@@ -154,11 +168,9 @@ def main():
                 "value": last["v"], "unit": "mb", "asOf": last["d"],
                 "note": note, "source": "EIA Weekly", "mode": "auto"}
     except Exception as e:
-        out["errors"].append(f"us_distillate_stock({STOCK_SERIES}): {e}")
+        out["errors"].append(f"eia: us_distillate_stock({STOCK_SERIES}): {e}")
 
-    if out["errors"]:
-        out["status"] = "partial" if out["indicators"] else "error"
-    OUT.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    merge_auto(out["indicators"], out["errors"])
     print(json.dumps(out, ensure_ascii=False, indent=2))
     return 0 if out["indicators"] else 1
 
