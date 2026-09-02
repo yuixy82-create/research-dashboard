@@ -25,9 +25,6 @@ jobs:
       PYTHONIOENCODING: "utf-8"
       # 러너 서비스(NETWORK SERVICE)는 사용자 PATH를 못 보므로 파이썬 경로를 직접 지정
       PY: C:\Users\user\AppData\Local\Programs\Python\Python312\python.exe
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       # setup-python은 시스템 레지스트리 쓰기가 필요해 서비스 계정에서 실패함.
@@ -58,13 +55,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: "& $env:PY refining/scripts/ci_commit.py"
 
-      # GITHUB_TOKEN 커밋은 다른 워크플로를 깨우지 않으므로 여기서 직접 배포
+      # 세번(HS) 탐색용. 관세청 응답이 비면 이 로그로 코드를 확인한다
+      - name: Probe customs codes
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY || secrets.DATA_GO_KR_KE }}
+        run: "& $env:PY refining/scripts/fetch_customs.py --probe"
+        continue-on-error: true
+
+      - name: Report status
+        run: "& $env:PY refining/scripts/ci_report.py"
+        continue-on-error: true
+
+  # 배포는 깃허브 러너에서. upload-pages-artifact가 bash·tar를 요구해 윈도우 서비스 계정에선 안 돎.
+  # GITHUB_TOKEN 커밋은 다른 워크플로를 깨우지 않으므로 같은 워크플로 안에서 이어서 배포한다
+  deploy:
+    needs: fetch
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main            # fetch 잡이 방금 올린 커밋을 받도록
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
       - id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Report status
-        run: "& $env:PY refining/scripts/ci_report.py"
