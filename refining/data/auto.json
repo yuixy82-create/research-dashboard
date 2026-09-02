@@ -1,10 +1,10 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-02T13:30:03+00:00",
-  "status": "partial",
+  "updatedAt": "2026-09-02T13:37:08+00:00",
+  "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 106.58,
+      "value": 106.62,
       "unit": "$/bbl",
       "asOf": "2026-09-02",
       "note": "장중 잠정치",
@@ -12,7 +12,7 @@
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 64.96,
+      "value": 65.0,
       "unit": "$/bbl",
       "asOf": "2026-09-02",
       "note": "장중 잠정치",
@@ -26,9 +26,15 @@
       "note": null,
       "source": "EIA Weekly",
       "mode": "auto"
+    },
+    "px_naphtha_spread": {
+      "value": 314.4,
+      "unit": "$/t",
+      "asOf": "2026-07-01",
+      "note": "관세청 수출입단가 기반 근사",
+      "source": "관세청 품목별 수출입실적",
+      "mode": "auto"
     }
   },
-  "errors": [
-    "customs: px_naphtha_spread: 겹치는 월이 없음"
-  ]
+  "errors": []
 }
