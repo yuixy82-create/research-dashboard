@@ -9,6 +9,7 @@
 수출은 FOB, 수입은 CIF 기준이라 스프레드에 운임 · 보험료가 섞임: 평가가격이 아닌 근사치임.
 
 관세청은 매월 15일경 전월까지의 자료를 정정 반영하므로 매 실행마다 구간 전체를 다시 만든다.
+조회기간이 1년 이내로 제한돼 12개월씩 끊어 부른다(36개월이면 세번당 3회).
 
 사용:
   DATA_GO_KR_KEY=xxxx python3 refining/scripts/fetch_customs.py
@@ -33,7 +34,8 @@ AUTO = ROOT / "data" / "auto.json"
 SERIES_DIR = ROOT / "data" / "series"
 
 KEEP_MONTHS = 60
-MONTHS_BACK = 72
+MONTHS_BACK = 36
+CHUNK = 12            # API가 조회기간을 1년 이내로 제한함(26.09.02 실측: resultCode=99)
 
 # 확정된 세번. --probe로 statKor를 확인해 고름
 HS_PX = "290243"       # 파라자일렌
@@ -66,13 +68,33 @@ def call(hs, strt, end):
     return rows
 
 
-def window():
-    t = date.today()
-    end = t.year * 100 + t.month
-    y, m = t.year, t.month - MONTHS_BACK
+def _shift(y, m, k):
+    m += k
     while m <= 0:
         m += 12; y -= 1
-    return f"{y}{m:02d}", f"{end}"
+    while m > 12:
+        m -= 12; y += 1
+    return y, m
+
+
+def window():
+    t = date.today()
+    y, m = _shift(t.year, t.month, -MONTHS_BACK)
+    return f"{y}{m:02d}", f"{t.year}{t.month:02d}"
+
+
+def call_range(hs, strt, end):
+    """1년 제한을 피해 12개월씩 나눠 부른 뒤 합친다."""
+    rows = []
+    y, m = int(strt[:4]), int(strt[4:])
+    ey, em = int(end[:4]), int(end[4:])
+    while (y, m) <= (ey, em):
+        y2, m2 = _shift(y, m, CHUNK - 1)
+        if (y2, m2) > (ey, em):
+            y2, m2 = ey, em
+        rows += call(hs, f"{y}{m:02d}", f"{y2}{m2:02d}")
+        y, m = _shift(y2, m2, 1)
+    return rows
 
 
 def unit_price(dlr, wgt):
@@ -150,8 +172,8 @@ def main():
     strt, end = window()
     ind, errors = {}, []
     try:
-        px = monthly(call(HS_PX, strt, end), "exp")
-        nap = monthly(call(HS_NAPHTHA, strt, end), "imp")
+        px = monthly(call_range(HS_PX, strt, end), "exp")
+        nap = monthly(call_range(HS_NAPHTHA, strt, end), "imp")
         months = sorted(set(px) & set(nap))
         if not months:
             raise RuntimeError("겹치는 월이 없음")

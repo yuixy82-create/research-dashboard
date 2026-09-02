@@ -15,8 +15,9 @@ EIA 스팟을 쓰지 않는 이유: EIA는 주 1회(수) 배치로만 공표해 
   07:30 KST (18:30 ET)  전일 정산(14:30 ET)이 끝난 뒤라 같은 날짜가 확정치로 덮임
 매 실행마다 원본에서 계열 전체를 다시 만들기 때문에 확정 전환이 저절로 일어남.
 
-소스는 두 곳을 순서대로 시도한다. 야후는 깃허브 러너 같은 데이터센터 IP에
-429를 주는 경우가 있어(26.09.02 실측) 스투크를 먼저 본다.
+소스는 두 곳을 순서대로 시도한다. 야후는 쿠키(A3)와 crumb 없이 부르면 데이터센터
+IP뿐 아니라 가정용 IP에서도 429를 주는 경우가 있어(26.09.02 실측) 브라우저처럼
+쿠키 → crumb → 차트 순서로 부른다. 야후가 막히면 스투크로 넘어간다.
 """
 import csv
 import http.cookiejar
@@ -24,12 +25,13 @@ import io
 import json
 import sys
 import time
+import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-      "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
+UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+      "(KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36")
 
 ROOT = Path(__file__).resolve().parent.parent
 AUTO = ROOT / "data" / "auto.json"
@@ -78,23 +80,41 @@ def from_stooq(sym):
     return out
 
 
-def _yahoo_opener():
+def _yahoo_session():
+    """브라우저와 같은 순서: fc.yahoo.com에서 A3 쿠키 → getcrumb → 차트."""
     cj = http.cookiejar.CookieJar()
     op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
-    try:                      # 쿠키를 받아두면 429 확률이 낮아짐
+    try:
         _open("https://fc.yahoo.com", opener=op, timeout=10).read()
     except Exception:
-        pass
-    return op
+        pass                              # 404를 주지만 쿠키는 붙는다
+    crumb = ""
+    for host in ("query2", "query1"):
+        try:
+            with _open(f"https://{host}.finance.yahoo.com/v1/test/getcrumb", opener=op, timeout=10) as r:
+                crumb = r.read().decode("utf-8", "replace").strip()
+            if crumb and "<" not in crumb:
+                break
+            crumb = ""
+        except Exception:
+            crumb = ""
+    return op, crumb
+
+
+_YSESSION = None
 
 
 def from_yahoo(sym):
-    op = _yahoo_opener()
+    global _YSESSION
+    if _YSESSION is None:
+        _YSESSION = _yahoo_session()
+    op, crumb = _YSESSION
     last = None
-    for host in ("query1", "query2"):
-        url = (f"https://{host}.finance.yahoo.com/v8/finance/chart/"
-               f"{sym.replace('=', '%3D')}?range=2y&interval=1d")
-        for attempt in range(2):
+    for attempt in range(3):
+        for host in ("query1", "query2"):
+            url = (f"https://{host}.finance.yahoo.com/v8/finance/chart/"
+                   f"{sym.replace('=', '%3D')}?range=2y&interval=1d"
+                   + (f"&crumb={urllib.parse.quote(crumb)}" if crumb else ""))
             try:
                 with _open(url, opener=op) as r:
                     payload = json.load(r)
@@ -114,11 +134,14 @@ def from_yahoo(sym):
                 raise RuntimeError("종가가 전부 결측")
             except Exception as e:
                 last = e
-                time.sleep(3 * (attempt + 1))
+                if "429" in str(e):        # 세션을 새로 열고 한참 쉰다
+                    _YSESSION = _yahoo_session()
+                    op, crumb = _YSESSION
+        time.sleep(15 * (attempt + 1))
     raise RuntimeError(str(last))
 
 
-SOURCES = [("stooq", from_stooq, 0), ("yahoo", from_yahoo, 1)]
+SOURCES = [("yahoo", from_yahoo, 1), ("stooq", from_stooq, 0)]
 
 
 def load_all():
