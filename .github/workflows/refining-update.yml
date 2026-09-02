@@ -2,8 +2,8 @@ name: refining-update
 
 on:
   schedule:
-    - cron: "30 22 * * *"   # 07:30 KST = 18:30 ET — 전일 정산(14:30 ET) 끝난 뒤. 확정치
-    - cron: "0 13 * * *"    # 22:00 KST = 09:00 ET — 장중. 잠정치로 먼저 붙임
+    - cron: "30 22 * * *"   # 07:30 KST
+    - cron: "0 13 * * *"    # 22:00 KST
   workflow_dispatch: {}
 
 permissions:
@@ -28,10 +28,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      # 선물 — 매 영업일. 크랙 2종. 장중이면 잠정치, 정산 뒤 실행에서 같은 날짜가 확정치로 덮임
-      - name: Fetch futures
-        run: python3 refining/scripts/fetch_futures.py
-        continue-on-error: true
+      # 선물 수집은 보류. 야후 · 스투크 모두 깃허브 러너 IP를 막음(26.09.02 실측).
+      # 소스가 정해지면 이 자리에 fetch_futures.py 단계를 되살릴 것.
 
       # EIA — 주간 재고만. 스팟 크랙은 선물로 옮김
       - name: Fetch EIA
