@@ -131,6 +131,10 @@ td.rank{text-align:center; font-family:ui-monospace,SFMono-Regular,Menlo,Consola
 tr.total td{font-weight:700; border-top:1.5px solid var(--star); background:var(--star-tint); color:var(--star-2)}
 tr.sub td{background:var(--surface-2)}
 td.key{font-weight:600}
+table.aux td.key{white-space:nowrap}
+table.aux td.meta{font-size:11.5px; color:var(--muted); min-width:200px}
+table.aux td.spark{width:84px; padding:6px 8px}
+table.aux td.spark svg{display:block; width:84px; height:22px; min-width:0; max-width:none}
 .badge{display:inline-block; font-size:10px; font-weight:600; padding:1px 6px; border-radius:2px; white-space:nowrap}
 .badge.auto{background:var(--teal-bg); color:var(--teal)}
 .badge.manual{background:var(--gold-bg); color:var(--gold)}
@@ -388,7 +392,7 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
         <div class="cplot"></div>
         <dl class="cmeta">
           <div><dt>정의</dt><dd>아시아 정유공장 산출 구성 전체를 반영한 배럴당 마진</dd></div>
-          <div><dt>출처</dt><dd>오피넷 국제제품가 + 두바이유 근사 산출 · 일간 · <span class="badge auto">자동 근사</span></dd></div>
+          <div><dt>출처</dt><dd>Petronet 스팟 · 주간 · iM증권 위클리에서 옮겨 적음 · <span class="badge manual">수동</span></dd></div>
           <div><dt>의미</dt><dd><b>정유부문 이익의 1차 함수</b>. 손익분기 위아래가 흑자 · 적자 경계</dd></div>
         </dl>
       </div>
@@ -404,7 +408,7 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
         <div class="cplot"></div>
         <dl class="cmeta">
           <div><dt>정의</dt><dd>윤활기유 가격 − 원료 가격</dd></div>
-          <div><dt>출처</dt><dd>관세청 윤활유 수출단가 − 싱가포르 HSFO · 월간 · <span class="badge auto">자동 근사</span></dd></div>
+          <div><dt>출처</dt><dd>관세청 윤활유 기유(2710.19.5020) 수출단가 기반 산출 예정 · 월간 · <span class="badge auto">자동 근사</span></dd></div>
           <div><dt>의미</dt><dd><b>윤활부문 이익의 방향</b>. 절대값보다 전월 대비 변화율을 봄</dd></div>
           <div><dt>종목</dt><dd><b>S-OIL 2Q26 영업이익의 49.5%가 윤활 부문</b>:<br>SK이노베이션은 SK엔무브가 SK온 CIC로 편입돼 배터리 적자와 상계됨</dd></div>
         </dl>
@@ -417,7 +421,7 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
         <div class="cplot"></div>
         <dl class="cmeta">
           <div><dt>정의</dt><dd>파라자일렌 가격 − 나프타 가격</dd></div>
-          <div><dt>출처</dt><dd>관세청 HS 2902.43 · 2710.12 수출단가 · 월간 · <span class="badge auto">자동 근사</span></dd></div>
+          <div><dt>출처</dt><dd>관세청 PX(2902.43) 수출단가 − 나프타(2710.12.4000) 수입단가 · 월간 · 약 2개월 지연 · <span class="badge auto">자동 근사</span></dd></div>
           <div><dt>의미</dt><dd><b>석유화학 부문 손익</b>. 손익분기 아래면 적자 지속</dd></div>
           <div><dt>종목</dt><dd>S-OIL은 <b>샤힌 상업가동(27년 초 목표) 전까지 석화 비중이 작음</b>:<br>SK이노베이션은 SK지오센트릭 손익으로 곧장 연결됨</dd></div>
         </dl>
@@ -460,6 +464,21 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
           <div><dt>종목</dt><dd>YoY는 감소지만 <b>26.07 휘발유 +320% · 경유 +144% MoM으로 이미 반등 중</b>:<br>러시아 수출금지 연장과 서로 상쇄되는 방향이라 둘을 같이 봐야 함</dd></div>
         </dl>
       </div>
+    </div>
+
+    <div class="grp"><span class="gk">주간 보조</span>iM증권 기름뿜뿜 위클리(금)에서 옮겨 적음 · 매주 점 하나씩 쌓임</div>
+    <div class="tablewrap">
+      <table class="aux">
+        <thead><tr><th>지표</th><th class="num">값</th><th>추이</th><th>기준일 · 비고</th><th>보는 이유</th></tr></thead>
+        <tbody>
+          <tr><td class="key">싱가포르 경유 마진</td><td class="num" data-kpi="gasoil_margin_sg">—</td><td class="spark" data-spark="gasoil_margin_sg"></td><td class="meta" data-kpi-meta="gasoil_margin_sg"></td><td>경유 − 두바이. 복합정제마진의 절반 이상을 설명함</td></tr>
+          <tr><td class="key">싱가포르 등유 마진</td><td class="num" data-kpi="kero_margin_sg">—</td><td class="spark" data-spark="kero_margin_sg"></td><td class="meta" data-kpi-meta="kero_margin_sg"></td><td>항공유 수요 회복 여부</td></tr>
+          <tr><td class="key">싱가포르 휘발유 마진</td><td class="num" data-kpi="gasoline_margin_sg">—</td><td class="spark" data-spark="gasoline_margin_sg"></td><td class="meta" data-kpi-meta="gasoline_margin_sg"></td><td>경유 대비 약하면 정유사가 경유 최대화 모드로 감</td></tr>
+          <tr><td class="key">Ural − Dubai</td><td class="num" data-kpi="ural_dubai">—</td><td class="spark" data-spark="ural_dubai"></td><td class="meta" data-kpi-meta="ural_dubai"></td><td>러시아산 할인 폭. 커지면 인도·중국 정유사가 원가 우위</td></tr>
+          <tr><td class="key">미국 정제설비 가동률</td><td class="num" data-kpi="us_refinery_util">—</td><td class="spark" data-spark="us_refinery_util"></td><td class="meta" data-kpi-meta="us_refinery_util"></td><td>97%대는 상한. 더 짜낼 여지가 없다는 뜻</td></tr>
+          <tr><td class="key">러시아 정제설비 피격 비중</td><td class="num" data-kpi="russia_refinery_hit">—</td><td class="spark" data-spark="russia_refinery_hit"></td><td class="meta" data-kpi-meta="russia_refinery_hit"></td><td>복구 속도가 디젤 쇼티지의 길이를 정함</td></tr>
+        </tbody>
+      </table>
     </div>
 
     <h3>1-2 추후 일정</h3>
@@ -1233,6 +1252,21 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
   Array.prototype.forEach.call(document.querySelectorAll('.chart[data-series]'), function(box){
     var k = box.getAttribute('data-series');
     get('./data/series/' + k + '.json').then(function(s){ drawChart(box, s); });
+  });
+
+  // 보조 지표 표의 작은 추이선. 점이 2개 이상일 때만 그림
+  Array.prototype.forEach.call(document.querySelectorAll('[data-spark]'), function(td){
+    var k = td.getAttribute('data-spark');
+    get('./data/series/' + k + '.json').then(function(s){
+      var pts = ((s && s.points) || []).filter(function(p){ return p && typeof p.v === 'number'; });
+      if (pts.length < 2){ td.innerHTML = '<span style="font-size:10px;color:var(--faint)">' + (pts.length ? '1점' : '') + '</span>'; return; }
+      var W = 84, H = 22, vals = pts.map(function(p){ return p.v; });
+      var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals); if (mn === mx){ mn -= 1; mx += 1; }
+      var X = function(i){ return 3 + (W - 6) * i / (pts.length - 1); };
+      var Y = function(v){ return 3 + (H - 6) * (1 - (v - mn) / (mx - mn)); };
+      var d = pts.map(function(p, i){ return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(p.v).toFixed(1); }).join(' ');
+      td.innerHTML = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><path d="' + d + '" fill="none" stroke="var(--star)" stroke-width="1.5" stroke-linejoin="round"/><circle cx="' + X(pts.length - 1).toFixed(1) + '" cy="' + Y(vals[vals.length - 1]).toFixed(1) + '" r="2.2" fill="var(--star)"/></svg>';
+    });
   });
 
   Promise.all([get('./data/manual.json'), get('./data/auto.json')]).then(function(res){
