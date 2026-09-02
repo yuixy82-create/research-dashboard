@@ -40,7 +40,10 @@ CHUNK = 12            # API가 조회기간을 1년 이내로 제한함(26.09.02
 # 확정된 세번. --probe로 statKor를 확인해 고름
 HS_PX = "290243"       # 파라자일렌
 HS_NAPHTHA = "271012"  # 경질유 및 조제품(나프타 포함)
-PROBE_CODES = ["290243", "271012", "271019", "271011"]
+PROBE_CODES = ["290243", "2902430000", "271012", "2710121000", "27101210", "271019", "271011"]
+
+
+LAST_RAW = b""
 
 
 def call(hs, strt, end):
@@ -51,6 +54,8 @@ def call(hs, strt, end):
     req = urllib.request.Request(url, headers={"User-Agent": "research-dashboard/refining"})
     with urllib.request.urlopen(req, timeout=60) as r:
         raw = r.read()
+    global LAST_RAW
+    LAST_RAW = raw
     root = ET.fromstring(raw)
     code = root.findtext(".//resultCode")
     if code not in (None, "00", "0"):
@@ -63,9 +68,7 @@ def call(hs, strt, end):
             "expDlr": g("expDlr"), "expWgt": g("expWgt"),
             "impDlr": g("impDlr"), "impWgt": g("impWgt"),
         })
-    if not rows:
-        raise RuntimeError(f"{hs}: 빈 응답")
-    return rows
+    return rows                      # 구간에 실적이 없으면 빈 목록. 합친 뒤 판단
 
 
 def _shift(y, m, k):
@@ -94,6 +97,8 @@ def call_range(hs, strt, end):
             y2, m2 = ey, em
         rows += call(hs, f"{y}{m:02d}", f"{y2}{m2:02d}")
         y, m = _shift(y2, m2, 1)
+    if not rows:
+        raise RuntimeError(f"{hs}: 빈 응답 (세번 자리수·형식 확인: --probe)")
     return rows
 
 
@@ -131,6 +136,8 @@ def probe():
             rows = call(hs, f"{y}{m:02d}", end)
         except Exception as e:
             print("  ERR", e); continue
+        if not rows:
+            print("  (빈 응답) 원문:", LAST_RAW[:400].decode("utf-8", "replace").replace("\n", " ")); continue
         for r in rows[:14]:
             print(f"  {r['year']:>8} {r['hsCode']:>12} {r['statKor'][:26]:<26} "
                   f"수출 {unit_price(r['expDlr'], r['expWgt'])} $/t   수입 {unit_price(r['impDlr'], r['impWgt'])} $/t")
