@@ -52,11 +52,10 @@ jobs:
         run: "& $env:PY refining/scripts/fetch_customs.py"
         continue-on-error: true
 
-      # 윈도우 러너라 bash 대신 파이썬 스크립트로 처리
-      - name: Discard timestamp-only changes
-        run: "& $env:PY refining/scripts/ci_guard.py"
-
+      # 러너 서비스 계정엔 git이 없어 GitHub API로 커밋(값이 바뀐 파일만)
       - name: Commit if changed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: "& $env:PY refining/scripts/ci_commit.py"
 
       # GITHUB_TOKEN 커밋은 다른 워크플로를 깨우지 않으므로 여기서 직접 배포
