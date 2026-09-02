@@ -1,6 +1,6 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-02T01:04:13+00:00",
+  "updatedAt": "2026-09-02T01:08:11+00:00",
   "status": "partial",
   "indicators": {
     "diesel_crack_1_1": {
@@ -27,9 +27,6 @@
     }
   },
   "errors": [
-    "futures: HO=F: HTTP Error 429: Too Many Requests",
-    "futures: RB=F: HTTP Error 429: Too Many Requests",
-    "futures: CL=F: HTTP Error 429: Too Many Requests",
-    "futures: HO · CL 중 하나가 없어 크랙을 산출하지 못함"
+    "futures: stooq:ho.f: 빈 응답 또는 헤더 없음 | yahoo:HO=F: HTTP Error 429: Too Many Requests"
   ]
 }
