@@ -24,7 +24,10 @@ from datetime import datetime, timezone, date
 from pathlib import Path
 
 API = "https://apis.data.go.kr/1220000/Itemtrade/getItemtradeList"
-KEY = os.environ.get("DATA_GO_KR_KEY")
+KEY = os.environ.get("DATA_GO_KR_KEY") or ""
+# 포털이 보여주는 키는 URL 인코딩된 형태(%2B, %3D)일 수 있음. urlencode가 다시 감싸므로 먼저 풀어둠
+if "%" in KEY:
+    KEY = urllib.parse.unquote(KEY)
 ROOT = Path(__file__).resolve().parent.parent
 AUTO = ROOT / "data" / "auto.json"
 SERIES_DIR = ROOT / "data" / "series"
