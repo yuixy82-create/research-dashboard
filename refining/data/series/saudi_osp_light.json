@@ -1,1 +1,1 @@
-{"key": "saudi_osp_light", "label": "사우디 OSP (Arab Light)", "unit": "$/bbl", "demo": false, "points": []}
+{"key": "saudi_osp_light", "label": "사우디 OSP (Arab Light)", "unit": "$/bbl", "demo": false, "src": "iM증권 기름뿜뿜 위클리(26.08.28) · 수동", "note": "월분 기준. 8월분은 전월 대비(−0.5)로 역산", "updatedAt": "2026-09-02T23:15:32+00:00", "points": [{"d": "2026-08-01", "v": -11.5}, {"d": "2026-09-01", "v": -12.0}]}
