@@ -37,10 +37,12 @@ KEEP_MONTHS = 60
 MONTHS_BACK = 36
 CHUNK = 12            # API가 조회기간을 1년 이내로 제한함(26.09.02 실측: resultCode=99)
 
-# 확정된 세번. --probe로 statKor를 확인해 고름
-HS_PX = "290243"       # 파라자일렌
-HS_NAPHTHA = "271012"  # 경질유 및 조제품(나프타 포함)
-PROBE_CODES = ["290243", "2902430000", "271012", "2710121000", "27101210", "271019", "271011"]
+# 확정된 세번(10자리). --probe로 statKor를 확인해 고름(26.09.02)
+#   2902430000 파라-크실렌 · 2710124000 나프타 (6자리로 부르면 휘발유·NGL 등 하위 세번이 다 섞여 옴)
+#   응답 year는 'YYYY.MM' 형식, 마지막에 '총계' 행이 붙음
+HS_PX = "2902430000"
+HS_NAPHTHA = "2710124000"
+PROBE_CODES = ["2902430000", "2710124000", "2710195020"]   # 마지막은 윤활유 기유(Group III 근사 후보)
 
 
 LAST_RAW = b""
@@ -111,11 +113,14 @@ def unit_price(dlr, wgt):
     return round(d / (w / 1000.0), 1) if w > 0 else None
 
 
-def monthly(rows, side):
-    """{YYYYMM: 단가}. year가 'YYYYMM'인 월별 행만 취함(합계 행 제외)."""
+def monthly(rows, side, hs=None):
+    """{YYYYMM: 단가}. year가 'YYYY.MM'(또는 'YYYYMM')인 월별 행만 취함(총계 행 제외).
+    hs를 주면 그 세번 행만(6자리로 불러 하위 세번이 섞인 경우 대비)."""
     out = {}
     for r in rows:
-        ym = r["year"]
+        if hs and r["hsCode"] and r["hsCode"] != hs:
+            continue
+        ym = r["year"].replace(".", "").replace("-", "")
         if not (len(ym) == 6 and ym.isdigit()):
             continue
         u = unit_price(r["expDlr"], r["expWgt"]) if side == "exp" else unit_price(r["impDlr"], r["impWgt"])
@@ -179,8 +184,8 @@ def main():
     strt, end = window()
     ind, errors = {}, []
     try:
-        px = monthly(call_range(HS_PX, strt, end), "exp")
-        nap = monthly(call_range(HS_NAPHTHA, strt, end), "imp")
+        px = monthly(call_range(HS_PX, strt, end), "exp", HS_PX)
+        nap = monthly(call_range(HS_NAPHTHA, strt, end), "imp", HS_NAPHTHA)
         months = sorted(set(px) & set(nap))
         if not months:
             raise RuntimeError("겹치는 월이 없음")
