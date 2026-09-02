@@ -53,15 +53,17 @@
       "asOf": null,
       "note": "26.08 4주차 PX +1.9% · 납사 +5.2% WoW → 스프레드 축소. 절대값 미확보",
       "source": "Cischem · iM증권 26.08.28 인용",
-      "mode": "manual"
+      "mode": "manual",
+      "period": "month"
     },
     "russia_diesel_export": {
       "value": 75,
       "unit": "만톤/월",
       "asOf": "2026-07-31",
-      "note": "전월 대비 약 −60%",
+      "note": "전월 180에서 −60%. 25.06은 335",
       "source": "Reuters",
-      "mode": "manual"
+      "mode": "manual",
+      "period": "month"
     },
     "group3_price": {
       "value": 4000,
@@ -77,15 +79,17 @@
       "asOf": "2026-07-31",
       "note": "전월 대비 −2.1, 전쟁 전 약 20",
       "source": "IEA",
-      "mode": "manual"
+      "mode": "manual",
+      "period": "month"
     },
     "china_product_export": {
       "value": 465,
       "unit": "만톤/월",
       "asOf": "2026-07-31",
-      "note": "YoY −12.9%, MoM 반등 중",
+      "note": "YoY −12.9%, MoM +6.7%. 4월 312 바닥에서 3개월 연속 반등",
       "source": "중국 해관총서 · iM증권 26.08.28 인용",
-      "mode": "manual"
+      "mode": "manual",
+      "period": "month"
     },
     "soil_cdu_util": {
       "value": 76,
@@ -93,7 +97,8 @@
       "asOf": "2026-06-30",
       "note": "정기보수로 전분기 대비 −9%p",
       "source": "S-OIL 2Q26 실적",
-      "mode": "manual"
+      "mode": "manual",
+      "period": "quarter"
     },
     "gasoil_margin_sg": {
       "value": 62.4,
@@ -128,12 +133,13 @@
       "mode": "manual"
     },
     "saudi_osp_light": {
-      "value": -12.0,
+      "value": -2.0,
       "unit": "$/bbl",
       "asOf": "2026-09-01",
-      "note": "9월분, 전월 −0.5",
-      "source": "Saudi Aramco · iM증권 26.08.28 인용",
-      "mode": "manual"
+      "note": "9월분, 전월 −0.5. 20년 6월 이후 최저",
+      "source": "Saudi Aramco · iM증권 26.08.28 표",
+      "mode": "manual",
+      "period": "month"
     },
     "us_refinery_util": {
       "value": 97.4,
@@ -149,7 +155,8 @@
       "asOf": "2026-07-31",
       "note": "명목 정제설비 중 피격 비중. 처리량은 다년 최저권",
       "source": "FT · Bloomberg · iM증권 26.08.28 인용",
-      "mode": "manual"
+      "mode": "manual",
+      "period": "month"
     }
   }
 }
