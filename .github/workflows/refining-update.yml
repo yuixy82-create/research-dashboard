@@ -55,13 +55,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: "& $env:PY refining/scripts/ci_commit.py"
 
-      # 세번(HS) 탐색용. 관세청 응답이 비면 이 로그로 코드를 확인한다
-      - name: Probe customs codes
-        env:
-          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY || secrets.DATA_GO_KR_KE }}
-        run: "& $env:PY refining/scripts/fetch_customs.py --probe"
-        continue-on-error: true
-
       - name: Report status
         run: "& $env:PY refining/scripts/ci_report.py"
         continue-on-error: true
