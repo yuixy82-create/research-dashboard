@@ -25,9 +25,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      # setup-python은 시스템 레지스트리 쓰기가 필요해 서비스 계정에서 실패함.
+      # 컴퓨터에 깔린 파이썬(winget Python.Python.3.12, --scope machine)을 그대로 씀
 
       # 선물 — 매 영업일. 크랙 2종. 장중이면 잠정치, 정산 뒤 실행에서 확정치로 덮임
       - name: Fetch futures
