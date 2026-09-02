@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 """NYMEX 선물 종가로 디젤 1:1 크랙과 3-2-1 크랙을 매일 산출한다.
 
-  HO=F  NY Harbor ULSD 근월물 ($/gal)
-  RB=F  RBOB 휘발유 근월물 ($/gal)
-  CL=F  WTI 근월물 ($/bbl)
+  ULSD 근월물 ($/gal) · RBOB 근월물 ($/gal) · WTI 근월물 ($/bbl)
 
-  디젤 1:1 크랙 = HO x 42 - CL
-  3-2-1 크랙    = (RB x 42 x 2 + HO x 42 - CL x 3) / 3
+  디젤 1:1 크랙 = ULSD x 42 - WTI
+  3-2-1 크랙    = (RBOB x 42 x 2 + ULSD x 42 - WTI x 3) / 3
 
 EIA 스팟을 쓰지 않는 이유: EIA는 주 1회(수) 배치로만 공표해 평균 4일이 밀림.
 선물은 매 영업일 정산되므로 블룸버그 등이 인용하는 값과 같은 주기로 따라감.
@@ -17,16 +15,19 @@ EIA 스팟을 쓰지 않는 이유: EIA는 주 1회(수) 배치로만 공표해 
   07:30 KST (18:30 ET)  전일 정산(14:30 ET)이 끝난 뒤라 같은 날짜가 확정치로 덮임
 매 실행마다 원본에서 계열 전체를 다시 만들기 때문에 확정 전환이 저절로 일어남.
 
-사용:
-  python3 refining/scripts/fetch_futures.py
+소스는 두 곳을 순서대로 시도한다. 야후는 깃허브 러너 같은 데이터센터 IP에
+429를 주는 경우가 있어(26.09.02 실측) 스투크를 먼저 본다.
 """
+import csv
+import http.cookiejar
+import io
 import json
 import sys
+import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{sym}?range=2y&interval=1d"
 UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
 
@@ -36,46 +37,119 @@ SERIES_DIR = ROOT / "data" / "series"
 
 GAL_PER_BBL = 42.0
 KEEP = 260
-SYMBOLS = {"ho": "HO=F", "rb": "RB=F", "cl": "CL=F"}
-SETTLE_HOUR = 14.5   # NYMEX 에너지 선물 정산 14:30 ET
+SETTLE_HOUR = 14.5          # NYMEX 에너지 선물 정산 14:30 ET
+ET_OFFSET = -4 * 3600       # 정산 판정용. 서머타임 폭은 30분 판정에 영향 없음
+
+SYMBOLS = {                 # 이름: (스투크, 야후)
+    "ho": ("ho.f", "HO=F"),
+    "rb": ("rb.f", "RB=F"),
+    "cl": ("cl.f", "CL=F"),
+}
 
 
-def is_provisional(last_day, gmtoffset):
-    """마지막 점이 아직 정산 전인지. 장중이면 잠정치임."""
-    now = datetime.now(timezone.utc) + timedelta(seconds=gmtoffset)
+def _open(url, opener=None, timeout=30):
+    req = urllib.request.Request(url, headers={
+        "User-Agent": UA,
+        "Accept": "text/csv,application/json,text/plain,*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+    })
+    o = opener or urllib.request
+    return o.urlopen(req, timeout=timeout) if opener is None else opener.open(req, timeout=timeout)
+
+
+def from_stooq(sym):
+    """스투크 일별 CSV. Date,Open,High,Low,Close,Volume"""
+    url = f"https://stooq.com/q/d/l/?s={sym}&i=d"
+    with _open(url) as r:
+        text = r.read().decode("utf-8", "replace").strip()
+    if not text or "Date" not in text.split("\n")[0]:
+        raise RuntimeError("빈 응답 또는 헤더 없음")
+    out = {}
+    for row in csv.DictReader(io.StringIO(text)):
+        c = row.get("Close")
+        if c in (None, "", "N/A"):
+            continue
+        try:
+            out[row["Date"]] = float(c)
+        except ValueError:
+            continue
+    if not out:
+        raise RuntimeError("종가가 전부 결측")
+    return out
+
+
+def _yahoo_opener():
+    cj = http.cookiejar.CookieJar()
+    op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+    try:                      # 쿠키를 받아두면 429 확률이 낮아짐
+        _open("https://fc.yahoo.com", opener=op, timeout=10).read()
+    except Exception:
+        pass
+    return op
+
+
+def from_yahoo(sym):
+    op = _yahoo_opener()
+    last = None
+    for host in ("query1", "query2"):
+        url = (f"https://{host}.finance.yahoo.com/v8/finance/chart/"
+               f"{sym.replace('=', '%3D')}?range=2y&interval=1d")
+        for attempt in range(2):
+            try:
+                with _open(url, opener=op) as r:
+                    payload = json.load(r)
+                res = (payload.get("chart") or {}).get("result") or []
+                if not res:
+                    raise RuntimeError("빈 응답")
+                res = res[0]
+                off = res.get("meta", {}).get("gmtoffset") or 0
+                closes = res["indicators"]["quote"][0]["close"]
+                out = {}
+                for t, c in zip(res["timestamp"], closes):
+                    if c is None:
+                        continue
+                    out[datetime.fromtimestamp(t + off, tz=timezone.utc).strftime("%Y-%m-%d")] = float(c)
+                if out:
+                    return out
+                raise RuntimeError("종가가 전부 결측")
+            except Exception as e:
+                last = e
+                time.sleep(3 * (attempt + 1))
+    raise RuntimeError(str(last))
+
+
+SOURCES = [("stooq", from_stooq, 0), ("yahoo", from_yahoo, 1)]
+
+
+def load_all():
+    """모든 종목을 한 소스에서 가져온다. 소스가 섞이면 계열이 어긋나므로."""
+    notes = []
+    for label, fn, idx in SOURCES:
+        got, err = {}, None
+        for name, syms in SYMBOLS.items():
+            try:
+                got[name] = fn(syms[idx])
+            except Exception as e:
+                err = f"{label}:{syms[idx]}: {e}"
+                notes.append(err)
+                break
+        if len(got) == len(SYMBOLS):
+            return got, label, notes
+    raise RuntimeError(" | ".join(notes) or "모든 소스 실패")
+
+
+def is_provisional(last_day):
+    now = datetime.now(timezone.utc) + timedelta(seconds=ET_OFFSET)
     if last_day != now.strftime("%Y-%m-%d"):
         return False
     return now.hour + now.minute / 60 < SETTLE_HOUR
 
 
-def series(sym):
-    """{'YYYY-MM-DD': 종가}. 거래소 현지 날짜로 맞춘다."""
-    req = urllib.request.Request(CHART.format(sym=sym.replace("=", "%3D")),
-                                 headers={"User-Agent": UA, "Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=45) as r:
-        payload = json.load(r)
-    res = (payload.get("chart") or {}).get("result") or []
-    if not res:
-        raise RuntimeError(f"{sym}: 빈 응답")
-    res = res[0]
-    off = res.get("meta", {}).get("gmtoffset") or 0
-    closes = res["indicators"]["quote"][0]["close"]
-    out = {}
-    for t, c in zip(res["timestamp"], closes):
-        if c is None:
-            continue
-        d = datetime.fromtimestamp(t + off, tz=timezone.utc).strftime("%Y-%m-%d")
-        out[d] = float(c)
-    if not out:
-        raise RuntimeError(f"{sym}: 종가가 전부 결측")
-    return out, off
-
-
-def write_series(key, label, points, provisional):
+def write_series(key, label, points, provisional, source):
     points = sorted(points, key=lambda p: p["d"])[-KEEP:]
     (SERIES_DIR / f"{key}.json").write_text(json.dumps({
         "key": key, "label": label, "unit": "$/bbl", "demo": False,
-        "provisional": provisional,
+        "provisional": provisional, "src": source,
         "updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "points": points,
     }, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -83,7 +157,6 @@ def write_series(key, label, points, provisional):
 
 
 def merge_auto(new_ind, errors):
-    """자기 key만 얹는다. EIA · 관세청 수집분을 지우지 않기 위함."""
     try:
         cur = json.loads(AUTO.read_text(encoding="utf-8"))
     except Exception:
@@ -99,46 +172,41 @@ def merge_auto(new_ind, errors):
 
 
 def main():
-    px, errors, ind, offset = {}, [], {}, 0
-    for name, sym in SYMBOLS.items():
-        try:
-            px[name], offset = series(sym)
-        except Exception as e:
-            errors.append(f"futures: {sym}: {e}")
+    ind, errors = {}, []
+    try:
+        px, src, notes = load_all()
+        print(f"소스: {src}" + (f" (앞선 시도 실패: {'; '.join(notes)})" if notes else ""))
+    except Exception as e:
+        merge_auto({}, [f"futures: {e}"])
+        print(f"실패: {e}")
+        return 1
 
-    if {"ho", "cl"} <= px.keys():
-        days = sorted(set(px["ho"]) & set(px["cl"]))
-        pts = [{"d": d, "v": round(px["ho"][d] * GAL_PER_BBL - px["cl"][d], 2)} for d in days]
-        prov = is_provisional(pts[-1]["d"], offset) if pts else False
-        last = write_series("diesel_crack_1_1", "디젤 1:1 크랙", pts, prov)
-        if last:
-            ind["diesel_crack_1_1"] = {
-                "value": last["v"], "unit": "$/bbl", "asOf": last["d"],
-                "note": "장중 잠정치" if prov else None,
-                "source": "NYMEX ULSD · WTI 선물 " + ("장중" if prov else "종가") + " 기반 산출",
-                "mode": "auto"}
+    days = sorted(set(px["ho"]) & set(px["cl"]))
+    pts = [{"d": d, "v": round(px["ho"][d] * GAL_PER_BBL - px["cl"][d], 2)} for d in days]
+    prov = is_provisional(pts[-1]["d"]) if pts else False
+    last = write_series("diesel_crack_1_1", "디젤 1:1 크랙", pts, prov, src)
+    if last:
+        ind["diesel_crack_1_1"] = {
+            "value": last["v"], "unit": "$/bbl", "asOf": last["d"],
+            "note": "장중 잠정치" if prov else None,
+            "source": f"NYMEX ULSD · WTI 선물 {'장중' if prov else '종가'} 기반 산출",
+            "mode": "auto"}
 
-        if "rb" in px:
-            d3 = sorted(set(days) & set(px["rb"]))
-            pts3 = []
-            for d in d3:
-                h = px["ho"][d] * GAL_PER_BBL
-                g = px["rb"][d] * GAL_PER_BBL
-                c = px["cl"][d]
-                pts3.append({"d": d, "v": round((g * 2 + h - c * 3) / 3, 2)})
-            prov3 = is_provisional(pts3[-1]["d"], offset) if pts3 else False
-            last3 = write_series("crack_3_2_1", "3-2-1 크랙", pts3, prov3)
-            if last3:
-                ind["crack_3_2_1"] = {
-                    "value": last3["v"], "unit": "$/bbl", "asOf": last3["d"],
-                    "note": "장중 잠정치" if prov3 else None,
-                    "source": "NYMEX 선물 " + ("장중" if prov3 else "종가") + " 기반 산출",
-                    "mode": "auto"}
-    else:
-        errors.append("futures: HO · CL 중 하나가 없어 크랙을 산출하지 못함")
+    d3 = sorted(set(days) & set(px["rb"]))
+    pts3 = []
+    for d in d3:
+        h, g, c = px["ho"][d] * GAL_PER_BBL, px["rb"][d] * GAL_PER_BBL, px["cl"][d]
+        pts3.append({"d": d, "v": round((g * 2 + h - c * 3) / 3, 2)})
+    prov3 = is_provisional(pts3[-1]["d"]) if pts3 else False
+    last3 = write_series("crack_3_2_1", "3-2-1 크랙", pts3, prov3, src)
+    if last3:
+        ind["crack_3_2_1"] = {
+            "value": last3["v"], "unit": "$/bbl", "asOf": last3["d"],
+            "note": "장중 잠정치" if prov3 else None,
+            "source": f"NYMEX 선물 {'장중' if prov3 else '종가'} 기반 산출", "mode": "auto"}
 
     merge_auto(ind, errors)
-    print(json.dumps({"indicators": ind, "errors": errors}, ensure_ascii=False, indent=2))
+    print(json.dumps({"source": src, "indicators": ind}, ensure_ascii=False, indent=2))
     return 0 if ind else 1
 
 
