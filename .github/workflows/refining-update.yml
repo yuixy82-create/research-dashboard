@@ -20,6 +20,9 @@ jobs:
     # 형 메인컴(DESKTOP-THUP7M4)에서 실행. 깃허브 러너 IP는 야후가 429로 막음(26.09.02 실측)
     runs-on: self-hosted
     timeout-minutes: 20
+    env:
+      PYTHONUTF8: "1"          # 윈도우 콘솔 코드페이지와 무관하게 한글 출력
+      PYTHONIOENCODING: "utf-8"
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
