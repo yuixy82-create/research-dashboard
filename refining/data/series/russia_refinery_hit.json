@@ -1,1 +1,1 @@
-{"key": "russia_refinery_hit", "label": "러시아 정제설비 피격 비중", "unit": "%", "demo": false, "src": "iM증권 기름뿜뿜 위클리(26.08.28) · 수동", "note": "명목 정제능력 대비", "updatedAt": "2026-09-02T23:15:32+00:00", "points": [{"d": "2026-07-01", "v": 45}]}
+{"key": "russia_refinery_hit", "label": "러시아 정제설비 피격 비중", "unit": "%", "period": "month", "demo": false, "src": "iM증권 기름뿜뿜 위클리(26.08.28) · 수동", "note": "명목 정제능력 대비", "updatedAt": "2026-09-02T23:15:32+00:00", "points": [{"d": "2026-07-01", "v": 45}]}

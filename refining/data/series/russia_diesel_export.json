@@ -1,1 +1,1 @@
-{"key": "russia_diesel_export", "label": "러시아 디젤·가스오일 해상수출", "unit": "만톤", "demo": false, "src": "iM증권 기름뿜뿜 위클리(26.08.28) · 수동", "note": "Reuters 집계 인용", "updatedAt": "2026-09-02T23:15:32+00:00", "points": [{"d": "2026-07-01", "v": 75}]}
+{"key": "russia_diesel_export", "label": "러시아 디젤·가스오일 해상수출", "unit": "만톤", "period": "month", "demo": false, "src": "Reuters(LSEG·트레이더 집계)", "note": "26.03 306 · 25.06 335. 4·5월은 보도 없음. 8월분은 9월 초 보도 예정", "updatedAt": "2026-09-02T23:43:14+00:00", "points": [{"d": "2026-06-01", "v": 180}, {"d": "2026-07-01", "v": 75}]}
