@@ -152,7 +152,7 @@ def probe():
 def write_series(key, label, unit, points):
     points = sorted(points, key=lambda p: p["d"])[-KEEP_MONTHS:]
     (SERIES_DIR / f"{key}.json").write_text(json.dumps({
-        "key": key, "label": label, "unit": unit, "demo": False,
+        "key": key, "label": label, "unit": unit, "period": "month", "demo": False,
         "updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "points": points,
     }, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -193,8 +193,8 @@ def main():
         last = write_series("px_naphtha_spread", "PX − 나프타 스프레드", "$/t", pts)
         if last:
             ind["px_naphtha_spread"] = {
-                "value": last["v"], "unit": "$/t", "asOf": last["d"],
-                "note": "관세청 수출입단가 기반 근사",
+                "value": last["v"], "unit": "$/t", "asOf": last["d"], "period": "month",
+                "note": "관세청 수출입단가 기반 근사. 약 2개월 지연",
                 "source": "관세청 품목별 수출입실적", "mode": "auto",
             }
     except Exception as e:
