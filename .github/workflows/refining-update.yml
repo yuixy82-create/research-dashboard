@@ -2,8 +2,8 @@ name: refining-update
 
 on:
   schedule:
-    - cron: "30 22 * * *"   # 07:30 KST — 전일 미국 종가 반영분
-    - cron: "0 13 * * *"    # 22:00 KST — 미국 장중 반영분
+    - cron: "30 22 * * *"   # 07:30 KST = 18:30 ET — 전일 정산(14:30 ET) 끝난 뒤. 확정치
+    - cron: "0 13 * * *"    # 22:00 KST = 09:00 ET — 장중. 잠정치로 먼저 붙임
   workflow_dispatch: {}
 
 permissions:
@@ -11,7 +11,6 @@ permissions:
   pages: write
   id-token: write
 
-# Pages 배포를 직접 하므로 다른 배포 워크플로와 같은 그룹을 씀
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -29,11 +28,42 @@ jobs:
         with:
           python-version: "3.12"
 
+      # 선물 — 매 영업일. 크랙 2종. 장중이면 잠정치, 정산 뒤 실행에서 같은 날짜가 확정치로 덮임
+      - name: Fetch futures
+        run: python3 refining/scripts/fetch_futures.py
+        continue-on-error: true
+
+      # EIA — 주간 재고만. 스팟 크랙은 선물로 옮김
       - name: Fetch EIA
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
         run: python3 refining/scripts/fetch_eia.py
         continue-on-error: true
+
+      # 값은 그대로인데 타임스탬프만 바뀐 커밋이 쌓이는 것을 막음
+      - name: Discard timestamp-only changes
+        run: |
+          python3 - <<'PY'
+          import json, subprocess
+          files = subprocess.run(["git","diff","--name-only","--","refining/data"],
+                                 capture_output=True, text=True).stdout.split()
+          if not files:
+              print("변경 없음"); raise SystemExit
+          real = []
+          for f in files:
+              try:
+                  old = json.loads(subprocess.run(["git","show",f"HEAD:{f}"],
+                                                  capture_output=True, text=True).stdout)
+                  new = json.load(open(f, encoding="utf-8"))
+              except Exception:
+                  real.append(f); continue
+              old.pop("updatedAt", None); new.pop("updatedAt", None)
+              if old != new:
+                  real.append(f)
+          print("값이 바뀐 파일:", real or "없음 (타임스탬프만 변경)")
+          if not real:
+              subprocess.run(["git","checkout","--","refining/data"])
+          PY
 
       - name: Commit if changed
         run: |
@@ -44,11 +74,10 @@ jobs:
             git commit -m "refining: daily update"
             git push
           else
-            echo "변경 없음"
+            echo "커밋할 변경 없음"
           fi
 
-      # GITHUB_TOKEN으로 만든 커밋은 다른 워크플로를 깨우지 않음(재귀 실행 방지 규칙).
-      # static.yml에 기대면 데이터만 바뀌고 화면은 옛것이 남으므로 여기서 직접 배포함.
+      # GITHUB_TOKEN 커밋은 다른 워크플로를 깨우지 않으므로 여기서 직접 배포함
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
