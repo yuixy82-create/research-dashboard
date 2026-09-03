@@ -3614,9 +3614,9 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 </div>
 
 <div class="card-sec">
-<span class="banner">③ CDS 5Y — 부도 위험 보험료 (bp) <span class="u">코어위브 · 오라클</span></span>
-""" + c_cds + """
-<div class="note">개별 기업의 부도 위험 보험료. 오라클은 AI 최대 차입자라 개별이 아닌 시장 전체 신호로 읽음. 벤더별 호가 차이로 같은 날 수치가 다를 수 있음</div>
+<span class="banner">③ 미국 국채 금리 (%) <span class="u">10년물이 주인공</span></span>
+""" + c_ust + """
+<div class="note"><b>10년물 = 이번 사이클의 대표 축</b> (장기 조달비용·밸류에이션 할인율)</div>
 </div>
 
 <div class="card-sec">
@@ -3643,9 +3643,9 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 </div>
 
 <div class="card-sec">
-<span class="banner">⑦ 미국 국채 금리 (%) <span class="u">10년물이 주인공</span></span>
-""" + c_ust + """
-<div class="note"><b>10년물 = 이번 사이클의 대표 축</b> (장기 조달비용·밸류에이션 할인율)</div>
+<span class="banner">⑦ CDS 5Y — 부도 위험 보험료 (bp) <span class="u">코어위브 · 오라클</span></span>
+""" + c_cds + """
+<div class="note">개별 기업의 부도 위험 보험료. 오라클은 AI 최대 차입자라 개별이 아닌 시장 전체 신호로 읽음. 벤더별 호가 차이로 같은 날 수치가 다를 수 있음</div>
 </div>
 
 <div class="card-sec">
