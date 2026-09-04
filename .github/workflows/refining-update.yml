@@ -49,6 +49,11 @@ jobs:
         run: "& $env:PY refining/scripts/fetch_customs.py"
         continue-on-error: true
 
+      # Group III 기유 — 주간(월·화 리포트). 4cSt FOB Asia 중간값과 Brent 대비 스프레드
+      - name: Fetch lube
+        run: "& $env:PY refining/scripts/fetch_lube.py"
+        continue-on-error: true
+
       # 러너 서비스 계정엔 git이 없어 GitHub API로 커밋(값이 바뀐 파일만)
       - name: Commit if changed
         env:
