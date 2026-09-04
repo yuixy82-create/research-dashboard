@@ -37,7 +37,7 @@ data/series/<key>.json    지표별 시계열. 차트 소스
 ```
 
 `demo: true`이면 카드에 "예시" 배지가 붙음.
-자동 4종(`diesel_crack_1_1` · `crack_3_2_1` · `us_distillate_stock` · `px_naphtha_spread`)은 스크립트가
+자동 6종(`diesel_crack_1_1` · `crack_3_2_1` · `us_distillate_stock` · `px_naphtha_spread` · `group3_price` · `group3_spread`)은 스크립트가
 매 실행마다 파일 전체를 다시 쓰므로 손대지 않음. 나머지는 `scripts/add_point.py`로 점을 추가함(아래 주간 루틴).
 
 ## 데이터 소스
@@ -50,7 +50,7 @@ data/series/<key>.json    지표별 시계열. 차트 소스
 | PX − 나프타 스프레드 | 관세청 품목별 수출입실적 (PX `2902430000` 수출단가 − 나프타 `2710124000` 수입단가) | 자동 · 월간, 약 2개월 지연 |
 | 싱가포르 복합정제마진 · 경유·등유·휘발유 마진 · Ural−Dubai · 미국 가동률 | Petronet · EIA — iM증권 기름뿜뿜 위클리(금)에서 옮겨 적음 | 수동 · 주간 |
 | 사우디 OSP · 러시아 디젤 해상수출 · 중국 정제품 수출 · 러시아 정제설비 피격 | Aramco · Reuters · 해관총서 — 같은 위클리 인용 | 수동 · 월간 |
-| Group III 기유 스프레드 | 관세청 윤활유 기유 `2710195020` 수출단가 기반 산출 예정 | 미연결 |
+| Group III 4cSt FOB Asia · 스프레드 | Lubes'n'Greases 주간 아시아 리포트(중간값) − Brent `BZ=F` × 7.33 (`fetch_lube.py`) | 자동 · 주간(월·화), 매일 확인 |
 
 산출식:
 
@@ -69,7 +69,7 @@ EIA 일간 스팟은 주 1회(수) 배치 공표라 쓰지 않음.
 
 | 잡 | 어디서 | 하는 일 |
 |---|---|---|
-| `fetch` | self-hosted 러너 (메인컴 DESKTOP-THUP7M4) | 야후·EIA·관세청 수집 → GitHub API로 `refining/data` 커밋 |
+| `fetch` | self-hosted 러너 (메인컴 DESKTOP-THUP7M4) | 야후·EIA·관세청·Lubes'n'Greases 수집 → GitHub API로 `refining/data` 커밋 |
 | `deploy` | ubuntu-latest | Pages 배포 (`upload-pages-artifact`가 bash·tar를 요구해 분리) |
 
 | 항목 | 값 |

@@ -282,48 +282,53 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
   <div class="kpis">
     <div class="kpi">
       <div class="lbl">디젤 1:1 크랙</div>
-      <div class="val" data-kpi="diesel_crack_1_1">102.2<span class="u">$/bbl</span></div>
-      <div class="meta" data-kpi-meta="diesel_crack_1_1">26.08.17 장중</div>
+      <div class="val empty" data-kpi="diesel_crack_1_1">—</div>
+      <div class="meta" data-kpi-meta="diesel_crack_1_1">불러오는 중</div>
     </div>
     <div class="kpi">
       <div class="lbl">3-2-1 크랙</div>
       <div class="val empty" data-kpi="crack_3_2_1">—</div>
-      <div class="meta" data-kpi-meta="crack_3_2_1">자동 산출 대기</div>
+      <div class="meta" data-kpi-meta="crack_3_2_1">불러오는 중</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Group III 기유 스프레드</div>
+      <div class="val empty" data-kpi="group3_spread">—</div>
+      <div class="meta" data-kpi-meta="group3_spread">불러오는 중</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Group III 4cSt FOB Asia</div>
+      <div class="val empty" data-kpi="group3_price">—</div>
+      <div class="meta" data-kpi-meta="group3_price">불러오는 중</div>
     </div>
     <div class="kpi">
       <div class="lbl">싱가포르 복합정제마진</div>
       <div class="val empty" data-kpi="sing_grm">—</div>
-      <div class="meta" data-kpi-meta="sing_grm">수치 확보 필요</div>
-    </div>
-    <div class="kpi">
-      <div class="lbl">Group III 기유</div>
-      <div class="val" data-kpi="group3_price">4,000<span class="u">$/t</span></div>
-      <div class="meta" data-kpi-meta="group3_price">26.08 · 전쟁 전 약 3배</div>
+      <div class="meta" data-kpi-meta="sing_grm">불러오는 중</div>
     </div>
     <div class="kpi">
       <div class="lbl">미국 중간유분 재고</div>
-      <div class="val" data-kpi="us_distillate_stock">107.1<span class="u">mb</span></div>
-      <div class="meta" data-kpi-meta="us_distillate_stock">26.08.07 · 1996년 이후 최저</div>
+      <div class="val empty" data-kpi="us_distillate_stock">—</div>
+      <div class="meta" data-kpi-meta="us_distillate_stock">불러오는 중</div>
     </div>
     <div class="kpi">
       <div class="lbl">러시아 디젤 해상수출</div>
-      <div class="val" data-kpi="russia_diesel_export">75<span class="u">만톤</span></div>
-      <div class="meta" data-kpi-meta="russia_diesel_export">26.07 · 전월 −60%</div>
+      <div class="val empty" data-kpi="russia_diesel_export">—</div>
+      <div class="meta" data-kpi-meta="russia_diesel_export">불러오는 중</div>
     </div>
     <div class="kpi">
       <div class="lbl">PX − 나프타 스프레드</div>
       <div class="val empty" data-kpi="px_naphtha_spread">—</div>
-      <div class="meta" data-kpi-meta="px_naphtha_spread">수치 확보 필요</div>
+      <div class="meta" data-kpi-meta="px_naphtha_spread">불러오는 중</div>
     </div>
     <div class="kpi">
       <div class="lbl">사우디 OSP (Arab Light)</div>
-      <div class="val" data-kpi="saudi_osp_light">−2.0<span class="u">$/bbl</span></div>
-      <div class="meta" data-kpi-meta="saudi_osp_light">26.09월분 · 전월 −0.5</div>
+      <div class="val empty" data-kpi="saudi_osp_light">—</div>
+      <div class="meta" data-kpi-meta="saudi_osp_light">불러오는 중</div>
     </div>
     <div class="kpi">
       <div class="lbl">중국 정제품 수출</div>
-      <div class="val" data-kpi="china_product_export">465<span class="u">만톤</span></div>
-      <div class="meta" data-kpi-meta="china_product_export">26.07 · YoY −12.9%</div>
+      <div class="val empty" data-kpi="china_product_export">—</div>
+      <div class="meta" data-kpi-meta="china_product_export">불러오는 중</div>
     </div>
   </div>
 
@@ -372,6 +377,19 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
           <div><dt>종목</dt><dd>1:1과의 격차가 벌어질수록 <b>휘발유가 마진을 깎고 있다는 뜻</b>:<br>국내사는 경유 · 항공유 수율이 높아 실제 이익은 1:1 쪽을 더 따라감</dd></div>
         </dl>
       </div>
+      <div class="chart" data-series="group3_spread">
+        <div class="chead">
+          <div class="ctitle">Group III 기유 스프레드<span class="cunit">$/t</span></div>
+          <div class="clast none">—</div>
+        </div>
+        <div class="cplot"></div>
+        <dl class="cmeta">
+          <div><dt>정의</dt><dd>Group III 4cSt FOB Asia 평가 중간값 − Brent 근월물($/bbl × 7.33 bbl/t). 기유 한 톤과 원유 한 톤의 차이</dd></div>
+          <div><dt>출처</dt><dd>Lubes'n'Greases 주간 아시아 리포트(월·화) + NYMEX Brent 선물 · 주간 · <span class="badge auto">자동</span></dd></div>
+          <div><dt>의미</dt><dd><b>윤활부문 이익의 방향</b>. 원유가 올라도 스프레드가 같이 벌어지면 기유 쇼티지가 유지되는 것. 관세청 수출단가(월간·2개월 지연)는 이보다 낮게 나옴: 장기계약·II군 혼합</dd></div>
+          <div><dt>종목</dt><dd><b>S-OIL 2Q26 영업이익의 49.5%가 윤활 부문</b>:<br>SK이노베이션은 SK엔무브가 SK온 CIC로 편입돼 배터리 적자와 상계됨</dd></div>
+        </dl>
+      </div>
       <div class="chart" data-series="us_distillate_stock">
         <div class="chead">
           <div class="ctitle">미국 중간유분 재고<span class="cunit">mb</span></div>
@@ -400,19 +418,6 @@ h3 + ul.body, h3 + details, h3 + .grp{margin-top:14px}
 
     <div class="grp"><span class="gk">월간</span>5일 전후 · 중순 · 하순</div>
     <div class="charts">
-      <div class="chart" data-series="group3_spread">
-        <div class="chead">
-          <div class="ctitle">Group III 기유 스프레드<span class="cunit">$/t</span></div>
-          <div class="clast none">—</div>
-        </div>
-        <div class="cplot"></div>
-        <dl class="cmeta">
-          <div><dt>정의</dt><dd>윤활기유 가격 − 원료 가격</dd></div>
-          <div><dt>출처</dt><dd>관세청 윤활유 기유(2710.19.5020) 수출단가 기반 산출 예정 · 월간 · <span class="badge auto">자동 근사</span></dd></div>
-          <div><dt>의미</dt><dd><b>윤활부문 이익의 방향</b>. 절대값보다 전월 대비 변화율을 봄</dd></div>
-          <div><dt>종목</dt><dd><b>S-OIL 2Q26 영업이익의 49.5%가 윤활 부문</b>:<br>SK이노베이션은 SK엔무브가 SK온 CIC로 편입돼 배터리 적자와 상계됨</dd></div>
-        </dl>
-      </div>
       <div class="chart" data-series="px_naphtha_spread">
         <div class="chead">
           <div class="ctitle">PX − 나프타 스프레드<span class="cunit">$/t</span></div>
