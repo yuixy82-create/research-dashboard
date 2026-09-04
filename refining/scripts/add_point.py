@@ -21,7 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SERIES = ROOT / "data" / "series"
 MANUAL = ROOT / "data" / "manual.json"
-AUTO_KEYS = {"diesel_crack_1_1", "crack_3_2_1", "us_distillate_stock", "px_naphtha_spread"}
+AUTO_KEYS = {"diesel_crack_1_1", "crack_3_2_1", "us_distillate_stock", "px_naphtha_spread", "group3_price", "group3_spread"}
 
 
 def main():
