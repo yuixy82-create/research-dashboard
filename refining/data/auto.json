@@ -1,10 +1,10 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-04T01:31:29+00:00",
+  "updatedAt": "2026-09-04T01:49:08+00:00",
   "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 100.95,
+      "value": 101.02,
       "unit": "$/bbl",
       "asOf": "2026-09-03",
       "note": null,
@@ -12,7 +12,7 @@
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 60.61,
+      "value": 60.5,
       "unit": "$/bbl",
       "asOf": "2026-09-03",
       "note": null,
@@ -35,9 +35,23 @@
       "note": "관세청 수출입단가 기반 근사. 약 2개월 지연",
       "source": "관세청 품목별 수출입실적",
       "mode": "auto"
+    },
+    "group3_price": {
+      "value": 3575,
+      "unit": "$/t",
+      "asOf": "2026-08-31",
+      "note": "4cSt FOB Asia 범위 3,550~3,600",
+      "source": "Lubes'n'Greases 주간 리포트",
+      "mode": "auto"
+    },
+    "group3_spread": {
+      "value": 2912,
+      "unit": "$/t",
+      "asOf": "2026-08-31",
+      "note": "Group III 3,575 − Brent 90.49 × 7.33",
+      "source": "Lubes'n'Greases · NYMEX Brent 선물",
+      "mode": "auto"
     }
   },
-  "errors": [
-    "lube: sitemap: HTTP Error 403: Forbidden"
-  ]
+  "errors": []
 }
