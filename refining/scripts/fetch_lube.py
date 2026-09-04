@@ -36,10 +36,42 @@ BACKFILL = 52             # 첫 실행 때 읽을 글 수
 DELAY = 5                 # robots.txt Crawl-delay: 10 → 첫 실행만 여러 건이라 5초로 완만하게
 
 
+HEADERS = {   # 브라우저와 같은 헤더 묶음. 26.09.04 실측: UA만 주면 403
+    "User-Agent": UA,
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9,ko;q=0.8",
+    "Accept-Encoding": "gzip, deflate",
+    "Sec-Fetch-Dest": "document", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "none", "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1", "Connection": "keep-alive",
+}
+
+
+def _curl(url, timeout):
+    """urllib이 403이면 curl.exe(윈도우 기본 탑재)로. TLS 지문이 달라 WAF를 통과하는 경우가 많음."""
+    import subprocess
+    exe = "curl.exe" if sys.platform.startswith("win") else "curl"
+    r = subprocess.run([exe, "-sSL", "--compressed", "--max-time", str(timeout), "-A", UA,
+                        "-H", "Accept-Language: en-US,en;q=0.9", url],
+                       capture_output=True, timeout=timeout + 10)
+    if r.returncode or not r.stdout:
+        raise RuntimeError(f"curl rc={r.returncode} {r.stderr.decode('utf-8', 'replace')[:120]}")
+    return r.stdout.decode("utf-8", "replace")
+
+
 def get(url, timeout=30):
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "text/html,application/xml,*/*"})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read().decode("utf-8", "replace")
+    import gzip
+    import urllib.error
+    req = urllib.request.Request(url, headers=HEADERS)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read()
+            if r.headers.get("Content-Encoding", "").lower() == "gzip":
+                raw = gzip.decompress(raw)
+            return raw.decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 429, 503):
+            return _curl(url, timeout)
+        raise
 
 
 def sitemap():
@@ -116,9 +148,8 @@ def main():
     try:
         items = sitemap()
     except Exception as e:
-        merge_auto({}, [f"lube: sitemap: {e}"])
-        print("실패:", e)
-        return 1
+        items = []                       # 사이트가 막혀도 기존 점으로 스프레드는 갱신한다
+        errors.append(f"lube: sitemap: {e}")
     todo = [u for u, _ in items if u not in seen][: (BACKFILL if not seen else 8)]
     for i, u in enumerate(todo):
         try:
