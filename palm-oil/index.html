@@ -419,7 +419,7 @@ function stats(a){
 
 /* 우측 라벨형 라인 차트 */
 function line(a,color,dec,name){
-  var W=900,H=300,L=62,PR=618,T=18,B=34;
+  var W=900,H=300,L=58,PR=726,T=18,B=34;
   var xs=a.map(function(p){return ord(p[0])}), ys=a.map(function(p){return p[1]});
   var x0=Math.min.apply(0,xs),x1=Math.max.apply(0,xs);
   var lo=Math.min.apply(0,ys),hi=Math.max.apply(0,ys),pad=(hi-lo)*0.16||1;
@@ -444,14 +444,14 @@ function line(a,color,dec,name){
   var st=stats(a), lx=px(xs[xs.length-1]), ly=py(ys[ys.length-1]);
   ly=Math.min(Math.max(ly,T+16),H-B-18);
   s+='<circle cx="'+px(xs[xs.length-1]).toFixed(1)+'" cy="'+py(ys[ys.length-1]).toFixed(1)+'" r="4" fill="'+color+'"/>';
-  s+='<text x="'+(PR+16)+'" y="'+(ly+1).toFixed(1)+'" font-size="15" font-weight="800" fill="'+color+'">'+esc(name)+' '+fmt(st.last,dec)+' ('+kd(st.date)+')</text>';
-  s+='<text x="'+(PR+16)+'" y="'+(ly+20).toFixed(1)+'" font-size="13" fill="var(--muted)">'+pct(st.d1)+' 직전 관측('+kd(st.prevDate)+')비</text>';
+  s+='<text x="'+(PR+14)+'" y="'+(ly+1).toFixed(1)+'" font-size="15" font-weight="800" fill="'+color+'">'+fmt(st.last,dec)+' ('+kd(st.date)+')</text>';
+  s+='<text x="'+(PR+14)+'" y="'+(ly+20).toFixed(1)+'" font-size="13" fill="var(--muted)">'+pct(st.d1)+' 직전 관측비</text>';
   return s+'</svg>';
 }
 
 /* 우측 라벨형 커브 차트 */
 function curve(rows,date){
-  var W=900,H=300,L=62,PR=618,T=26,B=38;
+  var W=900,H=300,L=58,PR=726,T=26,B=38;
   var ys=rows.map(function(r){return r[1]});
   var lo=Math.min.apply(0,ys)*0.90, hi=Math.max.apply(0,ys)*1.03;
   var py=function(y){return T+(hi-y)/(hi-lo)*(H-T-B)};
@@ -469,8 +469,8 @@ function curve(rows,date){
   });
   var f0=rows[0], fN=rows[rows.length-1], sl=(fN[1]/f0[1]-1)*100;
   var ly=py(fN[1]);
-  s+='<text x="'+(PR+16)+'" y="'+(ly+1).toFixed(1)+'" font-size="15" font-weight="800" fill="var(--brand-heading)">'+km(fN[0])+'월물 '+fmt(fN[1])+' ('+kd(date)+')</text>';
-  s+='<text x="'+(PR+16)+'" y="'+(ly+20).toFixed(1)+'" font-size="13" fill="var(--muted)">'+pct(sl)+' 근월('+fmt(f0[1])+')비</text>';
+  s+='<text x="'+(PR+14)+'" y="'+(ly+1).toFixed(1)+'" font-size="15" font-weight="800" fill="var(--brand-heading)">'+fmt(fN[1])+' ('+km(fN[0])+'월물)</text>';
+  s+='<text x="'+(PR+14)+'" y="'+(ly+20).toFixed(1)+'" font-size="13" fill="var(--muted)">'+pct(sl)+' 근월비</text>';
   return s+'</svg>';
 }
 
