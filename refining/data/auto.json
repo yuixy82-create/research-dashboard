@@ -1,22 +1,22 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-04T01:49:08+00:00",
+  "updatedAt": "2026-09-04T13:04:09+00:00",
   "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 101.02,
+      "value": 98.58,
       "unit": "$/bbl",
-      "asOf": "2026-09-03",
-      "note": null,
-      "source": "NYMEX ULSD · WTI 선물 종가 기반 산출",
+      "asOf": "2026-09-04",
+      "note": "장중 잠정치",
+      "source": "NYMEX ULSD · WTI 선물 장중 기반 산출",
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 60.5,
+      "value": 54.53,
       "unit": "$/bbl",
-      "asOf": "2026-09-03",
-      "note": null,
-      "source": "NYMEX 선물 종가 기반 산출",
+      "asOf": "2026-09-04",
+      "note": "장중 잠정치",
+      "source": "NYMEX 선물 장중 기반 산출",
       "mode": "auto"
     },
     "us_distillate_stock": {
