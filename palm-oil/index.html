@@ -247,20 +247,47 @@ a{color:var(--brand-heading)}
 .cards.wide{grid-template-columns:1fr; gap:20px}
 
 
-/* 트래커 전용 */
+/* ============ 컬러웨이: 민트 (design-skill v1.8) ============ */
+:root{
+  --brand-primary:#215C54; --brand-primary-deep:#173F3A; --brand-heading:#2A756A;
+  --brand-bright:#3EA294; --brand-vivid:#6FC7B8; --brand-mid:#7C9B96;
+  --brand-soft:#B4C9C5; --brand-fill-light:#D8EBE7; --brand-bg-tint:#EDF7F5;
+  --accent-blue:#3F63A8; --accent-blue-bg:#E7ECF7;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --brand-primary:#2A756A; --brand-primary-deep:#173F3A; --brand-heading:#6FD4C2;
+    --brand-bright:#3EA294; --brand-vivid:#6FC7B8; --brand-mid:#5C8A83;
+    --brand-soft:#3F5F5A; --brand-fill-light:#16332F; --brand-bg-tint:#122926;
+    --accent-blue:#8AA6E6; --accent-blue-bg:#1A2138;
+    --paper:#151B1A; --page:#0F1413;
+    --hairline:#28352F; --rowline:#1F2A27;
+  }
+}
+:root[data-theme="dark"]{
+  --brand-primary:#2A756A; --brand-primary-deep:#173F3A; --brand-heading:#6FD4C2;
+  --brand-bright:#3EA294; --brand-vivid:#6FC7B8; --brand-mid:#5C8A83;
+  --brand-soft:#3F5F5A; --brand-fill-light:#16332F; --brand-bg-tint:#122926;
+  --accent-blue:#8AA6E6; --accent-blue-bg:#1A2138;
+  --paper:#151B1A; --page:#0F1413;
+  --hairline:#28352F; --rowline:#1F2A27;
+}
+
+/* ============ 트래커 전용 ============ */
 .cards.kpis{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
 .kpi .delta{font-size:11.5px;font-weight:700;margin-top:2px}
 .up{color:var(--accent-teal)} .dn{color:var(--accent-red)}
 .chart-card{background:var(--paper);border:1px solid var(--hairline);border-radius:3px;
-  padding:16px 18px 12px;box-shadow:var(--shadow);margin-top:20px}
-.chart-card .ch-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.chart-card .ch-t{font-size:15px;font-weight:800;color:var(--brand-heading)}
-.chart-card .ch-v{font-family:var(--font-mono);font-size:19px;font-weight:800;color:var(--text)}
-.chart-card .ch-v .u{font-size:12px;font-weight:600;color:var(--muted)}
-.chart-card svg{display:block;width:100%;height:auto;margin-top:10px}
-.deflist{margin:10px 0 0;font-size:12.5px;line-height:1.9;color:var(--muted)}
-.deflist div{display:flex;gap:10px}
-.deflist b{flex:0 0 44px;color:var(--brand-heading);font-weight:700}
+  box-shadow:var(--shadow);margin-top:20px;overflow:hidden}
+.ch-band{background:var(--brand-primary);color:#fff;padding:8px 14px;
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ch-band .ch-t{font-size:15px;font-weight:800}
+.ch-band .ch-leg{font-size:11.5px;font-weight:600;opacity:.88}
+.chart-card svg{display:block;width:100%;height:auto;padding:12px 14px 0}
+.deflist{margin:6px 0 0;padding:0 16px 14px;font-size:12.5px;line-height:1.85;color:var(--muted)}
+.deflist div{display:flex;gap:10px;align-items:flex-start}
+.deflist b{flex:0 0 40px;color:var(--brand-heading);font-weight:700}
+.deflist .hot{color:var(--accent-red);font-weight:800}
 
 </style>
 </head>
@@ -283,26 +310,7 @@ a{color:var(--brand-heading)}
   <div class="cards kpis" id="kpis"></div>
 
 
-  <h2 class="sec"><span class="no">1장</span>지금 상태</h2>
-  <hr class="sec-rule">
-
-  <p id="state1">
-    세 지표가 같은 방향으로 올라 있음:<br>
-    KPBN은 추적 시작 대비 <b id="k-ytd">—</b>, MPOB는 연초 대비 <b id="m-ytd">—</b>.
-  </p>
-
-  <p>
-    상승의 1차 동인은 엘니뇨 감산이 아니라 <b>유가와 인니 B50 수요</b>임:<br>
-    26.02.28 이란전 개전 이후 에너지 가격이 뛰면서 3월에 한 단계 레벨업했고, 26.07.01 인니 B50 발효로 국내 수요가 추가됨.<br>
-    실물 감산은 아직 지표에 없음.
-  </p>
-
-  <p>
-    <span class="star">★</span><span class="mark" id="star-line">선물 커브가 우상향으로 서 있는 것이 가장 중요한 신호: 시장이 27년 공급 부족을 이미 가격에 넣기 시작했음.</span>
-  </p>
-
-
-  <h2 class="sec"><span class="no">2장</span>지표 3종</h2>
+  <h2 class="sec"><span class="no">1장</span>주요 지표 f/u</h2>
   <hr class="sec-rule">
 
   <div class="banner">최신값과 변동폭</div>
@@ -323,89 +331,40 @@ a{color:var(--brand-heading)}
   </div>
 
   <div class="chart-card">
-    <div class="ch-h">
-      <div class="ch-t">① KPBN 인니 현물 입찰가</div>
-      <div class="ch-v"><span id="k-val">—</span> <span class="u">IDR/kg</span></div>
-    </div>
+    <div class="ch-band"><span class="ch-t">① KPBN 인니 현물 입찰가 (IDR/kg)</span><span class="ch-leg">민트 = 낙찰가 (Franco Dumai)</span></div>
     <div id="chart-k"></div>
     <div class="deflist">
       <div><b>정의</b><span>PT Kharisma Pemasaran Bersama Nusantara 일별 입찰 낙찰가. 기준은 Franco Dumai</span></div>
-      <div><b>출처</b><span>KPBN 입찰 결과 (InfoSAWIT 일별 보도)</span></div>
-      <div><b>의미</b><span>인니 농장이 실제로 수취하는 국내 가격. 단위가 IDR/kg으로 기업 IR 공시 판가와 같음</span></div>
+      <div><b>의미</b><span class="hot">인니 농장이 실제로 수취하는 국내 가격. 단위가 IDR/kg으로 기업 IR 공시 판가와 같음</span></div>
       <div><b>현재</b><span id="k-cap">—</span></div>
+      <div><b>수집</b><span>InfoSAWIT 일별 KPBN 입찰 보도 · 영업일 · 1~2일 지연 · 부가세 별도 · 유찰일 결측</span></div>
     </div>
   </div>
-  <div class="note"><b>Source</b> — InfoSAWIT 일별 KPBN 입찰 보도 · <b>Note</b> — Franco Dumai 기준. 부가세 별도. 유찰일 결측</div>
 
   <div class="chart-card">
-    <div class="ch-h">
-      <div class="ch-t">② MPOB 말레이시아 일일 현물</div>
-      <div class="ch-v"><span id="m-val">—</span> <span class="u">MYR/톤</span></div>
-    </div>
+    <div class="ch-band"><span class="ch-t">② MPOB 말레이시아 일일 현물 (MYR/톤)</span><span class="ch-leg">인디고 = 국내 인도가</span></div>
     <div id="chart-m"></div>
     <div class="deflist">
       <div><b>정의</b><span>말레이시아 팜유청이 고시하는 CPO 국내 인도가 (Local Delivered)</span></div>
-      <div><b>출처</b><span>MPOB BEPI 일일 가격</span></div>
       <div><b>의미</b><span>글로벌 실물 기준선. FCPO 근월물과 1% 내외에서 같이 움직임</span></div>
       <div><b>현재</b><span id="m-cap">—</span></div>
+      <div><b>수집</b><span>MPOB BEPI 일일 가격표 · 영업일 · 당일 · PH는 공휴일, NT는 거래 없음으로 관측치에서 제외</span></div>
     </div>
   </div>
-  <div class="note"><b>Source</b> — MPOB BEPI, Daily Malaysia Prices of Crude Palm Oil · <b>Note</b> — PH는 공휴일, NT는 거래 없음. 해당일은 관측치에서 제외</div>
 
   <div class="chart-card">
-    <div class="ch-h">
-      <div class="ch-t">③ FCPO 선물 커브</div>
-      <div class="ch-v" id="f-val">—</div>
-    </div>
+    <div class="ch-band"><span class="ch-t">③ FCPO 선물 커브 (MYR/톤)</span><span class="ch-leg">진한 민트 = 근월물</span></div>
     <div id="chart-f"></div>
     <div class="deflist">
       <div><b>정의</b><span>Bursa Malaysia Derivatives 월물별 정산가. 첫 막대가 근월물</span></div>
-      <div><b>출처</b><span>Bursa Malaysia Derivatives (InfoSAWIT 일별 보도)</span></div>
       <div><b>의미</b><span>시장이 보는 향후 6개월 수급. 우상향이면 공급 부족을 선반영하는 중</span></div>
       <div><b>현재</b><span id="f-cap">—</span></div>
+      <div><b>수집</b><span>Bursa Malaysia 종가 (InfoSAWIT 경유) · 영업일 · 1~2일 지연 · 연속선물이 아니라 단일 시점의 월물별 커브</span></div>
     </div>
   </div>
-  <div class="note"><b>Source</b> — Bursa Malaysia Derivatives 종가 · <b>Note</b> — 연속선물 시계열이 아니라 단일 시점의 월물별 커브</div>
 
 
-  <h2 class="sec"><span class="no">3장</span>왜 KPBN을 기준으로 보는가</h2>
-  <hr class="sec-rule">
-
-  <p>
-    인니에 농장을 둔 기업은 <b>말레이 가격을 받지 않음</b>:<br>
-    CPO를 인니 국내에 IDR/kg으로 팔고, 국제가와의 차액은 수출세와 수출부담금이 가져감.
-  </p>
-
-  <div class="banner" id="wedge-banner">인니 수출 웨지</div>
-  <div class="tablewrap">
-    <table class="data">
-      <thead><tr><th>항목</th><th class="num">값</th><th>비고</th></tr></thead>
-      <tbody id="wedgebody"></tbody>
-    </table>
-  </div>
-  <div class="note">
-    <b>Source</b> — 인도네시아 무역부 HR CPO 월별 고시 · BPDP 수출부담금 요율 26.03 · <b>Note</b> —
-    부담금 요율은 26.03 확인치이며 이후 개정 여부는 미확인. 웨지 합계는 고시값 기준 산식 계산.
-  </div>
-
-  <p>
-    <span class="mark">웨지는 기준가가 오를수록 구간별로 커지는 구조라, 말레이 선물이 10% 오른다고 인니 농장 실수취가가 10% 오르지 않음.</span><br>
-    반대로 부담금은 B50 보조금 재원이 되어 인니 국내 수요를 밀어올림: 웨지가 전부 손실은 아님.
-  </p>
-
-  <div class="callout olive">
-    두 지표의 갭이 벌어지면 정책 웨지가 커지는 중이고, 좁혀지면 국제가 상승이 농장까지 도달하는 중임.<br>
-    갭 자체가 인니 팜 종목의 실적 전달률을 보여주는 지표임.
-  </div>
-
-  <p>
-    지역 베이시스는 남아 있음:<br>
-    KPBN 입찰 물량은 벨라완·두마이 등 수마트라 중심이고, 동칼리만탄 농장과는 운임·품질 차이가 있음.<br>
-    다만 공개된 인니 국내 지표 중에는 가장 근접한 대리변수임.
-  </p>
-
-
-  <h2 class="sec"><span class="no">4장</span>추후 일정</h2>
+  <h2 class="sec"><span class="no">2장</span>추후 일정</h2>
   <hr class="sec-rule">
 
   <div class="tablewrap">
@@ -414,7 +373,7 @@ a{color:var(--brand-heading)}
       <tbody>
         <tr><td class="key">26.09.10</td><td>CPC ENSO 진단문</td><td>OND 최강 사건 확률 69%의 갱신 여부</td></tr>
         <tr><td class="key">26.09 중순</td><td>MPOB 8월 재고·생산 통계</td><td>재고 감소 전환 시점</td></tr>
-        <tr><td class="key">26.10.01</td><td>인니 10월 HR CPO·수출세 고시</td><td>웨지 확대 여부</td></tr>
+        <tr><td class="key">26.10.01</td><td>인니 10월 HR CPO·수출세 고시</td><td>국제가와 인니 국내가 사이 웨지의 확대 여부</td></tr>
         <tr class="sub"><td class="key">26.10~12</td><td>엘니뇨 OND 피크</td><td>선물 커브의 27년 구간이 더 서는지</td></tr>
         <tr><td class="key">27.1Q~2Q</td><td>팜유 실물 감산 반영</td><td>12~16개월 시차의 도착 시점</td></tr>
       </tbody>
@@ -422,47 +381,10 @@ a{color:var(--brand-heading)}
   </div>
   <div class="note"><b>Note</b> — MPOB 월간 통계는 통상 매월 10일 전후 발표. 정확한 일자는 발표 직전 확인 필요</div>
 
-
-  <h2 class="sec"><span class="no">5장</span>아직 안 나온 것</h2>
-  <hr class="sec-rule">
-
-  <p>아래는 이 문서에서 아직 채우지 못한 항목임:</p>
-
-  <div class="tablewrap">
-    <table class="data">
-      <thead><tr><th>항목</th><th>상태</th></tr></thead>
-      <tbody>
-        <tr><td class="key">동칼리만탄 지역 CPO 가격</td><td>공개 지표 없음. KPBN 수마트라 기준으로 대체</td></tr>
-        <tr><td class="key">FCPO 연속선물 일별 시계열</td><td>무료 공개 소스 미확보. 월물별 커브로 대체</td></tr>
-        <tr><td class="key">인니 수출부담금 최신 요율</td><td>26.03 확인치 10%를 사용. 이후 개정 여부 미확인</td></tr>
-        <tr><td class="key">KPBN 유찰일 대체 지표</td><td>결측 처리 중. 보간하지 않음</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-
-  <h2 class="sec"><span class="no">6장</span>참고</h2>
-  <hr class="sec-rule">
-
-  <p>수집 주기와 방식:</p>
-
-  <div class="tablewrap">
-    <table class="data">
-      <thead><tr><th>지표</th><th>소스</th><th>주기</th><th>지연</th></tr></thead>
-      <tbody>
-        <tr><td class="key">KPBN 인니 현물</td><td>InfoSAWIT 일별 보도</td><td>영업일</td><td>1~2일</td></tr>
-        <tr><td class="key">MPOB 말레이 현물</td><td>MPOB BEPI 일일 가격표</td><td>영업일</td><td>당일</td></tr>
-        <tr><td class="key">FCPO 커브</td><td>Bursa Malaysia (InfoSAWIT 경유)</td><td>영업일</td><td>1~2일</td></tr>
-        <tr><td class="key">HR CPO·수출세</td><td>인도네시아 무역부 고시</td><td>월 1회</td><td>월초</td></tr>
-      </tbody>
-    </table>
-  </div>
-
   <div class="doc-foot">
-    <div><b>Source</b> — MPOB BEPI Daily Malaysia Prices of Crude Palm Oil · KPBN 입찰 결과, InfoSAWIT 일별 보도 · Bursa Malaysia Derivatives · 인도네시아 무역부 HR CPO 고시</div>
+    <div><b>Source</b> — MPOB BEPI Daily Malaysia Prices of Crude Palm Oil · KPBN 입찰 결과, InfoSAWIT 일별 보도 · Bursa Malaysia Derivatives</div>
     <div><b>Note 1</b> — 결측일은 보간하지 않고 비움. 관측 건수는 데이터 파일 기준</div>
-    <div><b>Note 2</b> — 수출 웨지 합계는 고시값 기준 산식 계산치이며 개별 기업의 실제 부담과 다를 수 있음</div>
-    <div><b>Note 3</b> — 본 자료는 개인 기록 목적이며 특정 종목의 매수 · 매도 권유가 아님</div>
+    <div><b>Note 2</b> — 본 자료는 개인 기록 목적이며 특정 종목의 매수 · 매도 권유가 아님</div>
   </div>
 
 </div>
@@ -475,7 +397,9 @@ var fmt=function(v,d){return Number(v).toLocaleString('en-US',{minimumFractionDi
 var pct=function(v){return (v>=0?'+':'')+v.toFixed(1)+'%'};
 var cls=function(v){return v>=0?'up':'dn'};
 var kd=function(s){return s.slice(2,4)+'.'+s.slice(5,7)+'.'+s.slice(8,10)};
+var km=function(s){return s.slice(2,4)+'.'+s.slice(5,7)};
 var ord=function(s){return Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))/864e5};
+var esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')};
 
 function near(a,days){
   var last=ord(a[a.length-1][0]), goal=last-days, best=a[0];
@@ -483,62 +407,78 @@ function near(a,days){
   return best;
 }
 function stats(a){
-  var last=a[a.length-1], r={date:last[0],last:last[1],first:a[0]};
-  [['w',7],['m',30],['q',90]].forEach(function(x){ r[x[0]]=(last[1]-near(a,x[1])[1])/near(a,x[1])[1]*100; });
+  var last=a[a.length-1], prev=a[a.length-2]||last;
+  var r={date:last[0],last:last[1],first:a[0],prevDate:prev[0],
+         d1:prev[1]?(last[1]-prev[1])/prev[1]*100:0};
+  [['w',7],['m',30],['q',90]].forEach(function(x){
+    var p=near(a,x[1]); r[x[0]]=(last[1]-p[1])/p[1]*100;
+  });
   r.ytd=(last[1]-a[0][1])/a[0][1]*100;
   return r;
 }
-function line(a,color,dec){
-  var W=620,H=210,L=8,R=66,T=14,B=24;
+
+/* 우측 라벨형 라인 차트 */
+function line(a,color,dec,name){
+  var W=900,H=300,L=62,PR=618,T=18,B=34;
   var xs=a.map(function(p){return ord(p[0])}), ys=a.map(function(p){return p[1]});
   var x0=Math.min.apply(0,xs),x1=Math.max.apply(0,xs);
-  var lo=Math.min.apply(0,ys),hi=Math.max.apply(0,ys),pad=(hi-lo)*0.18||1;
+  var lo=Math.min.apply(0,ys),hi=Math.max.apply(0,ys),pad=(hi-lo)*0.16||1;
   lo-=pad; hi+=pad;
-  var px=function(x){return L+(x-x0)/(x1-x0)*(W-L-R)}, py=function(y){return T+(hi-y)/(hi-lo)*(H-T-B)};
+  var px=function(x){return L+(x-x0)/(x1-x0)*(PR-L)}, py=function(y){return T+(hi-y)/(hi-lo)*(H-T-B)};
   var pts=a.map(function(p,i){return px(xs[i]).toFixed(1)+','+py(ys[i]).toFixed(1)}).join(' ');
-  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="시계열 추이">';
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(name)+' 시계열 추이">';
   for(var i=0;i<4;i++){
     var yv=lo+pad+(hi-lo-2*pad)*i/3, yy=py(yv);
-    s+='<line x1="'+L+'" y1="'+yy.toFixed(1)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(1)+'" stroke="var(--rowline)" stroke-width="1"/>';
-    s+='<text x="'+(W-R+6)+'" y="'+(yy+3.5).toFixed(1)+'" font-size="9.5" fill="var(--faint)">'+fmt(yv,dec)+'</text>';
+    s+='<line x1="'+L+'" y1="'+yy.toFixed(1)+'" x2="'+PR+'" y2="'+yy.toFixed(1)+'" stroke="var(--rowline)" stroke-width="1"/>';
+    s+='<text x="'+(L-10)+'" y="'+(yy+4).toFixed(1)+'" font-size="12" fill="var(--faint)" text-anchor="end">'+fmt(yv,dec)+'</text>';
   }
   var seen={},lastx=-1e9;
   a.forEach(function(p,i){
     var m=p[0].slice(0,7); if(seen[m])return; seen[m]=1;
-    var xx=Math.min(Math.max(px(xs[i]),L+15),W-R-15);
-    if(xx-lastx<44)return; lastx=xx;
-    s+='<text x="'+xx.toFixed(1)+'" y="'+(H-8)+'" font-size="9.5" fill="var(--faint)" text-anchor="middle">'+p[0].slice(2,4)+'.'+p[0].slice(5,7)+'</text>';
+    var xx=Math.min(Math.max(px(xs[i]),L),PR-18);
+    if(xx-lastx<66)return; lastx=xx;
+    s+='<text x="'+xx.toFixed(1)+'" y="'+(H-12)+'" font-size="12" fill="var(--faint)" text-anchor="middle">'+km(p[0])+'</text>';
   });
-  s+='<path d="M'+px(x0).toFixed(1)+','+(H-B)+' L'+pts.split(' ').join(' L')+' L'+px(x1).toFixed(1)+','+(H-B)+' Z" fill="'+color+'" opacity=".10"/>';
-  s+='<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
-  var lx=px(xs[xs.length-1]),ly=py(ys[ys.length-1]);
-  s+='<circle cx="'+lx.toFixed(1)+'" cy="'+ly.toFixed(1)+'" r="3.4" fill="'+color+'"/>';
-  s+='<text x="'+(lx-6).toFixed(1)+'" y="'+(ly-8).toFixed(1)+'" font-size="11.5" font-weight="800" fill="'+color+'" text-anchor="end">'+fmt(ys[ys.length-1],dec)+'</text>';
+  s+='<path d="M'+px(x0).toFixed(1)+','+(H-B)+' L'+pts.split(' ').join(' L')+' L'+px(x1).toFixed(1)+','+(H-B)+' Z" fill="'+color+'" opacity=".09"/>';
+  s+='<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2.4" stroke-linejoin="round"/>';
+  var st=stats(a), lx=px(xs[xs.length-1]), ly=py(ys[ys.length-1]);
+  ly=Math.min(Math.max(ly,T+16),H-B-18);
+  s+='<circle cx="'+px(xs[xs.length-1]).toFixed(1)+'" cy="'+py(ys[ys.length-1]).toFixed(1)+'" r="4" fill="'+color+'"/>';
+  s+='<text x="'+(PR+16)+'" y="'+(ly+1).toFixed(1)+'" font-size="15" font-weight="800" fill="'+color+'">'+esc(name)+' '+fmt(st.last,dec)+' ('+kd(st.date)+')</text>';
+  s+='<text x="'+(PR+16)+'" y="'+(ly+20).toFixed(1)+'" font-size="13" fill="var(--muted)">'+pct(st.d1)+' 직전 관측('+kd(st.prevDate)+')비</text>';
   return s+'</svg>';
 }
-function curve(rows){
-  var W=620,H=210,L=8,R=66,T=20,B=30;
+
+/* 우측 라벨형 커브 차트 */
+function curve(rows,date){
+  var W=900,H=300,L=62,PR=618,T=26,B=38;
   var ys=rows.map(function(r){return r[1]});
-  var lo=Math.min.apply(0,ys)*0.90, hi=Math.max.apply(0,ys)*1.02;
+  var lo=Math.min.apply(0,ys)*0.90, hi=Math.max.apply(0,ys)*1.03;
   var py=function(y){return T+(hi-y)/(hi-lo)*(H-T-B)};
-  var slot=(W-L-R)/rows.length, s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="FCPO 선물 커브">';
+  var slot=(PR-L)/rows.length, s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="FCPO 선물 커브">';
   for(var i=0;i<4;i++){
     var yv=lo+(hi-lo)*i/3, yy=py(yv);
-    s+='<line x1="'+L+'" y1="'+yy.toFixed(1)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(1)+'" stroke="var(--rowline)" stroke-width="1"/>';
-    s+='<text x="'+(W-R+6)+'" y="'+(yy+3.5).toFixed(1)+'" font-size="9.5" fill="var(--faint)">'+fmt(yv)+'</text>';
+    s+='<line x1="'+L+'" y1="'+yy.toFixed(1)+'" x2="'+PR+'" y2="'+yy.toFixed(1)+'" stroke="var(--rowline)" stroke-width="1"/>';
+    s+='<text x="'+(L-10)+'" y="'+(yy+4).toFixed(1)+'" font-size="12" fill="var(--faint)" text-anchor="end">'+fmt(yv)+'</text>';
   }
   rows.forEach(function(r,i){
-    var cx=L+slot*i+slot/2, bw=slot*0.5, top=py(r[1]);
+    var cx=L+slot*i+slot/2, bw=slot*0.52, top=py(r[1]);
     s+='<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+(H-B-top).toFixed(1)+'" fill="'+(i===0?'var(--brand-primary)':'var(--brand-mid)')+'"/>';
-    s+='<text x="'+cx.toFixed(1)+'" y="'+(top-6).toFixed(1)+'" font-size="11" font-weight="800" fill="var(--brand-heading)" text-anchor="middle">'+fmt(r[1])+'</text>';
-    s+='<text x="'+cx.toFixed(1)+'" y="'+(H-10)+'" font-size="9.5" fill="var(--faint)" text-anchor="middle">'+r[0].slice(2,4)+'.'+r[0].slice(5,7)+'</text>';
+    s+='<text x="'+cx.toFixed(1)+'" y="'+(top-8).toFixed(1)+'" font-size="13" font-weight="800" fill="var(--brand-heading)" text-anchor="middle">'+fmt(r[1])+'</text>';
+    s+='<text x="'+cx.toFixed(1)+'" y="'+(H-14)+'" font-size="12" fill="var(--faint)" text-anchor="middle">'+km(r[0])+'월물</text>';
   });
+  var f0=rows[0], fN=rows[rows.length-1], sl=(fN[1]/f0[1]-1)*100;
+  var ly=py(fN[1]);
+  s+='<text x="'+(PR+16)+'" y="'+(ly+1).toFixed(1)+'" font-size="15" font-weight="800" fill="var(--brand-heading)">'+km(fN[0])+'월물 '+fmt(fN[1])+' ('+kd(date)+')</text>';
+  s+='<text x="'+(PR+16)+'" y="'+(ly+20).toFixed(1)+'" font-size="13" fill="var(--muted)">'+pct(sl)+' 근월('+fmt(f0[1])+')비</text>';
   return s+'</svg>';
 }
+
 function kpi(lbl,num,delta,cap){
   return '<div class="card kpi"><div class="lbl">'+lbl+'</div><div class="num">'+num+'</div>'+
          '<div class="delta '+delta[1]+'">'+delta[0]+'</div><div class="cap">'+cap+'</div></div>';
 }
+
 function render(D){
   var sk=stats(D.kpbn), sm=stats(D.mpob);
   var f=D.fcpo.rows, f0=f[0], fN=f[f.length-1], fslope=(fN[1]/f0[1]-1)*100;
@@ -548,11 +488,7 @@ function render(D){
   $('kpis').innerHTML =
     kpi('KPBN 인니 현물 입찰가', fmt(sk.last), [pct(sk.w)+' 1주 · '+pct(sk.q)+' 3개월', cls(sk.w)], 'IDR/kg · Franco Dumai · '+kd(sk.date)) +
     kpi('MPOB 말레이 일일 현물', fmt(sm.last,1), [pct(sm.w)+' 1주 · '+pct(sm.q)+' 3개월', cls(sm.w)], 'MYR/톤 · Local Delivered · '+kd(sm.date)) +
-    kpi('FCPO 근월물', fmt(f0[1]), [fN[0].slice(2,4)+'.'+fN[0].slice(5,7)+'월물까지 '+pct(fslope), cls(fslope)], 'MYR/톤 · Bursa Malaysia · '+kd(D.fcpo.date));
-
-  $('k-ytd').textContent=pct(sk.ytd); $('m-ytd').textContent=pct(sm.ytd);
-  $('star-line').textContent='선물 커브가 우상향으로 서 있는 것이 가장 중요한 신호: '+
-    fN[0].slice(2,4)+'.'+fN[0].slice(5,7)+'월물이 근월 대비 '+pct(fslope)+'로, 시장이 27년 공급 부족을 이미 가격에 넣기 시작했음.';
+    kpi('FCPO 근월물', fmt(f0[1]), [km(fN[0])+'월물까지 '+pct(fslope), cls(fslope)], 'MYR/톤 · Bursa Malaysia · '+kd(D.fcpo.date));
 
   var row=function(k,name,unit,val,date,s){
     return '<tr'+(k?' class="sub"':'')+'><td class="key">'+name+'</td><td>'+unit+'</td><td class="num">'+val+'</td><td>'+kd(date)+'</td>'+
@@ -563,32 +499,20 @@ function render(D){
     row(1,'KPBN 인니 현물','IDR/kg',fmt(sk.last),sk.date,sk) +
     row(0,'MPOB 말레이 현물','MYR/톤',fmt(sm.last,1),sm.date,sm) +
     row(0,'FCPO 근월물','MYR/톤',fmt(f0[1]),D.fcpo.date,null) +
-    '<tr><td class="key">FCPO '+fN[0].slice(2,4)+'.'+fN[0].slice(5,7)+'월물</td><td>MYR/톤</td><td class="num">'+fmt(fN[1])+
+    '<tr><td class="key">FCPO '+km(fN[0])+'월물</td><td>MYR/톤</td><td class="num">'+fmt(fN[1])+
     '</td><td>'+kd(D.fcpo.date)+'</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">근월 '+pct(fslope)+'</td></tr>';
 
-  $('chart-k').innerHTML=line(D.kpbn,'var(--brand-primary)',0);
-  $('chart-m').innerHTML=line(D.mpob,'var(--accent-blue)',0);
-  $('chart-f').innerHTML=curve(f);
+  $('chart-k').innerHTML=line(D.kpbn,'var(--brand-primary)',0,'KPBN 낙찰가');
+  $('chart-m').innerHTML=line(D.mpob,'var(--accent-blue)',1,'MPOB 현물');
+  $('chart-f').innerHTML=curve(f,D.fcpo.date);
 
-  $('k-val').textContent=fmt(sk.last);
-  $('m-val').textContent=fmt(sm.last,1);
-  $('f-val').textContent='근월 '+fmt(f0[1])+' → '+fN[0].slice(2,4)+'.'+fN[0].slice(5,7)+'월 '+fmt(fN[1]);
   $('k-cap').textContent=kd(sk.date)+' '+fmt(sk.last)+'. 추적 시작('+kd(sk.first[0])+' '+fmt(sk.first[1])+') 대비 '+pct(sk.ytd);
   $('m-cap').textContent=kd(sm.date)+' '+fmt(sm.last,1)+'. 연초 '+fmt(sm.first[1],1)+' 대비 '+pct(sm.ytd);
-  $('f-cap').textContent=kd(D.fcpo.date)+' 커브 근월 대비 최원월물 '+pct(fslope);
-
-  var L=D.levy, pe=L.hr_cpo*L.pe_rate, tot=L.bk+pe;
-  $('wedge-banner').textContent='인니 수출 웨지 ('+L.month.slice(2,4)+'.'+L.month.slice(5,7)+' 기준)';
-  $('wedgebody').innerHTML =
-    '<tr><td class="key">HR CPO 기준가</td><td class="num">'+L.hr_cpo.toFixed(2)+'</td><td>USD/톤. 무역부 월별 고시</td></tr>'+
-    '<tr><td class="key">수출세 (BK)</td><td class="num">'+L.bk.toFixed(2)+'</td><td>USD/톤. 월별 고시</td></tr>'+
-    '<tr><td class="key">수출부담금 (PE)</td><td class="num">'+pe.toFixed(2)+'</td><td>USD/톤. 기준가의 '+(L.pe_rate*100).toFixed(0)+'% (26.03 요율 기준)</td></tr>'+
-    '<tr class="total"><td>합계 웨지</td><td class="num">'+tot.toFixed(2)+'</td><td>기준가의 약 '+(tot/L.hr_cpo*100).toFixed(1)+'%</td></tr>';
+  $('f-cap').textContent=kd(D.fcpo.date)+' 커브 근월 '+fmt(f0[1])+' → '+km(fN[0])+'월물 '+fmt(fN[1])+', '+pct(fslope);
 }
 fetch('./data/series.json?t='+Date.now()).then(function(r){return r.json()}).then(render)
   .catch(function(){ render(window.SEED); });
 })();
-
 </script>
 </body>
 </html>
