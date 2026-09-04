@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>팜유 가격 트래커 · 리서치 아카이브</title>
+<style>
+/* ============================================================
+   github-report / report.css  v1.0 (26.08.24)
+   깃허브 페이지스 장문 리서치 문서 레이아웃
+   색 토큰은 design-skill/assets/tokens.json 과 동일
+   ============================================================ */
+
+:root{
+  /* ---- brand (olive) ---- */
+  --brand-primary:#4A5228; --brand-primary-deep:#3E461F;
+  --brand-heading:#5F6C2C; --brand-bright:#819434; --brand-vivid:#A2B84A;
+  --brand-mid:#8F9678; --brand-soft:#BDC0B0;
+  --brand-fill-light:#E3E6D2; --brand-bg-tint:#F3F4EA;
+
+  /* ---- accent (기능색) ---- */
+  --accent-teal:#2E97A7;  --accent-teal-bg:#E6F2F4;
+  --accent-blue:#4587B2;  --accent-blue-bg:#E3EEF5;
+  --accent-red:#B7332B;   --accent-red-bg:#FBEDEA;
+  --accent-gold:#D9A62E;  --accent-gold-bg:#FAF3E0;
+
+  /* ---- neutral ---- */
+  --text:#3A3A3A; --muted:#6E6E6E; --faint:#9B9B9B;
+  --hairline:#D8D8D8; --rowline:#EFEFEF; --compare-gray:#ABABAB;
+  --paper:#FFFFFF; --page:#F7F7F2;
+
+  --shadow:0 1px 3px rgba(58,58,58,.09);
+  --font-sans:"Pretendard","Pretendard Variable","Noto Sans KR",
+              "Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  /* ---- 간격 규격 (legibility.md 1장) ---- */
+  --gap-chapter:156px;   /* 장 위 — 줄이지 말 것 */
+  --gap-band:130px;      /* 짙은 밴드형 장 구분 위 */
+  --gap-section:48px;    /* 절 위 */
+  --gap-para:26px;       /* 문단 위 */
+  --gap-block:20px;      /* 문단 ↔ 표·차트 */
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --brand-heading:#B9CC66; --brand-primary:#5F6C2C;
+    --brand-fill-light:#2B3119; --brand-bg-tint:#22261A;
+    --brand-soft:#5A6142; --brand-mid:#7C8757;
+    --accent-gold:#E0B554; --accent-gold-bg:#33290F;
+    --accent-red:#E8837A;  --accent-red-bg:#341F1C;
+    --accent-teal:#6FC2CE; --accent-teal-bg:#122A2E;
+    --accent-blue:#7FB3D5; --accent-blue-bg:#16232C;
+    --text:#E9EBDD; --muted:#A2A593; --faint:#7B7E6D;
+    --hairline:#343829; --rowline:#282C1F; --compare-gray:#6E7161;
+    --paper:#1C1F16; --page:#14160F;
+    --shadow:0 1px 3px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --brand-heading:#B9CC66; --brand-primary:#5F6C2C;
+  --brand-fill-light:#2B3119; --brand-bg-tint:#22261A;
+  --brand-soft:#5A6142; --brand-mid:#7C8757;
+  --accent-gold:#E0B554; --accent-gold-bg:#33290F;
+  --accent-red:#E8837A;  --accent-red-bg:#341F1C;
+  --accent-teal:#6FC2CE; --accent-teal-bg:#122A2E;
+  --accent-blue:#7FB3D5; --accent-blue-bg:#16232C;
+  --text:#E9EBDD; --muted:#A2A593; --faint:#7B7E6D;
+  --hairline:#343829; --rowline:#282C1F; --compare-gray:#6E7161;
+  --paper:#1C1F16; --page:#14160F;
+  --shadow:0 1px 3px rgba(0,0,0,.45);
+}
+
+/* ============ 골격 ============ */
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--page); color:var(--text);
+  font-family:var(--font-sans); font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased; line-height:1.7;
+}
+.doc{
+  max-width:1000px; margin:0 auto; padding:44px 24px 96px;
+  background:var(--paper);
+}
+
+/* ============ 표지 ============ */
+.doc-header{margin-bottom:20px}
+.kicker{
+  font-family:var(--font-mono); font-size:11px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--brand-heading);
+  margin-bottom:8px;
+}
+.page-title{
+  margin:2px 0 4px; font-size:31px; font-weight:800;
+  letter-spacing:-.02em; line-height:1.2; color:var(--brand-heading);
+  text-wrap:balance;
+}
+.page-sub{margin:0; font-size:16px; color:var(--muted)}
+.title-rule{border:0; border-top:3px solid var(--brand-primary); width:88px; margin:12px 0 0}
+.stamp{font-family:var(--font-mono); font-size:11.5px; color:var(--faint); margin-top:10px}
+
+/* ============ 장(章) — 간격이 핵심 ============ */
+.sec{
+  margin-top:var(--gap-chapter);   /* 156px. 줄이지 말 것 */
+  margin-bottom:8px;
+  font-size:25px; font-weight:800; letter-spacing:-.025em;
+  color:var(--brand-heading);
+}
+.sec .no{color:var(--brand-primary); margin-right:8px}
+.sec-rule{border:0; border-top:1.5px solid var(--brand-heading); margin:0 0 12px}
+
+/* 짙은 밴드형 장 구분 (표지급 전환에만) */
+.section-divider{
+  margin-top:var(--gap-band); margin-bottom:24px;
+  background:var(--brand-primary); color:#fff; padding:44px 48px;
+  display:flex; align-items:center; gap:22px;
+}
+.section-divider h2{margin:0; font-size:25px; font-weight:800; color:#fff}
+
+/* 첫 장은 표지 바로 아래라 큰 여백 불필요 */
+.doc-header + .sec, .lead + .sec{margin-top:64px}
+
+/* ============ 절(節) · 본문 ============ */
+/* 절 제목 — 본문(15px)보다 반드시 커야 함 */
+h3, .sec-h{margin:var(--gap-section) 0 12px; font-size:18.5px; font-weight:800; letter-spacing:-.015em; color:var(--brand-heading)}
+h3:first-of-type, .sec-h:first-of-type{margin-top:26px}
+/* 소분류 */
+.sub-h{margin:32px 0 10px; font-size:15px; font-weight:800; color:var(--text)}
+p{margin:var(--gap-para) 0 10px; font-size:15px; line-height:1.75; max-width:74ch}
+.lead{margin:12px 0 0; font-size:15px; color:var(--muted); max-width:74ch}
+
+/* 블록 여백: 문장과 표·차트가 붙지 않게 — 블록은 기본으로 띄운다 */
+.tablewrap, .chartbox, .callout, .cards, .banner, figure, details{
+  margin-top:var(--gap-block);
+}
+/* 예외 — 한 묶음으로 읽혀야 하는 짝은 붙인다 */
+.banner + .tablewrap, .banner + .chartbox,
+.sub-h + .tablewrap, .sub-h + .chartbox, .sub-h + .banner{margin-top:0}
+/* 각주는 표·차트에 바짝 붙인다 */
+.tablewrap + .note, .chartbox + .note, .tablewrap + .src, .chartbox + .src{margin-top:8px}
+
+/* ============ 강조 4단 위계 ============ */
+b, strong{font-weight:700}
+.hl{color:var(--brand-heading); font-weight:700}
+.mark{
+  background:var(--accent-gold-bg); padding:1px 4px;
+  font-weight:800; border-radius:2px;
+  box-shadow:0 0 0 1px var(--accent-gold-bg);
+}
+.star{color:var(--accent-gold); font-weight:800; margin-right:4px}
+.pos{color:var(--accent-teal); font-weight:700}
+.neg{color:var(--accent-red);  font-weight:700}
+.ref{color:var(--accent-blue);  font-weight:700}
+
+/* ============ 표 ============ */
+.tablewrap{overflow-x:auto; border-radius:3px; box-shadow:var(--shadow)}
+table.data{
+  width:100%; min-width:520px; border-collapse:collapse;
+  background:var(--paper); font-size:13.5px;
+}
+table.data thead th{
+  background:var(--brand-primary); color:#fff; font-weight:700;
+  font-size:12.5px; padding:7px 9px; text-align:left; white-space:nowrap;
+}
+table.data td{padding:8px 10px; border-bottom:1px solid var(--rowline); vertical-align:top}
+table.data tbody tr:last-child td{border-bottom:0}
+table.data td.num, table.data th.num{
+  text-align:right; font-family:var(--font-mono); white-space:nowrap;
+}
+table.data td.key{font-weight:700; white-space:nowrap}
+
+/* 강조 행 — 한 표에서 절반을 넘기지 말 것 */
+table.data tr.sub td{background:var(--brand-fill-light)}
+/* 합계 행 — 배경색이 아니라 굵게 + 윗선 */
+table.data tr.total td{font-weight:800; border-top:1.5px solid var(--text)}
+/* 경고 행 — 페이지당 1~2개 */
+table.data tr.warn td{background:var(--accent-red-bg)}
+
+/* ============ 콜아웃 ============ */
+.callout{padding:14px 18px; font-size:14px; line-height:1.65; border-left:3px solid}
+.callout.olive{background:var(--brand-bg-tint); border-color:var(--brand-primary); color:var(--text)}
+.callout.teal {background:var(--accent-teal-bg); border-color:var(--accent-teal)}
+.callout.red  {background:var(--accent-red-bg);  border-color:var(--accent-red)}
+.callout.gold {background:var(--accent-gold-bg); border-color:var(--accent-gold)}
+
+/* ============ 배너바 (표·차트 제목) ============ */
+.banner{
+  background:var(--brand-primary); color:#fff;
+  font-size:14px; font-weight:700; padding:6px 12px; display:block;
+}
+
+/* ============ 카드 · KPI ============ */
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px}
+.card{
+  background:var(--paper); border:1px solid var(--hairline);
+  border-radius:3px; padding:14px 16px; box-shadow:var(--shadow);
+}
+.kpi .lbl{font-size:11.5px; color:var(--muted); font-weight:600}
+.kpi .num{font-size:26px; font-weight:800; color:var(--brand-heading); font-family:var(--font-mono)}
+.kpi .cap{font-size:10.5px; color:var(--faint); margin-top:4px}
+
+/* ============ 차트 ============ */
+.chartbox{
+  background:var(--paper); border:1px solid var(--hairline);
+  border-radius:3px; padding:18px 16px; overflow-x:auto; box-shadow:var(--shadow);
+}
+.chartbox svg{display:block; width:100%; height:auto; color:var(--text)}
+
+/* ============ 각주 ============ */
+.note, .src{
+  margin-top:8px; padding-top:6px; border-top:1px solid var(--hairline);
+  font-size:10px; line-height:1.7; color:var(--faint);
+}
+.note b, .src b{color:var(--muted)}
+.doc-foot{
+  margin-top:72px; padding-top:16px; border-top:1px solid var(--hairline);
+  font-size:11.5px; line-height:1.7; color:var(--faint);
+  display:flex; flex-direction:column; gap:5px;
+}
+
+/* ============ 접이식 ============ */
+details{border:1px solid var(--hairline); border-radius:3px; background:var(--paper)}
+details summary{padding:10px 14px; font-size:14px; font-weight:700; cursor:pointer; color:var(--brand-heading)}
+details[open] summary{border-bottom:1px solid var(--hairline)}
+details .inner{padding:14px}
+
+/* ============ 링크 · 다운로드 ============ */
+a{color:var(--brand-heading)}
+.dl{
+  display:inline-block; margin-top:var(--gap-block);
+  background:var(--brand-primary); color:#fff; text-decoration:none;
+  font-size:14px; font-weight:700; padding:10px 18px; border-radius:3px;
+}
+
+/* ============ 모바일 ============ */
+@media (max-width:640px){
+  :root{--gap-chapter:104px; --gap-band:88px; --gap-section:36px}
+  .doc{padding:28px 16px 64px}
+  .page-title{font-size:26px}
+  .sec{font-size:20px}
+  h3, .sec-h{font-size:17px}
+  .section-divider{padding:28px 24px}
+}
+
+/* ============ 반복 열람 카드 — 한 줄에 하나 ============ */
+/* legibility.md 6-1장. 자주 보는 블록은 전폭으로 크게 */
+.cards.wide{grid-template-columns:1fr; gap:20px}
+
+
+/* 트래커 전용 */
+.cards.kpis{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.kpi .delta{font-size:11.5px;font-weight:700;margin-top:2px}
+.up{color:var(--accent-teal)} .dn{color:var(--accent-red)}
+.chart-card{background:var(--paper);border:1px solid var(--hairline);border-radius:3px;
+  padding:16px 18px 12px;box-shadow:var(--shadow);margin-top:20px}
+.chart-card .ch-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.chart-card .ch-t{font-size:15px;font-weight:800;color:var(--brand-heading)}
+.chart-card .ch-v{font-family:var(--font-mono);font-size:19px;font-weight:800;color:var(--text)}
+.chart-card .ch-v .u{font-size:12px;font-weight:600;color:var(--muted)}
+.chart-card svg{display:block;width:100%;height:auto;margin-top:10px}
+.deflist{margin:10px 0 0;font-size:12.5px;line-height:1.9;color:var(--muted)}
+.deflist div{display:flex;gap:10px}
+.deflist b{flex:0 0 44px;color:var(--brand-heading);font-weight:700}
+
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header class="doc-header">
+    <div class="kicker">Palm Oil · 리서치</div>
+    <h1 class="page-title">팜유 가격 트래커</h1>
+    <p class="page-sub">인니 현물 · 말레이 현물 · 말레이 선물 커브</p>
+    <hr class="title-rule">
+    <div class="stamp" id="stamp">기준일 —</div>
+  </header>
+
+  <p class="lead">
+    국내 팜 관련 종목의 손익은 말레이시아 선물이 아니라 <b>농장이 실제로 받는 인니 국내 가격</b>에서 결정됨:<br>
+    세 지표를 나란히 두고 국제가 상승분이 인니 농장까지 얼마나 도달하는지를 추적함.
+  </p>
+
+  <div class="cards kpis" id="kpis"></div>
+
+
+  <h2 class="sec"><span class="no">1장</span>지금 상태</h2>
+  <hr class="sec-rule">
+
+  <p id="state1">
+    세 지표가 같은 방향으로 올라 있음:<br>
+    KPBN은 추적 시작 대비 <b id="k-ytd">—</b>, MPOB는 연초 대비 <b id="m-ytd">—</b>.
+  </p>
+
+  <p>
+    상승의 1차 동인은 엘니뇨 감산이 아니라 <b>유가와 인니 B50 수요</b>임:<br>
+    26.02.28 이란전 개전 이후 에너지 가격이 뛰면서 3월에 한 단계 레벨업했고, 26.07.01 인니 B50 발효로 국내 수요가 추가됨.<br>
+    실물 감산은 아직 지표에 없음.
+  </p>
+
+  <p>
+    <span class="star">★</span><span class="mark" id="star-line">선물 커브가 우상향으로 서 있는 것이 가장 중요한 신호: 시장이 27년 공급 부족을 이미 가격에 넣기 시작했음.</span>
+  </p>
+
+
+  <h2 class="sec"><span class="no">2장</span>지표 3종</h2>
+  <hr class="sec-rule">
+
+  <div class="banner">최신값과 변동폭</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>지표</th><th>단위</th><th class="num">최신값</th><th>기준일</th>
+          <th class="num">1주</th><th class="num">1개월</th><th class="num">3개월</th><th class="num">추적 시작</th>
+        </tr>
+      </thead>
+      <tbody id="sumtbody"></tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Note</b> — 추적 시작 기준일은 KPBN 25.10.31, MPOB 26.01.02. 변동폭은 최신 관측치와 해당 시점 최근접 관측치의 비교.
+    KPBN은 유찰(withdraw)일에 가격이 나오지 않아 시계열에 결측이 있음. FCPO는 단일 시점의 월물별 값이므로 기간 변동폭을 계산하지 않음.
+  </div>
+
+  <div class="chart-card">
+    <div class="ch-h">
+      <div class="ch-t">① KPBN 인니 현물 입찰가</div>
+      <div class="ch-v"><span id="k-val">—</span> <span class="u">IDR/kg</span></div>
+    </div>
+    <div id="chart-k"></div>
+    <div class="deflist">
+      <div><b>정의</b><span>PT Kharisma Pemasaran Bersama Nusantara 일별 입찰 낙찰가. 기준은 Franco Dumai</span></div>
+      <div><b>출처</b><span>KPBN 입찰 결과 (InfoSAWIT 일별 보도)</span></div>
+      <div><b>의미</b><span>인니 농장이 실제로 수취하는 국내 가격. 단위가 IDR/kg으로 기업 IR 공시 판가와 같음</span></div>
+      <div><b>현재</b><span id="k-cap">—</span></div>
+    </div>
+  </div>
+  <div class="note"><b>Source</b> — InfoSAWIT 일별 KPBN 입찰 보도 · <b>Note</b> — Franco Dumai 기준. 부가세 별도. 유찰일 결측</div>
+
+  <div class="chart-card">
+    <div class="ch-h">
+      <div class="ch-t">② MPOB 말레이시아 일일 현물</div>
+      <div class="ch-v"><span id="m-val">—</span> <span class="u">MYR/톤</span></div>
+    </div>
+    <div id="chart-m"></div>
+    <div class="deflist">
+      <div><b>정의</b><span>말레이시아 팜유청이 고시하는 CPO 국내 인도가 (Local Delivered)</span></div>
+      <div><b>출처</b><span>MPOB BEPI 일일 가격</span></div>
+      <div><b>의미</b><span>글로벌 실물 기준선. FCPO 근월물과 1% 내외에서 같이 움직임</span></div>
+      <div><b>현재</b><span id="m-cap">—</span></div>
+    </div>
+  </div>
+  <div class="note"><b>Source</b> — MPOB BEPI, Daily Malaysia Prices of Crude Palm Oil · <b>Note</b> — PH는 공휴일, NT는 거래 없음. 해당일은 관측치에서 제외</div>
+
+  <div class="chart-card">
+    <div class="ch-h">
+      <div class="ch-t">③ FCPO 선물 커브</div>
+      <div class="ch-v" id="f-val">—</div>
+    </div>
+    <div id="chart-f"></div>
+    <div class="deflist">
+      <div><b>정의</b><span>Bursa Malaysia Derivatives 월물별 정산가. 첫 막대가 근월물</span></div>
+      <div><b>출처</b><span>Bursa Malaysia Derivatives (InfoSAWIT 일별 보도)</span></div>
+      <div><b>의미</b><span>시장이 보는 향후 6개월 수급. 우상향이면 공급 부족을 선반영하는 중</span></div>
+      <div><b>현재</b><span id="f-cap">—</span></div>
+    </div>
+  </div>
+  <div class="note"><b>Source</b> — Bursa Malaysia Derivatives 종가 · <b>Note</b> — 연속선물 시계열이 아니라 단일 시점의 월물별 커브</div>
+
+
+  <h2 class="sec"><span class="no">3장</span>왜 KPBN을 기준으로 보는가</h2>
+  <hr class="sec-rule">
+
+  <p>
+    인니에 농장을 둔 기업은 <b>말레이 가격을 받지 않음</b>:<br>
+    CPO를 인니 국내에 IDR/kg으로 팔고, 국제가와의 차액은 수출세와 수출부담금이 가져감.
+  </p>
+
+  <div class="banner" id="wedge-banner">인니 수출 웨지</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>항목</th><th class="num">값</th><th>비고</th></tr></thead>
+      <tbody id="wedgebody"></tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Source</b> — 인도네시아 무역부 HR CPO 월별 고시 · BPDP 수출부담금 요율 26.03 · <b>Note</b> —
+    부담금 요율은 26.03 확인치이며 이후 개정 여부는 미확인. 웨지 합계는 고시값 기준 산식 계산.
+  </div>
+
+  <p>
+    <span class="mark">웨지는 기준가가 오를수록 구간별로 커지는 구조라, 말레이 선물이 10% 오른다고 인니 농장 실수취가가 10% 오르지 않음.</span><br>
+    반대로 부담금은 B50 보조금 재원이 되어 인니 국내 수요를 밀어올림: 웨지가 전부 손실은 아님.
+  </p>
+
+  <div class="callout olive">
+    두 지표의 갭이 벌어지면 정책 웨지가 커지는 중이고, 좁혀지면 국제가 상승이 농장까지 도달하는 중임.<br>
+    갭 자체가 인니 팜 종목의 실적 전달률을 보여주는 지표임.
+  </div>
+
+  <p>
+    지역 베이시스는 남아 있음:<br>
+    KPBN 입찰 물량은 벨라완·두마이 등 수마트라 중심이고, 동칼리만탄 농장과는 운임·품질 차이가 있음.<br>
+    다만 공개된 인니 국내 지표 중에는 가장 근접한 대리변수임.
+  </p>
+
+
+  <h2 class="sec"><span class="no">4장</span>추후 일정</h2>
+  <hr class="sec-rule">
+
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>시점</th><th>이벤트</th><th>확인할 것</th></tr></thead>
+      <tbody>
+        <tr><td class="key">26.09.10</td><td>CPC ENSO 진단문</td><td>OND 최강 사건 확률 69%의 갱신 여부</td></tr>
+        <tr><td class="key">26.09 중순</td><td>MPOB 8월 재고·생산 통계</td><td>재고 감소 전환 시점</td></tr>
+        <tr><td class="key">26.10.01</td><td>인니 10월 HR CPO·수출세 고시</td><td>웨지 확대 여부</td></tr>
+        <tr class="sub"><td class="key">26.10~12</td><td>엘니뇨 OND 피크</td><td>선물 커브의 27년 구간이 더 서는지</td></tr>
+        <tr><td class="key">27.1Q~2Q</td><td>팜유 실물 감산 반영</td><td>12~16개월 시차의 도착 시점</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>Note</b> — MPOB 월간 통계는 통상 매월 10일 전후 발표. 정확한 일자는 발표 직전 확인 필요</div>
+
+
+  <h2 class="sec"><span class="no">5장</span>아직 안 나온 것</h2>
+  <hr class="sec-rule">
+
+  <p>아래는 이 문서에서 아직 채우지 못한 항목임:</p>
+
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>항목</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td class="key">동칼리만탄 지역 CPO 가격</td><td>공개 지표 없음. KPBN 수마트라 기준으로 대체</td></tr>
+        <tr><td class="key">FCPO 연속선물 일별 시계열</td><td>무료 공개 소스 미확보. 월물별 커브로 대체</td></tr>
+        <tr><td class="key">인니 수출부담금 최신 요율</td><td>26.03 확인치 10%를 사용. 이후 개정 여부 미확인</td></tr>
+        <tr><td class="key">KPBN 유찰일 대체 지표</td><td>결측 처리 중. 보간하지 않음</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <h2 class="sec"><span class="no">6장</span>참고</h2>
+  <hr class="sec-rule">
+
+  <p>수집 주기와 방식:</p>
+
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>지표</th><th>소스</th><th>주기</th><th>지연</th></tr></thead>
+      <tbody>
+        <tr><td class="key">KPBN 인니 현물</td><td>InfoSAWIT 일별 보도</td><td>영업일</td><td>1~2일</td></tr>
+        <tr><td class="key">MPOB 말레이 현물</td><td>MPOB BEPI 일일 가격표</td><td>영업일</td><td>당일</td></tr>
+        <tr><td class="key">FCPO 커브</td><td>Bursa Malaysia (InfoSAWIT 경유)</td><td>영업일</td><td>1~2일</td></tr>
+        <tr><td class="key">HR CPO·수출세</td><td>인도네시아 무역부 고시</td><td>월 1회</td><td>월초</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-foot">
+    <div><b>Source</b> — MPOB BEPI Daily Malaysia Prices of Crude Palm Oil · KPBN 입찰 결과, InfoSAWIT 일별 보도 · Bursa Malaysia Derivatives · 인도네시아 무역부 HR CPO 고시</div>
+    <div><b>Note 1</b> — 결측일은 보간하지 않고 비움. 관측 건수는 데이터 파일 기준</div>
+    <div><b>Note 2</b> — 수출 웨지 합계는 고시값 기준 산식 계산치이며 개별 기업의 실제 부담과 다를 수 있음</div>
+    <div><b>Note 3</b> — 본 자료는 개인 기록 목적이며 특정 종목의 매수 · 매도 권유가 아님</div>
+  </div>
+
+</div>
+
+<script>window.SEED={"updated":"2026-09-04","kpbn":[["2025-10-31",14075.0],["2025-11-27",14200.0],["2025-12-10",14315.0],["2025-12-11",14414.0],["2026-01-05",14175.0],["2026-01-08",14302.0],["2026-01-15",14355.0],["2026-01-22",14825.0],["2026-01-23",14800.0],["2026-01-27",15108.0],["2026-01-28",15288.0],["2026-01-29",15375.0],["2026-01-30",15225.0],["2026-02-02",15125.0],["2026-03-17",15825.0],["2026-04-01",16225.0],["2026-04-02",16275.0],["2026-04-08",15900.0],["2026-04-28",15325.0],["2026-05-11",15325.0],["2026-05-12",15150.0],["2026-05-13",15100.0],["2026-05-26",14885.0],["2026-06-10",15225.0],["2026-06-11",15400.0],["2026-06-12",15450.0],["2026-06-15",15450.0],["2026-06-18",15335.0],["2026-06-19",15600.0],["2026-06-22",15600.0],["2026-06-23",15315.0],["2026-06-24",15650.0],["2026-06-26",15575.0],["2026-06-30",15550.0],["2026-07-01",15675.0],["2026-07-02",15545.0],["2026-07-03",15485.0],["2026-07-06",15362.0],["2026-07-07",15650.0],["2026-07-08",15650.0],["2026-07-20",15777.0],["2026-07-22",15700.0],["2026-07-23",15800.0],["2026-07-24",15900.0],["2026-07-27",15800.0],["2026-07-28",15788.0],["2026-07-30",15800.0],["2026-07-31",15700.0],["2026-08-04",15800.0],["2026-08-06",15850.0],["2026-08-07",15650.0],["2026-08-10",15668.0],["2026-08-11",15702.0],["2026-08-12",15650.0],["2026-08-14",15700.0],["2026-08-18",15835.0],["2026-08-19",15900.0],["2026-08-21",15888.0],["2026-08-25",16000.0],["2026-08-26",15850.0],["2026-08-27",15770.0],["2026-08-28",15800.0],["2026-08-31",15888.0],["2026-09-01",16018.0],["2026-09-02",16000.0]],"mpob":[["2026-01-02",3967.5],["2026-01-05",3976.5],["2026-01-06",3950.0],["2026-01-07",3938.5],["2026-01-08",3968.0],["2026-01-09",4004.0],["2026-01-12",4021.0],["2026-01-13",4022.0],["2026-01-14",4007.0],["2026-01-15",3980.5],["2026-01-16",3993.5],["2026-01-19",4010.5],["2026-01-20",4056.5],["2026-01-21",4081.0],["2026-01-22",4116.0],["2026-01-23",4090.5],["2026-01-26",4111.0],["2026-01-27",4144.5],["2026-01-28",4180.0],["2026-01-29",4221.5],["2026-02-03",4134.0],["2026-02-04",4146.0],["2026-02-05",4132.5],["2026-02-06",4107.5],["2026-02-09",4111.0],["2026-02-10",4082.0],["2026-02-11",4062.5],["2026-02-12",4012.5],["2026-02-13",4013.5],["2026-02-16",4043.0],["2026-02-19",4044.0],["2026-02-20",4072.5],["2026-02-23",4024.5],["2026-02-24",4037.0],["2026-02-25",4037.5],["2026-02-26",4015.0],["2026-02-27",3956.5],["2026-03-02",4030.0],["2026-03-03",4052.5],["2026-03-04",4078.5],["2026-03-05",4123.5],["2026-03-06",4187.0],["2026-03-09",4408.0],["2026-03-10",4332.5],["2026-03-11",4336.5],["2026-03-12",4481.5],["2026-03-13",4492.0],["2026-03-16",4533.5],["2026-03-17",4534.5],["2026-03-18",4473.0],["2026-03-19",4510.0],["2026-03-24",4502.0],["2026-03-25",4466.5],["2026-03-26",4516.0],["2026-03-27",4532.5],["2026-03-30",4599.5],["2026-03-31",4700.0],["2026-04-01",4735.5],["2026-04-02",4740.5],["2026-04-03",4738.0],["2026-04-06",4756.5],["2026-04-07",4758.5],["2026-04-08",4578.0],["2026-04-09",4600.0],["2026-04-10",4570.5],["2026-04-13",4538.5],["2026-04-14",4457.0],["2026-04-15",4429.0],["2026-04-16",4414.5],["2026-04-17",4434.0],["2026-04-20",4437.5],["2026-04-21",4475.5],["2026-04-22",4540.0],["2026-04-23",4562.0],["2026-04-24",4540.0],["2026-04-27",4469.5],["2026-04-28",4484.5],["2026-04-29",4522.5],["2026-04-30",4532.0],["2026-05-04",4566.5],["2026-05-05",4611.5],["2026-05-06",4596.0],["2026-05-07",4502.5],["2026-05-08",4515.0],["2026-05-11",4519.5],["2026-05-12",4472.5],["2026-05-13",4420.0],["2026-05-14",4393.5],["2026-05-15",4407.0],["2026-05-18",4491.0],["2026-05-19",4540.0],["2026-05-20",4558.0],["2026-05-21",4454.5],["2026-05-22",4425.5],["2026-05-25",4408.0],["2026-05-26",4433.5],["2026-05-28",4483.5],["2026-05-29",4484.0],["2026-06-03",4546.0],["2026-06-04",4548.5],["2026-06-05",4477.5],["2026-06-08",4492.0],["2026-06-09",4443.0],["2026-06-10",4464.0],["2026-06-11",4493.0],["2026-06-12",4447.0],["2026-06-15",4379.5],["2026-06-16",4452.5],["2026-06-18",4488.5],["2026-06-19",4510.0],["2026-06-22",4551.5],["2026-06-23",4558.0],["2026-06-24",4553.5],["2026-06-25",4495.0],["2026-06-26",4493.0],["2026-06-29",4496.5],["2026-07-01",4477.5],["2026-07-02",4472.0],["2026-07-03",4445.5],["2026-07-06",4459.5],["2026-07-07",4490.5],["2026-07-08",4495.5],["2026-07-09",4482.0],["2026-07-10",4481.0],["2026-07-13",4466.5],["2026-07-14",4491.0],["2026-07-15",4497.5],["2026-07-16",4492.5],["2026-07-17",4495.5],["2026-07-20",4502.5],["2026-07-21",4497.0],["2026-07-22",4498.0],["2026-07-23",4519.5],["2026-07-24",4603.5],["2026-07-27",4532.5],["2026-07-28",4499.0],["2026-07-29",4515.0],["2026-07-30",4498.0],["2026-08-03",4499.0],["2026-08-04",4509.0],["2026-08-05",4532.0],["2026-08-06",4514.5],["2026-08-07",4510.5],["2026-08-10",4529.5],["2026-08-11",4539.0],["2026-08-12",4519.0],["2026-08-13",4520.0],["2026-08-14",4524.5],["2026-08-17",4526.5],["2026-08-18",4547.5],["2026-08-19",4595.5],["2026-08-20",4626.0],["2026-08-21",4687.5],["2026-08-24",4647.0],["2026-08-26",4596.0],["2026-08-27",4612.5],["2026-08-28",4607.5],["2026-09-01",4662.0],["2026-09-02",4660.0],["2026-09-03",4662.5]],"fcpo":{"date":"2026-09-01","rows":[["2026-09",4649],["2026-10",4853],["2026-11",4973],["2026-12",5072],["2027-01",5203],["2027-02",5237]]},"levy":{"month":"2026-09","hr_cpo":1007.51,"bk":148.0,"pe_rate":0.1}};</script>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+var fmt=function(v,d){return Number(v).toLocaleString('en-US',{minimumFractionDigits:d||0,maximumFractionDigits:d||0})};
+var pct=function(v){return (v>=0?'+':'')+v.toFixed(1)+'%'};
+var cls=function(v){return v>=0?'up':'dn'};
+var kd=function(s){return s.slice(2,4)+'.'+s.slice(5,7)+'.'+s.slice(8,10)};
+var ord=function(s){return Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))/864e5};
+
+function near(a,days){
+  var last=ord(a[a.length-1][0]), goal=last-days, best=a[0];
+  for(var i=0;i<a.length;i++){ if(Math.abs(ord(a[i][0])-goal)<Math.abs(ord(best[0])-goal)) best=a[i]; }
+  return best;
+}
+function stats(a){
+  var last=a[a.length-1], r={date:last[0],last:last[1],first:a[0]};
+  [['w',7],['m',30],['q',90]].forEach(function(x){ r[x[0]]=(last[1]-near(a,x[1])[1])/near(a,x[1])[1]*100; });
+  r.ytd=(last[1]-a[0][1])/a[0][1]*100;
+  return r;
+}
+function line(a,color,dec){
+  var W=620,H=210,L=8,R=66,T=14,B=24;
+  var xs=a.map(function(p){return ord(p[0])}), ys=a.map(function(p){return p[1]});
+  var x0=Math.min.apply(0,xs),x1=Math.max.apply(0,xs);
+  var lo=Math.min.apply(0,ys),hi=Math.max.apply(0,ys),pad=(hi-lo)*0.18||1;
+  lo-=pad; hi+=pad;
+  var px=function(x){return L+(x-x0)/(x1-x0)*(W-L-R)}, py=function(y){return T+(hi-y)/(hi-lo)*(H-T-B)};
+  var pts=a.map(function(p,i){return px(xs[i]).toFixed(1)+','+py(ys[i]).toFixed(1)}).join(' ');
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="시계열 추이">';
+  for(var i=0;i<4;i++){
+    var yv=lo+pad+(hi-lo-2*pad)*i/3, yy=py(yv);
+    s+='<line x1="'+L+'" y1="'+yy.toFixed(1)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(1)+'" stroke="var(--rowline)" stroke-width="1"/>';
+    s+='<text x="'+(W-R+6)+'" y="'+(yy+3.5).toFixed(1)+'" font-size="9.5" fill="var(--faint)">'+fmt(yv,dec)+'</text>';
+  }
+  var seen={},lastx=-1e9;
+  a.forEach(function(p,i){
+    var m=p[0].slice(0,7); if(seen[m])return; seen[m]=1;
+    var xx=Math.min(Math.max(px(xs[i]),L+15),W-R-15);
+    if(xx-lastx<44)return; lastx=xx;
+    s+='<text x="'+xx.toFixed(1)+'" y="'+(H-8)+'" font-size="9.5" fill="var(--faint)" text-anchor="middle">'+p[0].slice(2,4)+'.'+p[0].slice(5,7)+'</text>';
+  });
+  s+='<path d="M'+px(x0).toFixed(1)+','+(H-B)+' L'+pts.split(' ').join(' L')+' L'+px(x1).toFixed(1)+','+(H-B)+' Z" fill="'+color+'" opacity=".10"/>';
+  s+='<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
+  var lx=px(xs[xs.length-1]),ly=py(ys[ys.length-1]);
+  s+='<circle cx="'+lx.toFixed(1)+'" cy="'+ly.toFixed(1)+'" r="3.4" fill="'+color+'"/>';
+  s+='<text x="'+(lx-6).toFixed(1)+'" y="'+(ly-8).toFixed(1)+'" font-size="11.5" font-weight="800" fill="'+color+'" text-anchor="end">'+fmt(ys[ys.length-1],dec)+'</text>';
+  return s+'</svg>';
+}
+function curve(rows){
+  var W=620,H=210,L=8,R=66,T=20,B=30;
+  var ys=rows.map(function(r){return r[1]});
+  var lo=Math.min.apply(0,ys)*0.90, hi=Math.max.apply(0,ys)*1.02;
+  var py=function(y){return T+(hi-y)/(hi-lo)*(H-T-B)};
+  var slot=(W-L-R)/rows.length, s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="FCPO 선물 커브">';
+  for(var i=0;i<4;i++){
+    var yv=lo+(hi-lo)*i/3, yy=py(yv);
+    s+='<line x1="'+L+'" y1="'+yy.toFixed(1)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(1)+'" stroke="var(--rowline)" stroke-width="1"/>';
+    s+='<text x="'+(W-R+6)+'" y="'+(yy+3.5).toFixed(1)+'" font-size="9.5" fill="var(--faint)">'+fmt(yv)+'</text>';
+  }
+  rows.forEach(function(r,i){
+    var cx=L+slot*i+slot/2, bw=slot*0.5, top=py(r[1]);
+    s+='<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+(H-B-top).toFixed(1)+'" fill="'+(i===0?'var(--brand-primary)':'var(--brand-mid)')+'"/>';
+    s+='<text x="'+cx.toFixed(1)+'" y="'+(top-6).toFixed(1)+'" font-size="11" font-weight="800" fill="var(--brand-heading)" text-anchor="middle">'+fmt(r[1])+'</text>';
+    s+='<text x="'+cx.toFixed(1)+'" y="'+(H-10)+'" font-size="9.5" fill="var(--faint)" text-anchor="middle">'+r[0].slice(2,4)+'.'+r[0].slice(5,7)+'</text>';
+  });
+  return s+'</svg>';
+}
+function kpi(lbl,num,delta,cap){
+  return '<div class="card kpi"><div class="lbl">'+lbl+'</div><div class="num">'+num+'</div>'+
+         '<div class="delta '+delta[1]+'">'+delta[0]+'</div><div class="cap">'+cap+'</div></div>';
+}
+function render(D){
+  var sk=stats(D.kpbn), sm=stats(D.mpob);
+  var f=D.fcpo.rows, f0=f[0], fN=f[f.length-1], fslope=(fN[1]/f0[1]-1)*100;
+
+  $('stamp').textContent='기준일 '+kd(D.updated)+' · 최신 관측 KPBN '+kd(sk.date)+' / MPOB '+kd(sm.date);
+
+  $('kpis').innerHTML =
+    kpi('KPBN 인니 현물 입찰가', fmt(sk.last), [pct(sk.w)+' 1주 · '+pct(sk.q)+' 3개월', cls(sk.w)], 'IDR/kg · Franco Dumai · '+kd(sk.date)) +
+    kpi('MPOB 말레이 일일 현물', fmt(sm.last,1), [pct(sm.w)+' 1주 · '+pct(sm.q)+' 3개월', cls(sm.w)], 'MYR/톤 · Local Delivered · '+kd(sm.date)) +
+    kpi('FCPO 근월물', fmt(f0[1]), [fN[0].slice(2,4)+'.'+fN[0].slice(5,7)+'월물까지 '+pct(fslope), cls(fslope)], 'MYR/톤 · Bursa Malaysia · '+kd(D.fcpo.date));
+
+  $('k-ytd').textContent=pct(sk.ytd); $('m-ytd').textContent=pct(sm.ytd);
+  $('star-line').textContent='선물 커브가 우상향으로 서 있는 것이 가장 중요한 신호: '+
+    fN[0].slice(2,4)+'.'+fN[0].slice(5,7)+'월물이 근월 대비 '+pct(fslope)+'로, 시장이 27년 공급 부족을 이미 가격에 넣기 시작했음.';
+
+  var row=function(k,name,unit,val,date,s){
+    return '<tr'+(k?' class="sub"':'')+'><td class="key">'+name+'</td><td>'+unit+'</td><td class="num">'+val+'</td><td>'+kd(date)+'</td>'+
+      (s?'<td class="num">'+pct(s.w)+'</td><td class="num">'+pct(s.m)+'</td><td class="num">'+pct(s.q)+'</td><td class="num">'+pct(s.ytd)+'</td>'
+        :'<td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td>')+'</tr>';
+  };
+  $('sumtbody').innerHTML =
+    row(1,'KPBN 인니 현물','IDR/kg',fmt(sk.last),sk.date,sk) +
+    row(0,'MPOB 말레이 현물','MYR/톤',fmt(sm.last,1),sm.date,sm) +
+    row(0,'FCPO 근월물','MYR/톤',fmt(f0[1]),D.fcpo.date,null) +
+    '<tr><td class="key">FCPO '+fN[0].slice(2,4)+'.'+fN[0].slice(5,7)+'월물</td><td>MYR/톤</td><td class="num">'+fmt(fN[1])+
+    '</td><td>'+kd(D.fcpo.date)+'</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">근월 '+pct(fslope)+'</td></tr>';
+
+  $('chart-k').innerHTML=line(D.kpbn,'var(--brand-primary)',0);
+  $('chart-m').innerHTML=line(D.mpob,'var(--accent-blue)',0);
+  $('chart-f').innerHTML=curve(f);
+
+  $('k-val').textContent=fmt(sk.last);
+  $('m-val').textContent=fmt(sm.last,1);
+  $('f-val').textContent='근월 '+fmt(f0[1])+' → '+fN[0].slice(2,4)+'.'+fN[0].slice(5,7)+'월 '+fmt(fN[1]);
+  $('k-cap').textContent=kd(sk.date)+' '+fmt(sk.last)+'. 추적 시작('+kd(sk.first[0])+' '+fmt(sk.first[1])+') 대비 '+pct(sk.ytd);
+  $('m-cap').textContent=kd(sm.date)+' '+fmt(sm.last,1)+'. 연초 '+fmt(sm.first[1],1)+' 대비 '+pct(sm.ytd);
+  $('f-cap').textContent=kd(D.fcpo.date)+' 커브 근월 대비 최원월물 '+pct(fslope);
+
+  var L=D.levy, pe=L.hr_cpo*L.pe_rate, tot=L.bk+pe;
+  $('wedge-banner').textContent='인니 수출 웨지 ('+L.month.slice(2,4)+'.'+L.month.slice(5,7)+' 기준)';
+  $('wedgebody').innerHTML =
+    '<tr><td class="key">HR CPO 기준가</td><td class="num">'+L.hr_cpo.toFixed(2)+'</td><td>USD/톤. 무역부 월별 고시</td></tr>'+
+    '<tr><td class="key">수출세 (BK)</td><td class="num">'+L.bk.toFixed(2)+'</td><td>USD/톤. 월별 고시</td></tr>'+
+    '<tr><td class="key">수출부담금 (PE)</td><td class="num">'+pe.toFixed(2)+'</td><td>USD/톤. 기준가의 '+(L.pe_rate*100).toFixed(0)+'% (26.03 요율 기준)</td></tr>'+
+    '<tr class="total"><td>합계 웨지</td><td class="num">'+tot.toFixed(2)+'</td><td>기준가의 약 '+(tot/L.hr_cpo*100).toFixed(1)+'%</td></tr>';
+}
+fetch('./data/series.json?t='+Date.now()).then(function(r){return r.json()}).then(render)
+  .catch(function(){ render(window.SEED); });
+})();
+
+</script>
+</body>
+</html>
