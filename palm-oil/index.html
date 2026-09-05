@@ -374,15 +374,16 @@ a{color:var(--brand-heading)}
   </div>
 
   <div class="chart-card">
-    <div class="ch-band"><span class="ch-t">⑤ ICE 저유황 경유 ($/톤)</span><span class="ch-leg">민트 = 실물 · 회색 점선 = ULSD 환산 참조</span></div>
+    <div class="ch-band"><span class="ch-t">⑤ 디젤 가격 (톤 환산, $/톤)</span><span class="ch-leg">인디고 = ULSD 톤 환산 · 회색 점 = 실물 ICE 경유</span></div>
     <div id="chart-d"></div>
     <div class="deflist">
-      <div><b>정의</b><span>ICE Low Sulphur Gasoil 근월물 정산가. 유럽 ARA 인도 기준, 달러/톤</span></div>
+      <div><b>정의</b><span>디젤(ULSD) 선물을 톤으로 환산한 값. 42갤런/배럴 × 7.45배럴/톤</span></div>
       <div><b>의미</b><span>디젤 가격이 높을수록 바이오디젤 수요가 늘어남. CPO와 단위가 같아 직접 비교 가능</span></div>
       <div><b>현재</b><span id="d-cap">—</span></div>
-      <div><b>수집</b><span>CME가 상장한 미러 계약(European Low Sulphur Gasoil 100mt, 코드 7F)의 일일 정산가 · 영업일 · 자동</span></div>
-      <div><b>주의</b><span class="hot">CME 정산 API가 최근 약 1주일치만 제공해 이력을 매일 적립하는 중임: 초기에는 시계열이 짧음.
-      회색 점선은 미국 ULSD 톤 환산치로, 실물이 없던 구간을 메우는 참조선일 뿐 같은 가격이 아님</span></div>
+      <div><b>수집</b><span>Yahoo Finance HO=F 종가를 톤 환산 · 영업일 · 자동</span></div>
+      <div><b>주의</b><span class="hot">실물 ICE 저유황 경유(유럽 ARA)는 무료 일간 자동수집이 불가능함: CME 미러 계약(7F) 정산 API 가 깃허브 러너 IP 를 403 으로 막고, TradingView 임베드는 데이터 구독이 걸림.
+      다만 회색 점으로 찍은 실물 5일치와 대조하면 갭이 0.9–2.3%로, 방향 판단에는 환산치로 충분함.
+      실물 확인은 <a href="https://www.tradingview.com/symbols/ICEEUR-ULS1!/" target="_blank" rel="noopener">TradingView ICEEUR:ULS1!</a></span></div>
     </div>
   </div>
 
@@ -582,8 +583,8 @@ function line2(main,ref,color,dec,name){
   ref.forEach(function(p){var m=p[0].slice(0,7); if(seen[m])return; seen[m]=1;
     var xx=Math.min(Math.max(px(ord(p[0])),L),PR-18); if(xx-lastx<66)return; lastx=xx;
     s+='<text x="'+xx.toFixed(1)+'" y="'+(H-12)+'" font-size="12" fill="var(--faint)" text-anchor="middle">'+km(p[0])+'</text>';});
-  s+='<polyline points="'+pl(ref)+'" fill="none" stroke="var(--compare-gray)" stroke-width="1.6" stroke-dasharray="4 3"/>';
-  s+='<polyline points="'+pl(main)+'" fill="none" stroke="'+color+'" stroke-width="2.6" stroke-linejoin="round"/>';
+  s+='<polyline points="'+pl(main)+'" fill="none" stroke="'+color+'" stroke-width="2.4" stroke-linejoin="round"/>';
+  ref.forEach(function(p){ s+='<circle cx="'+px(ord(p[0])).toFixed(1)+'" cy="'+py(p[1]).toFixed(1)+'" r="3.2" fill="none" stroke="var(--compare-gray)" stroke-width="1.6"/>'; });
   var st=stats(main), lx=px(ord(st.date)), ly=py(st.last);
   ly=Math.min(Math.max(ly,T+16),H-B-18);
   s+='<circle cx="'+px(ord(st.date)).toFixed(1)+'" cy="'+py(st.last).toFixed(1)+'" r="4" fill="'+color+'"/>';
@@ -648,8 +649,7 @@ function render(D){
     '<tr><td class="key">FCPO '+km(fN[0])+'월물</td><td>MYR/톤</td><td class="num">'+fmt(fN[1])+
     '</td><td>'+kd(D.fcpo.date)+'</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">근월 '+pct(fslope)+'</td></tr>' +
     (hasC ? row(0,'디젤 1:1 크랙','$/bbl',fmt(sc.last,1),sc.date,sc) : '') +
-    (hasG ? row(1,'ICE 경유 (실물)','$/톤',fmt(sg.last),sg.date,sg) : '') +
-    (hasD ? row(0,'ULSD 환산 (참조)','$/톤',fmt(sd.last),sd.date,sd) : '');
+    (hasD ? row(0,'디젤 (톤 환산)','$/톤',fmt(sd.last),sd.date,sd) : '');
 
   $('chart-k').innerHTML=line(D.kpbn,'var(--brand-primary)',0,'KPBN 낙찰가');
   $('chart-m').innerHTML=line(D.mpob,'var(--accent-blue)',1,'MPOB 현물');
@@ -657,12 +657,11 @@ function render(D){
   if(hasC){ $('chart-c').innerHTML=line(D.crack,'var(--accent-blue)',1,'디젤 1:1 크랙');
     $('c-cap').textContent=kd(sc.date)+' '+fmt(sc.last,1)+'. 1개월 '+pct(sc.m)+' · 3개월 '+pct(sc.q); }
   else { $('chart-c').innerHTML='<p class="note">데이터 수집 대기 중: 다음 자동 수집에서 채워짐</p>'; }
-  if(hasG && hasD){ $('chart-d').innerHTML=line2(D.gasoil,D.diesel,'var(--brand-primary)',0,'ICE 저유황 경유');
-    var gap = sd ? (sg.last - sd.last) : null;
-    $('d-cap').textContent=kd(sg.date)+' '+fmt(sg.last)+' ($/톤). 관측 '+D.gasoil.length+'일'+
-      (gap!=null ? ' · 같은 날 ULSD 환산 대비 '+(gap>=0?'+':'')+fmt(gap)+' ('+(gap/sd.last*100).toFixed(1)+'%)' : ''); }
-  else if(hasD){ $('chart-d').innerHTML=line(D.diesel,'var(--compare-gray)',0,'ULSD 환산');
-    $('d-cap').textContent='실물 ICE 경유 수집 대기 중 · ULSD 환산치만 표시'; }
+  if(hasD && hasG){ $('chart-d').innerHTML=line2(D.diesel,D.gasoil,'var(--accent-blue)',0,'디젤 톤 환산');
+    $('d-cap').textContent=kd(sd.date)+' '+fmt(sd.last)+'. 1개월 '+pct(sd.m)+' · 3개월 '+pct(sd.q)+
+      ' · 실물 ICE 경유 대조 '+kd(sg.date)+' '+fmt(sg.last); }
+  else if(hasD){ $('chart-d').innerHTML=line(D.diesel,'var(--accent-blue)',0,'디젤 톤 환산');
+    $('d-cap').textContent=kd(sd.date)+' '+fmt(sd.last)+'. 1개월 '+pct(sd.m)+' · 3개월 '+pct(sd.q); }
   else { $('chart-d').innerHTML='<p class="note">데이터 수집 대기 중: 다음 자동 수집에서 채워짐</p>'; }
 
   $('k-cap').textContent=kd(sk.date)+' '+fmt(sk.last)+'. 추적 시작('+kd(sk.first[0])+' '+fmt(sk.first[1])+') 대비 '+pct(sk.ytd);
