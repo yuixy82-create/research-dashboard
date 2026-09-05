@@ -5,6 +5,7 @@
   MPOB 말레이 일일 현물  : MPOB BEPI 일일 가격표
 기존 data/series.json 을 읽어 새 관측치만 병합한다."""
 import json, os, re, sys, datetime as dt
+import urllib.parse
 import urllib.request
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
@@ -112,6 +113,40 @@ def fetch_mpob():
     return out
 
 
+# ---------- 디젤 (Yahoo Finance 선물 종가) ----------
+# HO=F : NYMEX ULSD (USD/gal), CL=F : WTI (USD/bbl)
+#   1:1 디젤 크랙 = HO x 42 - CL           (USD/bbl)
+#   디젤 톤 환산  = HO x 42 x 7.45          (USD/톤, 경유 7.45 bbl/톤)
+BBL_PER_GAL = 42.0
+BBL_PER_TON = 7.45
+YQ = 'https://query2.finance.yahoo.com/v8/finance/chart/%s?range=%s&interval=1d'
+
+
+def fetch_yahoo(symbol, rng='1y'):
+    j = json.loads(get(YQ % (urllib.parse.quote(symbol), rng)))
+    res = j['chart']['result'][0]
+    ts = res['timestamp']
+    close = res['indicators']['quote'][0]['close']
+    out = {}
+    for t, c in zip(ts, close):
+        if c is None:
+            continue
+        out[dt.datetime.utcfromtimestamp(t).strftime('%Y-%m-%d')] = float(c)
+    return out
+
+
+def fetch_diesel(rng='1y'):
+    ho = fetch_yahoo('HO=F', rng)
+    cl = fetch_yahoo('CL=F', rng)
+    crack, tonne = {}, {}
+    for d, v in ho.items():
+        bbl = v * BBL_PER_GAL
+        tonne[d] = round(bbl * BBL_PER_TON, 1)
+        if d in cl:
+            crack[d] = round(bbl - cl[d], 2)
+    return crack, tonne
+
+
 def merge(old_pairs, new_map):
     d = {k: v for k, v in old_pairs}
     added = [k for k in new_map if k not in d]
@@ -145,6 +180,20 @@ def main():
                 changed.append('mpob +%d' % n)
     except Exception as e:
         print('MPOB step failed: %s' % e, file=sys.stderr)
+
+    try:
+        first = not data.get('crack')
+        crack, tonne = fetch_diesel('1y' if first else '1mo')
+        if crack:
+            data['crack'], n = merge(data.get('crack', []), crack)
+            if n:
+                changed.append('crack +%d' % n)
+        if tonne:
+            data['diesel'], n = merge(data.get('diesel', []), tonne)
+            if n:
+                changed.append('diesel +%d' % n)
+    except Exception as e:
+        print('diesel step failed: %s' % e, file=sys.stderr)
 
     data['updated'] = dt.date.today().isoformat()
     json.dump(data, open(PATH, 'w', encoding='utf-8'),
