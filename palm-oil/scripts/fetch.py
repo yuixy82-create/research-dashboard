@@ -147,6 +147,41 @@ def fetch_diesel(rng='1y'):
     return crack, tonne
 
 
+# ---------- ICE 저유황 경유 (CME 7F 미러 계약, USD/톤) ----------
+# European Low Sulphur Gasoil (100mt) Bullet Futures, CME productId 2912
+# CmeWS 정산 API 는 최근 약 1주일치만 제공하므로 매일 돌려 이력을 쌓는다.
+CME_SETTLE = ('https://www.cmegroup.com/CmeWS/mvc/Settlements/Futures/Settlements/'
+              '2912/FUT?strategy=DEFAULT&tradeDate=%s&pageSize=50')
+
+
+def fetch_gasoil(days=12):
+    out = {}
+    today = dt.date.today()
+    for i in range(days):
+        d = today - dt.timedelta(days=i)
+        if d.weekday() >= 5:
+            continue
+        try:
+            j = json.loads(get(CME_SETTLE % d.strftime('%m/%d/%Y'), timeout=30))
+        except Exception:
+            continue
+        for row in j.get('settlements', []):
+            month = (row.get('month') or '').strip()
+            if not month or month.lower() == 'total':
+                continue
+            v = re.sub(r'[^0-9.]', '', str(row.get('settle', '')))
+            if not v:
+                break
+            try:
+                val = float(v)
+            except ValueError:
+                break
+            if 100 < val < 5000:
+                out[d.isoformat()] = round(val, 2)
+            break          # 첫 행 = 근월물
+    return out
+
+
 def merge(old_pairs, new_map):
     d = {k: v for k, v in old_pairs}
     added = [k for k in new_map if k not in d]
@@ -194,6 +229,15 @@ def main():
                 changed.append('diesel +%d' % n)
     except Exception as e:
         print('diesel step failed: %s' % e, file=sys.stderr)
+
+    try:
+        gasoil = fetch_gasoil()
+        if gasoil:
+            data['gasoil'], n = merge(data.get('gasoil', []), gasoil)
+            if n:
+                changed.append('gasoil +%d' % n)
+    except Exception as e:
+        print('gasoil step failed: %s' % e, file=sys.stderr)
 
     data['updated'] = dt.date.today().isoformat()
     json.dump(data, open(PATH, 'w', encoding='utf-8'),
