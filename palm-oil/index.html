@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>팜유 가격 트래커 · 리서치 아카이브</title>
+<title>팜유·바이오연료 가격 트래커 · 리서치 아카이브</title>
 <style>
 /* ============================================================
    github-report / report.css  v1.0 (26.08.24)
@@ -288,6 +288,8 @@ a{color:var(--brand-heading)}
 .deflist b{flex:0 0 40px;color:var(--brand-heading);font-weight:700}
 .deflist .hot{color:var(--accent-red);font-weight:800}
 
+.tvbox{height:420px;padding:12px 14px 0}
+.tvbox>div{height:100%}
 </style>
 </head>
 <body>
@@ -295,8 +297,8 @@ a{color:var(--brand-heading)}
 
   <header class="doc-header">
     <div class="kicker">Palm Oil · 리서치</div>
-    <h1 class="page-title">팜유 가격 트래커</h1>
-    <p class="page-sub">인니 현물 · 말레이 현물 · 말레이 선물 커브</p>
+    <h1 class="page-title">팜유·바이오연료 가격 트래커</h1>
+    <p class="page-sub">인니·말레이 팜유 현물 · 선물 커브 · 디젤 크랙</p>
     <hr class="title-rule">
     <div class="stamp" id="stamp">기준일 —</div>
   </header>
@@ -382,7 +384,17 @@ a{color:var(--brand-heading)}
       <div><b>현재</b><span id="d-cap">—</span></div>
       <div><b>수집</b><span>Yahoo Finance HO=F 종가를 톤 환산 · 영업일 · 자동</span></div>
       <div><b>주의</b><span class="hot">ICE LSGO(유럽 ARA 기준)는 무료 일간 자동수집 소스가 없어 미국 ULSD 환산치를 씀: 방향은 같이 가지만 절대 수준은 대서양 차익만큼 다름.
-      실제 LSGO는 <a href="https://www.tradingview.com/symbols/ICEEUR-ULS1!/" target="_blank" rel="noopener">TradingView ICEEUR:ULS1!</a>에서 눈으로 확인. 아시아 기준이 필요하면 싱가포르 경유(FOB Singapore Gasoil)가 별도 지표임</span></div>
+      아시아 기준이 필요하면 싱가포르 경유(FOB Singapore Gasoil)가 별도 지표임</span></div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="ch-band"><span class="ch-t">⑥ ICE 저유황 경유 (실물, $/톤)</span><span class="ch-leg">TradingView ICEEUR:ULS1!</span></div>
+    <div class="tvbox"><div id="tv-lsgo"></div></div>
+    <div class="deflist">
+      <div><b>정의</b><span>ICE Low Sulphur Gasoil 연속선물. 유럽 ARA 인도 기준, 달러/톤</span></div>
+      <div><b>의미</b><span>⑤의 환산 프록시와 달리 실제 유럽 디젤 가격. 둘의 갭이 대서양 차익</span></div>
+      <div><b>수집</b><span>TradingView 임베드 위젯 · 자동 수집 대상이 아니라 열람용 · 지연 시세일 수 있음</span></div>
     </div>
   </div>
 
@@ -632,6 +644,19 @@ function render(D){
   $('m-cap').textContent=kd(sm.date)+' '+fmt(sm.last,1)+'. 연초 '+fmt(sm.first[1],1)+' 대비 '+pct(sm.ytd);
   $('f-cap').textContent=kd(D.fcpo.date)+' 커브 근월 '+fmt(f0[1])+' → '+km(fN[0])+'월물 '+fmt(fN[1])+', '+pct(fslope);
 }
+
+/* TradingView ICE LSGO 위젯 (열람용) */
+(function(){
+  var host=document.getElementById('tv-lsgo'); if(!host) return;
+  var dark = matchMedia('(prefers-color-scheme: dark)').matches;
+  var cfg={symbol:"ICEEUR:ULS1!",interval:"D",timezone:"Asia/Seoul",theme:dark?"dark":"light",
+    style:"2",locale:"kr",hide_side_toolbar:true,hide_top_toolbar:false,allow_symbol_change:false,
+    save_image:false,details:false,withdateranges:true,range:"12M",autosize:true};
+  var s=document.createElement('script');
+  s.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+  s.async=true; s.type='text/javascript'; s.innerHTML=JSON.stringify(cfg);
+  host.appendChild(s);
+})();
 fetch('./data/series.json?t='+Date.now()).then(function(r){return r.json()}).then(render)
   .catch(function(){ render(window.SEED); });
 })();
