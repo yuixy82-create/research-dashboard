@@ -378,9 +378,11 @@ a{color:var(--brand-heading)}
     <div id="chart-d"></div>
     <div class="deflist">
       <div><b>정의</b><span>디젤(ULSD) 선물을 톤으로 환산한 값. 42갤런/배럴 × 7.45배럴/톤</span></div>
-      <div><b>의미</b><span>CPO와 같은 톤 단위라 직접 뺄 수 있음: CPO − 디젤이 음수면 팜유가 디젤보다 싸다는 뜻</span></div>
+      <div><b>의미</b><span>디젤 가격이 높을수록 바이오디젤 수요가 늘어남. CPO와 단위가 같아 직접 비교 가능</span></div>
       <div><b>현재</b><span id="d-cap">—</span></div>
-      <div><b>수집</b><span>유럽·아시아 디젤(ICE LSGO)은 무료 일간 소스가 없어 미국 ULSD를 톤 환산한 프록시임: 방향은 같이 가지만 절대 수준은 대서양 차익만큼 차이가 남</span></div>
+      <div><b>수집</b><span>Yahoo Finance HO=F 종가를 톤 환산 · 영업일 · 자동</span></div>
+      <div><b>주의</b><span class="hot">ICE LSGO(유럽 ARA 기준)는 무료 일간 자동수집 소스가 없어 미국 ULSD 환산치를 씀: 방향은 같이 가지만 절대 수준은 대서양 차익만큼 다름.
+      실제 LSGO는 <a href="https://www.tradingview.com/symbols/ICEEUR-ULS1!/" target="_blank" rel="noopener">TradingView ICEEUR:ULS1!</a>에서 눈으로 확인. 아시아 기준이 필요하면 싱가포르 경유(FOB Singapore Gasoil)가 별도 지표임</span></div>
     </div>
   </div>
 
@@ -591,6 +593,8 @@ function kpi(lbl,num,delta,cap){
 
 function render(D){
   var sk=stats(D.kpbn), sm=stats(D.mpob);
+  var hasC = !!(D.crack && D.crack.length>1), hasD = !!(D.diesel && D.diesel.length>1);
+  var sc = hasC ? stats(D.crack) : null, sd = hasD ? stats(D.diesel) : null;
   var f=D.fcpo.rows, f0=f[0], fN=f[f.length-1], fslope=(fN[1]/f0[1]-1)*100;
 
   $('stamp').textContent='기준일 '+kd(D.updated)+' · 최신 관측 KPBN '+kd(sk.date)+' / MPOB '+kd(sm.date);
@@ -614,9 +618,6 @@ function render(D){
     (hasC ? row(0,'디젤 1:1 크랙','$/bbl',fmt(sc.last,1),sc.date,sc) : '') +
     (hasD ? row(0,'디젤 (톤 환산)','$/톤',fmt(sd.last),sd.date,sd) : '');
 
-  var hasC = D.crack && D.crack.length>1, hasD = D.diesel && D.diesel.length>1;
-  if(hasC){ var sc=stats(D.crack); }
-  if(hasD){ var sd=stats(D.diesel); }
   $('chart-k').innerHTML=line(D.kpbn,'var(--brand-primary)',0,'KPBN 낙찰가');
   $('chart-m').innerHTML=line(D.mpob,'var(--accent-blue)',1,'MPOB 현물');
   $('chart-f').innerHTML=curve(f,D.fcpo.date);
