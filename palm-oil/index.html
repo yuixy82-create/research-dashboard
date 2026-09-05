@@ -287,6 +287,11 @@ a{color:var(--brand-heading)}
 .deflist div{display:flex;gap:10px;align-items:flex-start}
 .deflist b{flex:0 0 40px;color:var(--brand-heading);font-weight:700}
 .deflist .hot{color:var(--accent-red);font-weight:800}
+.ext-chart{display:block;margin:14px 16px 4px;padding:22px 18px;border-radius:10px;text-decoration:none;
+  background:var(--brand-bg-tint);border:1px solid var(--brand-soft);transition:background .15s,border-color .15s}
+.ext-chart:hover{background:var(--brand-fill-light);border-color:var(--brand-bright)}
+.ext-chart-t{display:block;font-size:15px;font-weight:800;color:var(--brand-primary)}
+.ext-chart-s{display:block;margin-top:6px;font-size:12.5px;line-height:1.7;color:var(--muted)}
 
 </style>
 </head>
@@ -302,8 +307,9 @@ a{color:var(--brand-heading)}
   </header>
 
   <p class="lead">
-    국내 팜 관련 종목의 손익은 말레이시아 선물이 아니라 <b>농장이 실제로 받는 인니 국내 가격</b>에서 결정됨:<br>
-    세 지표를 나란히 두고 국제가 상승분이 인니 농장까지 얼마나 도달하는지를 추적함.
+    국내 팜 관련 종목의 손익은 <b>농장이 실제로 받는 인니 국내 가격</b>에서 결정됨:<br>
+    팜유 3종(인니 현물·말레이 현물·선물 커브)과 디젤 2종(크랙·톤 환산)을 나란히 두고,
+    국제가 상승분이 인니 농장까지 얼마나 도달하는지와 바이오디젤 수요 쪽 압력을 함께 추적함.
   </p>
 
   <div class="cards kpis" id="kpis"></div>
@@ -330,7 +336,7 @@ a{color:var(--brand-heading)}
   </div>
 
   <div class="chart-card">
-    <div class="ch-band"><span class="ch-t">① KPBN 인니 현물 입찰가 (IDR/kg)</span><span class="ch-leg">민트 = 낙찰가 (Franco Dumai)</span></div>
+    <div class="ch-band"><span class="ch-t">① KPBN 인니 현물 입찰가 (팜유, IDR/kg)</span><span class="ch-leg">민트 = 낙찰가 (Franco Dumai)</span></div>
     <div id="chart-k"></div>
     <div class="deflist">
       <div><b>정의</b><span>PT Kharisma Pemasaran Bersama Nusantara 일별 입찰 낙찰가. 기준은 Franco Dumai</span></div>
@@ -341,7 +347,7 @@ a{color:var(--brand-heading)}
   </div>
 
   <div class="chart-card">
-    <div class="ch-band"><span class="ch-t">② MPOB 말레이시아 일일 현물 (MYR/톤)</span><span class="ch-leg">인디고 = 국내 인도가</span></div>
+    <div class="ch-band"><span class="ch-t">② MPOB 말레이시아 일일 현물 (팜유, MYR/톤)</span><span class="ch-leg">민트 = 국내 인도가</span></div>
     <div id="chart-m"></div>
     <div class="deflist">
       <div><b>정의</b><span>말레이시아 팜유청이 고시하는 CPO 국내 인도가 (Local Delivered)</span></div>
@@ -352,7 +358,7 @@ a{color:var(--brand-heading)}
   </div>
 
   <div class="chart-card">
-    <div class="ch-band"><span class="ch-t">③ FCPO 선물 커브 (MYR/톤)</span><span class="ch-leg">진한 민트 = 근월물</span></div>
+    <div class="ch-band"><span class="ch-t">③ FCPO 선물 커브 (팜유, MYR/톤)</span><span class="ch-leg">진한 민트 = 근월물</span></div>
     <div id="chart-f"></div>
     <div class="deflist">
       <div><b>정의</b><span>Bursa Malaysia Derivatives 월물별 정산가. 첫 막대가 근월물</span></div>
@@ -363,7 +369,7 @@ a{color:var(--brand-heading)}
   </div>
 
   <div class="chart-card">
-    <div class="ch-band"><span class="ch-t">④ 디젤 1:1 크랙 ($/bbl)</span><span class="ch-leg">인디고 = ULSD − WTI</span></div>
+    <div class="ch-band"><span class="ch-t">④ 디젤 1:1 크랙 ($/bbl)</span><span class="ch-leg">민트 = ULSD − WTI</span></div>
     <div id="chart-c"></div>
     <div class="deflist">
       <div><b>정의</b><span>디젤(ULSD) 선물을 배럴로 환산한 값에서 WTI를 뺀 정제마진. 배럴당 달러</span></div>
@@ -374,16 +380,26 @@ a{color:var(--brand-heading)}
   </div>
 
   <div class="chart-card">
-    <div class="ch-band"><span class="ch-t">⑤ 디젤 가격 (톤 환산, $/톤)</span><span class="ch-leg">인디고 = ULSD 톤 환산 · 회색 점 = 실물 ICE 경유</span></div>
+    <div class="ch-band"><span class="ch-t">⑤ 디젤 가격 (톤 환산, $/톤)</span><span class="ch-leg">민트 = ULSD 톤 환산 · 회색 점 = 실물 ICE 경유</span></div>
     <div id="chart-d"></div>
     <div class="deflist">
       <div><b>정의</b><span>디젤(ULSD) 선물을 톤으로 환산한 값. 42갤런/배럴 × 7.45배럴/톤</span></div>
       <div><b>의미</b><span>디젤 가격이 높을수록 바이오디젤 수요가 늘어남. CPO와 단위가 같아 직접 비교 가능</span></div>
       <div><b>현재</b><span id="d-cap">—</span></div>
       <div><b>수집</b><span>Yahoo Finance HO=F 종가를 톤 환산 · 영업일 · 자동</span></div>
-      <div><b>주의</b><span class="hot">실물 ICE 저유황 경유(유럽 ARA)는 무료 일간 자동수집이 불가능함: CME 미러 계약(7F) 정산 API 가 깃허브 러너 IP 를 403 으로 막고, TradingView 임베드는 데이터 구독이 걸림.
-      다만 회색 점으로 찍은 실물 5일치와 대조하면 갭이 0.9–2.3%로, 방향 판단에는 환산치로 충분함.
-      실물 확인은 <a href="https://www.tradingview.com/symbols/ICEEUR-ULS1!/" target="_blank" rel="noopener">TradingView ICEEUR:ULS1!</a></span></div>
+      <div><b>주의</b><span class="hot">여기 그린 선은 미국 ULSD 환산치임. 유럽·아시아 실물 벤치마크인 ICE 저유황 경유는 자동수집이 막혀 회색 점 5일치만 있음(갭 0.9–2.3%) — 실물 차트는 아래 ⑥ 참조</span></div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="ch-band"><span class="ch-t">⑥ 실물 ICE 저유황 경유 (유럽 ARA, $/톤)</span><span class="ch-leg">외부 차트 링크</span></div>
+    <a class="ext-chart" href="https://www.tradingview.com/symbols/ICEEUR-ULS1!/" target="_blank" rel="noopener">
+      <span class="ext-chart-t">TradingView 에서 ICEEUR:ULS1! 차트 열기 &#8599;</span>
+      <span class="ext-chart-s">유럽·아시아 디젤의 실물 기준가. 제이씨케미칼 바이오디젤 수출가와 가장 직결되는 지표</span>
+    </a>
+    <div class="deflist">
+      <div><b>정의</b><span>ICE Low Sulphur Gasoil 선물(ARA 인도, $/톤). 유럽·아시아 경유의 실물 벤치마크</span></div>
+      <div><b>수집</b><span>자동수집 불가 — CME 미러 계약(7F) 정산 API 가 깃허브 러너 IP 를 403 으로 차단, TradingView 임베드는 데이터 구독 필요. 따라서 차트는 원본 사이트로 연결함</span></div>
     </div>
   </div>
 
@@ -652,15 +668,15 @@ function render(D){
     (hasD ? row(0,'디젤 (톤 환산)','$/톤',fmt(sd.last),sd.date,sd) : '');
 
   $('chart-k').innerHTML=line(D.kpbn,'var(--brand-primary)',0,'KPBN 낙찰가');
-  $('chart-m').innerHTML=line(D.mpob,'var(--accent-blue)',1,'MPOB 현물');
+  $('chart-m').innerHTML=line(D.mpob,'var(--brand-primary)',1,'MPOB 현물');
   $('chart-f').innerHTML=curve(f,D.fcpo.date);
-  if(hasC){ $('chart-c').innerHTML=line(D.crack,'var(--accent-blue)',1,'디젤 1:1 크랙');
+  if(hasC){ $('chart-c').innerHTML=line(D.crack,'var(--brand-primary)',1,'디젤 1:1 크랙');
     $('c-cap').textContent=kd(sc.date)+' '+fmt(sc.last,1)+'. 1개월 '+pct(sc.m)+' · 3개월 '+pct(sc.q); }
   else { $('chart-c').innerHTML='<p class="note">데이터 수집 대기 중: 다음 자동 수집에서 채워짐</p>'; }
-  if(hasD && hasG){ $('chart-d').innerHTML=line2(D.diesel,D.gasoil,'var(--accent-blue)',0,'디젤 톤 환산');
+  if(hasD && hasG){ $('chart-d').innerHTML=line2(D.diesel,D.gasoil,'var(--brand-primary)',0,'디젤 톤 환산');
     $('d-cap').textContent=kd(sd.date)+' '+fmt(sd.last)+'. 1개월 '+pct(sd.m)+' · 3개월 '+pct(sd.q)+
       ' · 실물 ICE 경유 대조 '+kd(sg.date)+' '+fmt(sg.last); }
-  else if(hasD){ $('chart-d').innerHTML=line(D.diesel,'var(--accent-blue)',0,'디젤 톤 환산');
+  else if(hasD){ $('chart-d').innerHTML=line(D.diesel,'var(--brand-primary)',0,'디젤 톤 환산');
     $('d-cap').textContent=kd(sd.date)+' '+fmt(sd.last)+'. 1개월 '+pct(sd.m)+' · 3개월 '+pct(sd.q); }
   else { $('chart-d').innerHTML='<p class="note">데이터 수집 대기 중: 다음 자동 수집에서 채워짐</p>'; }
 
@@ -673,5 +689,4 @@ fetch('./data/series.json?t='+Date.now()).then(function(r){return r.json()}).the
   .catch(function(){ render(window.SEED); });
 })();
 </script>
-</body>
-</html>
+</body></html>
