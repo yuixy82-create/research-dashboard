@@ -18,10 +18,20 @@ EN  = {'January':1,'February':2,'March':3,'April':4,'May':5,'June':6,
        'July':7,'August':8,'September':9,'October':10,'November':11,'December':12}
 
 
-def get(url, timeout=45):
-    req = urllib.request.Request(url, headers=UA)
+def get(url, timeout=45, headers=None):
+    req = urllib.request.Request(url, headers=headers or UA)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode('utf-8', 'replace')
+
+
+BROWSER_UA = {
+    'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                   '(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36'),
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Referer': ('https://www.cmegroup.com/markets/energy/refined-products/'
+                'european-gasoil-ice-futures.settlements.html'),
+}
 
 
 def strip(h):
@@ -156,14 +166,17 @@ CME_SETTLE = ('https://www.cmegroup.com/CmeWS/mvc/Settlements/Futures/Settlement
 
 def fetch_gasoil(days=12):
     out = {}
+    print('  cme gasoil fetch start', file=sys.stderr)
     today = dt.date.today()
     for i in range(days):
         d = today - dt.timedelta(days=i)
         if d.weekday() >= 5:
             continue
         try:
-            j = json.loads(get(CME_SETTLE % d.strftime('%m/%d/%Y'), timeout=30))
-        except Exception:
+            j = json.loads(get(CME_SETTLE % d.strftime('%m/%d/%Y'),
+                               timeout=30, headers=BROWSER_UA))
+        except Exception as e:
+            print('  cme %s: %s' % (d, str(e)[:80]), file=sys.stderr)
             continue
         for row in j.get('settlements', []):
             month = (row.get('month') or '').strip()
@@ -179,6 +192,7 @@ def fetch_gasoil(days=12):
             if 100 < val < 5000:
                 out[d.isoformat()] = round(val, 2)
             break          # 첫 행 = 근월물
+    print('  cme gasoil got %d days' % len(out), file=sys.stderr)
     return out
 
 
