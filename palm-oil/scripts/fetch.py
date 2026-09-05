@@ -46,7 +46,7 @@ def fetch_infosawit(pages=2):
         url = ('https://sumatera.infosawit.com/wp-json/wp/v2/posts'
                f'?search=KPBN&per_page=100&page={p}&_fields=date,title,content')
         try:
-            posts = json.loads(get(url))
+            posts = json.loads(get(url, headers=BROWSER_UA))
         except Exception as e:
             print('infosawit page %d failed: %s' % (p, e), file=sys.stderr)
             break
@@ -244,14 +244,8 @@ def main():
     except Exception as e:
         print('diesel step failed: %s' % e, file=sys.stderr)
 
-    try:
-        gasoil = fetch_gasoil()
-        if gasoil:
-            data['gasoil'], n = merge(data.get('gasoil', []), gasoil)
-            if n:
-                changed.append('gasoil +%d' % n)
-    except Exception as e:
-        print('gasoil step failed: %s' % e, file=sys.stderr)
+    # CME 정산 API 는 깃허브 러너 IP 를 403 으로 막는다(2026.09.05 확인).
+    # fetch_gasoil() 은 브라우저에서 수동 수집할 때만 쓴다.
 
     data['updated'] = dt.date.today().isoformat()
     json.dump(data, open(PATH, 'w', encoding='utf-8'),
