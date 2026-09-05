@@ -292,6 +292,8 @@ a{color:var(--brand-heading)}
 .ext-chart:hover{background:var(--brand-fill-light);border-color:var(--brand-bright)}
 .ext-chart-t{display:block;font-size:15px;font-weight:800;color:var(--brand-primary)}
 .ext-chart-s{display:block;margin-top:6px;font-size:12.5px;line-height:1.7;color:var(--muted)}
+.ext-chart{width:calc(100% - 32px);text-align:left;cursor:pointer;font-family:inherit}
+.tv-box{margin:0 16px 6px;height:340px;border:1px solid var(--brand-soft);border-radius:10px;overflow:hidden}
 
 </style>
 </head>
@@ -392,14 +394,15 @@ a{color:var(--brand-heading)}
   </div>
 
   <div class="chart-card">
-    <div class="ch-band"><span class="ch-t">⑥ 실물 ICE 저유황 경유 (유럽 ARA, $/톤)</span><span class="ch-leg">외부 차트 링크</span></div>
-    <a class="ext-chart" href="https://www.tradingview.com/symbols/ICEEUR-ULS1!/" target="_blank" rel="noopener">
-      <span class="ext-chart-t">TradingView 에서 ICEEUR:ULS1! 차트 열기 &#8599;</span>
+    <div class="ch-band"><span class="ch-t">⑥ 실물 ICE 저유황 경유 (유럽 ARA, $/톤)</span><span class="ch-leg">TradingView 임베드 · 클릭해서 열기</span></div>
+    <button class="ext-chart" id="tv-open" type="button">
+      <span class="ext-chart-t">차트 열기 &#9662;</span>
       <span class="ext-chart-s">유럽·아시아 디젤의 실물 기준가. 제이씨케미칼 바이오디젤 수출가와 가장 직결되는 지표</span>
-    </a>
+    </button>
+    <div id="tv-box" class="tv-box" hidden></div>
     <div class="deflist">
       <div><b>정의</b><span>ICE Low Sulphur Gasoil 선물(ARA 인도, $/톤). 유럽·아시아 경유의 실물 벤치마크</span></div>
-      <div><b>수집</b><span>자동수집 불가 — CME 미러 계약(7F) 정산 API 가 깃허브 러너 IP 를 403 으로 차단, TradingView 임베드는 데이터 구독 필요. 따라서 차트는 원본 사이트로 연결함</span></div>
+      <div><b>수집</b><span>자동수집 불가 — CME 미러 계약(7F) 정산 API 가 깃허브 러너 IP 를 403 으로 차단. 대신 TradingView 차트를 이 카드 안에서 바로 띄움 · <a href="https://www.tradingview.com/symbols/ICEEUR-ULS1!/" target="_blank" rel="noopener">원본 페이지</a></span></div>
     </div>
   </div>
 
@@ -687,6 +690,41 @@ function render(D){
 
 fetch('./data/series.json?t='+Date.now()).then(function(r){return r.json()}).then(render)
   .catch(function(){ render(window.SEED); });
+})();
+
+(function(){
+  var btn=document.getElementById('tv-open'), box=document.getElementById('tv-box'), done=false;
+  if(!btn||!box) return;
+  btn.addEventListener('click',function(){
+    if(!done){
+      done=true;
+      var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if(document.documentElement.getAttribute('data-theme')==='light') dark=false;
+      if(document.documentElement.getAttribute('data-theme')==='dark') dark=true;
+      var wrap=document.createElement('div');
+      wrap.className='tradingview-widget-container';
+      wrap.style.height='340px';
+      var inner=document.createElement('div');
+      inner.className='tradingview-widget-container__widget';
+      inner.style.height='340px';
+      wrap.appendChild(inner);
+      box.appendChild(wrap);
+      var sc=document.createElement('script');
+      sc.type='text/javascript';
+      sc.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      sc.async=true;
+      sc.text=JSON.stringify({
+        autosize:true, symbol:'ICEEUR:ULS1!', interval:'D', timezone:'Asia/Seoul',
+        theme: dark?'dark':'light', style:'2', locale:'kr',
+        hide_top_toolbar:true, hide_legend:false, allow_symbol_change:false,
+        save_image:false, calendar:false, backgroundColor: dark?'#141b1a':'#ffffff'
+      });
+      wrap.appendChild(sc);
+    }
+    var open = box.hidden;
+    box.hidden = !open;
+    btn.querySelector('.ext-chart-t').innerHTML = open ? '차트 닫기 \u25B4' : '차트 열기 \u25BE';
+  });
 })();
 </script>
 </body></html>
