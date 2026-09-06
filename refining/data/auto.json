@@ -1,12 +1,12 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-06T13:04:55+00:00",
-  "status": "partial",
+  "updatedAt": "2026-09-06T23:10:41+00:00",
+  "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
       "value": 99.21,
       "unit": "$/bbl",
-      "asOf": "2026-09-04",
+      "asOf": "2026-09-06",
       "note": null,
       "source": "NYMEX ULSD · WTI 선물 종가 기반 산출",
       "mode": "auto"
@@ -14,7 +14,7 @@
     "crack_3_2_1": {
       "value": 62.09,
       "unit": "$/bbl",
-      "asOf": "2026-09-04",
+      "asOf": "2026-09-06",
       "note": null,
       "source": "NYMEX 선물 종가 기반 산출",
       "mode": "auto"
@@ -53,7 +53,5 @@
       "mode": "auto"
     }
   },
-  "errors": [
-    "customs: px_naphtha_spread: <urlopen error _ssl.c:993: The handshake operation timed out>"
-  ]
+  "errors": []
 }
