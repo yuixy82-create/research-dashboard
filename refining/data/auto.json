@@ -1,7 +1,7 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-05T13:03:57+00:00",
-  "status": "ok",
+  "updatedAt": "2026-09-06T13:04:55+00:00",
+  "status": "partial",
   "indicators": {
     "diesel_crack_1_1": {
       "value": 99.21,
@@ -53,5 +53,7 @@
       "mode": "auto"
     }
   },
-  "errors": []
+  "errors": [
+    "customs: px_naphtha_spread: <urlopen error _ssl.c:993: The handshake operation timed out>"
+  ]
 }
