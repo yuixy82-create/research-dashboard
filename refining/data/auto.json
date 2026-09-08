@@ -1,22 +1,22 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-08T13:05:59+00:00",
-  "status": "ok",
+  "updatedAt": "2026-09-08T23:05:56+00:00",
+  "status": "partial",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 100.35,
+      "value": 100.1,
       "unit": "$/bbl",
       "asOf": "2026-09-08",
-      "note": "장중 잠정치",
-      "source": "NYMEX ULSD · WTI 선물 장중 기반 산출",
+      "note": null,
+      "source": "NYMEX ULSD · WTI 선물 종가 기반 산출",
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 56.86,
+      "value": 57.07,
       "unit": "$/bbl",
       "asOf": "2026-09-08",
-      "note": "장중 잠정치",
-      "source": "NYMEX 선물 장중 기반 산출",
+      "note": null,
+      "source": "NYMEX 선물 종가 기반 산출",
       "mode": "auto"
     },
     "us_distillate_stock": {
@@ -53,5 +53,7 @@
       "mode": "auto"
     }
   },
-  "errors": []
+  "errors": [
+    "customs: px_naphtha_spread: <urlopen error [WinError 10060] 연결된 구성원으로부터 응답이 없어 연결하지 못했거나, 호스트로부터 응답이 없어 연결이 끊어졌습니다>"
+  ]
 }
