@@ -77,6 +77,9 @@ def get(url, timeout=30):
 def sitemap():
     x = get(SITEMAP)
     items = re.findall(r"<url>\s*<loc>([^<]+)</loc>\s*<lastmod>([^<]+)</lastmod>", x)
+    if not items:                      # WAF 차단 페이지가 200으로 올 수 있음. 조용히 0건으로 끝내지 않는다
+        head = re.sub(r"\s+", " ", x[:300])
+        raise RuntimeError(f"사이트맵 항목 0건 (len={len(x)}): {head}")
     items.sort(key=lambda t: t[1], reverse=True)
     return items
 
@@ -153,10 +156,15 @@ def main():
     todo = [u for u, _ in items if u not in seen][: (BACKFILL if not seen else 8)]
     for i, u in enumerate(todo):
         try:
-            r = parse(get(u))
+            html = get(u)
+            r = parse(html)
             if r:
                 raw[r["d"]] = {"d": r["d"], "v": round((r["lo"] + r["hi"]) / 2), "lo": r["lo"], "hi": r["hi"]}
-            seen.add(u)
+                seen.add(u)
+            elif "Group III" not in html:
+                raise RuntimeError(f"본문 없음 (len={len(html)}): " + re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html[:400]))[:120])
+            else:
+                seen.add(u)                # 가격 구절이 없는 글(공지 등)은 건너뜀
         except Exception as e:
             errors.append(f"lube: {u.rsplit('/', 2)[-2]}: {e}")
         if i < len(todo) - 1:
