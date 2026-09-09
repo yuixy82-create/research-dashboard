@@ -453,10 +453,10 @@
   }
  },
  "quote": {
-  "price": 2.7,
-  "prev": 7.25,
+  "price": 2.54,
+  "prev": 7.5,
   "high52": 23.5,
-  "low52": 2.61,
+  "low52": 2.507,
   "hist": [
    {
     "date": "2026-03-09",
@@ -965,6 +965,10 @@
    {
     "date": "2026-09-08",
     "close": 2.7
+   },
+   {
+    "date": "2026-09-09",
+    "close": 2.54
    }
   ]
  },
@@ -1176,7 +1180,7 @@
  "reddit": [],
  "cms": {
   "cy2027_files": [],
-  "checked": "2026-09-09"
+  "checked": "2026-09-10"
  },
  "trials_hist": [
   {
@@ -1205,7 +1209,7 @@
    "gbm": 53
   },
   {
-   "date": "2026-09-09",
+   "date": "2026-09-10",
    "lm": 37,
    "gbm": 53
   }
@@ -1336,7 +1340,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-09-09 06:09",
+  "updated": "2026-09-10 01:00",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1345,7 +1349,7 @@
    "quote": "ok",
    "trials": "ok",
    "ctgov": "fail: 임상 없음 · Cerenome(plain=True): HTTP Error 403: Forbidden | Cerenome(plain=False): HTTP Error 403: Forbidden | Plus Therapeutics(plain=True): ",
-   "news": "ok",
+   "news": "fail: no feed",
    "cnside": "ok",
    "reddit": "ok",
    "cms": "ok",
