@@ -70,9 +70,19 @@ def get(url, timeout=30):
     except urllib.error.HTTPError as e:
         if e.code not in (403, 429, 503):
             raise
-    req = urllib.request.Request(READER + url, headers={"User-Agent": UA, "Accept": "text/plain"})
-    with urllib.request.urlopen(req, timeout=timeout + 30) as r:
-        return r.read().decode("utf-8", "replace")
+    last = None
+    for hdr in ({"Accept": "text/plain"},                                   # 파이썬 기본 UA
+                {"User-Agent": UA, "Accept": "text/plain", "X-Return-Format": "markdown"},
+                {"User-Agent": "curl/8.4.0", "Accept": "*/*"}):
+        req = urllib.request.Request(READER + url, headers=hdr)
+        try:
+            with urllib.request.urlopen(req, timeout=timeout + 30) as r:
+                return r.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            body = e.read()[:200].decode("utf-8", "replace").replace("\n", " ")
+            last = RuntimeError(f"reader {e.code} [{hdr.get('User-Agent', 'py')[:12]}]: {body}")
+            time.sleep(3)
+    raise last
 
 
 def sitemap():
