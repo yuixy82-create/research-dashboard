@@ -1,22 +1,22 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-08T23:05:56+00:00",
+  "updatedAt": "2026-09-09T04:33:24+00:00",
   "status": "partial",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 100.1,
+      "value": 101.46,
       "unit": "$/bbl",
-      "asOf": "2026-09-08",
-      "note": null,
-      "source": "NYMEX ULSD · WTI 선물 종가 기반 산출",
+      "asOf": "2026-09-09",
+      "note": "장중 잠정치",
+      "source": "NYMEX ULSD · WTI 선물 장중 기반 산출",
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 57.07,
+      "value": 57.48,
       "unit": "$/bbl",
-      "asOf": "2026-09-08",
-      "note": null,
-      "source": "NYMEX 선물 종가 기반 산출",
+      "asOf": "2026-09-09",
+      "note": "장중 잠정치",
+      "source": "NYMEX 선물 장중 기반 산출",
       "mode": "auto"
     },
     "us_distillate_stock": {
@@ -37,23 +37,23 @@
       "mode": "auto"
     },
     "group3_price": {
-      "value": 3575,
+      "value": 3625,
       "unit": "$/t",
-      "asOf": "2026-08-31",
-      "note": "4cSt FOB Asia 범위 3,550~3,600",
+      "asOf": "2026-09-07",
+      "note": "4cSt FOB Asia 범위 3,600~3,650",
       "source": "Lubes'n'Greases 주간 리포트",
       "mode": "auto"
     },
     "group3_spread": {
-      "value": 2912,
+      "value": 2919,
       "unit": "$/t",
-      "asOf": "2026-08-31",
-      "note": "Group III 3,575 − Brent 90.49 × 7.33",
+      "asOf": "2026-09-07",
+      "note": "Group III 3,625 − Brent 96.28 × 7.33",
       "source": "Lubes'n'Greases · NYMEX Brent 선물",
       "mode": "auto"
     }
   },
   "errors": [
-    "customs: px_naphtha_spread: <urlopen error [WinError 10060] 연결된 구성원으로부터 응답이 없어 연결하지 못했거나, 호스트로부터 응답이 없어 연결이 끊어졌습니다>"
+    "lube: sitemap: 사이트맵 항목 0건 (len=1486): <html> <head><title>403 Forbidden</title></head> <body> <center><h1>403 Forbidden</h1></center> <hr><center>nginx</center> <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$para"
   ]
 }
