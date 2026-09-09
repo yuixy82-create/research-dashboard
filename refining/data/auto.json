@@ -1,10 +1,10 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-09T04:33:24+00:00",
+  "updatedAt": "2026-09-09T04:39:10+00:00",
   "status": "partial",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 101.46,
+      "value": 101.49,
       "unit": "$/bbl",
       "asOf": "2026-09-09",
       "note": "장중 잠정치",
@@ -12,7 +12,7 @@
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 57.48,
+      "value": 57.53,
       "unit": "$/bbl",
       "asOf": "2026-09-09",
       "note": "장중 잠정치",
@@ -54,6 +54,6 @@
     }
   },
   "errors": [
-    "lube: sitemap: 사이트맵 항목 0건 (len=1486): <html> <head><title>403 Forbidden</title></head> <body> <center><h1>403 Forbidden</h1></center> <hr><center>nginx</center> <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$para"
+    "lube: sitemap: HTTP Error 403: Forbidden"
   ]
 }
