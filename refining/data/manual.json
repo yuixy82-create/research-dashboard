@@ -1,10 +1,10 @@
 {
   "_comment": "수동 입력 지표. 값을 바꾸고 asOf를 갱신할 것. 자동 수집이 붙으면 auto.json이 같은 key를 덮어씀.",
-  "baseDate": "2026-08-28",
+  "baseDate": "2026-09-04",
   "scenario": {
     "current": "불완전한 회복",
-    "note": "통항 부분 회복, 공격·보험 리스크 지속, 러시아 정제 복구 지연",
-    "asOf": "2026-08-28"
+    "note": "통항 5~13척/일(전쟁 전 ~100) · 후티 아람코 공격 지속 · 루와이스 복귀 · 중국 수출 전쟁 전 회복 · 러시아 금지 09.30 만료",
+    "asOf": "2026-09-08"
   },
   "indicators": {
     "diesel_crack_1_1": {
@@ -32,11 +32,11 @@
       "mode": "auto-pending"
     },
     "sing_grm": {
-      "value": 32.8,
+      "value": 33.6,
       "unit": "$/bbl",
-      "asOf": "2026-08-28",
-      "note": "스팟 기준, 전주 대비 −4.9. 1개월 래깅은 35.0(−16.7)",
-      "source": "Petronet · iM증권 26.08.28 인용",
+      "asOf": "2026-09-04",
+      "note": "스팟 기준, 전주 대비 +0.8",
+      "source": "Petronet · 파이낸셜뉴스 26.09.09 인용",
       "mode": "manual"
     },
     "group3_spread": {
@@ -74,7 +74,7 @@
       "mode": "manual"
     },
     "gulf_exports": {
-      "value": 15.0,
+      "value": 15,
       "unit": "mb/d",
       "asOf": "2026-07-31",
       "note": "전월 대비 −2.1, 전쟁 전 약 20",
@@ -83,11 +83,11 @@
       "period": "month"
     },
     "china_product_export": {
-      "value": 465,
+      "value": 601,
       "unit": "만톤/월",
-      "asOf": "2026-07-31",
-      "note": "YoY −12.9%, MoM +6.7%. 4월 312 바닥에서 3개월 연속 반등",
-      "source": "중국 해관총서 · iM증권 26.08.28 인용",
+      "asOf": "2026-08-01",
+      "note": "YoY +12.8%, MoM +29%. 4월 312 바닥에서 4개월 연속 반등, 전쟁 전 수준 회복",
+      "source": "중국 해관총서 · Reuters 26.09.08",
       "mode": "manual",
       "period": "month"
     },
@@ -101,11 +101,11 @@
       "period": "quarter"
     },
     "gasoil_margin_sg": {
-      "value": 62.4,
+      "value": 58.7,
       "unit": "$/bbl",
-      "asOf": "2026-08-28",
-      "note": "싱가포르 경유 − 두바이. 전주 대비 −8.3. 미국 ULSD−WTI 크랙과 정의가 달라 비교 불가",
-      "source": "Petronet · iM증권 26.08.28 인용",
+      "asOf": "2026-09-04",
+      "note": "싱가포르 경유 − 두바이. 전주 대비 −3.7. 미국 ULSD−WTI 크랙과 정의가 달라 비교 불가",
+      "source": "Petronet · 파이낸셜뉴스 26.09.09 인용",
       "mode": "manual"
     },
     "kero_margin_sg": {
@@ -133,11 +133,11 @@
       "mode": "manual"
     },
     "saudi_osp_light": {
-      "value": -2.0,
+      "value": -2,
       "unit": "$/bbl",
-      "asOf": "2026-09-01",
-      "note": "9월분, 전월 −0.5. 20년 6월 이후 최저",
-      "source": "Saudi Aramco · iM증권 26.08.28 표",
+      "asOf": "2026-10-01",
+      "note": "10월분, 전월과 동일. 3개월 연속 마이너스",
+      "source": "Saudi Aramco · 파이낸셜뉴스 26.09.09 인용",
       "mode": "manual",
       "period": "month"
     },
