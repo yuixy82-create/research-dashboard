@@ -9,7 +9,8 @@
 월간·2개월 지연이라 이 주간 계열을 코어로 쓴다.
 
 수집 방법: 사이트맵(bor-asia-sitemap.xml)에서 새 글 URL을 찾고, 본문 HTML의 마지막 "Group III … 4 cSt …
-$a/t-$b/t" 구절을 읽는다. 본문 텍스트는 서버 HTML에 그대로 들어 있음(브라우저에선 JS가 가림).
+$a/t-$b/t" 구절을 읽는다. 본문 텍스트는 서버 HTML에 그대로 들어 있음(브라우저에선 JS가 가림). 러너 IP는 클라우드플레어에
+막혀서(26.09.09 실측, curl.exe도 403) r.jina.ai 리더 경유로 텍스트를 받는다. 리더는 무료·무키, 분당 20회.
 이미 읽은 글은 series 파일의 seen 목록으로 건너뛰므로 평소엔 요청 1~2건, 첫 실행만 1년치(약 50건, 5초 간격).
 
 Brent는 fetch_futures의 야후 경로를 그대로 씀. 스프레드는 리포트 날짜 이하 가장 가까운 종가로 계산.
@@ -36,7 +37,7 @@ BACKFILL = 52             # 첫 실행 때 읽을 글 수
 DELAY = 5                 # robots.txt Crawl-delay: 10 → 첫 실행만 여러 건이라 5초로 완만하게
 
 
-HEADERS = {   # 브라우저와 같은 헤더 묶음. 26.09.04 실측: UA만 주면 403
+HEADERS = {   # 브라우저와 같은 헤더 묶음. 그래도 러너 IP는 클라우드플레어가 403을 주므로 get()이 리더로 넘어감
     "User-Agent": UA,
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9,ko;q=0.8",
@@ -46,19 +47,15 @@ HEADERS = {   # 브라우저와 같은 헤더 묶음. 26.09.04 실측: UA만 주
 }
 
 
-def _curl(url, timeout):
-    """urllib이 403이면 curl.exe(윈도우 기본 탑재)로. TLS 지문이 달라 WAF를 통과하는 경우가 많음."""
-    import subprocess
-    exe = "curl.exe" if sys.platform.startswith("win") else "curl"
-    r = subprocess.run([exe, "-sSL", "--compressed", "--max-time", str(timeout), "-A", UA,
-                        "-H", "Accept-Language: en-US,en;q=0.9", url],
-                       capture_output=True, timeout=timeout + 10)
-    if r.returncode or not r.stdout:
-        raise RuntimeError(f"curl rc={r.returncode} {r.stderr.decode('utf-8', 'replace')[:120]}")
-    return r.stdout.decode("utf-8", "replace")
+READER = "https://r.jina.ai/"   # 서버 쪽 헤드리스 브라우저로 렌더한 본문을 텍스트로 돌려주는 공개 리더
+
+
+def _blocked(text):
+    return "__CF$cv$params" in text or "<title>403 Forbidden</title>" in text or "Just a moment" in text
 
 
 def get(url, timeout=30):
+    """직접 요청 → 클라우드플레어에 막히면 리더 경유. 26.09.09 실측: 러너 IP는 curl.exe로도 403"""
     import gzip
     import urllib.error
     req = urllib.request.Request(url, headers=HEADERS)
@@ -67,16 +64,22 @@ def get(url, timeout=30):
             raw = r.read()
             if r.headers.get("Content-Encoding", "").lower() == "gzip":
                 raw = gzip.decompress(raw)
-            return raw.decode("utf-8", "replace")
+            text = raw.decode("utf-8", "replace")
+        if not _blocked(text):
+            return text
     except urllib.error.HTTPError as e:
-        if e.code in (403, 429, 503):
-            return _curl(url, timeout)
-        raise
+        if e.code not in (403, 429, 503):
+            raise
+    req = urllib.request.Request(READER + url, headers={"User-Agent": UA, "Accept": "text/plain"})
+    with urllib.request.urlopen(req, timeout=timeout + 30) as r:
+        return r.read().decode("utf-8", "replace")
 
 
 def sitemap():
     x = get(SITEMAP)
     items = re.findall(r"<url>\s*<loc>([^<]+)</loc>\s*<lastmod>([^<]+)</lastmod>", x)
+    if not items:                      # 리더 경유면 마크다운: [url](url) 줄 다음 줄에 lastmod
+        items = re.findall(r"\[(https://[^\]\s]+)\]\([^)]*\)\s*(\d{4}-\d{2}-\d{2}T\S+)", x)
     if not items:                      # WAF 차단 페이지가 200으로 올 수 있음. 조용히 0건으로 끝내지 않는다
         head = re.sub(r"\s+", " ", x[:300])
         raise RuntimeError(f"사이트맵 항목 0건 (len={len(x)}): {head}")
@@ -102,6 +105,14 @@ def parse(html):
 
     m = re.search(r'"datePublished":"([^"]+)"', html) or re.search(r'article:published_time" content="([^"]+)"', html)
     date = m.group(1)[:10] if m else None
+    if not date:                        # 리더 경유: "Published Time: Mon, 07 Sep 2026 10:03:14 GMT"
+        m = re.search(r"Published Time:\s*([^\n]+)", html)
+        if m:
+            from email.utils import parsedate_to_datetime
+            try:
+                date = parsedate_to_datetime(m.group(1).strip()).strftime("%Y-%m-%d")
+            except Exception:
+                date = None
     g4 = pair("4 cSt")
     if not (date and g4):
         return None
