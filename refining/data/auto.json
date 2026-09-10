@@ -1,36 +1,36 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-10T00:30:58+00:00",
+  "updatedAt": "2026-09-10T23:45:17+00:00",
   "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 103.77,
+      "value": 112.31,
       "unit": "$/bbl",
-      "asOf": "2026-09-09",
+      "asOf": "2026-09-10",
       "note": null,
       "source": "NYMEX ULSD · WTI 선물 종가 기반 산출",
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 55.52,
+      "value": 59.09,
       "unit": "$/bbl",
-      "asOf": "2026-09-09",
+      "asOf": "2026-09-10",
       "note": null,
       "source": "NYMEX 선물 종가 기반 산출",
       "mode": "auto"
     },
     "us_distillate_stock": {
-      "value": 104.2,
+      "value": 106.3,
       "unit": "mb",
-      "asOf": "2026-08-28",
+      "asOf": "2026-09-04",
       "note": null,
       "source": "EIA Weekly",
       "mode": "auto"
     },
     "px_naphtha_spread": {
-      "value": 314.4,
+      "value": 259.9,
       "unit": "$/t",
-      "asOf": "2026-07-01",
+      "asOf": "2026-08-01",
       "period": "month",
       "note": "관세청 수출입단가 기반 근사. 약 2개월 지연",
       "source": "관세청 품목별 수출입실적",
