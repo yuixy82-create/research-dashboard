@@ -3,6 +3,13 @@
   "entity": "CERENOME, INC.",
   "list": [
    {
+    "form": "8-K",
+    "filed": "2026-09-10",
+    "items": "1.01,2.03,3.02,8.01,9.01",
+    "acc": "0001193125-26-387267",
+    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526387267/d382364d8k.htm"
+   },
+   {
     "form": "10-Q",
     "filed": "2026-08-14",
     "items": "",
@@ -274,13 +281,6 @@
     "items": "",
     "acc": "0001193125-26-134670",
     "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526134670/2025_ars.pdf"
-   },
-   {
-    "form": "DEF 14A",
-    "filed": "2026-03-31",
-    "items": "",
-    "acc": "0001193125-26-134646",
-    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526134646/pstv-20260331.htm"
    }
   ]
  },
@@ -453,10 +453,10 @@
   }
  },
  "quote": {
-  "price": 2.49,
+  "price": 2.505,
   "prev": 7.5,
   "high52": 23.5,
-  "low52": 2.489,
+  "low52": 2.39,
   "hist": [
    {
     "date": "2026-03-10",
@@ -965,6 +965,10 @@
    {
     "date": "2026-09-09",
     "close": 2.49
+   },
+   {
+    "date": "2026-09-10",
+    "close": 2.505
    }
   ]
  },
@@ -1176,7 +1180,7 @@
  "reddit": [],
  "cms": {
   "cy2027_files": [],
-  "checked": "2026-09-10"
+  "checked": "2026-09-11"
  },
  "trials_hist": [
   {
@@ -1200,7 +1204,12 @@
    "gbm": 53
   },
   {
-   "date": "2026-09-10",
+   "date": "2026-08-31",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
+   "date": "2026-09-11",
    "lm": 37,
    "gbm": 53
   }
@@ -1238,6 +1247,13 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-09-11",
+   "level": "orange",
+   "axis": "자본",
+   "text": "SEC 8-K 제출 (2026-09-10) · Item 1.01,2.03,3.02,8.01,9.01",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526387267/d382364d8k.htm"
+  },
   {
    "date": "2026-08-29",
    "level": "yellow",
@@ -1331,7 +1347,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-09-10 07:56",
+  "updated": "2026-09-11 00:54",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1346,6 +1362,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 0
+  "new_events": 1
  }
 }
