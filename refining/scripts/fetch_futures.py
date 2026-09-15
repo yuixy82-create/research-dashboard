@@ -1,33 +1,36 @@
 #!/usr/bin/env python3
-"""NYMEX 선물 종가로 디젤 1:1 크랙과 3-2-1 크랙을 매일 산출한다.
+"""NYMEX 선물 종가로 디젤 1:1 크랙과 3-2-1 크랙을 매 영업일 산출한다.
 
-  ULSD 근월물 ($/gal) · RBOB 근월물 ($/gal) · WTI 근월물 ($/bbl)
-
-  디젤 1:1 크랙 = ULSD x 42 - WTI
+  디젤 1:1 크랙 = ULSD($/gal) x 42 - WTI($/bbl)
   3-2-1 크랙    = (RBOB x 42 x 2 + ULSD x 42 - WTI x 3) / 3
 
-EIA 스팟을 쓰지 않는 이유: EIA는 주 1회(수) 배치로만 공표해 평균 4일이 밀림.
-선물은 매 영업일 정산되므로 블룸버그 등이 인용하는 값과 같은 주기로 따라감.
-근월물 연결 계열이라 롤오버 시점에 작은 단차가 생김: 수준보다 방향을 볼 것.
+★ 세 다리는 반드시 같은 인도월 계약을 쓴다 (26.09.15 수정).
+야후의 연결 심볼(HO=F 등)은 종목마다 롤오버 날짜가 달라서, 26.09.14에 난방유·휘발유만
+11월물로 넘어가고 WTI는 10월물에 남는 바람에 크랙이 하루 만에 8달러 깎인 것처럼 찍혔다.
+같은 착시가 26.09.01에도 있었다: RBOB 9월물(여름 규격) → 10월물(겨울 규격) 전환으로
+3-2-1이 73 → 63으로 떨어진 듯 보였지만, 10월물끼리 다시 계산하면 62 → 63으로 오히려 올랐다.
+그래서 이제 `CLV26.NYM` 처럼 인도월을 명시한 심볼만 쓴다.
+
+인도월 결정: WTI 만기가 전월 20일경으로 셋 중 가장 이르므로 그 기준에 맞춘다.
+  날짜의 일자 <= 19 → 다음 달물, 그 이후 → 다다음 달물
+롤오버 단차는 남지만(겨울 규격 전환 같은 건 실제 시장 현상임) 세 다리가 같은 날 함께
+넘어가므로 인위적인 단차는 없어진다. 각 점에 쓰인 월물 코드를 `m` 필드로 같이 남긴다.
 
 하루 두 번 도는 것을 전제로 함.
   22:00 KST (09:00 ET)  장중이라 마지막 점이 잠정치. provisional=true로 표시함
   07:30 KST (18:30 ET)  전일 정산(14:30 ET)이 끝난 뒤라 같은 날짜가 확정치로 덮임
-매 실행마다 원본에서 계열 전체를 다시 만들기 때문에 확정 전환이 저절로 일어남.
+최근 LOOKBACK_DAYS 구간만 매번 다시 만들어 기존 계열에 덮으므로 확정 전환이 저절로 일어난다.
 
-소스는 두 곳을 순서대로 시도한다. 야후는 쿠키(A3)와 crumb 없이 부르면 데이터센터
-IP뿐 아니라 가정용 IP에서도 429를 주는 경우가 있어(26.09.02 실측) 브라우저처럼
-쿠키 → crumb → 차트 순서로 부른다. 야후가 막히면 스투크로 넘어간다.
+야후는 쿠키(A3)와 crumb 없이 부르면 가정용 IP에서도 429를 주는 경우가 있어(26.09.02 실측)
+브라우저처럼 쿠키 → crumb → 차트 순서로 부른다. 스투크는 월물별 시세가 없어 폐기함.
 """
-import csv
 import http.cookiejar
-import io
 import json
 import sys
 import time
 import urllib.parse
 import urllib.request
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -39,45 +42,22 @@ SERIES_DIR = ROOT / "data" / "series"
 
 GAL_PER_BBL = 42.0
 KEEP = 260
+LOOKBACK_DAYS = 75          # 매 실행마다 다시 만드는 구간. 월물 3~4개면 덮임
+ROLL_DAY = 19               # 이 날짜를 넘기면 한 달 더 뒤 월물로 넘어감 (WTI 만기 22일경)
 SETTLE_HOUR = 14.5          # NYMEX 에너지 선물 정산 14:30 ET
 ET_OFFSET = -4 * 3600       # 정산 판정용. 서머타임 폭은 30분 판정에 영향 없음
-
-SYMBOLS = {                 # 이름: (스투크, 야후)
-    "ho": ("ho.f", "HO=F"),
-    "rb": ("rb.f", "RB=F"),
-    "cl": ("cl.f", "CL=F"),
-}
+MONTH_CODE = "FGHJKMNQUVXZ"  # 1월~12월 NYMEX 월물 코드
+ROOTS = ("cl", "ho", "rb")
 
 
 def _open(url, opener=None, timeout=30):
     req = urllib.request.Request(url, headers={
         "User-Agent": UA,
-        "Accept": "text/csv,application/json,text/plain,*/*",
+        "Accept": "application/json,text/plain,*/*",
         "Accept-Language": "en-US,en;q=0.9",
     })
     o = opener or urllib.request
     return o.urlopen(req, timeout=timeout) if opener is None else opener.open(req, timeout=timeout)
-
-
-def from_stooq(sym):
-    """스투크 일별 CSV. Date,Open,High,Low,Close,Volume"""
-    url = f"https://stooq.com/q/d/l/?s={sym}&i=d"
-    with _open(url) as r:
-        text = r.read().decode("utf-8", "replace").strip()
-    if not text or "Date" not in text.split("\n")[0]:
-        raise RuntimeError("빈 응답 또는 헤더 없음")
-    out = {}
-    for row in csv.DictReader(io.StringIO(text)):
-        c = row.get("Close")
-        if c in (None, "", "N/A"):
-            continue
-        try:
-            out[row["Date"]] = float(c)
-        except ValueError:
-            continue
-    if not out:
-        raise RuntimeError("종가가 전부 결측")
-    return out
 
 
 def _yahoo_session():
@@ -104,16 +84,17 @@ def _yahoo_session():
 _YSESSION = None
 
 
-def from_yahoo(sym):
+def from_yahoo(sym, rng="6mo"):
     global _YSESSION
     if _YSESSION is None:
         _YSESSION = _yahoo_session()
     op, crumb = _YSESSION
     last = None
     for attempt in range(3):
+        throttled = False
         for host in ("query1", "query2"):
             url = (f"https://{host}.finance.yahoo.com/v8/finance/chart/"
-                   f"{sym.replace('=', '%3D')}?range=2y&interval=1d"
+                   f"{urllib.parse.quote(sym)}?range={rng}&interval=1d"
                    + (f"&crumb={urllib.parse.quote(crumb)}" if crumb else ""))
             try:
                 with _open(url, opener=op) as r:
@@ -135,30 +116,72 @@ def from_yahoo(sym):
             except Exception as e:
                 last = e
                 if "429" in str(e):        # 세션을 새로 열고 한참 쉰다
+                    throttled = True
                     _YSESSION = _yahoo_session()
                     op, crumb = _YSESSION
+        if not throttled:
+            break                          # 만기가 지나 상장폐지된 월물은 바로 포기 (기다릴 이유 없음)
         time.sleep(15 * (attempt + 1))
     raise RuntimeError(str(last))
 
 
-SOURCES = [("yahoo", from_yahoo, 1), ("stooq", from_stooq, 0)]
+def front_month(d):
+    """그 날짜에 쓸 인도월 (년, 월). WTI 만기 기준으로 세 다리가 같이 넘어간다."""
+    y, m = d.year, d.month + (1 if d.day <= ROLL_DAY else 2)
+    while m > 12:
+        m -= 12
+        y += 1
+    return y, m
 
 
-def load_all():
-    """모든 종목을 한 소스에서 가져온다. 소스가 섞이면 계열이 어긋나므로."""
-    notes = []
-    for label, fn, idx in SOURCES:
-        got, err = {}, None
-        for name, syms in SYMBOLS.items():
+def code(y, m):
+    return f"{MONTH_CODE[m - 1]}{y % 100:02d}"
+
+
+def symbol(root, y, m):
+    return f"{root.upper()}{code(y, m)}.NYM"
+
+
+def load_window(days_back=LOOKBACK_DAYS):
+    """구간에 필요한 인도월들을 월물별 심볼로 받아온다. {(root,(y,m)): {날짜: 종가}}"""
+    today = date.today()
+    months, seen = [], set()
+    for k in range(days_back, -1, -1):
+        ym = front_month(today - timedelta(days=k))
+        if ym not in seen:
+            seen.add(ym)
+            months.append(ym)
+    px, errs = {}, []
+    for (y, m) in months:
+        for root in ROOTS:
+            sym = symbol(root, y, m)
             try:
-                got[name] = fn(syms[idx])
+                px[(root, (y, m))] = from_yahoo(sym)
             except Exception as e:
-                err = f"{label}:{syms[idx]}: {e}"
-                notes.append(err)
-                break
-        if len(got) == len(SYMBOLS):
-            return got, label, notes
-    raise RuntimeError(" | ".join(notes) or "모든 소스 실패")
+                errs.append(f"{sym}: {e}")
+            time.sleep(1)
+    return px, months, errs
+
+
+def build(px, days_back=LOOKBACK_DAYS):
+    """날짜마다 그 날의 인도월 하나로 세 다리를 맞춰 크랙을 계산한다."""
+    today = date.today()
+    diesel, c321 = [], []
+    for k in range(days_back, -1, -1):
+        d = today - timedelta(days=k)
+        ym = front_month(d)
+        key = d.strftime("%Y-%m-%d")
+        cl = (px.get(("cl", ym)) or {}).get(key)
+        ho = (px.get(("ho", ym)) or {}).get(key)
+        rb = (px.get(("rb", ym)) or {}).get(key)
+        if cl is None or ho is None:
+            continue
+        diesel.append({"d": key, "v": round(ho * GAL_PER_BBL - cl, 2), "m": code(*ym)})
+        if rb is not None:
+            c321.append({"d": key,
+                         "v": round((rb * GAL_PER_BBL * 2 + ho * GAL_PER_BBL - cl * 3) / 3, 2),
+                         "m": code(*ym)})
+    return diesel, c321
 
 
 def is_provisional(last_day):
@@ -168,11 +191,20 @@ def is_provisional(last_day):
     return now.hour + now.minute / 60 < SETTLE_HOUR
 
 
-def write_series(key, label, points, provisional, source):
-    points = sorted(points, key=lambda p: p["d"])[-KEEP:]
-    (SERIES_DIR / f"{key}.json").write_text(json.dumps({
+def merge_series(key, label, fresh, provisional):
+    """기존 계열에 최근 구간만 덮어쓴다. 옛 점은 그대로 둔다."""
+    path = SERIES_DIR / f"{key}.json"
+    try:
+        cur = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        cur = {}
+    pts = {p["d"]: p for p in (cur.get("points") or [])}
+    pts.update({p["d"]: p for p in fresh})
+    points = sorted(pts.values(), key=lambda p: p["d"])[-KEEP:]
+    path.write_text(json.dumps({
         "key": key, "label": label, "unit": "$/bbl", "demo": False,
-        "provisional": provisional, "src": source,
+        "provisional": provisional, "src": "yahoo",
+        "note": "세 다리 모두 같은 인도월 계약. m은 쓰인 월물 코드. 26.08.20 이전 점은 옛 연결 방식이라 원유 만기 직후 약 8영업일 구간이 실제보다 높게 찍혀 있음",
         "updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "points": points,
     }, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -197,39 +229,40 @@ def merge_auto(new_ind, errors):
 def main():
     ind, errors = {}, []
     try:
-        px, src, notes = load_all()
-        print(f"소스: {src}" + (f" (앞선 시도 실패: {'; '.join(notes)})" if notes else ""))
+        px, months, errs = load_window()
     except Exception as e:
         merge_auto({}, [f"futures: {e}"])
         print(f"실패: {e}")
         return 1
+    print("월물:", " ".join(code(*ym) for ym in months))
 
-    days = sorted(set(px["ho"]) & set(px["cl"]))
-    pts = [{"d": d, "v": round(px["ho"][d] * GAL_PER_BBL - px["cl"][d], 2)} for d in days]
-    prov = is_provisional(pts[-1]["d"]) if pts else False
-    last = write_series("diesel_crack_1_1", "디젤 1:1 크랙", pts, prov, src)
+    diesel, c321 = build(px)
+    if not diesel:
+        merge_auto({}, [f"futures: 계산된 점 없음 ({'; '.join(errs[:3]) or '원인 미상'})"])
+        print("실패: 점 없음", errs[:3])
+        return 1
+    # 구간 안에 만기 지난 월물이 섞여 일부 심볼이 비는 건 정상이므로, 점이 나왔으면 에러로 올리지 않는다
+
+    prov = is_provisional(diesel[-1]["d"])
+    last = merge_series("diesel_crack_1_1", "디젤 1:1 크랙", diesel, prov)
     if last:
         ind["diesel_crack_1_1"] = {
             "value": last["v"], "unit": "$/bbl", "asOf": last["d"],
             "note": "장중 잠정치" if prov else None,
-            "source": f"NYMEX ULSD · WTI 선물 {'장중' if prov else '종가'} 기반 산출",
+            "source": f"NYMEX ULSD · WTI {last.get('m', '')}물 {'장중' if prov else '종가'} 기반 산출",
             "mode": "auto"}
 
-    d3 = sorted(set(days) & set(px["rb"]))
-    pts3 = []
-    for d in d3:
-        h, g, c = px["ho"][d] * GAL_PER_BBL, px["rb"][d] * GAL_PER_BBL, px["cl"][d]
-        pts3.append({"d": d, "v": round((g * 2 + h - c * 3) / 3, 2)})
-    prov3 = is_provisional(pts3[-1]["d"]) if pts3 else False
-    last3 = write_series("crack_3_2_1", "3-2-1 크랙", pts3, prov3, src)
+    prov3 = is_provisional(c321[-1]["d"]) if c321 else False
+    last3 = merge_series("crack_3_2_1", "3-2-1 크랙", c321, prov3)
     if last3:
         ind["crack_3_2_1"] = {
             "value": last3["v"], "unit": "$/bbl", "asOf": last3["d"],
             "note": "장중 잠정치" if prov3 else None,
-            "source": f"NYMEX 선물 {'장중' if prov3 else '종가'} 기반 산출", "mode": "auto"}
+            "source": f"NYMEX {last3.get('m', '')}물 {'장중' if prov3 else '종가'} 기반 산출",
+            "mode": "auto"}
 
     merge_auto(ind, errors)
-    print(json.dumps({"source": src, "indicators": ind}, ensure_ascii=False, indent=2))
+    print(json.dumps({"indicators": ind, "누락 심볼": errs[:5]}, ensure_ascii=False, indent=2))
     return 0 if ind else 1
 
 
