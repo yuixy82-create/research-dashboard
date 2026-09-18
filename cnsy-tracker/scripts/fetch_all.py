@@ -293,18 +293,13 @@ def f_ctgov():
 def f_news():
     del _ERR[:]
     out = []
-    feeds = ("https://ir.cerenome.com/rss/news-releases.xml",
-             "https://cnside-dx.com/news/feed/",
-             "https://cnside-dx.com/feed/")
-    for u in feeds:
-        for plain in (False, True):
-            try:
-                out += parse_rss(get(u, plain=plain), limit=20)
-                break
-            except Exception as e:                   # noqa: BLE001
-                _ERR.append("%s(plain=%s): %s" % (u.split("/")[2], plain, e))
-        if out:
+    u = "https://ir.cerenome.com/rss/news-releases.xml"
+    for ua, plain in ((UA_WEB, False), (UA_WEB, True), ("CNSY Tracker yuixy82@gmail.com", True)):
+        try:
+            out += parse_rss(get(u, ua=ua, plain=plain), limit=20)
             break
+        except Exception as e:                       # noqa: BLE001
+            _ERR.append("plain=%s: %s" % (plain, e))
     if not out:
         raise RuntimeError("피드 없음 · " + " | ".join(_ERR[:3]))
     ded, seen = [], set()
@@ -410,6 +405,26 @@ def grade_news(title):
     return "yellow"
 
 
+_MONTHS = {m: i + 1 for i, m in enumerate(
+    ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])}
+
+
+def item_age_days(raw):
+    """RSS pubDate를 날짜로 읽어 며칠 지났는지 센다. 못 읽으면 None."""
+    m = re.search(r"(\d{1,2})\s+([A-Z][a-z]{2})\s+(\d{4})", raw or "")
+    if m:
+        try:
+            d = datetime(int(m.group(3)), _MONTHS[m.group(2)], int(m.group(1)), tzinfo=KST)
+        except Exception:                            # noqa: BLE001
+            return None
+    else:
+        m = re.search(r"(\d{4})-(\d{2})-(\d{2})", raw or "")
+        if not m:
+            return None
+        d = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)), tzinfo=KST)
+    return (datetime.now(KST) - d).days
+
+
 def diff(prev, cur):
     """직전 스냅샷과 비교해 변화만 뽑는다."""
     ev = []
@@ -460,8 +475,12 @@ def diff(prev, cur):
     # 5. IR 보도자료
     oldn = {n["link"] for n in (prev.get("news") or [])}
     for n in (cur.get("news") or []):
-        if oldn and n["link"] not in oldn:
-            add(grade_news(n["title"]), "뉴스", n["title"], n["link"])
+        if not oldn or n["link"] in oldn:
+            continue
+        age = item_age_days(n.get("date"))
+        if age is not None and age > 30:     # 소스가 바뀌며 옛 글이 올라오는 경우를 막는다
+            continue
+        add(grade_news(n["title"]), "뉴스", n["title"], n["link"])
 
     # 6. CNSide 사이트
     oldc = {c["link"] for c in (prev.get("cnside") or [])}
