@@ -291,14 +291,22 @@ def f_ctgov():
 
 
 def f_news():
+    del _ERR[:]
     out = []
-    for u in ("https://ir.cerenome.com/rss/news-releases.xml",):
-        try:
-            out += parse_rss(get(u), limit=20)
-        except Exception:                            # noqa: BLE001
-            continue
+    feeds = ("https://ir.cerenome.com/rss/news-releases.xml",
+             "https://cnside-dx.com/news/feed/",
+             "https://cnside-dx.com/feed/")
+    for u in feeds:
+        for plain in (False, True):
+            try:
+                out += parse_rss(get(u, plain=plain), limit=20)
+                break
+            except Exception as e:                   # noqa: BLE001
+                _ERR.append("%s(plain=%s): %s" % (u.split("/")[2], plain, e))
+        if out:
+            break
     if not out:
-        raise RuntimeError("no feed")
+        raise RuntimeError("피드 없음 · " + " | ".join(_ERR[:3]))
     ded, seen = [], set()
     for it in out:
         if it["link"] in seen:
