@@ -3,6 +3,13 @@
   "entity": "CERENOME, INC.",
   "list": [
    {
+    "form": "D",
+    "filed": "2026-09-18",
+    "items": "06b",
+    "acc": "0001193125-26-395734",
+    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526395734/xslFormDX01/primary_doc.xml"
+   },
+   {
     "form": "8-K",
     "filed": "2026-09-10",
     "items": "1.01,2.03,3.02,8.01,9.01",
@@ -274,13 +281,6 @@
     "items": "",
     "acc": "0001140361-26-012353",
     "url": "https://www.sec.gov/Archives/edgar/data/1095981/000114036126012353/ef20069112_defa14a.htm"
-   },
-   {
-    "form": "ARS",
-    "filed": "2026-03-31",
-    "items": "",
-    "acc": "0001193125-26-134670",
-    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526134670/2025_ars.pdf"
    }
   ]
  },
@@ -453,15 +453,11 @@
   }
  },
  "quote": {
-  "price": 2.09,
+  "price": 2.03,
   "prev": 6.0,
   "high52": 23.5,
   "low52": 2.0,
   "hist": [
-   {
-    "date": "2026-03-18",
-    "close": 6.0
-   },
    {
     "date": "2026-03-19",
     "close": 6.0
@@ -968,7 +964,7 @@
    },
    {
     "date": "2026-09-18",
-    "close": 2.09
+    "close": 2.03
    }
   ]
  },
@@ -1153,11 +1149,6 @@
    "gbm": 53
   },
   {
-   "date": "2026-08-31",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
    "date": "2026-09-19",
    "lm": 37,
    "gbm": 53
@@ -1196,6 +1187,13 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-09-19",
+   "level": "yellow",
+   "axis": "자본",
+   "text": "SEC D 제출 (2026-09-18) · Item 06b",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526395734/xslFormDX01/primary_doc.xml"
+  },
   {
    "date": "2026-09-16",
    "level": "yellow",
@@ -1289,7 +1287,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-09-19 00:57",
+  "updated": "2026-09-19 08:03",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1304,6 +1302,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 0
+  "new_events": 1
  }
 }
