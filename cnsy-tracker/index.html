@@ -153,7 +153,7 @@ a{color:var(--brand-heading)}
     <h1 class="page-title">Cerenome (CNSY) 추적</h1>
     <p class="page-sub">진단 CNSide · 치료제 REYOBIQ · 자본구조</p>
     <hr class="title-rule">
-    <div class="stamp">기준일 2026.08.31 · 자동 갱신 <span id="stamp-auto">—</span></div>
+    <div class="stamp">기준일 2026.09.18 · 자동 갱신 <span id="stamp-auto">—</span></div>
   </header>
 
   <p class="lead">
@@ -185,7 +185,7 @@ a{color:var(--brand-heading)}
   <hr class="sec-rule">
 
   <p>
-    매일 자동으로 갱신되는 항목(LM 다회투여 · GBM · CNSide)만 이 장에 둠.
+    매일 자동으로 갱신되는 항목(LM 다회투여 · GBM · CNSide · 희석)만 이 장에 둠.
   </p>
 
   <div class="banner">한 줄 현황</div>
@@ -195,6 +195,7 @@ a{color:var(--brand-heading)}
         <tr><td class="key">LM 다회투여</td><td id="s-lm">—</td></tr>
         <tr><td class="key">GBM</td><td id="s-gbm">—</td></tr>
         <tr><td class="key">CNSide</td><td id="s-cov">—</td></tr>
+        <tr><td class="key">희석</td><td id="s-dil">—</td></tr>
       </tbody>
     </table>
   </div>
@@ -248,7 +249,7 @@ a{color:var(--brand-heading)}
   </p>
 
   <p>
-    <span class="mark">카운터가 (26.06.09) 37명에서 두 달 넘게 멈춰 있음</span>:
+    <b>카운터가 (26.06.09) 37명에서 석 달 넘게 멈춰 있음</b>:
     다회투여 8명에서 변동 없음. 페이지 본문은 (26.08.20)에 수정되었으나 카운터 반영이 늦을 수 있어
     등록 정체로 단정하지 않음. 연말 RP2D 확정 목표와 맞물리는 지점이라 매일 확인 대상 1순위로 둠.
   </p>
@@ -327,6 +328,74 @@ a{color:var(--brand-heading)}
   <div class="note"><b>Note</b> — 확보분: UnitedHealthcare · Humana · Highmark · Blue Shield of California · Elevance Health · Medical Mutual · HCSC</div>
 
 
+
+  <div class="grp-h">희석 · ATM과 전환사채</div>
+  <hr class="grp-rule">
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>항목</th><th>현재</th></tr></thead>
+      <tbody>
+        <tr><td class="key">발행주식수</td><td id="d-shares">—</td></tr>
+        <tr><td class="key">최근 증감</td><td id="d-delta">—</td></tr>
+        <tr><td class="key">워런트</td><td>1,817,714주 (26.06.30) · 발행주식 대비 약 24%</td></tr>
+        <tr><td class="key">ATM</td><td>Canaccord Genuity 한도 $17.35M 중 $1.85M 인출 (436,448주, 주당 약 $4.25).
+          베이비셸프 산정이 시가총액에 연동되어 실제 사용 가능액은 한도보다 작음</td></tr>
+        <tr class="sub"><td class="key">전환사채</td><td><b>3i, LP와 선순위 담보부 전환사채 (26.09.04 계약, 26.09.10 초기 클로징)</b>:
+          원금 총 $21.28M, 초기 실수령 $3.0M, 나머지는 마일스톤 조건.
+          전환가 $2.74, 플로어 $0.50, 이자 8%(디폴트 시 최대 18%), OID 6%, 만기 1년</td></tr>
+        <tr class="sub"><td class="key">담보와 로열티</td><td><b>회사와 CNSide 자산 전부에 1순위 담보권, CNSide 지분 질권 포함.
+          CNSide 총매출의 2.5%를 분기 로열티로 지급</b> (분기 상한은 미상환 잔액의 2.5%), 사채 전액 상환까지 유지</td></tr>
+        <tr><td class="key">보유 제한</td><td>투자자 지분 4.99%(선택 시 9.99%) 상한, 나스닥 교환 상한 적용</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Source</b> — <a href="https://www.sec.gov/Archives/edgar/data/1095981/000119312526387267/d382364d8k.htm" target="_blank" rel="noopener">8-K (26.09.10, Item 1.01·2.03·3.02·8.01)</a>
+    · 발행주식수는 SEC XBRL dei 태그, 매일 수집 ·
+    <b>Note</b> — 발행주식수는 10-Q·10-K 표지 기준이라 ATM 인출이 며칠 늦게 잡힘. 전환사채 전환분은 전환 후 표지 갱신 시점에 반영됨
+  </div>
+
+  <div class="banner">발행주식수 추이 (액면병합 이후)</div>
+  <div class="chartbox"><svg id="ch-sh" viewBox="0 0 880 250" role="img"
+    aria-label="액면병합 이후 발행주식수 추이"></svg></div>
+  <div class="note">
+    <b>Source</b> — SEC XBRL dei:EntityCommonStockSharesOutstanding ·
+    <b>Note</b> — (26.04.02) 1대 25 액면병합 이전 구간은 축이 뭉개져 제외함. 병합 자체는 기업가치를 바꾸지 않음
+  </div>
+
+  <div class="banner">전환 시 희석 규모</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>전환가</th><th class="num">신주</th><th class="num">전환 후 총주식</th><th class="num">희석률</th><th>조건</th></tr></thead>
+      <tbody id="dilbody"><tr><td colspan="5">불러오는 중</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note"><b>Note</b> — 원금 $21,276,596 전액이 해당 가격에 전환된다고 가정한 산술치. 이자와 OID는 제외. 마일스톤 미달로 후속 트랜치가 나가지 않으면 실제 희석은 초기분에 그침</div>
+
+  <div class="banner">경보 기준</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>신호</th><th>읽는 법</th></tr></thead>
+      <tbody>
+        <tr><td class="key">주간 주식수 +2%</td><td>ATM 가동 중</td></tr>
+        <tr><td class="key">주간 +5% 또는 월 +10%</td><td>전환 또는 대량 인출: 조달 조건을 다시 확인함</td></tr>
+        <tr class="sub"><td class="key">주식수 증가가 멈춤</td><td><b>회사가 미공개 중요정보를 보유한 구간일 수 있음</b>: ATM은 그 기간 매도가 금지됨</td></tr>
+        <tr><td class="key">증가 재개</td><td>발표를 조달 창구로 쓴 것: 발표 직후 구간을 함께 봄</td></tr>
+        <tr><td class="key">주가가 $2.74 아래 유지</td><td>전환 유인 낮음. 다만 전환가는 조정 조항이 있어 하향 가능</td></tr>
+        <tr><td class="key">신규 S-1 또는 424B5</td><td>등록권 계약에 따른 전환주식 재판매 등록: 매물 출회 시점</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    <span class="mark">조달은 ATM이 아니라 CNSide를 담보로 잡은 전환사채로 들어왔음</span>:
+    초기 실수령은 $3.0M이고 나머지 $18M대는 마일스톤 조건임.
+    회사는 주주 희석 최소화와 2028년까지의 런웨이를 내세웠으나,
+    진단 자회사의 자산과 지분이 1순위 담보로 묶이고 매출에 2.5% 로열티가 선순위로 붙은 구조임.
+    주가는 발표 전후로 $3.05에서 $2.03까지 내려 전환가 $2.74 아래에 있음.
+  </p>
+
+
   <!-- ══════════ 2장 ══════════ -->
   <h2 class="sec"><span class="no">2장</span>지금 상태</h2>
   <hr class="sec-rule">
@@ -341,12 +410,18 @@ a{color:var(--brand-heading)}
   <p>
     반대편에서 현금·투자는 (26.06.30) $8.6M, 분기 영업현금유출 $6.7M.
     10-Q에 <span class="neg">계속기업 불확실성</span>이 기재됨.
-    베이비셸프 한도는 시가총액 하락으로 $7~8M 수준까지 축소되어,
-    ATM만으로는 다음 분기를 넘기기 어려운 구조임.
+    베이비셸프 한도가 시가총액 하락으로 축소되어 ATM만으로는 다음 분기를 넘기기 어려운 구조였음.
   </p>
 
   <p>
-    <span class="star">★</span><span class="mark">임상 리드아웃 2건과 현금 소진이 같은 분기에 몰려 있어: 데이터 자체보다 데이터를 어떤 조달 조건과 묶어 내놓는지가 주가를 지배함</span>
+    (26.09.10) 3i, LP와 선순위 담보부 전환사채로 조달이 들어옴: 초기 실수령 $3.0M,
+    원금 총액 $21.28M 중 나머지는 마일스톤 조건.
+    조건은 <b>CNSide 자산과 지분에 대한 1순위 담보권, 총매출 2.5% 로열티, 전환가 $2.74에 플로어 $0.50</b>.
+    주가는 $3.05에서 $2.03까지 내렸고 52주 저가는 $2.00임.
+  </p>
+
+  <p>
+    <span class="star">★</span><span class="mark">조달이 임상 데이터보다 먼저 왔고 대가는 진단 자회사의 담보였음: 남은 판단은 데이터가 그 담보를 풀 만큼 나오는지</span>
   </p>
 
 
@@ -560,7 +635,9 @@ a{color:var(--brand-heading)}
     <table class="data">
       <thead><tr><th>질문</th><th>해소 시점</th></tr></thead>
       <tbody>
-        <tr class="sub"><td class="key">0640U 준용 단가 수준</td><td>CMS 예비결정 26.09 상반기</td></tr>
+        <tr class="sub"><td class="key">0640U 준용 단가 수준</td><td>CMS 예비결정이 26.09 상반기 예정이었으나 (26.09.18) 현재 미게시. 최종결정은 26.11 예정</td></tr>
+        <tr class="sub"><td class="key">전환사채 후속 트랜치의 마일스톤 조건</td><td>보도자료와 8-K 모두 비공개. 후속 S-1 또는 분기 보고서</td></tr>
+        <tr><td class="key">조달 후 현금 잔액과 런웨이</td><td>회사는 2028년까지를 주장. 3분기 10-Q (26.11 중순)</td></tr>
         <tr><td class="key">LM 다회투여 실제 등록 인원</td><td>회사가 "목표의 약 1/3"만 반복. 3분기 실적 또는 SNO 초록</td></tr>
         <tr><td class="key">GBM 데이터 시점: 4분기 대 27년 1분기</td><td>보도자료는 27년 1분기로 일관됨. 컨콜 원문 대조 필요</td></tr>
         <tr><td class="key">7~8월 발행주식 27.9만주 증가분의 출처</td><td>3분기 10-Q</td></tr>
@@ -688,7 +765,10 @@ a{color:var(--brand-heading)}
   function rows(id, html){ var e=document.getElementById(id); if(e) e.innerHTML = html || '<tr><td colspan="5">자료 없음</td></tr>'; }
 
 
-  var SINGLE_DOSE_LM = 29;   // 단회투여 Phase 1 종료 인원. 다회투여 = 카운터 - 29
+  var SINGLE_DOSE_LM = 29;    // 단회투여 Phase 1 종료 인원. 다회투여 = 카운터 - 29
+  var NOTE_PRINCIPAL = 21276596;   // 3i 전환사채 원금
+  var NOTE_PRICE = 2.74, NOTE_FLOOR = 0.50;
+  var SPLIT_DATE = '2026-04-02';   // 1대 25 액면병합 발효일
 
   function svgEl(tag, attrs, txt){
     var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
@@ -836,6 +916,40 @@ a{color:var(--brand-heading)}
       return '<tr><td class="num">'+esc(String(c.date).slice(0,16))+'</td>'
            + '<td class="num">'+c.lives_m+'M</td><td>'+t+'</td></tr>';
     }).join(''));
+
+    // 1장 · 희석
+    var ser = ((d.shares||{}).series||[]);
+    var post = ser.filter(function(x){ return x.date >= SPLIT_DATE; });
+    lineChart(document.getElementById('ch-sh'),
+      post.map(function(x){ return {d:x.date, v:x.shares}; }), '주');
+    var cur = (d.shares||{}).latest || (post.length? post[post.length-1] : null);
+    if(cur){
+      put('d-shares', n(cur.shares) + '주 (' + cur.date + ' 기준)');
+      var pv = post.length > 1 ? post[post.length-2] : null;
+      var e1 = document.getElementById('d-delta');
+      if(e1) e1.innerHTML = pv
+        ? ('직전 ' + pv.date + ' ' + n(pv.shares) + '주 대비 <b>'
+           + (cur.shares-pv.shares>=0?'+':'') + n(cur.shares-pv.shares) + '주 ('
+           + ((cur.shares-pv.shares)/pv.shares*100).toFixed(1) + '%)</b>')
+        : '비교 시점 없음';
+      var scen = [
+        {px:NOTE_PRICE, cond:'계약상 초기 전환가'},
+        {px:1.50, cond:'조정 조항 작동 가정'},
+        {px:NOTE_FLOOR, cond:'플로어까지 하향된 최악'}
+      ];
+      rows('dilbody', scen.map(function(x){
+        var ns = Math.round(NOTE_PRINCIPAL / x.px);
+        var tot = cur.shares + ns;
+        return '<tr' + (x.px===NOTE_FLOOR?' class="warn"':'') + '><td class="key">$'
+             + x.px.toFixed(2) + '</td><td class="num">' + n(ns) + '</td><td class="num">' + n(tot)
+             + '</td><td class="num">+' + Math.round(ns/cur.shares*100) + '%</td><td>'
+             + x.cond + '</td></tr>';
+      }).join(''));
+      var e2 = document.getElementById('s-dil');
+      if(e2) e2.innerHTML = '발행 <b>' + n(cur.shares) + '주</b>, 전환사채 원금 $21.28M이 전환가 $2.74에 전액 전환되면 '
+        + '<b>주식수 약 2배</b>: 주가 $' + ((d.quote||{}).price!=null ? (d.quote.price).toFixed(2) : '—')
+        + '로 전환가 아래, ATM 인출 여부를 매일 확인함';
+    }
 
     rows('logbody', (d.log||[]).slice(0,60).map(function(e){
       var lv = LV[e.level] || LV.yellow;
