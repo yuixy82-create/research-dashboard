@@ -1,17 +1,17 @@
 {
  "_comment": "수동 기초값. cache.json이 없거나 특정 소스가 실패했을 때의 폴백. 자동 수집이 성공하면 cache.json이 우선함.",
  "meta": {
-  "updated": "2026-08-31 (수동 기준값)",
+  "updated": "2026-09-18 (수동 기준값)",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {},
   "new_events": 0
  },
  "quote": {
-  "price": 3.07,
-  "prev": 3.0,
+  "price": 2.03,
+  "prev": 2.05,
   "high52": 23.425,
-  "low52": 2.9,
+  "low52": 2.0,
   "hist": []
  },
  "shares": {
@@ -23,6 +23,10 @@
    {
     "date": "2026-01-02",
     "shares": 5555902
+   },
+   {
+    "date": "2026-05-13",
+    "shares": 6883106
    },
    {
     "date": "2026-06-30",
@@ -104,9 +108,23 @@
  "reddit": [],
  "cms": {
   "cy2027_files": [],
-  "checked": "2026-08-31"
+  "checked": "2026-09-18"
  },
  "log": [
+  {
+   "date": "2026-09-16",
+   "level": "yellow",
+   "axis": "진단",
+   "text": "Samantha Fowlkes를 CNSide 상업영업 총괄 부사장으로 선임",
+   "link": "https://ir.cerenome.com/news-releases"
+  },
+  {
+   "date": "2026-09-10",
+   "level": "red",
+   "axis": "희석",
+   "text": "3i, LP와 선순위 담보부 전환사채: 원금 $21.28M, 초기 실수령 $3.0M, 전환가 $2.74, 플로어 $0.50, 이자 8%, 만기 1년. CNSide 자산·지분 담보 및 총매출 2.5% 로열티",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526387267/d382364d8k.htm"
+  },
   {
    "date": "2026-08-20",
    "level": "yellow",
