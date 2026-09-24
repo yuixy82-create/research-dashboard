@@ -2706,6 +2706,29 @@ def _asof(seg):
         return None
 
 
+def _sd_asof():
+    """Silicon Data 지수의 기록일: 직전 미국 영업일 (영업일당 1회 발표)."""
+    et = datetime.now(timezone.utc) - timedelta(hours=5)
+    d0 = et.date()
+    if et.hour < 17:
+        d0 -= timedelta(days=1)
+    while d0.weekday() >= 5:
+        d0 -= timedelta(days=1)
+    return d0.isoformat()
+
+
+# 26.09.24 형식: 라벨(티커) $가격.  하이퍼스케일러 줄을 먼저 잡아야 H100 줄과 섞이지 않는다
+SD_TICKER_PAT = [
+    ("SD_H100_HYP",   r"H100\s*-\s*hyperscaler[^$]{0,30}\$\s*([\d.]+)"),
+    ("SD_A100_HYP",   r"A100\s*-\s*hyperscaler[^$]{0,30}\$\s*([\d.]+)"),
+    ("SD_H100_NEO",   r"H100\s*\(\s*SDH100RT\s*\)[^$]{0,30}\$\s*([\d.]+)"),
+    ("SD_A100_NEO",   r"A100\s*\(\s*SDA100RT\s*\)[^$]{0,30}\$\s*([\d.]+)"),
+    ("SD_B200_ALL",   r"B200\s*\(\s*SDB200RT\s*\)[^$]{0,30}\$\s*([\d.]+)"),
+    ("SD_MI300X_ALL", r"\bMI300X\b[^$]{0,30}\$\s*([\d.]+)"),
+    ("SD_H200_ALL",   r"\bH200\b[^$]{0,30}\$\s*([\d.]+)"),
+]
+
+
 def collect_silicondata():
     """{'SD_H100_NEO': {'2026-08-19': 2.68}, ...} 형태로 반환."""
     page = http_get(SD_URL)
@@ -2776,7 +2799,26 @@ def collect_silicondata():
             dd = sorted(out[k])[-1]
             print(f"  {k:16s} {dd}  ${out[k][dd]}")
     if not out:
-        print("  [warn] Silicon Data: 지수 파싱 실패 (신·구 형식 모두)")
+        # 26.09.24 재개편 대응: "H100(SDH100RT) $2.61 1.5% vs 7D" 형태의 지수 카드
+        # 'Rental Price Index' 문구가 사라지고 티커·하이퍼스케일러 구분이 본문에 노출됨
+        d = _sd_asof()
+        for key, pat in SD_TICKER_PAT:
+            g = re.search(pat, text, re.I)
+            if not g:
+                continue
+            try:
+                v = round(float(g.group(1)), 4)
+            except ValueError:
+                continue
+            if 0.05 <= v <= 100:
+                out.setdefault(key, {})[d] = v
+        if out:
+            print(f"  티커 형식 파싱 성공 ({len(out)}종, 기록일 {d})")
+        for k in sorted(out):
+            dd = sorted(out[k])[-1]
+            print(f"  {k:16s} {dd}  ${out[k][dd]}")
+    if not out:
+        print("  [warn] Silicon Data: 지수 파싱 실패 (형식 3종 모두)")
     return out
 
 
