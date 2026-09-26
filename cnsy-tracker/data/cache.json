@@ -1127,7 +1127,7 @@
   "cy2027_files": [
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip"
   ],
-  "checked": "2026-09-26"
+  "checked": "2026-09-27"
  },
  "trials_hist": [
   {
@@ -1151,7 +1151,12 @@
    "gbm": 53
   },
   {
-   "date": "2026-09-26",
+   "date": "2026-08-31",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
+   "date": "2026-09-27",
    "lm": 37,
    "gbm": 53
   }
@@ -1296,7 +1301,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-09-26 08:51",
+  "updated": "2026-09-27 00:55",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
