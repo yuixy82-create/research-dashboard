@@ -1,20 +1,20 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-29T02:14:13+00:00",
+  "updatedAt": "2026-09-30T00:04:45+00:00",
   "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 97.98,
+      "value": 100.69,
       "unit": "$/bbl",
-      "asOf": "2026-09-28",
+      "asOf": "2026-09-29",
       "note": null,
       "source": "NYMEX ULSD · WTI X26물 종가 기반 산출",
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 58.82,
+      "value": 61.22,
       "unit": "$/bbl",
-      "asOf": "2026-09-28",
+      "asOf": "2026-09-29",
       "note": null,
       "source": "NYMEX X26물 종가 기반 산출",
       "mode": "auto"
@@ -45,10 +45,10 @@
       "mode": "auto"
     },
     "group3_spread": {
-      "value": 2932,
+      "value": 2888,
       "unit": "$/t",
       "asOf": "2026-09-28",
-      "note": "Group III 3,660 − Brent 99.3 × 7.33",
+      "note": "Group III 3,660 − Brent 105.28 × 7.33",
       "source": "Lubes'n'Greases · NYMEX Brent 선물",
       "mode": "auto"
     }
