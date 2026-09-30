@@ -1,10 +1,10 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-09-30T00:04:45+00:00",
+  "updatedAt": "2026-09-30T01:28:42+00:00",
   "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 100.69,
+      "value": 102.0,
       "unit": "$/bbl",
       "asOf": "2026-09-29",
       "note": null,
@@ -12,7 +12,7 @@
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 61.22,
+      "value": 61.74,
       "unit": "$/bbl",
       "asOf": "2026-09-29",
       "note": null,
