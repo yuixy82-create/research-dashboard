@@ -200,6 +200,8 @@ def merge_series(key, label, fresh, provisional):
         cur = {}
     pts = {p["d"]: p for p in (cur.get("points") or [])}
     pts.update({p["d"]: p for p in fresh})
+    # 월요일 07:30 KST 실행 때 일요일 저녁 글로벡스 개장분이 일요일 날짜 봉으로 잡혀 남는다 → 주말 날짜 점은 버림
+    pts = {d: p for d, p in pts.items() if datetime.strptime(d, "%Y-%m-%d").weekday() < 5}
     points = sorted(pts.values(), key=lambda p: p["d"])[-KEEP:]
     path.write_text(json.dumps({
         "key": key, "label": label, "unit": "$/bbl", "demo": False,
