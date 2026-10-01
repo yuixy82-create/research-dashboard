@@ -1,1 +1,1 @@
-{"key": "russia_refinery_hit", "label": "러시아 정제설비 피격 비중", "unit": "%", "period": "month", "demo": false, "src": "iM증권 기름뿜뿜 위클리(26.08.28) · 수동", "note": "명목 정제능력 대비", "updatedAt": "2026-09-02T23:15:32+00:00", "points": [{"d": "2026-07-01", "v": 45}]}
+{"key":"russia_refinery_hit","label":"러시아 정유 처리량","unit":"mb/d","period":"month","demo":false,"src":"EA Analytics(Bloomberg 인용) · 수동","note":"평년 여름 5.3~5.5. 26.08은 월말 전 추정치. 9월은 약 4.2 전망","updatedAt":"2026-10-01T11:12:08+00:00","points":[{"d":"2026-07-01","v":3.6},{"d":"2026-08-01","v":3.8}]}
