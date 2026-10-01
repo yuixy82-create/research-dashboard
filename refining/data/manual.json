@@ -57,11 +57,11 @@
       "period": "month"
     },
     "russia_diesel_export": {
-      "value": 75,
+      "value": 53.5,
       "unit": "만톤/월",
-      "asOf": "2026-07-31",
-      "note": "전월 180에서 −60%. 25.06은 335",
-      "source": "Reuters",
+      "asOf": "2026-08-31",
+      "note": "같은 기준 7월 71.3에서 −25%. 09.01~24 44.8만톤, 흑해 항구는 9월 넷째 주 처음으로 0",
+      "source": "S&P Global CAS · The Insider 26.09.30",
       "mode": "manual",
       "period": "month"
     },
@@ -74,11 +74,11 @@
       "mode": "manual"
     },
     "gulf_exports": {
-      "value": 15,
+      "value": 13,
       "unit": "mb/d",
-      "asOf": "2026-07-31",
-      "note": "전월 대비 −2.1, 전쟁 전 약 20",
-      "source": "IEA",
+      "asOf": "2026-08-31",
+      "note": "전월 15에서 −2. 전쟁 전의 절반 수준. 제품·LPG는 26.02 대비 −3.7mb/d(−60%), 경유 순수출 39만b/d(전쟁 전의 1/4)",
+      "source": "IEA OMR 26.09.11",
       "mode": "manual",
       "period": "month"
     },
@@ -150,11 +150,11 @@
       "mode": "manual"
     },
     "russia_refinery_hit": {
-      "value": 45,
-      "unit": "%",
-      "asOf": "2026-07-31",
-      "note": "명목 정제설비 중 피격 비중. iM은 8월 추가 피격(NORSI 등)으로 현재 50% 이상 차질 추정(26.09.23)",
-      "source": "FT · Bloomberg · iM증권 26.08.28 인용",
+      "value": 3.8,
+      "unit": "mb/d",
+      "asOf": "2026-08-31",
+      "note": "평년 여름 5.3~5.5의 70% 수준. 9월 약 4.2 전망. IIR 집계 비계획 정지 설비 8월 평균 3.81mb/d(7월 4.27)",
+      "source": "EA Analytics · Bloomberg(Meduza 26.08.28 인용) · IIR 26.09.08",
       "mode": "manual",
       "period": "month"
     }
