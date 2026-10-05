@@ -1,20 +1,20 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-10-04T01:12:42+00:00",
+  "updatedAt": "2026-10-05T23:03:13+00:00",
   "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 97.94,
+      "value": 100.03,
       "unit": "$/bbl",
-      "asOf": "2026-10-02",
+      "asOf": "2026-10-05",
       "note": null,
       "source": "NYMEX ULSD · WTI X26물 종가 기반 산출",
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 64.65,
+      "value": 64.15,
       "unit": "$/bbl",
-      "asOf": "2026-10-02",
+      "asOf": "2026-10-05",
       "note": null,
       "source": "NYMEX X26물 종가 기반 산출",
       "mode": "auto"
@@ -39,16 +39,16 @@
     "group3_price": {
       "value": 3660,
       "unit": "$/t",
-      "asOf": "2026-09-28",
+      "asOf": "2026-10-05",
       "note": "4cSt FOB Asia 범위 3,640~3,680",
       "source": "Lubes'n'Greases 주간 리포트",
       "mode": "auto"
     },
     "group3_spread": {
-      "value": 2888,
+      "value": 2925,
       "unit": "$/t",
-      "asOf": "2026-09-28",
-      "note": "Group III 3,660 − Brent 105.28 × 7.33",
+      "asOf": "2026-10-05",
+      "note": "Group III 3,660 − Brent 100.24 × 7.33",
       "source": "Lubes'n'Greases · NYMEX Brent 선물",
       "mode": "auto"
     }
