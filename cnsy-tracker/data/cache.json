@@ -453,15 +453,11 @@
   }
  },
  "quote": {
-  "price": 1.65,
+  "price": 1.635,
   "prev": 2.92,
   "high52": 20.25,
   "low52": 1.49,
   "hist": [
-   {
-    "date": "2026-04-07",
-    "close": 2.92
-   },
    {
     "date": "2026-04-08",
     "close": 3.17
@@ -965,10 +961,6 @@
    {
     "date": "2026-10-06",
     "close": 1.59
-   },
-   {
-    "date": "2026-10-07",
-    "close": 1.65
    }
   ]
  },
@@ -1039,13 +1031,19 @@
    "title": "Advancing Leptomeningeal Metastases Diagnostics: CNSide® at SNO/ASCO CNS 2026",
    "link": "https://cnside-dx.com/advancing-leptomeningeal-metastases-diagnostics-cnside-at-sno-asco-2026/",
    "date": "2026-07-14",
-   "modified": "2026-07-16"
+   "modified": "2026-10-07"
   },
   {
    "title": "CNSide at Best of ASCO Austin: Free CME for Healthcare Professionals",
    "link": "https://cnside-dx.com/cnside-at-best-of-asco-austin/",
    "date": "2026-05-28",
-   "modified": "2026-06-02"
+   "modified": "2026-10-07"
+  },
+  {
+   "title": "Celebrating CNS Care and Lab Week 2026",
+   "link": "https://cnside-dx.com/celebrating-cns-care-and-lab-week-2026/",
+   "date": "2026-04-20",
+   "modified": "2026-10-07"
   },
   {
    "title": "Important Step Forward for CNSide Clinical Adoption and Access with AMA PLA Code Approval",
@@ -1118,12 +1116,6 @@
    "link": "https://cnside-dx.com/cnside-supports-world-cancer-day/",
    "date": "2026-02-04",
    "modified": "2026-05-29"
-  },
-  {
-   "title": "CNSide Diagnostics to Participate in the Inaugural Brain &#038; Spine Metastases Conference",
-   "link": "https://cnside-dx.com/cnside-diagnostics-to-participate-in-the-inaugural-brain-spine-metastases-conference/",
-   "date": "2026-01-20",
-   "modified": "2026-05-29"
   }
  ],
  "reddit": [],
@@ -1151,11 +1143,6 @@
   },
   {
    "date": "2026-08-24",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
-   "date": "2026-08-31",
    "lm": 37,
    "gbm": 53
   },
@@ -1198,6 +1185,13 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-10-08",
+   "level": "yellow",
+   "axis": "진단",
+   "text": "CNSide: Celebrating CNS Care and Lab Week 2026",
+   "link": "https://cnside-dx.com/celebrating-cns-care-and-lab-week-2026/"
+  },
   {
    "date": "2026-10-03",
    "level": "orange",
@@ -1333,7 +1327,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-10-08 03:31",
+  "updated": "2026-10-08 09:45",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1348,6 +1342,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 0
+  "new_events": 1
  }
 }
