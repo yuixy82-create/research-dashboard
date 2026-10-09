@@ -453,15 +453,11 @@
   }
  },
  "quote": {
-  "price": 1.71,
+  "price": 1.79,
   "prev": 3.17,
   "high52": 20.0,
   "low52": 1.49,
   "hist": [
-   {
-    "date": "2026-04-08",
-    "close": 3.17
-   },
    {
     "date": "2026-04-09",
     "close": 3.92
@@ -965,10 +961,6 @@
    {
     "date": "2026-10-07",
     "close": 1.64
-   },
-   {
-    "date": "2026-10-08",
-    "close": 1.71
    }
   ]
  },
@@ -1155,11 +1147,6 @@
    "gbm": 53
   },
   {
-   "date": "2026-08-31",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
    "date": "2026-10-09",
    "lm": 37,
    "gbm": 53
@@ -1340,7 +1327,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-10-09 03:29",
+  "updated": "2026-10-09 10:00",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1349,7 +1336,7 @@
    "quote": "ok",
    "trials": "ok",
    "ctgov": "ok",
-   "news": "fail: 피드 없음 · plain=False: The read operation timed out | plain=True: HTTP Error 403: Forbidden | plain=True: HTTP Error 403: Forbidden",
+   "news": "fail: 피드 없음 · plain=False: The read operation timed out | plain=True: HTTP Error 403: Forbidden | plain=True: The read operation timed out",
    "cnside": "ok",
    "reddit": "ok",
    "cms": "ok",
