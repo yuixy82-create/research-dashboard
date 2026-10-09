@@ -453,9 +453,9 @@
   }
  },
  "quote": {
-  "price": 1.79,
-  "prev": 3.17,
-  "high52": 20.0,
+  "price": 1.88,
+  "prev": 3.92,
+  "high52": 19.0,
   "low52": 1.49,
   "hist": [
    {
@@ -961,6 +961,14 @@
    {
     "date": "2026-10-07",
     "close": 1.64
+   },
+   {
+    "date": "2026-10-08",
+    "close": 1.79
+   },
+   {
+    "date": "2026-10-09",
+    "close": 1.88
    }
   ]
  },
@@ -1123,7 +1131,7 @@
   "cy2027_files": [
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip"
   ],
-  "checked": "2026-10-09"
+  "checked": "2026-10-10"
  },
  "trials_hist": [
   {
@@ -1147,7 +1155,12 @@
    "gbm": 53
   },
   {
-   "date": "2026-10-09",
+   "date": "2026-08-31",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
+   "date": "2026-10-10",
    "lm": 37,
    "gbm": 53
   }
@@ -1327,7 +1340,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-10-09 10:00",
+  "updated": "2026-10-10 03:01",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1336,7 +1349,7 @@
    "quote": "ok",
    "trials": "ok",
    "ctgov": "ok",
-   "news": "fail: 피드 없음 · plain=False: The read operation timed out | plain=True: HTTP Error 403: Forbidden | plain=True: The read operation timed out",
+   "news": "fail: 피드 없음 · plain=False: The read operation timed out | plain=True: HTTP Error 403: Forbidden | plain=True: HTTP Error 403: Forbidden",
    "cnside": "ok",
    "reddit": "ok",
    "cms": "ok",
