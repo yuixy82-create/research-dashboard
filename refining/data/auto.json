@@ -1,10 +1,10 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-10-13T00:00:50+00:00",
+  "updatedAt": "2026-10-13T03:08:16+00:00",
   "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 103.67,
+      "value": 103.56,
       "unit": "$/bbl",
       "asOf": "2026-10-12",
       "note": null,
@@ -12,7 +12,7 @@
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 63.83,
+      "value": 63.82,
       "unit": "$/bbl",
       "asOf": "2026-10-12",
       "note": null,
@@ -45,10 +45,10 @@
       "mode": "auto"
     },
     "group3_spread": {
-      "value": 2883,
+      "value": 2888,
       "unit": "$/t",
       "asOf": "2026-10-12",
-      "note": "Group III 3,660 − Brent 105.95 × 7.33",
+      "note": "Group III 3,660 − Brent 105.27 × 7.33",
       "source": "Lubes'n'Greases · NYMEX Brent 선물",
       "mode": "auto"
     }
