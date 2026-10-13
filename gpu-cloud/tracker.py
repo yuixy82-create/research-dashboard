@@ -2217,9 +2217,9 @@ SEED = {
         ]
     },
     "anthropic_rev": {
-        "label": "앤스로픽 연환산 매출 run-rate ($B)",
+        "label": "앤스로픽 연환산 매출 run-rate — Gross ($B)",
         "source": "CNBC·Reuters·TechCrunch·Series G/H 공식 발표",
-        "note": "연환산(run-rate) = 해당 시점 월매출×12. 연간 실적 아님. 이익 비공개(적자)",
+        "note": "앤스로픽은 Gross(CSP 수익배분 차감 전) 기준 인식. 연환산 = 월매출×12, 연간 실적 아님",
         "points": [
             [
                 "2024-12-31",
@@ -2290,50 +2290,22 @@ SEED = {
         "points": []
     },
     "openai_rev": {
-        "label": "오픈AI 연환산 매출 run-rate ($B)",
-        "source": "Reuters·The Information·Bloomberg·Epoch AI",
-        "note": "연환산(run-rate) 기준. 26.02~06 약 25B 정체 후 7월 급가속. 이익 비공개(적자)",
+        "label": "오픈AI 연환산 매출 run-rate — Net ($B)",
+        "source": "Reuters·The Information·Bloomberg·FT(26.10.08) 정정치",
+        "note": "오픈AI는 26년 초 Gross→Net 인식으로 변경. CSP 수익배분 차감 후 금액. 이익 비공개(적자)",
         "points": [
-            [
-                "2024-06-30",
-                3.4
-            ],
-            [
-                "2024-12-31",
-                5.5
-            ],
-            [
-                "2025-06-30",
-                10.0
-            ],
-            [
-                "2025-07-30",
-                12.0
-            ],
-            [
-                "2025-08-31",
-                13.0
-            ],
-            [
-                "2025-12-31",
-                21.4
-            ],
-            [
-                "2026-02-28",
-                25.0
-            ],
-            [
-                "2026-03-31",
-                25.0
-            ],
-            [
-                "2026-06-11",
-                25.0
-            ],
-            [
-                "2026-08-13",
-                40.0
-            ]
+            ["2024-06-30", 3.4], ["2024-12-31", 5.5], ["2025-06-30", 10.0],
+            ["2025-07-30", 12.0], ["2025-08-31", 13.0], ["2025-09-30", 15.0],
+            ["2025-12-31", 20.0], ["2026-02-28", 25.0], ["2026-06-30", 25.0],
+            ["2026-07-31", 30.0], ["2026-08-31", 38.0], ["2026-09-30", 50.0]
+        ]
+    },
+    "openai_rev_gross": {
+        "label": "오픈AI Gross ($B)",
+        "source": "FT(26.10.08) 투자자 공개 자료",
+        "note": "CSP 수익배분 차감 전. 시장이 기대하던 $70B은 이 기준의 수치였음",
+        "points": [
+            ["2026-07-31", 40.0], ["2026-09-30", 68.0]
         ]
     },
     "crwv_margin": {
@@ -3445,10 +3417,14 @@ def sig_card(title, cls, state, desc):
             '<div class="d">%s</div></div>' % (cls, title, state, desc))
 
 
+NET_RATIO = 0.73   # Gross → Net 환산 (CSP 수익배분 차감 후, 업계 통용 역산치)
+
+
 def build_html():
     # news.json: 예약 작업(Claude)이 언론 보도 값을 자동 추가하는 파일.
     # 형식 {"anthropic_rev": [["2026-09-30", 80]], "openai_rev": [...], "cds": [...],
-    #      "openai_agent_wau": [["날짜", 백만명]], "anthropic_agent_wau": [...]}
+    #      "openai_agent_wau": [["날짜", 백만명]], "anthropic_agent_wau": [...],
+    #      "openai_rev_gross": [["날짜", B단위]]}
     news = load_json(os.path.join(ROOT, "news.json"), {})
     for k, pts in news.items():
         if k in SEED and isinstance(pts, list):
@@ -3475,6 +3451,9 @@ def build_html():
     cw_int = seed_series("crwv_interest")
     ant_rev = seed_series("anthropic_rev")
     oai_rev = seed_series("openai_rev")
+    oai_gross = seed_series("openai_rev_gross")
+    # 앤스로픽 공시는 Gross 기준 — 오픈AI(Net)와 같은 잣대로 보기 위한 환산 보조선
+    ant_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_rev]
     agent_wau = seed_series("openai_agent_wau")
     ant_wau = seed_series("anthropic_agent_wau")
     gb300 = daily_series(cache, bk("GB300"))
@@ -3600,9 +3579,15 @@ def build_html():
         {"label": "조정영업이익률", "color": T["primary"], "width": 2.4, "markers": True, "points": cw_mgn},
     ], h=250, yfmt=lambda v: "%.0f%%" % v)
     c_rev = svg_chart([
-        {"label": "앤스로픽", "color": T["primary"], "width": 2.4, "markers": True, "points": ant_rev},
-        {"label": "오픈AI", "color": T["teal"], "width": 2.4, "markers": True, "points": oai_rev},
-    ], h=250, yfmt=lambda v: "$%.0fB" % v)
+        {"label": "앤스로픽 Gross", "color": T["chartGray"], "width": 1.6, "dash": True,
+         "markers": True, "points": ant_rev},
+        {"label": "오픈AI Gross", "color": T["tealLight"], "width": 1.6, "dash": True,
+         "markers": True, "points": oai_gross},
+        {"label": "앤스로픽 Net환산", "color": T["primary"], "width": 2.4, "markers": True,
+         "points": ant_net},
+        {"label": "오픈AI Net", "color": T["teal"], "width": 2.4, "markers": True,
+         "points": oai_rev},
+    ], h=270, yfmt=lambda v: "$%.0fB" % v)
     c_agent = svg_chart([
         {"label": "오픈AI 에이전트", "color": T["teal"], "width": 2.4, "markers": True,
          "points": agent_wau},
@@ -3691,10 +3676,14 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 </div>
 
 <div class="card-sec">
-<span class="banner">⑧ 프론티어 랩 연환산 매출 ($B) <span class="u">언론 보도 기준 · 이익 비공개</span></span>
+<span class="banner">⑧ 프론티어 랩 연환산 매출 ($B) <span class="u">실선 = Net 기준 비교 · 점선 = 각사 공시 원본</span></span>
 """ + c_rev + """
-<div class="note">클라우드 가격을 떠받치는 최종 수요.<br>
-<span class="key">연환산(run-rate) 기준: 해당 시점 월매출 × 12이며 연간 실적이 아님</span><br>앤스로픽 10월 상장 후 분기 공시 예정</div>
+<div class="note">클라우드 가격을 떠받치는 최종 수요. 연환산(run-rate) = 해당 시점 월매출 × 12이며 연간 실적이 아님<br>
+<span class="key">두 회사는 인식 기준이 다름: 앤스로픽은 Gross, 오픈AI는 26년 초부터 Net. 그대로 겹쳐 보면 격차가 과장됨</span><br>
+CSP를 통해 API를 팔면 인프라 비용 차감 후 매출의 20~30%를 CSP에 배분. 그 차감 전이 Gross, 후가 Net<br>
+<b>26.10.08 FT 보도로 촉발된 "오픈AI ARR $70B 미달" 하락은 기준 차이였음</b> — 9월 말 Gross $68B / Net $50B이고, 시장이 보던 $70B은 Gross 기준 기대치<br>
+올리브 실선(앤스로픽 Net환산)은 공시 Gross × 0.73으로 역산한 보조선이며 회사 발표치가 아님<br>
+앤스로픽 공식 발표는 26.07 $65B가 마지막. 서드파티(TickerTrends) 26.10 초 추정은 Gross $76.8B — Net 환산 약 $56B로, 같은 잣대로는 격차가 10%대까지 좁혀진 상태</div>
 </div>
 
 <div class="card-sec">
