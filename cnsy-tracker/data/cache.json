@@ -453,8 +453,8 @@
   }
  },
  "quote": {
-  "price": 1.69,
-  "prev": 5.43,
+  "price": 1.81,
+  "prev": 5.65,
   "high52": 19.0,
   "low52": 1.49,
   "hist": [
@@ -965,6 +965,10 @@
    {
     "date": "2026-10-14",
     "close": 1.69
+   },
+   {
+    "date": "2026-10-15",
+    "close": 1.81
    }
   ]
  },
@@ -987,10 +991,10 @@
    "nct": "NCT01906385",
    "title": "Maximum Tolerated Dose, Safety, and Efficacy of Rhenium Nanoliposomes in Recurrent Glioma (ReSPECT)",
    "status": "RECRUITING",
-   "updated": "2025-03-26",
+   "updated": "2026-10-15",
    "enroll": 55,
    "enrollType": "ESTIMATED",
-   "primaryCompletion": "2025-12"
+   "primaryCompletion": "2027-04"
   },
   {
    "nct": "NCT05034497",
@@ -1127,7 +1131,7 @@
   "cy2027_files": [
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip"
   ],
-  "checked": "2026-10-15"
+  "checked": "2026-10-16"
  },
  "trials_hist": [
   {
@@ -1151,7 +1155,12 @@
    "gbm": 53
   },
   {
-   "date": "2026-10-15",
+   "date": "2026-08-31",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
+   "date": "2026-10-16",
    "lm": 37,
    "gbm": 53
   }
@@ -1331,7 +1340,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-10-15 08:40",
+  "updated": "2026-10-16 01:24",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
