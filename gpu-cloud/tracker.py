@@ -2317,6 +2317,15 @@ SEED = {
             ["2026-07-22", 74.3], ["2026-09-24", 76.8]
         ]
     },
+    "openai_rev_tt": {
+        "label": "오픈AI ARR — TickerTrends 추정 ($B)",
+        "source": "TickerTrends 공개 블로그·X (blog.tickertrends.io)",
+        "note": "서드파티 추정. 26.07은 Gross 보도($40B)와, 26.09는 Net 보도($50B)와 맞음 — 기준이 고정돼 있지 않음",
+        "points": [
+            ["2026-01-31", 21.4], ["2026-05-31", 33.0], ["2026-07-29", 42.6],
+            ["2026-08-12", 44.3], ["2026-09-28", 50.44]
+        ]
+    },
     "crwv_margin": {
         "label": "코어위브 조정영업이익률(%)",
         "source": "CoreWeave 분기 실적발표",
@@ -3466,6 +3475,7 @@ def build_html():
     ant_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_rev]
     ant_tt = seed_series("anthropic_rev_tt")
     ant_tt_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_tt]
+    oai_tt = seed_series("openai_rev_tt")
     agent_wau = seed_series("openai_agent_wau")
     ant_wau = seed_series("anthropic_agent_wau")
     gb300 = daily_series(cache, bk("GB300"))
@@ -3604,9 +3614,11 @@ def build_html():
          "markers": True, "points": ant_tt_net},
         {"label": "앤스로픽 환산", "color": T["primary"], "width": 2.4, "markers": True,
          "points": ant_net},
+        {"label": "오픈AI TT추정", "color": T["tealLight"], "width": 1.8, "dash": True,
+         "markers": True, "points": oai_tt},
         {"label": "오픈AI Net", "color": T["teal"], "width": 2.4, "markers": True,
          "points": oai_rev},
-    ], h=260, yfmt=usd, labels_right=True)
+    ], h=280, yfmt=usd, labels_right=True)
     c_agent = svg_chart([
         {"label": "오픈AI 에이전트", "color": T["teal"], "width": 2.4, "markers": True,
          "points": agent_wau},
@@ -3711,7 +3723,9 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <div class="note">CSP를 통해 API를 팔면 인프라 비용 차감 후 매출의 20~30%를 CSP에 배분. 그 차감 후가 Net<br>
 <span class="key">오픈AI만 Net 실측치가 있음. 앤스로픽은 공시 Gross × 0.73으로 역산한 환산선이며 회사 발표치가 아님</span><br>
 오픈AI Net: 25.09 $15B → 25.12 $20B → 26.02~06 $25B 정체 → 26.07 $30B → 26.08 $38B → <b>26.09 $50B</b><br>
-같은 잣대로는 앤스로픽(공시 환산 $47B, TT 환산 $56B)과 오픈AI의 격차가 10%대로 좁혀진 상태</div>
+같은 잣대로는 앤스로픽(공시 환산 $47B, TT 환산 $56B)과 오픈AI의 격차가 10%대로 좁혀진 상태<br>
+하늘색 점선 = TickerTrends 오픈AI 추정. <b>26.07.29 $42.6B는 Bloomberg Gross $40B와, 26.09.28 $50.44B는 FT Net $50B와 맞았음</b><br>
+→ 그때그때 보도 수준은 맞혔으나 기준이 고정돼 있지 않고, 7→9월 증가율 +18%로 실제 Net +67%를 크게 밑돎. 오픈AI는 수준 확인용으로만 참고</div>
 </div>
 
 <div class="card-sec">
