@@ -2308,6 +2308,15 @@ SEED = {
             ["2026-07-31", 40.0], ["2026-09-30", 68.0]
         ]
     },
+    "anthropic_rev_tt": {
+        "label": "앤스로픽 ARR — TickerTrends 추정 ($B)",
+        "source": "TickerTrends 공개 블로그·X (blog.tickertrends.io)",
+        "note": "서드파티 추정. 공시 Gross와 같은 기준. 26.07.31 공시 $65B 대비 +14% 과대였음 — 수준보다 기울기로 읽음",
+        "points": [
+            ["2026-01-31", 10.2], ["2026-04-30", 35.6], ["2026-06-30", 69.6],
+            ["2026-07-22", 74.3], ["2026-09-24", 76.8]
+        ]
+    },
     "crwv_margin": {
         "label": "코어위브 조정영업이익률(%)",
         "source": "CoreWeave 분기 실적발표",
@@ -3140,7 +3149,7 @@ def fmt_kr(s):
     return f"{y[2:]}.{m}.{d}"
 
 
-def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False):
+def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=False):
     """series: [{label,color,points:[(날짜,값)],dash,width,markers}]"""
     yfmt = yfmt or (lambda v: f"${v:,.2f}")
     series = [s for s in series if s.get("points")]
@@ -3213,7 +3222,8 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False):
             else:
                 dtxt = "%+.2f" % (last - prev)
             dtxt += " " + suffix
-        ends.append([co[-1][0] + 7, co[-1][1] + 3, s["color"],
+        lx = (w - mr + 7) if labels_right else (co[-1][0] + 7)   # 일찍 끝나는 선의 라벨이 다른 선과 겹치지 않게
+        ends.append([lx, co[-1][1] + 3, s["color"],
                      "%s %s (%s)" % (s["label"], yfmt(pts[-1][1]),
                                      date.fromisoformat(pts[-1][0]).strftime("%y.%m.%d")),
                      dtxt])
@@ -3454,6 +3464,8 @@ def build_html():
     oai_gross = seed_series("openai_rev_gross")
     # 앤스로픽 공시는 Gross 기준 — 오픈AI(Net)와 같은 잣대로 보기 위한 환산 보조선
     ant_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_rev]
+    ant_tt = seed_series("anthropic_rev_tt")
+    ant_tt_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_tt]
     agent_wau = seed_series("openai_agent_wau")
     ant_wau = seed_series("anthropic_agent_wau")
     gb300 = daily_series(cache, bk("GB300"))
@@ -3578,16 +3590,23 @@ def build_html():
         {"label": "이자비용/매출", "color": T["red"], "width": 2.4, "markers": True, "points": cw_int},
         {"label": "조정영업이익률", "color": T["primary"], "width": 2.4, "markers": True, "points": cw_mgn},
     ], h=250, yfmt=lambda v: "%.0f%%" % v)
-    c_rev = svg_chart([
-        {"label": "앤스로픽 Gross", "color": T["chartGray"], "width": 1.6, "dash": True,
-         "markers": True, "points": ant_rev},
-        {"label": "오픈AI Gross", "color": T["tealLight"], "width": 1.6, "dash": True,
-         "markers": True, "points": oai_gross},
-        {"label": "앤스로픽 Net환산", "color": T["primary"], "width": 2.4, "markers": True,
+    usd = lambda v: "$%.0fB" % v
+    c_rev_gross = svg_chart([
+        {"label": "앤스로픽 TT추정", "color": T["chartGray"], "width": 1.8, "dash": True,
+         "markers": True, "points": ant_tt},
+        {"label": "앤스로픽 공시", "color": T["primary"], "width": 2.4, "markers": True,
+         "points": ant_rev},
+        {"label": "오픈AI Gross", "color": T["teal"], "width": 2.4, "markers": True,
+         "points": oai_gross},
+    ], h=260, yfmt=usd, labels_right=True)
+    c_rev_net = svg_chart([
+        {"label": "앤스로픽 TT환산", "color": T["chartGray"], "width": 1.8, "dash": True,
+         "markers": True, "points": ant_tt_net},
+        {"label": "앤스로픽 환산", "color": T["primary"], "width": 2.4, "markers": True,
          "points": ant_net},
         {"label": "오픈AI Net", "color": T["teal"], "width": 2.4, "markers": True,
          "points": oai_rev},
-    ], h=270, yfmt=lambda v: "$%.0fB" % v)
+    ], h=260, yfmt=usd, labels_right=True)
     c_agent = svg_chart([
         {"label": "오픈AI 에이전트", "color": T["teal"], "width": 2.4, "markers": True,
          "points": agent_wau},
@@ -3676,19 +3695,27 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 </div>
 
 <div class="card-sec">
-<span class="banner">⑧ 프론티어 랩 연환산 매출 ($B) <span class="u">실선 = Net 기준 비교 · 점선 = 각사 공시 원본</span></span>
-""" + c_rev + """
+<span class="banner">⑧ 프론티어 랩 매출 — Gross 기준 ($B) <span class="u">각사 공시 원본 · CSP 배분 차감 전</span></span>
+""" + c_rev_gross + """
 <div class="note">클라우드 가격을 떠받치는 최종 수요. 연환산(run-rate) = 해당 시점 월매출 × 12이며 연간 실적이 아님<br>
-<span class="key">두 회사는 인식 기준이 다름: 앤스로픽은 Gross, 오픈AI는 26년 초부터 Net. 그대로 겹쳐 보면 격차가 과장됨</span><br>
-CSP를 통해 API를 팔면 인프라 비용 차감 후 매출의 20~30%를 CSP에 배분. 그 차감 전이 Gross, 후가 Net<br>
-<b>26.10.08 FT 보도로 촉발된 "오픈AI ARR $70B 미달" 하락은 기준 차이였음</b> — 9월 말 Gross $68B / Net $50B이고, 시장이 보던 $70B은 Gross 기준 기대치<br>
-올리브 실선(앤스로픽 Net환산)은 공시 Gross × 0.73으로 역산한 보조선이며 회사 발표치가 아님<br>
-앤스로픽 확정 보도는 26.07.31 Gross $65B가 마지막 (26.09.18 보도된 $100B은 연말 전망치라 제외)<br>
-서드파티(TickerTrends) 26.10 초 추정은 앤스로픽 Gross $76.8B — Net 환산 약 $56B로, 같은 잣대로는 오픈AI와 격차가 10%대</div>
+<span class="key">앤스로픽은 Gross로 공시. 오픈AI는 26년 초부터 Net으로 바꿔 Gross는 투자자 자료로만 공개됨 (26.07 $40B, 26.09 $68B)</span><br>
+<b>26.10.08 FT 보도의 "오픈AI ARR $70B 미달"은 기준 차이였음</b>: 시장이 보던 $70B은 Gross 기대치이고 실제 Gross $68B / Net $50B<br>
+앤스로픽 확정 보도는 26.07.31 $65B가 마지막. 26.09.18 보도된 $100B은 연말 전망치라 제외<br>
+회색 점선 = TickerTrends 월별 추정. 26.01·04는 공시 사이에 정확히 들어왔으나 <b>26.07.22 $74.3B로 7월말 공시 $65B보다 14% 높았음</b><br>
+→ 수준은 높게 잡히는 경향, 기울기는 참고할 만함. 26.08→09 증가율 +1.8%로 성장 둔화 신호</div>
 </div>
 
 <div class="card-sec">
-<span class="banner">⑨ 에이전트 사용자 (주간, 백만명) <span class="u">토큰 소비 = 클라우드 수요의 선행지표</span></span>
+<span class="banner">⑨ 프론티어 랩 매출 — Net 기준 ($B) <span class="u">같은 잣대 비교 · CSP 배분 차감 후</span></span>
+""" + c_rev_net + """
+<div class="note">CSP를 통해 API를 팔면 인프라 비용 차감 후 매출의 20~30%를 CSP에 배분. 그 차감 후가 Net<br>
+<span class="key">오픈AI만 Net 실측치가 있음. 앤스로픽은 공시 Gross × 0.73으로 역산한 환산선이며 회사 발표치가 아님</span><br>
+오픈AI Net: 25.09 $15B → 25.12 $20B → 26.02~06 $25B 정체 → 26.07 $30B → 26.08 $38B → <b>26.09 $50B</b><br>
+같은 잣대로는 앤스로픽(공시 환산 $47B, TT 환산 $56B)과 오픈AI의 격차가 10%대로 좁혀진 상태</div>
+</div>
+
+<div class="card-sec">
+<span class="banner">⑩ 에이전트 사용자 (주간, 백만명) <span class="u">토큰 소비 = 클라우드 수요의 선행지표</span></span>
 """ + c_agent + """
 <div class="note">오픈AI = ChatGPT Work + Codex 주간 사용자(공식 공개·CNBC 집계). 공개 시점 기준<br>
 <span class="key">앤스로픽은 사용자 수를 정기 공개하지 않음 — 매출 run-rate(⑧)가 사실상의 대용 지표. 공식 공개가 나오면 여기에 자동 추가</span></div>
