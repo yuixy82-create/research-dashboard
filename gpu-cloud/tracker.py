@@ -2309,21 +2309,12 @@ SEED = {
         ]
     },
     "anthropic_rev_tt": {
-        "label": "앤스로픽 ARR — TickerTrends 추정 ($B)",
-        "source": "TickerTrends 공개 블로그·X (blog.tickertrends.io)",
-        "note": "서드파티 추정. 공시 Gross와 같은 기준. 26.07.31 공시 $65B 대비 +14% 과대였음 — 수준보다 기울기로 읽음",
+        "label": "앤스로픽 ARR 티커트랜드 추정 ($B)",
+        "source": "티커트랜드 공개 블로그·X (blog.tickertrends.io)",
+        "note": "앤스로픽 발표 이후 구간을 잇는 데만 사용. 금액은 발표치보다 높게 잡히는 경향이 있어 증가율만 반영",
         "points": [
             ["2026-01-31", 10.2], ["2026-04-30", 35.6], ["2026-06-30", 69.6],
             ["2026-07-22", 74.3], ["2026-09-24", 76.8]
-        ]
-    },
-    "openai_rev_tt": {
-        "label": "오픈AI ARR — TickerTrends 추정 ($B)",
-        "source": "TickerTrends 공개 블로그·X (blog.tickertrends.io)",
-        "note": "서드파티 추정. 26.07은 Gross 보도($40B)와, 26.09는 Net 보도($50B)와 맞음 — 기준이 고정돼 있지 않음",
-        "points": [
-            ["2026-01-31", 21.4], ["2026-05-31", 33.0], ["2026-07-29", 42.6],
-            ["2026-08-12", 44.3], ["2026-09-28", 50.44]
         ]
     },
     "crwv_margin": {
@@ -3207,10 +3198,17 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=Fal
                      'stroke-linejoin="round"/>'
                      % (" ".join("%.1f,%.1f" % c for c in co), s["color"],
                         s.get("width", 2.1), dash))
+        ef = s.get("est_from")
+        ed = s.get("est_dates") or ()
+        is_est = lambda d: (ef and d > ef) or d in ed
         if len(co) <= 8 or s.get("markers"):
-            for cx, cy in co:
-                o.append('<circle cx="%.1f" cy="%.1f" r="3" fill="%s" stroke="#fff" '
-                         'stroke-width="1.2"/>' % (cx, cy, s["color"]))
+            for (cx, cy), p in zip(co, pts):
+                if is_est(p[0]):         # 추정 점: 속 빈 점
+                    o.append('<circle cx="%.1f" cy="%.1f" r="3.4" fill="#fff" stroke="%s" '
+                             'stroke-width="1.8"/>' % (cx, cy, s["color"]))
+                else:
+                    o.append('<circle cx="%.1f" cy="%.1f" r="3" fill="%s" stroke="#fff" '
+                             'stroke-width="1.2"/>' % (cx, cy, s["color"]))
         o.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s" stroke="#fff" '
                  'stroke-width="1"/>' % (co[-1][0], co[-1][1], s["color"]))
         dtxt = ""
@@ -3233,8 +3231,9 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=Fal
             dtxt += " " + suffix
         lx = (w - mr + 7) if labels_right else (co[-1][0] + 7)   # 일찍 끝나는 선의 라벨이 다른 선과 겹치지 않게
         ends.append([lx, co[-1][1] + 3, s["color"],
-                     "%s %s (%s)" % (s["label"], yfmt(pts[-1][1]),
-                                     date.fromisoformat(pts[-1][0]).strftime("%y.%m.%d")),
+                     "%s %s (%s%s)" % (s["label"], yfmt(pts[-1][1]),
+                                       date.fromisoformat(pts[-1][0]).strftime("%y.%m.%d"),
+                                       " 추정" if is_est(pts[-1][0]) else ""),
                      dtxt])
     ends.sort(key=lambda e: e[1])
     gap = 24 if any(e[4] for e in ends) else 13
@@ -3439,6 +3438,19 @@ def sig_card(title, cls, state, desc):
 NET_RATIO = 0.73   # Gross → Net 환산 (CSP 수익배분 차감 후, 업계 통용 역산치)
 
 
+def extend_with_tt(official, tt):
+    """마지막 발표치 이후 구간을 티커트랜드 '증가율'로 연장. (연장된 시리즈, 추정 시작일) 반환."""
+    if not official or not tt:
+        return official, None
+    d0, v0 = official[-1]
+    base = [p for p in tt if p[0] <= d0]
+    later = [p for p in tt if p[0] > d0]
+    if not base or not later:
+        return official, None
+    b = base[-1][1]
+    return official + [(d, round(v0 * v / b, 1)) for d, v in later], d0
+
+
 def build_html():
     # news.json: 예약 작업(Claude)이 언론 보도 값을 자동 추가하는 파일.
     # 형식 {"anthropic_rev": [["2026-09-30", 80]], "openai_rev": [...], "cds": [...],
@@ -3470,12 +3482,17 @@ def build_html():
     cw_int = seed_series("crwv_interest")
     ant_rev = seed_series("anthropic_rev")
     oai_rev = seed_series("openai_rev")
-    oai_gross = seed_series("openai_rev_gross")
+    oai_gross_real = seed_series("openai_rev_gross")
+    # Gross 실측은 26.07·26.09 두 점뿐. 실측 Net/Gross 비율(0.75·0.74)이 NET_RATIO와 같아
+    # 26년 Net 점을 ÷ NET_RATIO로 역산해 공백을 메움 (25년 이전은 비율 확인 불가라 비워 둠)
+    _have = {d for d, _ in oai_gross_real}
+    oai_gross_est = [(d, round(v / NET_RATIO, 1)) for d, v in seed_series("openai_rev")
+                     if d >= "2026-01-01" and d not in _have]
+    oai_gross = sorted(oai_gross_real + oai_gross_est)
+    oai_gross_est_dates = {d for d, _ in oai_gross_est}
     # 앤스로픽 공시는 Gross 기준 — 오픈AI(Net)와 같은 잣대로 보기 위한 환산 보조선
-    ant_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_rev]
-    ant_tt = seed_series("anthropic_rev_tt")
-    ant_tt_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_tt]
-    oai_tt = seed_series("openai_rev_tt")
+    ant_ext, ant_est_from = extend_with_tt(ant_rev, seed_series("anthropic_rev_tt"))
+    ant_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_ext]
     agent_wau = seed_series("openai_agent_wau")
     ant_wau = seed_series("anthropic_agent_wau")
     gb300 = daily_series(cache, bk("GB300"))
@@ -3602,23 +3619,17 @@ def build_html():
     ], h=250, yfmt=lambda v: "%.0f%%" % v)
     usd = lambda v: "$%.0fB" % v
     c_rev_gross = svg_chart([
-        {"label": "앤스로픽 TT추정", "color": T["chartGray"], "width": 1.8, "dash": True,
-         "markers": True, "points": ant_tt},
-        {"label": "앤스로픽 공시", "color": T["primary"], "width": 2.4, "markers": True,
-         "points": ant_rev},
-        {"label": "오픈AI Gross", "color": T["teal"], "width": 2.4, "markers": True,
-         "points": oai_gross},
+        {"label": "앤스로픽", "color": T["primary"], "width": 2.6, "markers": True,
+         "points": ant_ext, "est_from": ant_est_from},
+        {"label": "오픈AI", "color": T["teal"], "width": 2.6, "markers": True,
+         "points": oai_gross, "est_dates": oai_gross_est_dates},
     ], h=260, yfmt=usd, labels_right=True)
     c_rev_net = svg_chart([
-        {"label": "앤스로픽 TT환산", "color": T["chartGray"], "width": 1.8, "dash": True,
-         "markers": True, "points": ant_tt_net},
-        {"label": "앤스로픽 환산", "color": T["primary"], "width": 2.4, "markers": True,
-         "points": ant_net},
-        {"label": "오픈AI TT추정", "color": T["tealLight"], "width": 1.8, "dash": True,
-         "markers": True, "points": oai_tt},
-        {"label": "오픈AI Net", "color": T["teal"], "width": 2.4, "markers": True,
+        {"label": "앤스로픽(환산)", "color": T["primary"], "width": 2.6, "markers": True,
+         "points": ant_net, "est_from": ant_est_from},
+        {"label": "오픈AI", "color": T["teal"], "width": 2.6, "markers": True,
          "points": oai_rev},
-    ], h=280, yfmt=usd, labels_right=True)
+    ], h=260, yfmt=usd, labels_right=True)
     c_agent = svg_chart([
         {"label": "오픈AI 에이전트", "color": T["teal"], "width": 2.4, "markers": True,
          "points": agent_wau},
@@ -3707,25 +3718,23 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 </div>
 
 <div class="card-sec">
-<span class="banner">⑧ 프론티어 랩 매출 — Gross 기준 ($B) <span class="u">각사 공시 원본 · CSP 배분 차감 전</span></span>
+<span class="banner">⑧ 프론티어 랩 매출 — Gross 기준 ($B) <span class="u">올리브 = 앤스로픽 · 청록 = 오픈AI</span></span>
 """ + c_rev_gross + """
 <div class="note">클라우드 가격을 떠받치는 최종 수요. 연환산(run-rate) = 해당 시점 월매출 × 12이며 연간 실적이 아님<br>
-<span class="key">앤스로픽은 Gross로 공시. 오픈AI는 26년 초부터 Net으로 바꿔 Gross는 투자자 자료로만 공개됨 (26.07 $40B, 26.09 $68B)</span><br>
+<span class="key">Gross = CSP 수익배분 차감 전 매출. 앤스로픽은 이 기준으로 발표하고, 오픈AI는 투자자 자료로만 공개함 (26.07 $40B, 26.09 $68B)</span><br>
+<b>속 빈 점 = 추정</b>. 오픈AI는 Net ÷ 0.73으로 역산 (실측 Net/Gross 비율 26.07 0.75, 26.09 0.74). 25년 이전은 비율을 확인할 자료가 없어 비워 둠<br>
 <b>26.10.08 FT 보도의 "오픈AI ARR $70B 미달"은 기준 차이였음</b>: 시장이 보던 $70B은 Gross 기대치이고 실제 Gross $68B / Net $50B<br>
-앤스로픽 확정 보도는 26.07.31 $65B가 마지막. 26.09.18 보도된 $100B은 연말 전망치라 제외<br>
-회색 점선 = TickerTrends 월별 추정. 26.01·04는 공시 사이에 정확히 들어왔으나 <b>26.07.22 $74.3B로 7월말 공시 $65B보다 14% 높았음</b><br>
-→ 수준은 높게 잡히는 경향, 기울기는 참고할 만함. 26.08→09 증가율 +1.8%로 성장 둔화 신호</div>
+앤스로픽 확정 발표는 26.07.31 $65B가 마지막. 26.09.18 보도된 $100B은 연말 전망치라 제외<br>
+앤스로픽 26.07.31 이후는 티커트랜드로 이어 붙임: 발표가 느려 이후 흐름은 티커트랜드로 봄. 다만 티커트랜드는 7월에 발표치보다 14% 높게 잡혔던 이력이 있어 금액 대신 증가율만 반영 (원 수치 26.09.24 $76.8B)</div>
 </div>
 
 <div class="card-sec">
-<span class="banner">⑨ 프론티어 랩 매출 — Net 기준 ($B) <span class="u">같은 잣대 비교 · CSP 배분 차감 후</span></span>
+<span class="banner">⑨ 프론티어 랩 매출 — Net 기준 ($B) <span class="u">올리브 = 앤스로픽 · 청록 = 오픈AI</span></span>
 """ + c_rev_net + """
-<div class="note">CSP를 통해 API를 팔면 인프라 비용 차감 후 매출의 20~30%를 CSP에 배분. 그 차감 후가 Net<br>
-<span class="key">오픈AI만 Net 실측치가 있음. 앤스로픽은 공시 Gross × 0.73으로 역산한 환산선이며 회사 발표치가 아님</span><br>
+<div class="note">Net = CSP를 통해 판 API 매출에서 CSP 몫(인프라 비용 차감 후 20~30%)을 뺀 매출. 오픈AI는 26년 초부터 이 기준으로 발표<br>
+<span class="key">앤스로픽은 Net을 발표하지 않음. 올리브 선은 ⑧의 Gross × 0.73으로 역산한 환산치이며 회사 발표치가 아님</span><br>
 오픈AI Net: 25.09 $15B → 25.12 $20B → 26.02~06 $25B 정체 → 26.07 $30B → 26.08 $38B → <b>26.09 $50B</b><br>
-같은 잣대로는 앤스로픽(공시 환산 $47B, TT 환산 $56B)과 오픈AI의 격차가 10%대로 좁혀진 상태<br>
-하늘색 점선 = TickerTrends 오픈AI 추정. <b>26.07.29 $42.6B는 Bloomberg Gross $40B와, 26.09.28 $50.44B는 FT Net $50B와 맞았음</b><br>
-→ 그때그때 보도 수준은 맞혔으나 기준이 고정돼 있지 않고, 7→9월 증가율 +18%로 실제 Net +67%를 크게 밑돎. 오픈AI는 수준 확인용으로만 참고</div>
+같은 잣대로는 9월 기준 앤스로픽 환산 약 $49B와 오픈AI $50B로 비슷한 수준. 속 빈 점 = 추정 (⑧과 같은 방식)</div>
 </div>
 
 <div class="card-sec">
