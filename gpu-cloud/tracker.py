@@ -3231,10 +3231,12 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=Fal
             else:
                 dtxt = "%+.2f" % (last - prev)
             dtxt += " " + suffix
+        if s.get("end_note"):
+            dtxt = s["end_note"]
         lx = (w - mr + 7) if labels_right else (co[-1][0] + 7)   # 일찍 끝나는 선의 라벨이 다른 선과 겹치지 않게
         ends.append([lx, co[-1][1] + 3, s["color"],
                      "%s %s (%s%s)" % (s["label"], yfmt(pts[-1][1]),
-                                       date.fromisoformat(pts[-1][0]).strftime("%y.%m.%d"),
+                                       s.get("end_tag") or date.fromisoformat(pts[-1][0]).strftime("%y.%m.%d"),
                                        " 추정" if is_est(pts[-1][0]) and s.get("est_label", True) else ""),
                      dtxt])
     ends.sort(key=lambda e: e[1])
@@ -3481,6 +3483,9 @@ def build_html():
     oai_gross_est_dates = {d for d, _ in oai_gross_est}
     # 앤스로픽 공시는 Gross 기준 — 오픈AI(Net)와 같은 잣대로 보기 위한 환산 보조선
     ant_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_rev]
+    # 분기 실매출 × 4로 넣은 점(분기 중간 날짜)은 날짜 대신 '분기 평균'으로 표시
+    _QMID = {"02-15": "1분기", "05-15": "2분기", "08-15": "3분기", "11-15": "4분기"}
+    ant_tag = (_QMID[ant_rev[-1][0][5:]] + " 평균") if ant_rev and ant_rev[-1][0][5:] in _QMID else None
     ant_tt = seed_series("anthropic_rev_tt")              # 티커트랜드 앤스로픽 추정 (Gross 기준)
     ant_tt_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_tt]
     agent_wau = seed_series("openai_agent_wau")
@@ -3613,7 +3618,7 @@ def build_html():
         {"label": "앤스로픽 티커트랜드", "color": T["vivid"], "width": 2.0, "markers": True,
          "points": ant_tt, "est_dates": tt_dates, "est_label": False},
         {"label": "앤스로픽", "color": T["primary"], "width": 2.8, "markers": True,
-         "points": ant_rev},
+         "points": ant_rev, "end_tag": ant_tag, "end_note": "26.10.14 발표 · 7~9월 실매출×4" if ant_tag else None},
         {"label": "오픈AI", "color": T["teal"], "width": 2.8, "markers": True,
          "points": oai_gross, "est_dates": oai_gross_est_dates},
     ], h=270, yfmt=usd, labels_right=True)
@@ -3621,7 +3626,7 @@ def build_html():
         {"label": "앤스로픽 티커트랜드", "color": T["vivid"], "width": 2.0, "markers": True,
          "points": ant_tt_net, "est_dates": tt_dates, "est_label": False},
         {"label": "앤스로픽(환산)", "color": T["primary"], "width": 2.8, "markers": True,
-         "points": ant_net},
+         "points": ant_net, "end_tag": ant_tag, "end_note": "26.10.14 발표 · 7~9월 실매출×4" if ant_tag else None},
         {"label": "오픈AI", "color": T["teal"], "width": 2.8, "markers": True,
          "points": oai_rev},
     ], h=270, yfmt=usd, labels_right=True)
@@ -3717,7 +3722,8 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 """ + c_rev_gross + """
 <div class="note">클라우드 가격을 떠받치는 최종 수요. 연환산(run-rate) = 해당 시점 월매출 × 12이며 연간 실적이 아님<br>
 <span class="key">Gross = CSP 수익배분 차감 전 매출. 앤스로픽은 이 기준으로 발표하고, 오픈AI는 투자자 자료로만 공개함 (26.07 $40B, 26.09 $68B)</span><br>
-앤스로픽 26.08.15 점 = 3분기 실매출 $16.8B × 4 (FT 26.10.15, 분기 평균). <b>전분기 대비 +45%로 2분기 +149%에서 크게 둔화</b><br>
+앤스로픽 마지막 점 = 26.10.14 투자자 행사에서 공개한 3분기(7~9월) 실매출 $16.8B × 4. 7~9월 평균이라 분기 한가운데에 찍음<br>
+<b>전분기 대비 +45%로 2분기 +149%에서 크게 둔화.</b> 9월 말 연환산은 공개되지 않았음 (보도된 $110B은 연말 전망치라 제외)<br>
 연한 올리브 = 티커트랜드 앤스로픽 추정. 발표가 느려 최근 흐름 참고용이나 금액은 발표치보다 높게 잡힘 (26.07 +14%)<br>
 속 빈 점 = 추정. 오픈AI는 Net ÷ 0.73으로 역산 (실측 Net/Gross 비율 26.07 0.75, 26.09 0.74). 25년 이전은 비율 확인 불가라 비워 둠<br>
 26.10.08 FT 보도의 "오픈AI ARR $70B 미달"은 기준 차이: 시장이 보던 $70B은 Gross 기대치, 실제 Gross $68B / Net $50B</div>
