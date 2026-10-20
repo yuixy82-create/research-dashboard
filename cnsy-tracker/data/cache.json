@@ -453,7 +453,7 @@
   }
  },
  "quote": {
-  "price": 1.62,
+  "price": 1.65,
   "prev": 6.39,
   "high52": 19.0,
   "low52": 1.49,
@@ -961,10 +961,6 @@
    {
     "date": "2026-10-16",
     "close": 1.7
-   },
-   {
-    "date": "2026-10-19",
-    "close": 1.62
    }
   ]
  },
@@ -1125,7 +1121,8 @@
  "reddit": [],
  "cms": {
   "cy2027_files": [
-   "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip"
+   "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
+   "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
   "checked": "2026-10-20"
  },
@@ -1147,11 +1144,6 @@
   },
   {
    "date": "2026-08-24",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
-   "date": "2026-08-31",
    "lm": 37,
    "gbm": 53
   },
@@ -1194,6 +1186,13 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-10-20",
+   "level": "red",
+   "axis": "수가",
+   "text": "CMS CY2027 CLFS 가격결정 파일 게시 — 0640U 단가 확인",
+   "link": "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
+  },
   {
    "date": "2026-10-08",
    "level": "yellow",
@@ -1336,7 +1335,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-10-20 03:24",
+  "updated": "2026-10-20 09:07",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1351,6 +1350,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 0
+  "new_events": 1
  }
 }
