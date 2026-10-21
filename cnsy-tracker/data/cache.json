@@ -453,8 +453,8 @@
   }
  },
  "quote": {
-  "price": 1.68,
-  "prev": 7.3,
+  "price": 1.73,
+  "prev": 7.14,
   "high52": 19.0,
   "low52": 1.49,
   "hist": [
@@ -965,6 +965,10 @@
    {
     "date": "2026-10-20",
     "close": 1.68
+   },
+   {
+    "date": "2026-10-21",
+    "close": 1.73
    }
   ]
  },
@@ -1005,7 +1009,7 @@
    "nct": "NCT05460507",
    "title": "Safety & Efficacy/Tolerability of Rhenium-186 NanoLiposomes (186RNL) for Patients Who Received a Prior 186RNL Treatment",
    "status": "RECRUITING",
-   "updated": "2025-03-30",
+   "updated": "2026-10-21",
    "enroll": 40,
    "enrollType": "ESTIMATED",
    "primaryCompletion": "2028-03-01"
@@ -1128,7 +1132,7 @@
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
-  "checked": "2026-10-21"
+  "checked": "2026-10-22"
  },
  "trials_hist": [
   {
@@ -1152,7 +1156,12 @@
    "gbm": 53
   },
   {
-   "date": "2026-10-21",
+   "date": "2026-08-31",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
+   "date": "2026-10-22",
    "lm": 37,
    "gbm": 53
   }
@@ -1339,7 +1348,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-10-21 08:38",
+  "updated": "2026-10-22 01:41",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
