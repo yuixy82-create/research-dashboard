@@ -453,8 +453,8 @@
   }
  },
  "quote": {
-  "price": 1.73,
-  "prev": 7.14,
+  "price": 1.768,
+  "prev": 7.62,
   "high52": 19.0,
   "low52": 1.49,
   "hist": [
@@ -965,6 +965,10 @@
    {
     "date": "2026-10-21",
     "close": 1.73
+   },
+   {
+    "date": "2026-10-22",
+    "close": 1.768
    }
   ]
  },
@@ -1047,7 +1051,7 @@
    "title": "CNSide Strengthens R&D Leadership with Appointment of Dr. Colby Suire, PhD",
    "link": "https://cnside-dx.com/cnside-appoints-dr-colby-suire-as-vp-of-research-development/",
    "date": "2026-04-26",
-   "modified": "2026-10-21"
+   "modified": "2026-10-22"
   },
   {
    "title": "Celebrating CNS Care and Lab Week 2026",
@@ -1128,7 +1132,7 @@
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
-  "checked": "2026-10-22"
+  "checked": "2026-10-23"
  },
  "trials_hist": [
   {
@@ -1152,7 +1156,12 @@
    "gbm": 53
   },
   {
-   "date": "2026-10-22",
+   "date": "2026-08-31",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
+   "date": "2026-10-23",
    "lm": 37,
    "gbm": 53
   }
@@ -1346,7 +1355,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-10-22 08:55",
+  "updated": "2026-10-23 01:42",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1361,6 +1370,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 1
+  "new_events": 0
  }
 }
