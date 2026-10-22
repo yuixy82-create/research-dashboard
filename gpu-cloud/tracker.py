@@ -3778,22 +3778,22 @@ def build_html():
     # ---- ⑪ 토큰 경제 차트 ----
     idx_fmt = lambda v: "%.0f" % v
     tok_vol_series = [
-        {"label": "합산", "color": T["chartGray"], "width": 1.4, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
-        {"label": "앤스로픽", "color": T["primary"], "width": 2.8, "points": ramp_vol_a, "delta": "pct", "delta_suffix": "전주比"},
-        {"label": "오픈AI", "color": T["teal"], "width": 2.8, "points": ramp_vol_o, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "합산", "color": T["primary"], "width": 3.2, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": ramp_vol_a, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_vol_o, "delta": "pct", "delta_suffix": "전주比"},
     ]
     if or_idx:
-        tok_vol_series.append({"label": "오픈라우터", "color": T["vivid"], "width": 2.2, "points": or_idx, "delta": "pct", "delta_suffix": "전주比"})
+        tok_vol_series.append({"label": "오픈라우터", "color": T["red"], "width": 1.5, "points": or_idx, "delta": "pct", "delta_suffix": "전주比"})
     c_tok_vol = svg_chart(tok_vol_series, h=230, yfmt=idx_fmt, zero_base=True, labels_right=True)
     c_tok_spend = svg_chart([
-        {"label": "합산", "color": T["chartGray"], "width": 1.4, "points": ramp_sp, "delta": "pct", "delta_suffix": "전주比"},
-        {"label": "앤스로픽", "color": T["primary"], "width": 2.8, "points": ramp_sp_a, "delta": "pct", "delta_suffix": "전주比"},
-        {"label": "오픈AI", "color": T["teal"], "width": 2.8, "points": ramp_sp_o, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "합산", "color": T["primary"], "width": 3.2, "points": ramp_sp, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": ramp_sp_a, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_sp_o, "delta": "pct", "delta_suffix": "전주比"},
     ], h=230, yfmt=idx_fmt, zero_base=True, labels_right=True)
     c_tok_px = svg_chart([
-        {"label": "앤스로픽", "color": T["primary"], "width": 2.8, "points": ramp_px_a, "delta": "pct", "delta_suffix": "전주比"},
-        {"label": "오픈AI", "color": T["teal"], "width": 2.8, "points": ramp_px_o, "delta": "pct", "delta_suffix": "전주比"},
-        {"label": "합산", "color": T["chartGray"], "width": 1.4, "points": ramp_px, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": ramp_px_a, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_px_o, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "합산", "color": T["primary"], "width": 3.2, "points": ramp_px, "delta": "pct", "delta_suffix": "전주比"},
     ], h=230, yfmt=lambda v: "$%.2f" % v, zero_base=True, labels_right=True)
     # 구글 공개치 문장 (점이 추가되면 자동 갱신)
     def _tok_fmt(v):
@@ -3932,17 +3932,17 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 
 <div class="card-sec">
 <span class="banner">⑪ 토큰 경제 — 사용량 · 지출 · 단가 <span class="u">Ramp 일별 원본 데이터 (오픈AI+앤스로픽) · 26.01 = 100</span></span>
-<div class="sub">토큰 사용량 <span class="d">(7일 합산 토큰 수, 26.01 = 100)</span>""" + ("<span class='r'>진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산 · 연한 올리브 = 오픈라우터</span>" if or_idx else "<span class='r'>진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span>") + """</div>
+<div class="sub">토큰 사용량 <span class="d">(7일 합산 토큰 수, 26.01 = 100)</span>""" + ("<span class='r'>굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI · 빨강 = 오픈라우터</span>" if or_idx else "<span class='r'>굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span>") + """</div>
 """ + c_tok_vol + """
-<div class="sub">토큰 지출 <span class="d">(7일 합산 달러, 26.01 = 100)</span><span class="r">진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span></div>
+<div class="sub">토큰 지출 <span class="d">(7일 합산 달러, 26.01 = 100)</span><span class="r">굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
 """ + c_tok_spend + """
-<div class="sub">토큰 단가 <span class="d">($/백만 토큰, 입력·출력·캐시 가중 평균)</span><span class="r">진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span></div>
+<div class="sub">토큰 단가 <span class="d">($/백만 토큰, 입력·출력·캐시 가중 평균)</span><span class="r">굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
 """ + c_tok_px + """
-<div class="note"><b>올리브·청록·회색 선 = Ramp(램프)</b>: 미국 기업용 법인카드·결제 회사. 가입 기업이 오픈AI·앤스로픽에 실제로 낸 돈과 토큰 수 (중소·중견기업 위주 표본). 매일 수집, Ramp 갱신은 월 1회 · 데이터 기준 """ + ramp_last + """<br>
+<div class="note"><b>올리브·청록 선 = Ramp(램프)</b>: 미국 기업용 법인카드·결제 회사. 가입 기업이 오픈AI·앤스로픽에 실제로 낸 돈과 토큰 수 (중소·중견기업 위주 표본). 매일 수집, Ramp 갱신은 월 1회 · 데이터 기준 """ + ramp_last + """<br>
 <span class="key">사용량·지출은 가입 기업이 늘면 같이 늘어 수준은 믿지 말고 방향만 볼 것. 단가(지출 ÷ 토큰 수)와 두 회사 비중은 신뢰 가능</span><br>
 <b>구글 공개치</b>: 구글이 자기 AI(제미나이)로 한 달에 처리한 토큰 총량 (검색·제미나이 앱·클라우드 API 전부). 세계 최대 단일 사용처라 규모 기준점. I/O·실적발표에서 밝힐 때만 추가 (분기 1회꼴): """ + goog_txt + goog_yoy + ("""<br>
-<b>연한 올리브 선 = 오픈라우터</b>: 여러 AI 모델을 중계하는 개발자용 서비스의 일별 처리 토큰. 매일 수집 (출처 openrouter.ai/rankings, CC BY 4.0)""" if or_idx else """<br>
-오픈라우터(여러 AI 모델을 중계하는 개발자용 서비스) 일별 토큰은 API 키 등록 시 연한 올리브 선으로 추가, 매일 수집""") + """</div>
+<b>빨간 선 = 오픈라우터</b>: 여러 AI 모델을 중계하는 개발자용 서비스의 일별 처리 토큰. 매일 수집 (출처 openrouter.ai/rankings, CC BY 4.0)""" if or_idx else """<br>
+오픈라우터(여러 AI 모델을 중계하는 개발자용 서비스) 일별 토큰은 API 키 등록 시 빨간 선으로 추가, 매일 수집""") + """</div>
 </div>
 
 <footer>
