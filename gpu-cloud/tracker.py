@@ -2412,7 +2412,19 @@ SEED = {
                 24.9
             ]
         ]
-    }
+    },
+    "google_tokens_month": {
+        "label": "구글 월간 처리 토큰 (조 토큰/월)",
+        "source": "구글 I/O·실적발표·공식 블로그 공개치 (모든 서비스 합산)",
+        "note": "공개 시점 기준. 24.04 9.7조 → 25.05 480조 → 25.07 980조 → 25.10 1,300조 → 26.05 3,200조. 실적발표의 'API 분당 토큰'(26.07 220억/분)은 범위가 달라 별도",
+        "points": [
+            ["2024-04-30", 9.7],
+            ["2025-05-20", 480],
+            ["2025-07-23", 980],
+            ["2025-10-09", 1300],
+            ["2026-05-20", 3200]
+        ]
+    },
 }
 
 ANALYSIS = {
@@ -3134,6 +3146,98 @@ def collect_etf_credit_proxy(existing):
 # ============================================================
 # 4. 차트 (인라인 SVG) — 주인공만 색, 나머지는 회색, 직접 라벨
 # ============================================================
+# ------------------------------------------------------------
+# Ramp 토큰 경제 (ramp.com/data/ai-index 차트 원본 JSON)
+#   일별, 오픈AI·앤스로픽 7일 합산 지출(USD)·토큰 수. 2025-01-01부터.
+#   표본 = Ramp 토큰 지출 관리 상품 가입사 → 수준·증가율은 표본 확대 효과 포함. 단가·비중은 그 영향 없음
+# ------------------------------------------------------------
+RAMP_URL = "https://ramp.com/data/ai-index/chart-data/tokenPrices"
+
+
+def collect_ramp_tokens():
+    out = {}
+    try:
+        raw = http_get(RAMP_URL, headers={"Accept": "application/json", "Referer": "https://ramp.com/data/ai-index"})
+        rows = json.loads(raw)
+    except Exception as e:
+        print("  Ramp 수집 실패:", e)
+        return out
+    agg = {}
+    for r in rows:
+        if r.get("token_type") != "all_tokens":
+            continue
+        d = r.get("usage_date")
+        mk = r.get("model_maker")
+        c = float(r.get("token_cost_usd_7d") or 0)
+        n = float(r.get("token_count_7d") or 0)
+        if not d or n <= 0:
+            continue
+        a = agg.setdefault(d, {"c": 0.0, "n": 0.0, "ant_c": 0.0, "ant_n": 0.0, "oai_c": 0.0, "oai_n": 0.0})
+        a["c"] += c; a["n"] += n
+        if mk == "anthropic":
+            a["ant_c"] += c; a["ant_n"] += n
+        elif mk == "openai":
+            a["oai_c"] += c; a["oai_n"] += n
+    sp, vol, px, px_a, px_o, sp_a, sp_o = {}, {}, {}, {}, {}, {}, {}
+    for d, a in agg.items():
+        sp[d] = round(a["c"] / 1e6, 4)            # $M (7일 합산)
+        vol[d] = round(a["n"] / 1e12, 4)          # 조 토큰 (7일 합산)
+        px[d] = round(a["c"] / a["n"] * 1e6, 4)   # $/백만 토큰
+        if a["ant_n"] > 0:
+            px_a[d] = round(a["ant_c"] / a["ant_n"] * 1e6, 4)
+            sp_a[d] = round(a["ant_c"] / 1e6, 4)
+        if a["oai_n"] > 0:
+            px_o[d] = round(a["oai_c"] / a["oai_n"] * 1e6, 4)
+            sp_o[d] = round(a["oai_c"] / 1e6, 4)
+    out = {"RAMP_SPEND": sp, "RAMP_VOL": vol, "RAMP_PX_ALL": px,
+           "RAMP_PX_ANT": px_a, "RAMP_PX_OAI": px_o, "RAMP_SPEND_ANT": sp_a, "RAMP_SPEND_OAI": sp_o}
+    if sp:
+        last = max(sp)
+        print("  Ramp: %d일 (%s ~ %s), 최근 단가 $%.3f/M" % (len(sp), min(sp), last, px[last]))
+    return out
+
+
+# ------------------------------------------------------------
+# OpenRouter 일별 토큰 총량 (공개 데이터셋, CC BY 4.0 — API 키 필요)
+#   키가 없으면 건너뜀. GitHub Secrets OPENROUTER_API_KEY 에 넣으면 그날부터 수집
+# ------------------------------------------------------------
+OR_URL = "https://openrouter.ai/api/v1/datasets/rankings-daily"
+
+
+def collect_openrouter(existing):
+    key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    if not key:
+        print("  OPENROUTER_API_KEY 없음 — 건너뜀")
+        return {}
+    have = existing.get("OR_TOKENS", {}) or {}
+    start = date(2025, 1, 1)
+    if have:
+        start = max(start, date.fromisoformat(max(have)) - timedelta(days=10))
+    end = date.today() - timedelta(days=1)
+    tot = {}
+    cur = start
+    while cur <= end:
+        chunk_end = min(end, cur + timedelta(days=360))
+        url = "%s?start_date=%s&end_date=%s&period=day" % (OR_URL, cur.isoformat(), chunk_end.isoformat())
+        try:
+            raw = http_get(url, headers={"Authorization": "Bearer " + key, "Accept": "application/json"})
+            rows = json.loads(raw).get("data", [])
+        except Exception as e:
+            print("  OpenRouter 수집 실패:", e)
+            break
+        for r in rows:
+            d = r.get("date")
+            try:
+                tot[d] = tot.get(d, 0.0) + float(r.get("total_tokens") or 0)
+            except Exception:
+                pass
+        cur = chunk_end + timedelta(days=1)
+    out = {d: round(v / 1e12, 4) for d, v in tot.items() if v > 0}   # 조 토큰/일
+    if out:
+        print("  OpenRouter: %d일, 최근 %s %.2f조/일" % (len(out), max(out), out[max(out)]))
+    return {"OR_TOKENS": out} if out else {}
+
+
 T = {"primary": "#4A5228", "heading": "#5F6C2C", "vivid": "#A2B84A",
      "fillLight": "#E3E6D2", "bgTint": "#F3F4EA", "teal": "#2E97A7",
      "tealLight": "#81C0CB", "tealBg": "#E6F2F4", "red": "#B7332B",
@@ -3220,7 +3324,9 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=Fal
             suffix = "전일比" if days <= 3 else (
                 date.fromisoformat(pts[-2][0]).strftime("%m.%d") + "比")
             f = yfmt(last)
-            if "bp" in f:
+            if s.get("delta") == "pct" and prev:
+                dtxt = "%+.1f%%" % ((last / prev - 1) * 100)
+            elif "bp" in f:
                 dtxt = "%+.0fbp" % (last - prev)
             elif "%" in f:
                 dtxt = "%+.0fbp" % ((last - prev) * 100)
@@ -3230,7 +3336,7 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=Fal
                 dtxt = "%+.1fM" % (last - prev)
             else:
                 dtxt = "%+.2f" % (last - prev)
-            dtxt += " " + suffix
+            dtxt += " " + (s.get("delta_suffix") or suffix)
         if s.get("end_note"):
             dtxt = s["end_note"]
         lx = (w - mr + 7) if labels_right else (co[-1][0] + 7)   # 일찍 끝나는 선의 라벨이 다른 선과 겹치지 않게
@@ -3390,6 +3496,8 @@ table.data tr.hl td{background:var(--fill);font-weight:700}
 .pos{color:var(--teal);font-weight:700}.neg{color:var(--red);font-weight:700}
 .ana{font-size:12.5px;line-height:1.65;margin:0 0 10px}
 .ana b{color:var(--heading)}
+.sub{font-size:12px;font-weight:800;color:var(--heading);margin:12px 0 2px}
+.sub .r{font-weight:400;font-size:10.5px;color:var(--faint);float:right}
 .note{font-size:10.5px;color:var(--faint);margin-top:8px;line-height:1.5}
 .note .key{color:var(--red);font-weight:800;font-size:11.5px}
 .thesis{background:var(--tint);border-left:5px solid var(--primary);padding:20px 24px;margin:0 0 22px}
@@ -3446,7 +3554,7 @@ def build_html():
     # news.json: 예약 작업(Claude)이 언론 보도 값을 자동 추가하는 파일.
     # 형식 {"anthropic_rev": [["2026-09-30", 80]], "openai_rev": [...], "cds": [...],
     #      "openai_agent_wau": [["날짜", 백만명]], "anthropic_agent_wau": [...],
-    #      "openai_rev_gross": [["날짜", B단위]]}
+    #      "openai_rev_gross": [["날짜", B단위]], "google_tokens_month": [["날짜", 조토큰/월]]}
     news = load_json(os.path.join(ROOT, "news.json"), {})
     for k, pts in news.items():
         if k in SEED and isinstance(pts, list):
@@ -3490,6 +3598,37 @@ def build_html():
     ant_tt_net = [(d, round(v * NET_RATIO, 1)) for d, v in ant_tt]
     agent_wau = seed_series("openai_agent_wau")
     ant_wau = seed_series("anthropic_agent_wau")
+
+    # ---- 토큰 경제 (Ramp 일별 + OpenRouter + 구글 공개치) ----
+    def _rebase_at(pts, d0="2026-01-01", base=100.0):
+        """d0부터 한 달 평균을 100으로 지수화 (연초 휴일 저점 영향 제거). d0 이전은 버림."""
+        pts = [(d, v) for d, v in pts if d >= d0]
+        m = [v for d, v in pts if d < "2026-02-01"] or [v for d, v in pts[:4]]
+        if not pts or not m:
+            return []
+        b = sum(m) / len(m)
+        return [(d, round(v / b * base, 2)) for d, v in pts]
+    def _weekly(pts):
+        """일별 7일 합산 계열을 마지막 날 기준 7일 간격으로 솎음 (전주比 비교가 되게)."""
+        if not pts:
+            return []
+        last = d2o(pts[-1][0])
+        return [(d, v) for d, v in pts if (last - d2o(d)) % 7 == 0]
+    ramp_vol = _rebase_at(_weekly(hist_series(cache, "RAMP_VOL")))
+    ramp_sp = _rebase_at(_weekly(hist_series(cache, "RAMP_SPEND")))
+    ramp_sp_a = _rebase_at(_weekly(hist_series(cache, "RAMP_SPEND_ANT")))
+    ramp_sp_o = _rebase_at(_weekly(hist_series(cache, "RAMP_SPEND_OAI")))
+    ramp_px = _weekly([(d, v) for d, v in hist_series(cache, "RAMP_PX_ALL") if d >= "2025-01-01"])
+    ramp_px_a = _weekly([(d, v) for d, v in hist_series(cache, "RAMP_PX_ANT") if d >= "2025-01-01"])
+    ramp_px_o = _weekly([(d, v) for d, v in hist_series(cache, "RAMP_PX_OAI") if d >= "2025-01-01"])
+    or_raw = hist_series(cache, "OR_TOKENS")
+    # OpenRouter는 일별 변동이 커서 7일 평균으로
+    or_7d = []
+    for i in range(len(or_raw)):
+        win = [v for _, v in or_raw[max(0, i - 6):i + 1]]
+        or_7d.append((or_raw[i][0], round(sum(win) / len(win), 4)))
+    or_idx = _rebase_at(_weekly(or_7d))
+    goog_tok = seed_series("google_tokens_month")
     gb300 = daily_series(cache, bk("GB300"))
     b200v = daily_series(cache, bk("B200"))
 
@@ -3630,6 +3769,43 @@ def build_html():
         {"label": "오픈AI", "color": T["teal"], "width": 2.8, "markers": True,
          "points": oai_rev},
     ], h=270, yfmt=usd, labels_right=True)
+    # ---- ⑪ 토큰 경제 차트 ----
+    idx_fmt = lambda v: "%.0f" % v
+    tok_vol_series = [
+        {"label": "Ramp 사용량", "color": T["primary"], "width": 2.8, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
+    ]
+    if or_idx:
+        tok_vol_series.append({"label": "오픈라우터", "color": T["teal"], "width": 2.2, "points": or_idx, "delta": "pct", "delta_suffix": "전주比"})
+    c_tok_vol = svg_chart(tok_vol_series, h=230, yfmt=idx_fmt, zero_base=True, labels_right=True)
+    c_tok_spend = svg_chart([
+        {"label": "합산", "color": T["chartGray"], "width": 1.4, "points": ramp_sp, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "앤스로픽", "color": T["primary"], "width": 2.8, "points": ramp_sp_a, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "오픈AI", "color": T["teal"], "width": 2.8, "points": ramp_sp_o, "delta": "pct", "delta_suffix": "전주比"},
+    ], h=230, yfmt=idx_fmt, zero_base=True, labels_right=True)
+    c_tok_px = svg_chart([
+        {"label": "앤스로픽", "color": T["primary"], "width": 2.8, "points": ramp_px_a, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "오픈AI", "color": T["teal"], "width": 2.8, "points": ramp_px_o, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "합산", "color": T["chartGray"], "width": 1.4, "points": ramp_px, "delta": "pct", "delta_suffix": "전주比"},
+    ], h=230, yfmt=lambda v: "$%.2f" % v, zero_base=True, labels_right=True)
+    # 구글 공개치 문장 (점이 추가되면 자동 갱신)
+    def _tok_fmt(v):
+        return ("%.0f조" % v) if v < 1000 else ("%.1f경" % (v / 1000)).replace(".0경", "경")
+    goog_txt = " → ".join("%s %s" % (fmt_kr(d), _tok_fmt(v)) for d, v in goog_tok[-5:])
+    goog_yoy = ""
+    if len(goog_tok) >= 2:
+        d1, v1 = goog_tok[-1]
+        prev = [(d, v) for d, v in goog_tok[:-1] if d2o(d1) - d2o(d) >= 360]
+        if prev:
+            d0, v0 = prev[-1]
+            yrs = (d2o(d1) - d2o(d0)) / 365.0
+            goog_yoy = " (연 %.1f배)" % ((v1 / v0) ** (1 / yrs))
+    ramp_last = fmt_kr(ramp_px[-1][0]) if ramp_px else "—"
+    ramp_gain = ""
+    if ramp_vol and ramp_sp:
+        ramp_gain = "26.01 대비 사용량 %.0f배 · 지출 %.0f배 · 단가 %+.0f%%" % (
+            ramp_vol[-1][1] / 100, ramp_sp[-1][1] / 100,
+            (ramp_px[-1][1] / [v for d, v in ramp_px if d >= "2026-01-01"][0] - 1) * 100)
+
     c_agent = svg_chart([
         {"label": "오픈AI 에이전트", "color": T["teal"], "width": 2.4, "markers": True,
          "points": agent_wau},
@@ -3746,10 +3922,25 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 </div>
 
 
+<div class="card-sec">
+<span class="banner">⑪ 토큰 경제 — 사용량 · 지출 · 단가 <span class="u">Ramp 일별 원본 데이터 (오픈AI+앤스로픽) · 26.01 = 100</span></span>
+<div class="sub">사용량 지수 (7일 합산 토큰 수, 26.01 = 100)""" + ("<span class='r'>진한 올리브 = Ramp · 청록 = 오픈라우터 7일 평균</span>" if or_idx else "<span class='r'>진한 올리브 = Ramp</span>") + """</div>
+""" + c_tok_vol + """
+<div class="sub">지출 지수 (7일 합산 달러, 26.01 = 100)<span class="r">진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span></div>
+""" + c_tok_spend + """
+<div class="sub">토큰 단가 ($/백만 토큰, 입력·출력·캐시 가중 평균)<span class="r">진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span></div>
+""" + c_tok_px + """
+<div class="note">Ramp 토큰 지출 관리 상품 가입사(미국 기업)의 실제 청구 데이터. 데이터 기준 """ + ramp_last + """ · """ + ramp_gain + """<br>
+<span class="key">사용량·지출 지수는 가입사 증가 효과가 섞여 실제 시장 증가율보다 높게 나옴 — 방향만 볼 것. 단가와 두 회사 비중은 그 영향이 없어 신뢰 가능</span><br>
+단가 = 지출 ÷ 토큰 수. 같은 회사라도 고객이 비싼 모델·출력 토큰을 더 쓰면 오르고, 싼 모델·캐시를 더 쓰면 내림 (가격 인하 + 사용 구성 변화의 합)<br>
+<b>사용량 증가가 단가 하락을 이기면 지출이 늘고(= ⑧⑨ 매출), 못 이기면 지출이 평평해짐. 2026.08 이후 지출 둔화가 그 신호였음</b><br>
+구글 공개치 (모든 서비스 월간 처리 토큰): """ + goog_txt + goog_yoy + """ — 세계 최대 사용처의 실측 기준점. 실적발표·I/O 공개 시 자동 추가""" + ("<br>오픈라우터 = 여러 모델을 중계하는 개발자용 API의 일별 처리량 (CC BY 4.0, openrouter.ai/rankings). 오픈모델 비중이 커 수준이 아닌 추세용" if or_idx else "<br>오픈라우터 일별 토큰(개발자 API 중계 서비스)은 API 키 등록 시 청록 선으로 추가됨") + """</div>
+</div>
+
 <footer>
 Source: Silicon Data 공식 지수(SDH100RT·SDB200RT 등, 무료 공개 페이지 자동수집), SemiAnalysis 1년 계약가 범위(자동수집), Price of Compute 공개 API(블랙웰 중위가),
 코어위브·네비우스·크루소·람다·투게더·베르다 등 공식 가격 페이지 + 오라클 OCI 공개 가격 API(자동수집), FRED(금리·신용스프레드),
-CRWV·ORCL CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도), 코어위브 분기 실적(SEC 공시).<br>
+CRWV·ORCL CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도), 코어위브 분기 실적(SEC 공시), Ramp AI Index 토큰 데이터(ramp.com/data/ai-index 공개 차트 원본), 구글 토큰 공개치.<br>
 Note: 지수의 26.08.19 이전 구간은 PDF 차트 판독값(<b>오차 약 ±1%</b>)이고 이후는 자동수집값이라 이어붙인 계열임.
 오라클 CDS·프론티어 랩 매출은 보도 시점만 있는 이산 데이터라 점 사이는 직선 연결.<br>
 정보 제공 목적이며 투자 권유가 아닙니다. Generated automatically via GitHub Actions.
@@ -3805,7 +3996,17 @@ def main():
     for k, s in collect_etf_credit_proxy(cache["series"]).items():
         cache["series"].setdefault(k, {}).update(s)
 
+    print("[+] Ramp 토큰 경제 (지출·사용량·단가)")
+    for k, s in collect_ramp_tokens().items():
+        cache["series"].setdefault(k, {}).update(s)
+
+    print("[+] OpenRouter 일별 토큰 총량")
+    for k, s in collect_openrouter(cache["series"]).items():
+        cache["series"].setdefault(k, {}).update(s)
+
     for k in list(cache["series"]):
+        if k.startswith(("RAMP_", "OR_")):      # 토큰 계열은 25.01부터 전체 보관
+            continue
         cache["series"][k] = {d: x for d, x in cache["series"][k].items() if d >= since}
     cache["daily"] = {d: v for d, v in cache["daily"].items() if d >= since}
 
