@@ -3811,7 +3811,7 @@ def build_html():
     # ---- ⑪ 토큰 경제 차트 ----
     idx_fmt = lambda v: "%.0f" % v
     tok_vol_series = [
-        {"label": "합산", "color": T["primary"], "width": 3.2, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "합산", "color": T["primary"], "width": 2.6, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": ramp_vol_a, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_vol_o, "delta": "pct", "delta_suffix": "전주比"},
     ]
@@ -3819,17 +3819,17 @@ def build_html():
         tok_vol_series.append({"label": "오픈라우터", "color": T["red"], "width": 1.5, "points": or_idx, "delta": "pct", "delta_suffix": "전주比"})
     c_tok_vol = svg_chart(tok_vol_series, h=230, yfmt=idx_fmt, zero_base=True, labels_right=True)
     c_tok_spend = svg_chart([
-        {"label": "합산", "color": T["primary"], "width": 3.2, "points": ramp_sp, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "합산", "color": T["primary"], "width": 2.6, "points": ramp_sp, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": ramp_sp_a, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_sp_o, "delta": "pct", "delta_suffix": "전주比"},
     ], h=230, yfmt=idx_fmt, zero_base=True, labels_right=True)
     c_tok_px = svg_chart([
         {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": ramp_px_a, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_px_o, "delta": "pct", "delta_suffix": "전주比"},
-        {"label": "합산", "color": T["primary"], "width": 3.2, "points": ramp_px, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "합산", "color": T["primary"], "width": 2.6, "points": ramp_px, "delta": "pct", "delta_suffix": "전주比"},
     ], h=230, yfmt=lambda v: "$%.2f" % v, zero_base=True, labels_right=True)
     c_tok_adopt = svg_chart([
-        {"label": "전체", "color": T["primary"], "width": 3.2, "points": adopt, "end_tag": (fmt_kr(adopt[-1][0])[:5] if adopt else None), "delta": "pp", "delta_suffix": "전월比"},
+        {"label": "전체", "color": T["primary"], "width": 2.6, "points": adopt, "end_tag": (fmt_kr(adopt[-1][0])[:5] if adopt else None), "delta": "pp", "delta_suffix": "전월比"},
         {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": adopt_a, "end_tag": (fmt_kr(adopt_a[-1][0])[:5] if adopt_a else None), "delta": "pp", "delta_suffix": "전월比"},
         {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": adopt_o, "end_tag": (fmt_kr(adopt_o[-1][0])[:5] if adopt_o else None), "delta": "pp", "delta_suffix": "전월比"},
     ], h=230, yfmt=lambda v: "%.1f%%" % v, zero_base=True, labels_right=True)
