@@ -3178,7 +3178,7 @@ def collect_ramp_tokens():
             a["ant_c"] += c; a["ant_n"] += n
         elif mk == "openai":
             a["oai_c"] += c; a["oai_n"] += n
-    sp, vol, px, px_a, px_o, sp_a, sp_o = {}, {}, {}, {}, {}, {}, {}
+    sp, vol, px, px_a, px_o, sp_a, sp_o, vol_a, vol_o = {}, {}, {}, {}, {}, {}, {}, {}, {}
     for d, a in agg.items():
         sp[d] = round(a["c"] / 1e6, 4)            # $M (7일 합산)
         vol[d] = round(a["n"] / 1e12, 4)          # 조 토큰 (7일 합산)
@@ -3186,11 +3186,14 @@ def collect_ramp_tokens():
         if a["ant_n"] > 0:
             px_a[d] = round(a["ant_c"] / a["ant_n"] * 1e6, 4)
             sp_a[d] = round(a["ant_c"] / 1e6, 4)
+            vol_a[d] = round(a["ant_n"] / 1e12, 4)
         if a["oai_n"] > 0:
             px_o[d] = round(a["oai_c"] / a["oai_n"] * 1e6, 4)
             sp_o[d] = round(a["oai_c"] / 1e6, 4)
+            vol_o[d] = round(a["oai_n"] / 1e12, 4)
     out = {"RAMP_SPEND": sp, "RAMP_VOL": vol, "RAMP_PX_ALL": px,
-           "RAMP_PX_ANT": px_a, "RAMP_PX_OAI": px_o, "RAMP_SPEND_ANT": sp_a, "RAMP_SPEND_OAI": sp_o}
+           "RAMP_PX_ANT": px_a, "RAMP_PX_OAI": px_o, "RAMP_SPEND_ANT": sp_a, "RAMP_SPEND_OAI": sp_o,
+           "RAMP_VOL_ANT": vol_a, "RAMP_VOL_OAI": vol_o}
     if sp:
         last = max(sp)
         print("  Ramp: %d일 (%s ~ %s), 최근 단가 $%.3f/M" % (len(sp), min(sp), last, px[last]))
@@ -3496,8 +3499,9 @@ table.data tr.hl td{background:var(--fill);font-weight:700}
 .pos{color:var(--teal);font-weight:700}.neg{color:var(--red);font-weight:700}
 .ana{font-size:12.5px;line-height:1.65;margin:0 0 10px}
 .ana b{color:var(--heading)}
-.sub{font-size:12px;font-weight:800;color:var(--heading);margin:12px 0 2px}
-.sub .r{font-weight:400;font-size:10.5px;color:var(--faint);float:right}
+.sub{font-size:17px;font-weight:800;color:var(--heading);margin:16px 0 4px}
+.sub .d{font-weight:400;font-size:12.5px;color:var(--faint);margin-left:6px}
+.sub .r{font-weight:400;font-size:12px;color:var(--faint);float:right;padding-top:5px}
 .note{font-size:10.5px;color:var(--faint);margin-top:8px;line-height:1.5}
 .note .key{color:var(--red);font-weight:800;font-size:11.5px}
 .thesis{background:var(--tint);border-left:5px solid var(--primary);padding:20px 24px;margin:0 0 22px}
@@ -3615,6 +3619,8 @@ def build_html():
         last = d2o(pts[-1][0])
         return [(d, v) for d, v in pts if (last - d2o(d)) % 7 == 0]
     ramp_vol = _rebase_at(_weekly(hist_series(cache, "RAMP_VOL")))
+    ramp_vol_a = _rebase_at(_weekly(hist_series(cache, "RAMP_VOL_ANT")))
+    ramp_vol_o = _rebase_at(_weekly(hist_series(cache, "RAMP_VOL_OAI")))
     ramp_sp = _rebase_at(_weekly(hist_series(cache, "RAMP_SPEND")))
     ramp_sp_a = _rebase_at(_weekly(hist_series(cache, "RAMP_SPEND_ANT")))
     ramp_sp_o = _rebase_at(_weekly(hist_series(cache, "RAMP_SPEND_OAI")))
@@ -3772,10 +3778,12 @@ def build_html():
     # ---- ⑪ 토큰 경제 차트 ----
     idx_fmt = lambda v: "%.0f" % v
     tok_vol_series = [
-        {"label": "Ramp 사용량", "color": T["primary"], "width": 2.8, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "합산", "color": T["chartGray"], "width": 1.4, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "앤스로픽", "color": T["primary"], "width": 2.8, "points": ramp_vol_a, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "오픈AI", "color": T["teal"], "width": 2.8, "points": ramp_vol_o, "delta": "pct", "delta_suffix": "전주比"},
     ]
     if or_idx:
-        tok_vol_series.append({"label": "오픈라우터", "color": T["teal"], "width": 2.2, "points": or_idx, "delta": "pct", "delta_suffix": "전주比"})
+        tok_vol_series.append({"label": "오픈라우터", "color": T["vivid"], "width": 2.2, "points": or_idx, "delta": "pct", "delta_suffix": "전주比"})
     c_tok_vol = svg_chart(tok_vol_series, h=230, yfmt=idx_fmt, zero_base=True, labels_right=True)
     c_tok_spend = svg_chart([
         {"label": "합산", "color": T["chartGray"], "width": 1.4, "points": ramp_sp, "delta": "pct", "delta_suffix": "전주比"},
@@ -3924,17 +3932,17 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 
 <div class="card-sec">
 <span class="banner">⑪ 토큰 경제 — 사용량 · 지출 · 단가 <span class="u">Ramp 일별 원본 데이터 (오픈AI+앤스로픽) · 26.01 = 100</span></span>
-<div class="sub">사용량 지수 (7일 합산 토큰 수, 26.01 = 100)""" + ("<span class='r'>진한 올리브 = Ramp · 청록 = 오픈라우터 7일 평균</span>" if or_idx else "<span class='r'>진한 올리브 = Ramp</span>") + """</div>
+<div class="sub">토큰 사용량 <span class="d">(7일 합산 토큰 수, 26.01 = 100)</span>""" + ("<span class='r'>진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산 · 연한 올리브 = 오픈라우터</span>" if or_idx else "<span class='r'>진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span>") + """</div>
 """ + c_tok_vol + """
-<div class="sub">지출 지수 (7일 합산 달러, 26.01 = 100)<span class="r">진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span></div>
+<div class="sub">토큰 지출 <span class="d">(7일 합산 달러, 26.01 = 100)</span><span class="r">진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span></div>
 """ + c_tok_spend + """
-<div class="sub">토큰 단가 ($/백만 토큰, 입력·출력·캐시 가중 평균)<span class="r">진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span></div>
+<div class="sub">토큰 단가 <span class="d">($/백만 토큰, 입력·출력·캐시 가중 평균)</span><span class="r">진한 올리브 = 앤스로픽 · 청록 = 오픈AI · 회색 = 합산</span></div>
 """ + c_tok_px + """
 <div class="note">Ramp 토큰 지출 관리 상품 가입사(미국 기업)의 실제 청구 데이터. 데이터 기준 """ + ramp_last + """ · """ + ramp_gain + """<br>
 <span class="key">사용량·지출 지수는 가입사 증가 효과가 섞여 실제 시장 증가율보다 높게 나옴 — 방향만 볼 것. 단가와 두 회사 비중은 그 영향이 없어 신뢰 가능</span><br>
 단가 = 지출 ÷ 토큰 수. 같은 회사라도 고객이 비싼 모델·출력 토큰을 더 쓰면 오르고, 싼 모델·캐시를 더 쓰면 내림 (가격 인하 + 사용 구성 변화의 합)<br>
 <b>사용량 증가가 단가 하락을 이기면 지출이 늘고(= ⑧⑨ 매출), 못 이기면 지출이 평평해짐. 2026.08 이후 지출 둔화가 그 신호였음</b><br>
-구글 공개치 (모든 서비스 월간 처리 토큰): """ + goog_txt + goog_yoy + """ — 세계 최대 사용처의 실측 기준점. 실적발표·I/O 공개 시 자동 추가""" + ("<br>오픈라우터 = 여러 모델을 중계하는 개발자용 API의 일별 처리량 (CC BY 4.0, openrouter.ai/rankings). 오픈모델 비중이 커 수준이 아닌 추세용" if or_idx else "<br>오픈라우터 일별 토큰(개발자 API 중계 서비스)은 API 키 등록 시 청록 선으로 추가됨") + """</div>
+구글 공개치 (모든 서비스 월간 처리 토큰): """ + goog_txt + goog_yoy + """ — 세계 최대 사용처의 실측 기준점. 실적발표·I/O 공개 시 자동 추가""" + ("<br>오픈라우터 = 여러 모델을 중계하는 개발자용 API의 일별 처리량 (CC BY 4.0, openrouter.ai/rankings). 오픈모델 비중이 커 수준이 아닌 추세용" if or_idx else "<br>오픈라우터 일별 토큰(개발자 API 중계 서비스)은 API 키 등록 시 연한 올리브 선으로 추가됨") + """</div>
 </div>
 
 <footer>
