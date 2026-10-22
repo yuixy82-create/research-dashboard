@@ -3200,6 +3200,34 @@ def collect_ramp_tokens():
     return out
 
 
+RAMP_PAGE = "https://ramp.com/data/ai-index"
+
+
+def collect_ramp_adoption():
+    """Ramp AI Index 페이지 안에 박힌 월별 AI 도입률 (전체·업체별). 23.07부터."""
+    raw = http_get(RAMP_PAGE)
+    if not raw:
+        print("  Ramp 도입률 수집 실패")
+        return {}
+    h = raw.replace('\\"', '"')
+    out = {}
+    i = h.find('"adoptionOverall":[')
+    if i >= 0:
+        seg = h[i:h.find("]", i)]
+        out["RAMP_ADOPT"] = {m.group(1): float(m.group(2)) for m in re.finditer(
+            r'"date_month":"(\d{4}-\d\d-01)","adoption_rate_pct":([\d.]+)', seg)}
+    i = h.find('"adoptionVendor":[')
+    if i >= 0:
+        seg = h[i:h.find("]", i)]
+        for m in re.finditer(r'"date_month":"(\d{4}-\d\d-01)","vendor":"(Anthropic|OpenAI)","adoption_rate_pct":([\d.]+)', seg):
+            key = "RAMP_ADOPT_ANT" if m.group(2) == "Anthropic" else "RAMP_ADOPT_OAI"
+            out.setdefault(key, {})[m.group(1)] = float(m.group(3))
+    if out.get("RAMP_ADOPT"):
+        d = max(out["RAMP_ADOPT"])
+        print("  Ramp 도입률: %d개월, 최근 %s %.1f%%" % (len(out["RAMP_ADOPT"]), d, out["RAMP_ADOPT"][d]))
+    return out
+
+
 # ------------------------------------------------------------
 # OpenRouter 일별 토큰 총량 (공개 데이터셋, CC BY 4.0 — API 키 필요)
 #   키가 없으면 건너뜀. GitHub Secrets OPENROUTER_API_KEY 에 넣으면 그날부터 수집
@@ -3329,6 +3357,8 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=Fal
             f = yfmt(last)
             if s.get("delta") == "pct" and prev:
                 dtxt = "%+.1f%%" % ((last / prev - 1) * 100)
+            elif s.get("delta") == "pp":
+                dtxt = "%+.1f%%p" % (last - prev)
             elif "bp" in f:
                 dtxt = "%+.0fbp" % (last - prev)
             elif "%" in f:
@@ -3627,6 +3657,9 @@ def build_html():
     ramp_px = _weekly([(d, v) for d, v in hist_series(cache, "RAMP_PX_ALL") if d >= "2025-01-01"])
     ramp_px_a = _weekly([(d, v) for d, v in hist_series(cache, "RAMP_PX_ANT") if d >= "2025-01-01"])
     ramp_px_o = _weekly([(d, v) for d, v in hist_series(cache, "RAMP_PX_OAI") if d >= "2025-01-01"])
+    adopt = hist_series(cache, "RAMP_ADOPT")
+    adopt_a = hist_series(cache, "RAMP_ADOPT_ANT")
+    adopt_o = hist_series(cache, "RAMP_ADOPT_OAI")
     or_raw = hist_series(cache, "OR_TOKENS")
     # OpenRouter는 일별 변동이 커서 7일 평균으로
     or_7d = []
@@ -3795,6 +3828,11 @@ def build_html():
         {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_px_o, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "합산", "color": T["primary"], "width": 3.2, "points": ramp_px, "delta": "pct", "delta_suffix": "전주比"},
     ], h=230, yfmt=lambda v: "$%.2f" % v, zero_base=True, labels_right=True)
+    c_tok_adopt = svg_chart([
+        {"label": "전체", "color": T["primary"], "width": 3.2, "points": adopt, "end_tag": (fmt_kr(adopt[-1][0])[:5] if adopt else None), "delta": "pp", "delta_suffix": "전월比"},
+        {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": adopt_a, "end_tag": (fmt_kr(adopt_a[-1][0])[:5] if adopt_a else None), "delta": "pp", "delta_suffix": "전월比"},
+        {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": adopt_o, "end_tag": (fmt_kr(adopt_o[-1][0])[:5] if adopt_o else None), "delta": "pp", "delta_suffix": "전월比"},
+    ], h=230, yfmt=lambda v: "%.1f%%" % v, zero_base=True, labels_right=True)
     # 구글 공개치 문장 (점이 추가되면 자동 갱신)
     def _tok_fmt(v):
         return ("%.0f조" % v) if v < 1000 else ("%.1f경" % (v / 1000)).replace(".0경", "경")
@@ -3931,15 +3969,18 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 
 
 <div class="card-sec">
-<span class="banner">⑪ 토큰 경제 — 사용량 · 지출 · 단가 <span class="u">Ramp 일별 원본 데이터 (오픈AI+앤스로픽) · 26.01 = 100</span></span>
+<span class="banner">⑪ 토큰 경제 — 사용량 · 지출 · 단가 · 도입률 <span class="u">Ramp 원본 데이터 (오픈AI+앤스로픽)</span></span>
 <div class="sub">토큰 사용량 <span class="d">(7일 합산 토큰 수, 26.01 = 100)</span>""" + ("<span class='r'>굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI · 빨강 = 오픈라우터</span>" if or_idx else "<span class='r'>굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span>") + """</div>
 """ + c_tok_vol + """
 <div class="sub">토큰 지출 <span class="d">(7일 합산 달러, 26.01 = 100)</span><span class="r">굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
 """ + c_tok_spend + """
 <div class="sub">토큰 단가 <span class="d">($/백만 토큰, 입력·출력·캐시 가중 평균)</span><span class="r">굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
 """ + c_tok_px + """
-<div class="note"><b>올리브·청록 선 = Ramp(램프)</b>: 미국 기업용 법인카드·결제 회사. 가입 기업이 오픈AI·앤스로픽에 실제로 낸 돈과 토큰 수 (중소·중견기업 위주 표본). 매일 수집, Ramp 갱신은 월 1회 · 데이터 기준 """ + ramp_last + """<br>
-<span class="key">사용량·지출은 가입 기업이 늘면 같이 늘어 수준은 믿지 말고 방향만 볼 것. 단가(지출 ÷ 토큰 수)와 두 회사 비중은 신뢰 가능</span>""" + ("""<br>
+<div class="sub">AI 도입률 <span class="d">(AI에 돈을 내는 미국 기업 비중, 월간)</span><span class="r">굵은 올리브 = 전체 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
+""" + c_tok_adopt + """
+<div class="note"><b>올리브·청록 선 = Ramp(램프)</b>: 미국 기업용 법인카드·결제 회사. 가입 기업이 오픈AI·앤스로픽에 실제로 낸 돈과 토큰 수. <span class="key">중소·중견기업 위주 표본</span>. 매일 수집, Ramp 갱신은 월 1회 · 데이터 기준 """ + ramp_last + """<br>
+<span class="key">사용량·지출 지수는 Ramp 토큰 관리 상품을 켜는 회사가 늘면 같이 늘어 수준은 믿지 말고 방향만 볼 것. 단가(지출 ÷ 토큰 수)와 두 회사 비중은 신뢰 가능</span><br>
+<b>AI 도입률</b>: Ramp 고객 기업 중 그달 AI 서비스에 결제가 있었던 비중. "쓰는 회사가 느는지"를 보는 지표라 위 지수와 분리해서 봄. 월 1회 갱신""" + ("""<br>
 <b>빨간 선 = 오픈라우터</b>: 여러 AI 모델을 중계하는 개발자용 서비스의 일별 처리 토큰. 매일 수집 (출처 openrouter.ai/rankings, CC BY 4.0)""" if or_idx else """<br>
 오픈라우터(여러 AI 모델을 중계하는 개발자용 서비스) 일별 토큰은 API 키 등록 시 빨간 선으로 추가, 매일 수집""") + """</div>
 </div>
@@ -4005,6 +4046,10 @@ def main():
 
     print("[+] Ramp 토큰 경제 (지출·사용량·단가)")
     for k, s in collect_ramp_tokens().items():
+        cache["series"].setdefault(k, {}).update(s)
+
+    print("[+] Ramp AI 도입률 (월별)")
+    for k, s in collect_ramp_adoption().items():
         cache["series"].setdefault(k, {}).update(s)
 
     print("[+] OpenRouter 일별 토큰 총량")
