@@ -13,6 +13,7 @@ import csv
 import html as htmlmod
 import io
 import json
+import math
 import os
 import re
 import time
@@ -3286,6 +3287,94 @@ def fmt_kr(s):
     return f"{y[2:]}.{m}.{d}"
 
 
+def _month_ends(d0, d1):
+    """d0~d1 사이의 매월 말일 (ISO 문자열)."""
+    out, y, m = [], d0.year, d0.month
+    while True:
+        last = (date(y + (m == 12), (m % 12) + 1, 1) - timedelta(days=1))
+        if last > d1:
+            break
+        if last >= d0:
+            out.append(last.isoformat())
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+    return out
+
+
+def _interp_log(pts, d):
+    """점 사이를 로그 선형(=일정 증가율)으로 보간. 범위 밖이면 None."""
+    o = d2o(d)
+    pts = sorted(pts)
+    if not pts or o < d2o(pts[0][0]) or o > d2o(pts[-1][0]):
+        return None
+    for (a, va), (b, vb) in zip(pts, pts[1:]):
+        oa, ob = d2o(a), d2o(b)
+        if oa <= o <= ob:
+            if ob == oa or va <= 0 or vb <= 0:
+                return va
+            t = (o - oa) / (ob - oa)
+            return math.exp(math.log(va) + t * (math.log(vb) - math.log(va)))
+    return pts[-1][1]
+
+
+def svg_line_bars(line, bars, est_from=None, w=680, h=330):
+    """위: 합산 런레이트 선 ($B), 아래: 전월比 증가율 막대 (%). est_from 이후는 추정(점선·연한 막대)."""
+    if len(line) < 3 or not bars:
+        return ""
+    ml, mr, mt, gap, mb = 54, 150, 24, 40, 26
+    h1 = int((h - mt - gap - mb) * 0.55)
+    h2 = h - mt - gap - mb - h1
+    pw = w - ml - mr
+    xs = [d2o(d) for d, _ in line]
+    x0, x1 = min(xs), max(xs)
+    X = lambda o: ml + (o - x0) / (x1 - x0) * pw
+    vmax = max(v for _, v in line) * 1.08
+    Y1 = lambda v: mt + (1 - v / vmax) * h1
+    bmax = max(5.0, max(v for _, v in bars) * 1.15)
+    top2 = mt + h1 + gap
+    Y2 = lambda v: top2 + (1 - max(v, 0) / bmax) * h2
+    o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" style="width:100%%;height:auto;font-family:inherit">' % (w, h)]
+    # 패널 제목
+    o.append('<text x="%d" y="%d" font-size="10.5" font-weight="700" fill="%s">합산 Gross 런레이트 ($B)</text>' % (ml, mt - 9, T["heading"]))
+    o.append('<text x="%d" y="%d" font-size="10.5" font-weight="700" fill="%s">합산 전월比 증가율 (%%)</text>' % (ml, top2 - 10, T["heading"]))
+    # 격자
+    for i in range(4):
+        v = vmax * i / 3; yy = Y1(v)
+        o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="%s"/>' % (ml, yy, w - mr, yy, T["hair"], 1 if i == 0 else 0.6))
+        o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">$%.0fB</text>' % (ml - 6, yy + 3, T["muted"], v))
+    for i in range(4):
+        v = bmax * i / 3; yy = Y2(v)
+        o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="%s"/>' % (ml, yy, w - mr, yy, T["hair"], 1 if i == 0 else 0.6))
+        o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">%.0f%%</text>' % (ml - 6, yy + 3, T["muted"], v))
+    # x축 라벨 (6개월 간격)
+    for d, _ in line:
+        if d[5:7] in ("01", "07"):
+            o.append('<text x="%.1f" y="%d" text-anchor="middle" font-size="9.5" fill="%s">%s</text>' % (X(d2o(d)), h - 8, T["muted"], d[2:4] + "." + d[5:7]))
+    # 선 (확정 실선 / 추정 점선)
+    est_o = d2o(est_from) if est_from else None
+    solid = [(d, v) for d, v in line if est_o is None or d2o(d) <= est_o]
+    dotted = [(d, v) for d, v in line if est_o is not None and d2o(d) >= est_o]
+    for pts, dash in ((solid, ""), (dotted, ' stroke-dasharray="5 4"')):
+        if len(pts) >= 2:
+            path = " ".join("%s%.1f,%.1f" % ("M" if i == 0 else "L", X(d2o(d)), Y1(v)) for i, (d, v) in enumerate(pts))
+            o.append('<path d="%s" fill="none" stroke="%s" stroke-width="2.8" stroke-linejoin="round"%s/>' % (path, T["primary"], dash))
+    ld, lv = line[-1]
+    o.append('<circle cx="%.1f" cy="%.1f" r="3.4" fill="%s"/>' % (X(d2o(ld)), Y1(lv), T["primary"]))
+    o.append('<text x="%.1f" y="%.1f" font-size="12" font-weight="700" fill="%s">$%.0fB (%s%s)</text>'
+             % (X(d2o(ld)) + 8, Y1(lv) + 4, T["primary"], lv, ld[2:7].replace("-", "."), " 추정" if est_o and d2o(ld) > est_o else ""))
+    # 막대
+    bw = max(4.0, pw / len(line) * 0.62)
+    for d, v in bars:
+        x = X(d2o(d)) - bw / 2
+        est = est_o is not None and d2o(d) > est_o
+        o.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="1.5" fill="%s"%s/>'
+                 % (x, Y2(v), bw, Y2(0) - Y2(v), T["vivid"] if est else T["primary"], ' fill-opacity="0.55"' if est else ""))
+    bd, bv = bars[-1]
+    o.append('<text x="%.1f" y="%.1f" font-size="12" font-weight="700" fill="%s">%+.1f%% (%s%s)</text>'
+             % (X(d2o(bd)) + bw / 2 + 6, Y2(bv) + 4, T["red"] if bv < bars[-2][1] else T["primary"], bv, bd[2:7].replace("-", "."), " 추정" if est_o and d2o(bd) > est_o else ""))
+    o.append('</svg>')
+    return "".join(o)
+
+
 def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=False):
     """series: [{label,color,points:[(날짜,값)],dash,width,markers}]"""
     yfmt = yfmt or (lambda v: f"${v:,.2f}")
@@ -3644,6 +3733,37 @@ def build_html():
     agent_wau = seed_series("openai_agent_wau")
     ant_wau = seed_series("anthropic_agent_wau")
 
+    # ---- 합산 Gross 런레이트 월말 시계열 + 전월比 증가율 ----
+    # 점 사이는 로그 선형 보간(구간 안 증가율 일정). 앤스로픽 마지막 발표 이후 달은
+    # 티커트랜드 추세를 발표치 수준에 맞춰(겹치는 날의 비율) 이어 붙인 추정치
+    ant_last = ant_rev[-1][0] if ant_rev else None
+    ant_ext = list(ant_rev)
+    if ant_last and ant_tt and ant_tt[-1][0] > ant_last:
+        tt_at = _interp_log(ant_tt, ant_last)
+        if tt_at:
+            k = ant_rev[-1][1] / tt_at
+            ant_ext += [(d, round(v * k, 1)) for d, v in ant_tt if d > ant_last]
+    # 마지막 점이 20일 이후면 그 달 말까지 같은 값으로 늘려 월말 점을 만든다
+    if ant_ext and int(ant_ext[-1][0][8:10]) >= 20:
+        me = _month_ends(date.fromisoformat(ant_ext[-1][0]), date.fromisoformat(ant_ext[-1][0]) + timedelta(days=31))[0]
+        if me > ant_ext[-1][0]:
+            ant_ext.append((me, ant_ext[-1][1]))
+    # 오픈AI는 이 차트에서만 전 기간 Net ÷ 0.73 (⑧ 선은 26년부터만 역산). 실측 Gross 점이 있으면 그 값
+    oai_g_all = sorted({**{d: round(v / NET_RATIO, 1) for d, v in oai_rev}, **dict(oai_gross_real)}.items())
+    sum_rr, sum_mom, est_from = [], [], None
+    if ant_ext and oai_g_all:
+        d0 = max(date.fromisoformat(ant_ext[0][0]), date.fromisoformat(oai_g_all[0][0]))
+        d1 = min(date.fromisoformat(ant_ext[-1][0]), date.fromisoformat(oai_g_all[-1][0]))
+        for m in _month_ends(d0, d1):
+            a, b = _interp_log(ant_ext, m), _interp_log(oai_g_all, m)
+            if a and b:
+                sum_rr.append((m, round(a + b, 1)))
+        for (dp, vp), (dc, vc) in zip(sum_rr, sum_rr[1:]):
+            sum_mom.append((dc, round((vc / vp - 1) * 100, 1)))
+        if ant_last and sum_rr and sum_rr[-1][0] > ant_last:
+            est_from = max(m for m, _ in sum_rr if m <= ant_last) if any(m <= ant_last for m, _ in sum_rr) else sum_rr[0][0]
+    c_rev_mom = svg_line_bars(sum_rr, sum_mom, est_from=est_from)
+
     # ---- 토큰 경제 (Ramp 일별 + OpenRouter + 구글 공개치) ----
     def _rebase_at(pts, d0="2026-01-01", base=100.0):
         """d0부터 한 달 평균을 100으로 지수화 (연초 휴일 저점 영향 제거). d0 이전은 버림."""
@@ -3956,13 +4076,16 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <div class="card-sec">
 <span class="banner">⑧ 프론티어 랩 매출 — Gross 기준 ($B) <span class="u">진한 올리브 = 앤스로픽 발표 · 연한 올리브 = 앤스로픽 티커트랜드 · 청록 = 오픈AI</span></span>
 """ + c_rev_gross + """
+<div class="sub">합산 Gross 런레이트 · 전월比 증가율 <span class="d">앤스로픽 발표 + 오픈AI(Net ÷ 0.73), 월말 보간</span></div>
+""" + c_rev_mom + """
 <div class="note">클라우드 가격을 떠받치는 최종 수요. 연환산(run-rate) = 해당 시점 월매출 × 12이며 연간 실적이 아님<br>
 <span class="key">Gross = CSP 수익배분 차감 전 매출. 앤스로픽은 이 기준으로 발표하고, 오픈AI는 투자자 자료로만 공개함 (26.07 $40B, 26.09 $68B)</span><br>
 앤스로픽 마지막 점 = 26.10.14 투자자 행사에서 공개한 3분기(7~9월) 실매출 $16.8B × 4. 7~9월 평균이라 분기 한가운데에 찍음<br>
 <b>전분기 대비 +45%로 2분기 +149%에서 크게 둔화.</b> 9월 말 연환산은 공개되지 않았음 (보도된 $110B은 연말 전망치라 제외)<br>
 연한 올리브 = 티커트랜드 앤스로픽 추정. 발표가 느려 최근 흐름 참고용이나 금액은 발표치보다 높게 잡힘 (26.07 +14%)<br>
 속 빈 점 = 추정. 오픈AI는 Net ÷ 0.73으로 역산 (실측 Net/Gross 비율 26.07 0.75, 26.09 0.74). 25년 이전은 비율 확인 불가라 비워 둠<br>
-26.10.08 FT 보도의 "오픈AI ARR $70B 미달"은 기준 차이: 시장이 보던 $70B은 Gross 기대치, 실제 Gross $68B / Net $50B</div>
+26.10.08 FT 보도의 "오픈AI ARR $70B 미달"은 기준 차이: 시장이 보던 $70B은 Gross 기대치, 실제 Gross $68B / Net $50B<br>
+합산 차트: 발표 점 사이는 일정 증가율로 보간해 월말 값을 만든 것이라 막대는 구간 평균 증가율. 연한 막대 = 앤스로픽 마지막 발표(26.08) 이후 달로, 티커트랜드 추세를 발표치 수준에 맞춘 추정. 오픈AI 25년치는 Net ÷ 0.73</div>
 </div>
 
 <div class="card-sec">
