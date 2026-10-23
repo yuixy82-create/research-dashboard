@@ -3316,8 +3316,9 @@ def _interp_log(pts, d):
     return pts[-1][1]
 
 
-def svg_line_bars(line, bars, est_from=None, w=680, h=330):
-    """위: 합산 런레이트 선 ($B), 아래: 전월比 증가율 막대 (%). est_from 이후는 추정(점선·연한 막대)."""
+def svg_line_bars(line, bars, est_from=None, est_months=(), w=680, h=330):
+    """위: 합산 런레이트 선 ($B), 아래: 전월比 증가율 막대 (%).
+    est_from 이후는 추정(점선·연한 막대). est_months = 그 달에 두 회사 보도가 하나도 없어 보간만 한 달(연한 막대)."""
     if len(line) < 3 or not bars:
         return ""
     ml, mr, mt, gap, mb = 54, 150, 24, 40, 26
@@ -3365,7 +3366,7 @@ def svg_line_bars(line, bars, est_from=None, w=680, h=330):
     bw = max(4.0, pw / len(line) * 0.62)
     for d, v in bars:
         x = X(d2o(d)) - bw / 2
-        est = est_o is not None and d2o(d) > est_o
+        est = (est_o is not None and d2o(d) > est_o) or d[:7] in est_months
         o.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="1.5" fill="%s"%s/>'
                  % (x, Y2(v), bw, Y2(0) - Y2(v), T["vivid"] if est else T["primary"], ' fill-opacity="0.55"' if est else ""))
     bd, bv = bars[-1]
@@ -3762,7 +3763,9 @@ def build_html():
             sum_mom.append((dc, round((vc / vp - 1) * 100, 1)))
         if ant_last and sum_rr and sum_rr[-1][0] > ant_last:
             est_from = max(m for m, _ in sum_rr if m <= ant_last) if any(m <= ant_last for m, _ in sum_rr) else sum_rr[0][0]
-    c_rev_mom = svg_line_bars(sum_rr, sum_mom, est_from=est_from)
+    _rep_months = {d[:7] for d, _ in ant_rev} | {d[:7] for d, _ in oai_rev} | {d[:7] for d, _ in oai_gross_real}
+    est_months = {m[:7] for m, _ in sum_mom if m[:7] not in _rep_months}
+    c_rev_mom = svg_line_bars(sum_rr, sum_mom, est_from=est_from, est_months=est_months)
 
     # ---- 토큰 경제 (Ramp 일별 + OpenRouter + 구글 공개치) ----
     def _rebase_at(pts, d0="2026-01-01", base=100.0):
@@ -3941,7 +3944,7 @@ def build_html():
         {"label": "오픈AI", "color": T["teal"], "width": 2.8, "markers": True,
          "points": oai_rev},
     ], h=270, yfmt=usd, labels_right=True)
-    # ---- ⑪ 토큰 경제 차트 ----
+    # ---- ⑫ 토큰 경제 차트 ----
     idx_fmt = lambda v: "%.0f" % v
     tok_vol_series = [
         {"label": "합산", "color": T["primary"], "width": 2.6, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
@@ -4076,16 +4079,13 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <div class="card-sec">
 <span class="banner">⑧ 프론티어 랩 매출 — Gross 기준 ($B) <span class="u">진한 올리브 = 앤스로픽 발표 · 연한 올리브 = 앤스로픽 티커트랜드 · 청록 = 오픈AI</span></span>
 """ + c_rev_gross + """
-<div class="sub">합산 Gross 런레이트 · 전월比 증가율 <span class="d">앤스로픽 발표 + 오픈AI(Net ÷ 0.73), 월말 보간</span></div>
-""" + c_rev_mom + """
 <div class="note">클라우드 가격을 떠받치는 최종 수요. 연환산(run-rate) = 해당 시점 월매출 × 12이며 연간 실적이 아님<br>
 <span class="key">Gross = CSP 수익배분 차감 전 매출. 앤스로픽은 이 기준으로 발표하고, 오픈AI는 투자자 자료로만 공개함 (26.07 $40B, 26.09 $68B)</span><br>
 앤스로픽 마지막 점 = 26.10.14 투자자 행사에서 공개한 3분기(7~9월) 실매출 $16.8B × 4. 7~9월 평균이라 분기 한가운데에 찍음<br>
 <b>전분기 대비 +45%로 2분기 +149%에서 크게 둔화.</b> 9월 말 연환산은 공개되지 않았음 (보도된 $110B은 연말 전망치라 제외)<br>
 연한 올리브 = 티커트랜드 앤스로픽 추정. 발표가 느려 최근 흐름 참고용이나 금액은 발표치보다 높게 잡힘 (26.07 +14%)<br>
 속 빈 점 = 추정. 오픈AI는 Net ÷ 0.73으로 역산 (실측 Net/Gross 비율 26.07 0.75, 26.09 0.74). 25년 이전은 비율 확인 불가라 비워 둠<br>
-26.10.08 FT 보도의 "오픈AI ARR $70B 미달"은 기준 차이: 시장이 보던 $70B은 Gross 기대치, 실제 Gross $68B / Net $50B<br>
-합산 차트: 발표 점 사이는 일정 증가율로 보간해 월말 값을 만든 것이라 막대는 구간 평균 증가율. 연한 막대 = 앤스로픽 마지막 발표(26.08) 이후 달로, 티커트랜드 추세를 발표치 수준에 맞춘 추정. 오픈AI 25년치는 Net ÷ 0.73</div>
+26.10.08 FT 보도의 "오픈AI ARR $70B 미달"은 기준 차이: 시장이 보던 $70B은 Gross 기대치, 실제 Gross $68B / Net $50B</div>
 </div>
 
 <div class="card-sec">
@@ -4098,15 +4098,23 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 </div>
 
 <div class="card-sec">
-<span class="banner">⑩ 에이전트 사용자 (주간, 백만명) <span class="u">토큰 소비 = 클라우드 수요의 선행지표</span></span>
+<span class="banner">⑩ 합산 Gross 런레이트 · 전월比 증가율 ($B, %) <span class="u">앤스로픽 발표 + 오픈AI Gross(Net ÷ 0.73) · 월말 기준</span></span>
+""" + c_rev_mom + """
+<div class="note">월말 값 = 그 달까지 나온 두 회사 보도치. 보도 사이는 일정 증가율로 보간하므로 막대는 그 구간의 평균 증가율이고, 한 달 막대 하나로 읽지 말고 3개월을 묶어 볼 것<br>
+<span class="key">진한 막대 = 그 달에 보도가 있던 달 · 연한 막대 = 보도 없이 보간만 한 달, 또는 앤스로픽 마지막 발표(26.08) 이후 티커트랜드 추세를 발표치 수준에 맞춰 이은 달(추정)</span><br>
+오픈AI는 Net ÷ 0.73 (실측 Gross 26.07 $40B·26.09 $68B는 그 값). 새 보도가 들어오면 해당 달 막대가 자동으로 바뀜</div>
+</div>
+
+<div class="card-sec">
+<span class="banner">⑪ 에이전트 사용자 (주간, 백만명) <span class="u">토큰 소비 = 클라우드 수요의 선행지표</span></span>
 """ + c_agent + """
 <div class="note">오픈AI = ChatGPT Work + Codex 주간 사용자(공식 공개·CNBC 집계). 공개 시점 기준<br>
-<span class="key">앤스로픽은 사용자 수를 정기 공개하지 않음 — 매출 run-rate(⑧)가 사실상의 대용 지표. 공식 공개가 나오면 여기에 자동 추가</span></div>
+<span class="key">앤스로픽은 사용자 수를 정기 공개하지 않음 — 매출 run-rate(⑧⑩)가 사실상의 대용 지표. 공식 공개가 나오면 여기에 자동 추가</span></div>
 </div>
 
 
 <div class="card-sec">
-<span class="banner">⑪ 토큰 경제 — 사용량 · 지출 · 단가 · 도입률 <span class="u">Ramp 원본 데이터 (오픈AI+앤스로픽)</span></span>
+<span class="banner">⑫ 토큰 경제 — 사용량 · 지출 · 단가 · 도입률 <span class="u">Ramp 원본 데이터 (오픈AI+앤스로픽)</span></span>
 <div class="sub">토큰 사용량 <span class="d">(7일 합산 토큰 수, 26.01 = 100)</span>""" + ("<span class='r'>굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI · 빨강 = 오픈라우터</span>" if or_idx else "<span class='r'>굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span>") + """</div>
 """ + c_tok_vol + """
 <div class="sub">토큰 지출 <span class="d">(7일 합산 달러, 26.01 = 100)</span><span class="r">굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
