@@ -28,6 +28,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import unicodedata
 
 import numpy as np
 from PIL import Image
@@ -169,8 +170,9 @@ def main():
     if os.path.exists(a.store):
         with open(a.store, encoding="utf-8") as f:
             store = json.load(f)
-    tag = os.path.basename(a.pdf)
-    if tag in store.get("processed", []) and not a.replace:
+    tag = unicodedata.normalize("NFC", os.path.basename(a.pdf))   # 맥·VM 마운트는 NFD로 올 수 있음
+    store["processed"] = [unicodedata.normalize("NFC", t) for t in store.get("processed", [])]
+    if tag in store["processed"] and not a.replace:
         print("이미 처리한 파일:", tag); return
 
     with tempfile.TemporaryDirectory() as td:
