@@ -1,0 +1,95 @@
+# AI 트래커: CDS 일별 시계열(gpu-cloud/cds.json)을 Google Drive에서 자동 반영
+# - 매일 08:50 KST(23:50 UTC) + Actions 탭에서 수동 실행(Run workflow) 가능
+# - 드라이브 공개 폴더(gpu-cloud-news)에서
+#   ① cds_YYYYMMDD.json (PC 예약 작업이 텔레그램 PDF를 읽어 올린 것) 중 최신본이 저장소보다 새로우면 교체
+#   ② 코어위브 CDS 등_YYYYMMDD.pdf 가 직접 올라와 있으면 tools/cds_from_pdf.py 로 읽어 덧붙임
+#   바뀐 경우에만 커밋하고 트래커를 재생성한다
+name: Update cds.json from Drive
+
+on:
+  schedule:
+    - cron: '50 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install poppler + python deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils > /dev/null
+          pip install -q numpy pillow
+
+      - name: Fetch from public Drive folder and merge
+        run: |
+          python3 - <<'EOF'
+          import json, os, re, subprocess, sys, unicodedata, urllib.request
+
+          FOLDER = "1eqjmV0Z7Fm-Vr9SQbA0z4OAH0LkYvhmN"  # gpu-cloud-news (공개 폴더)
+          STORE = "gpu-cloud/cds.json"
+          html = urllib.request.urlopen(
+              f"https://drive.google.com/embeddedfolderview?id={FOLDER}", timeout=30
+          ).read().decode("utf-8", "replace")
+          pairs = re.findall(r'id="entry-([-\w]+)".*?flip-entry-title">([^<]+)<', html, re.S)
+          files = {unicodedata.normalize("NFC", t): i for i, t in pairs}
+
+          def fetch(fid):
+              return urllib.request.urlopen(
+                  f"https://drive.google.com/uc?export=download&id={fid}", timeout=60).read()
+
+          store = json.load(open(STORE, encoding="utf-8")) if os.path.exists(STORE) else {}
+          before = json.dumps(store, sort_keys=True)
+
+          # ① PC 예약 작업이 올린 cds_YYYYMMDD.json: 저장소보다 asof가 새로우면 통째로 교체
+          js = sorted(t for t in files if re.fullmatch(r"cds_\d{8}\.json", t))
+          if js:
+              new = json.loads(fetch(files[js[-1]]).decode("utf-8"))
+              if new.get("asof", "") > store.get("asof", "") and len(new.get("cds", [])) >= len(store.get("cds", [])):
+                  store = new
+                  print("교체:", js[-1], "asof", new["asof"])
+              else:
+                  print("드라이브 JSON이 더 새롭지 않음:", js[-1])
+          json.dump(store, open(STORE, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+
+          # ② 폴더에 PDF가 직접 올라온 경우: 아직 처리 안 한 것만 날짜순으로 읽는다
+          pdfs = sorted((re.search(r"(\d{8})", t).group(1), t) for t in files
+                        if re.search(r"CDS.*_(\d{8})\.pdf$", t))
+          for _, t in pdfs:
+              if t in store.get("processed", []):
+                  continue
+              path = "/tmp/" + t
+              open(path, "wb").write(fetch(files[t]))
+              r = subprocess.run([sys.executable, "tools/cds_from_pdf.py", path, "--store", STORE])
+              print(t, "→ 종료코드", r.returncode)
+              store = json.load(open(STORE, encoding="utf-8"))
+
+          after = json.dumps(store, sort_keys=True)
+          open("/tmp/changed", "w").write("1" if after != before else "0")
+          EOF
+
+      - name: Commit if changed
+        id: commit
+        run: |
+          if [ "$(cat /tmp/changed)" != "1" ]; then
+            echo "변경 없음 — 커밋 생략"
+            exit 0
+          fi
+          git config user.name "cds-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add gpu-cloud/cds.json
+          git commit -m "chore: cds.json 자동 갱신 ($(date -u +%Y-%m-%d))"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger tracker rebuild
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run gpu-cloud.yml --repo ${{ github.repository }} || echo "재생성 트리거 실패 (다음 정기 실행에서 반영됨)"
