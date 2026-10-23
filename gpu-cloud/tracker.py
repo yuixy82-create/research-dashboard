@@ -3596,6 +3596,17 @@ def build_html():
             SEED[k]["points"] += [p for p in pts if p and p[0] not in have]
             SEED[k]["points"].sort(key=lambda p: p[0])
 
+    # cds.json: Bloomberg 1Y 차트 PDF를 tools/cds_from_pdf.py 로 읽은 일별 CDS.
+    # 차트가 덮는 기간은 통째로 이 값으로 바꾼다 (같은 출처로 통일). 그 밖의 날짜는 seed·news 유지
+    cds_file = load_json(os.path.join(ROOT, "cds.json"), {})
+    cds_asof = cds_file.get("asof")
+    for k in ("cds", "oracle_cds"):
+        pts = cds_file.get(k)
+        if k in SEED and isinstance(pts, list) and pts:
+            lo, hi = pts[0][0], pts[-1][0]
+            keep = [p for p in SEED[k]["points"] if not (lo <= p[0] <= hi)]
+            SEED[k]["points"] = sorted(keep + [list(p) for p in pts], key=lambda p: p[0])
+
     cache = load_json(CACHE_FILE, {"daily": {}, "series": {}})
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M KST")
     n_days = len(cache.get("daily", {}))
@@ -3784,8 +3795,10 @@ def build_html():
     ], h=260)
     c_cds = svg_chart([
         {"label": "코어위브", "color": T["red"], "width": 2.4, "points": cds},
-        {"label": "오라클", "color": T["gold"], "width": 2.0, "markers": True, "points": ora_cds},
+        {"label": "오라클", "color": T["gold"], "width": 2.0, "points": ora_cds},
     ], h=250, yfmt=lambda v: "%.0fbp" % v)
+    cds_src = ("Bloomberg 1Y 차트 PDF를 픽셀로 읽은 일별 값 (%s까지). 그 뒤 날짜는 언론 보도치"
+               % fmt_kr(cds_asof)) if cds_asof else "언론 보도치 (주요 시점만)"
     c_gap = svg_chart([
         {"label": "이자비용/매출", "color": T["red"], "width": 2.4, "markers": True, "points": cw_int},
         {"label": "조정영업이익률", "color": T["primary"], "width": 2.4, "markers": True, "points": cw_mgn},
@@ -3936,7 +3949,8 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <div class="card-sec">
 <span class="banner">⑦ CDS 5Y — 부도 위험 보험료 (bp) <span class="u">코어위브 · 오라클</span></span>
 """ + c_cds + """
-<div class="note">개별 기업의 부도 위험 보험료. 오라클은 AI 최대 차입자라 개별이 아닌 시장 전체 신호로 읽음. 벤더별 호가 차이로 같은 날 수치가 다를 수 있음</div>
+<div class="note">개별 기업의 부도 위험 보험료. 오라클은 AI 최대 차입자라 개별이 아닌 시장 전체 신호로 읽음<br>
+""" + cds_src + """. 벤더별 호가 차이로 같은 날 수치가 언론 보도와 다를 수 있음 (Bloomberg CMAN 기준)</div>
 </div>
 
 <div class="card-sec">
