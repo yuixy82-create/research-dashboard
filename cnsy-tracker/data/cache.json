@@ -453,15 +453,11 @@
   }
  },
  "quote": {
-  "price": 0.914,
+  "price": 0.892,
   "prev": 6.3,
   "high52": 19.0,
   "low52": 0.78,
   "hist": [
-   {
-    "date": "2026-05-04",
-    "close": 6.3
-   },
    {
     "date": "2026-05-05",
     "close": 6.22
@@ -969,10 +965,6 @@
    {
     "date": "2026-11-03",
     "close": 1.3
-   },
-   {
-    "date": "2026-11-04",
-    "close": 0.914
    }
   ]
  },
@@ -1052,6 +1044,12 @@
    "modified": "2026-10-07"
   },
   {
+   "title": "Honoring the Team Behind Advancing CNS Cancer Diagnostics",
+   "link": "https://cnside-dx.com/honoring-the-team-behind-advancing-cns-cancer-diagnostics/",
+   "date": "2026-04-27",
+   "modified": "2026-11-04"
+  },
+  {
    "title": "CNSide Strengthens R&D Leadership with Appointment of Dr. Colby Suire, PhD",
    "link": "https://cnside-dx.com/cnside-appoints-dr-colby-suire-as-vp-of-research-development/",
    "date": "2026-04-26",
@@ -1122,12 +1120,6 @@
    "link": "https://cnside-dx.com/international-day-of-women-and-girls-in-science-2026/",
    "date": "2026-02-12",
    "modified": "2026-05-11"
-  },
-  {
-   "title": "CNSide at the NCCN Breast Cancer Conference",
-   "link": "https://cnside-dx.com/cnside-at-the-nccn-breast-cancer-conference/",
-   "date": "2026-02-11",
-   "modified": "2026-05-29"
   }
  ],
  "reddit": [],
@@ -1156,11 +1148,6 @@
   },
   {
    "date": "2026-08-24",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
-   "date": "2026-08-31",
    "lm": 37,
    "gbm": 53
   },
@@ -1203,6 +1190,13 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-11-05",
+   "level": "yellow",
+   "axis": "진단",
+   "text": "CNSide: Honoring the Team Behind Advancing CNS Cancer Diagnostics",
+   "link": "https://cnside-dx.com/honoring-the-team-behind-advancing-cns-cancer-diagnostics/"
+  },
   {
    "date": "2026-10-28",
    "level": "orange",
@@ -1373,7 +1367,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-05 04:26",
+  "updated": "2026-11-05 10:18",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1388,6 +1382,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 0
+  "new_events": 1
  }
 }
