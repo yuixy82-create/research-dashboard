@@ -453,10 +453,10 @@
   }
  },
  "quote": {
-  "price": 0.892,
-  "prev": 6.3,
+  "price": 0.6916,
+  "prev": 6.22,
   "high52": 19.0,
-  "low52": 0.78,
+  "low52": 0.63,
   "hist": [
    {
     "date": "2026-05-05",
@@ -965,6 +965,14 @@
    {
     "date": "2026-11-03",
     "close": 1.3
+   },
+   {
+    "date": "2026-11-04",
+    "close": 0.89
+   },
+   {
+    "date": "2026-11-05",
+    "close": 0.692
    }
   ]
  },
@@ -1023,10 +1031,10 @@
    "nct": "NCT07098806",
    "title": "Multiple Dose Intraventricular Administration of Rhenium-186 NanoLiposome for Leptomeningeal Metastases",
    "status": "RECRUITING",
-   "updated": "2026-09-09",
+   "updated": "2026-11-05",
    "enroll": 24,
    "enrollType": "ESTIMATED",
-   "primaryCompletion": "2026-10-02"
+   "primaryCompletion": "2027-07-31"
   }
  ],
  "news": [],
@@ -1128,7 +1136,7 @@
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
-  "checked": "2026-11-05"
+  "checked": "2026-11-06"
  },
  "trials_hist": [
   {
@@ -1152,7 +1160,12 @@
    "gbm": 53
   },
   {
-   "date": "2026-11-05",
+   "date": "2026-08-31",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
+   "date": "2026-11-06",
    "lm": 37,
    "gbm": 53
   }
@@ -1367,14 +1380,14 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-05 10:18",
+  "updated": "2026-11-06 04:36",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
    "filings": "ok",
    "shares": "ok",
    "quote": "ok",
-   "trials": "ok",
+   "trials": "fail: 카운터 없음 · wp lm: HTTP Error 500: Internal Server Error | lm: HTTP Error 500: Internal Server Error | wp gbm: HTTP Error 500: Internal Server ",
    "ctgov": "ok",
    "news": "fail: 피드 없음 · plain=False: The read operation timed out | plain=True: HTTP Error 403: Forbidden | plain=True: HTTP Error 403: Forbidden",
    "cnside": "ok",
@@ -1382,6 +1395,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 1
+  "new_events": 0
  }
 }
