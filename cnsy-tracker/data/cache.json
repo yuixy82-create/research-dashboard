@@ -453,15 +453,11 @@
   }
  },
  "quote": {
-  "price": 0.6739,
+  "price": 0.6427,
   "prev": 6.0,
   "high52": 19.0,
   "low52": 0.6001,
   "hist": [
-   {
-    "date": "2026-05-06",
-    "close": 6.0
-   },
    {
     "date": "2026-05-07",
     "close": 5.95
@@ -972,7 +968,7 @@
    },
    {
     "date": "2026-11-06",
-    "close": 0.674
+    "close": 0.643
    }
   ]
  },
@@ -1156,11 +1152,6 @@
   },
   {
    "date": "2026-08-24",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
-   "date": "2026-08-31",
    "lm": 37,
    "gbm": 53
   },
@@ -1380,14 +1371,14 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-07 03:59",
+  "updated": "2026-11-07 09:38",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
    "filings": "ok",
    "shares": "ok",
    "quote": "ok",
-   "trials": "fail: 카운터 없음 · wp lm: HTTP Error 500: Internal Server Error | lm: HTTP Error 500: Internal Server Error | wp gbm: HTTP Error 500: Internal Server ",
+   "trials": "fail: 카운터 없음 · ",
    "ctgov": "ok",
    "news": "fail: 피드 없음 · plain=False: The read operation timed out | plain=True: HTTP Error 403: Forbidden | plain=True: HTTP Error 403: Forbidden",
    "cnside": "ok",
