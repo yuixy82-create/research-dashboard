@@ -1,10 +1,10 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-11-09T22:52:52+00:00",
-  "status": "ok",
+  "updatedAt": "2026-11-10T04:16:18+00:00",
+  "status": "partial",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 89.76,
+      "value": 89.2,
       "unit": "$/bbl",
       "asOf": "2026-11-09",
       "note": null,
@@ -12,7 +12,7 @@
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 46.08,
+      "value": 46.16,
       "unit": "$/bbl",
       "asOf": "2026-11-09",
       "note": null,
@@ -53,5 +53,7 @@
       "mode": "auto"
     }
   },
-  "errors": []
+  "errors": [
+    "customs: px_naphtha_spread: HTTP Error 500: Internal Server Error"
+  ]
 }
