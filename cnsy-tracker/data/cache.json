@@ -3,6 +3,20 @@
   "entity": "CERENOME, INC.",
   "list": [
    {
+    "form": "4",
+    "filed": "2026-11-12",
+    "items": "",
+    "acc": "0001193125-26-457094",
+    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526457094/xslF345X06/ownership.xml"
+   },
+   {
+    "form": "8-K",
+    "filed": "2026-11-12",
+    "items": "5.02,8.01,9.01",
+    "acc": "0001193125-26-455816",
+    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526455816/cnsy-20261106.htm"
+   },
+   {
     "form": "8-K",
     "filed": "2026-10-02",
     "items": "8.01,9.01",
@@ -267,20 +281,6 @@
     "items": "",
     "acc": "0001649553-26-000057",
     "url": "https://www.sec.gov/Archives/edgar/data/1095981/000164955326000057/xslSCHEDULE_13G_X02/primary_doc.xml"
-   },
-   {
-    "form": "SCHEDULE 13G",
-    "filed": "2026-05-15",
-    "items": "",
-    "acc": "0000919574-26-003205",
-    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000091957426003205/xslSCHEDULE_13G_X02/primary_doc.xml"
-   },
-   {
-    "form": "4",
-    "filed": "2026-04-22",
-    "items": "",
-    "acc": "0001193125-26-170730",
-    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526170730/xslF345X06/ownership.xml"
    }
   ]
  },
@@ -453,8 +453,8 @@
   }
  },
  "quote": {
-  "price": 0.801,
-  "prev": 6.04,
+  "price": 0.81,
+  "prev": 5.85,
   "high52": 19.0,
   "low52": 0.43,
   "hist": [
@@ -965,6 +965,14 @@
    {
     "date": "2026-11-10",
     "close": 0.68
+   },
+   {
+    "date": "2026-11-11",
+    "close": 0.8
+   },
+   {
+    "date": "2026-11-12",
+    "close": 0.81
    }
   ]
  },
@@ -1128,7 +1136,7 @@
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
-  "checked": "2026-11-12"
+  "checked": "2026-11-13"
  },
  "trials_hist": [
   {
@@ -1152,7 +1160,12 @@
    "gbm": 53
   },
   {
-   "date": "2026-11-12",
+   "date": "2026-08-31",
+   "lm": 37,
+   "gbm": 53
+  },
+  {
+   "date": "2026-11-13",
    "lm": 37,
    "gbm": 53
   }
@@ -1190,6 +1203,20 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-11-13",
+   "level": "yellow",
+   "axis": "자본",
+   "text": "SEC 4 제출 (2026-11-12)",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526457094/xslF345X06/ownership.xml"
+  },
+  {
+   "date": "2026-11-13",
+   "level": "orange",
+   "axis": "자본",
+   "text": "SEC 8-K 제출 (2026-11-12) · Item 5.02,8.01,9.01",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526455816/cnsy-20261106.htm"
+  },
   {
    "date": "2026-11-10",
    "level": "orange",
@@ -1374,7 +1401,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-12 11:08",
+  "updated": "2026-11-13 04:36",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1389,6 +1416,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 0
+  "new_events": 2
  }
 }
