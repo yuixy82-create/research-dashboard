@@ -3,6 +3,20 @@
   "entity": "CERENOME, INC.",
   "list": [
    {
+    "form": "10-Q",
+    "filed": "2026-11-13",
+    "items": "",
+    "acc": "0001193125-26-460950",
+    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526460950/cnsy-20260930.htm"
+   },
+   {
+    "form": "8-K",
+    "filed": "2026-11-13",
+    "items": "2.02,9.01",
+    "acc": "0001193125-26-460887",
+    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526460887/cnsy-20261113.htm"
+   },
+   {
     "form": "4",
     "filed": "2026-11-12",
     "items": "",
@@ -267,29 +281,11 @@
     "items": "",
     "acc": "0001193125-26-226978",
     "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526226978/pstv-20260331.htm"
-   },
-   {
-    "form": "8-K",
-    "filed": "2026-05-15",
-    "items": "2.02,9.01",
-    "acc": "0001193125-26-226747",
-    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526226747/pstv-20260515.htm"
-   },
-   {
-    "form": "SCHEDULE 13G/A",
-    "filed": "2026-05-15",
-    "items": "",
-    "acc": "0001649553-26-000057",
-    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000164955326000057/xslSCHEDULE_13G_X02/primary_doc.xml"
    }
   ]
  },
  "shares": {
   "series": [
-   {
-    "date": "2016-07-31",
-    "shares": 20492643
-   },
    {
     "date": "2016-10-31",
     "shares": 20500553
@@ -445,23 +441,23 @@
    {
     "date": "2026-08-05",
     "shares": 7589625
+   },
+   {
+    "date": "2026-11-09",
+    "shares": 9776935
    }
   ],
   "latest": {
-   "date": "2026-08-05",
-   "shares": 7589625
+   "date": "2026-11-09",
+   "shares": 9776935
   }
  },
  "quote": {
-  "price": 0.8653,
+  "price": 0.9502,
   "prev": 5.7,
   "high52": 19.0,
   "low52": 0.43,
   "hist": [
-   {
-    "date": "2026-05-13",
-    "close": 5.7
-   },
    {
     "date": "2026-05-14",
     "close": 5.76
@@ -969,10 +965,6 @@
    {
     "date": "2026-11-12",
     "close": 0.77
-   },
-   {
-    "date": "2026-11-13",
-    "close": 0.865
    }
   ]
  },
@@ -1160,11 +1152,6 @@
    "gbm": 53
   },
   {
-   "date": "2026-08-31",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
    "date": "2026-11-14",
    "lm": 37,
    "gbm": 53
@@ -1203,6 +1190,27 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-11-14",
+   "level": "yellow",
+   "axis": "자본",
+   "text": "SEC 10-Q 제출 (2026-11-13)",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526460950/cnsy-20260930.htm"
+  },
+  {
+   "date": "2026-11-14",
+   "level": "orange",
+   "axis": "자본",
+   "text": "SEC 8-K 제출 (2026-11-13) · Item 2.02,9.01",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526460887/cnsy-20261113.htm"
+  },
+  {
+   "date": "2026-11-14",
+   "level": "red",
+   "axis": "희석",
+   "text": "발행주식수 7,589,625 → 9,776,935 (+28.82%)",
+   "link": ""
+  },
   {
    "date": "2026-11-13",
    "level": "yellow",
@@ -1401,7 +1409,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-14 04:16",
+  "updated": "2026-11-14 10:16",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1416,6 +1424,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 0
+  "new_events": 3
  }
 }
