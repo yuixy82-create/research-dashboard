@@ -1,23 +1,23 @@
 {
  "_comment": "수동 기초값. cache.json이 없거나 특정 소스가 실패했을 때의 폴백. 자동 수집이 성공하면 cache.json이 우선함.",
  "meta": {
-  "updated": "2026-09-18 (수동 기준값)",
+  "updated": "2026-11-16 (수동 기준값)",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {},
   "new_events": 0
  },
  "quote": {
-  "price": 2.03,
-  "prev": 2.05,
-  "high52": 23.425,
-  "low52": 2.0,
+  "price": 0.91,
+  "prev": 0.95,
+  "high52": 19.0,
+  "low52": 0.43,
   "hist": []
  },
  "shares": {
   "latest": {
-   "date": "2026-08-05",
-   "shares": 7589625
+   "date": "2026-09-30",
+   "shares": 7879968
   },
   "series": [
    {
@@ -35,41 +35,32 @@
    {
     "date": "2026-08-05",
     "shares": 7589625
+   },
+   {
+    "date": "2026-09-30",
+    "shares": 7879968
    }
   ]
  },
- "trials": {
-  "lm": {
-   "modified": "2026-08-20",
-   "counters": {
-    "Patients Treated to Date": 37
-   }
-  },
-  "gbm": {
-   "modified": "2026-08-19",
-   "counters": {
-    "Patients Treated to Date": 53
-   }
-  }
- },
+ "trials": {},
  "ctgov": [
   {
    "nct": "NCT01906385",
    "title": "ReSPECT-GBM Phase 1/2",
-   "status": "RECRUITING",
-   "updated": "2025-03-26",
+   "status": "ACTIVE_NOT_RECRUITING",
+   "updated": "2026-11-09",
    "enroll": 55,
    "enrollType": "ESTIMATED",
-   "primaryCompletion": "2025-12"
+   "primaryCompletion": "2027-04"
   },
   {
    "nct": "NCT05034497",
    "title": "ReSPECT-LM 단회투여 Phase 1",
-   "status": "ACTIVE_NOT_RECRUITING",
-   "updated": "2025-03-26",
-   "enroll": 18,
-   "enrollType": "ESTIMATED",
-   "primaryCompletion": "2025-12-21"
+   "status": "COMPLETED",
+   "updated": "2026-10-27",
+   "enroll": 37,
+   "enrollType": "ACTUAL",
+   "primaryCompletion": "2026-10-19"
   },
   {
    "nct": "NCT05460507",
@@ -83,20 +74,20 @@
   {
    "nct": "NCT07061626",
    "title": "ReSPECT-PBC 소아 Phase 1/2a",
-   "status": "NOT_YET_RECRUITING",
-   "updated": "2025-07-11",
+   "status": "RECRUITING",
+   "updated": "2026-09-11",
    "enroll": 56,
    "enrollType": "ESTIMATED",
-   "primaryCompletion": "2027-03"
+   "primaryCompletion": "2028-03"
   },
   {
    "nct": "NCT07098806",
    "title": "ReSPECT-LM 다회투여 Phase 1",
    "status": "RECRUITING",
-   "updated": "2025-08-01",
+   "updated": "2026-11-05",
    "enroll": 24,
    "enrollType": "ESTIMATED",
-   "primaryCompletion": "2026-10-02"
+   "primaryCompletion": "2027-07-31"
   }
  ],
  "filings": {
@@ -108,9 +99,114 @@
  "reddit": [],
  "cms": {
   "cy2027_files": [],
-  "checked": "2026-09-18"
+  "checked": "2026-11-16"
  },
  "log": [
+  {
+   "date": "2026-11-16",
+   "level": "orange",
+   "axis": "임상",
+   "text": "회사 리뷰 콜 (현지 08:30 ET): SNO 데이터 해석 및 CNSide 상업 업데이트",
+   "link": "https://ir.cerenome.com/"
+  },
+  {
+   "date": "2026-11-13",
+   "level": "red",
+   "axis": "임상",
+   "text": "SNO 2026 포스터 CTNI-40 공개: 다회투여 10명, DLT 0건·중단 0건. 최고 용량 44.1 mCi와 14일 간격은 미개시. mOS·반응률 미제시, 톱라인 27년 중반",
+   "link": "https://ir.cerenome.com/static-files/4f81b3f7-8e6e-4207-bdb8-7dff35d270ed"
+  },
+  {
+   "date": "2026-11-13",
+   "level": "red",
+   "axis": "자본",
+   "text": "3분기 실적: 현금·투자 $4.9M, 순손실 $8.657M, 매출 $722K, 자기자본 −$0.92M. 분기 후 ATM $3.8M 조달",
+   "link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001095981"
+  },
+  {
+   "date": "2026-11-12",
+   "level": "orange",
+   "axis": "임상",
+   "text": "SNO 데이터 리뷰 및 CNSide 상업 업데이트 콜 예고 (26.11.16 개최)",
+   "link": "https://ir.cerenome.com/news-releases"
+  },
+  {
+   "date": "2026-11-10",
+   "level": "yellow",
+   "axis": "자본",
+   "text": "이사 Ron Andrews를 신설 Chief Business Officer로 선임, 이사직 유지",
+   "link": "https://ir.cerenome.com/news-releases"
+  },
+  {
+   "date": "2026-11-06",
+   "level": "orange",
+   "axis": "임상",
+   "text": "respect-trials.com에서 Patients Treated to Date 카운터 삭제됨: 매일 세던 환자 지표가 사라짐",
+   "link": "https://www.respect-trials.com/lm/"
+  },
+  {
+   "date": "2026-11-04",
+   "level": "orange",
+   "axis": "진단",
+   "text": "Aetna 전국 인네트워크 계약: 약 2,600만명 추가, 누적 약 1.9억명",
+   "link": "https://ir.cerenome.com/news-releases"
+  },
+  {
+   "date": "2026-10-29",
+   "level": "orange",
+   "axis": "임상",
+   "text": "ReSPECT-GBM 2상 등록 완료: 32명 치료(계획 34명), 톱라인 27년 중반",
+   "link": "https://ir.cerenome.com/news-releases"
+  },
+  {
+   "date": "2026-10-27",
+   "level": "orange",
+   "axis": "임상",
+   "text": "SNO 2026 포스터 CTNI-40 예고: LM 다회투여 첫 10명 중간 데이터, 27년 FDA 정렬 2상 무작위배정 목표",
+   "link": "https://www.globenewswire.com/news-release/2026/10/27/3388870/0/en/cerenome-to-present-interim-clinical-update-on-the-respect-lm-trial-of-multiple-reyobiq-doses-in-leptomeningeal-metastases.html"
+  },
+  {
+   "date": "2026-10-21",
+   "level": "yellow",
+   "axis": "임상",
+   "text": "REYOBIQ 이중 기전 전임상 공개: 항-PD-1 병용 난소암 모델 median survival 65일",
+   "link": "https://ir.cerenome.com/news-releases"
+  },
+  {
+   "date": "2026-10-20",
+   "level": "red",
+   "axis": "수가",
+   "text": "CMS CY2027 CLFS 가격결정 파일 게시",
+   "link": "https://www.cms.gov/medicare/payment/fee-schedules/clinical-laboratory-fee-schedule-clfs/annual-public-meetings"
+  },
+  {
+   "date": "2026-10-08",
+   "level": "orange",
+   "axis": "진단",
+   "text": "Florida Blue 인네트워크 계약: 약 600만명 추가, 누적 약 1.64억명",
+   "link": "https://ir.cerenome.com/news-releases"
+  },
+  {
+   "date": "2026-10-06",
+   "level": "orange",
+   "axis": "진단",
+   "text": "CNSide CSF Molecular Profile 검사 출시, 26.10.12부터 제공: 3분기 약속한 어세이 확장 이행",
+   "link": "https://ir.cerenome.com/news-releases"
+  },
+  {
+   "date": "2026-10-02",
+   "level": "yellow",
+   "axis": "진단",
+   "text": "투자자 발표자료 갱신 8-K: 3분기 상업 TCE 187건, 누적 362건, 주문 기관 24곳·의사 43명",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526411259/cnsy-20261002.htm"
+  },
+  {
+   "date": "2026-09-30",
+   "level": "red",
+   "axis": "수가",
+   "text": "3분기 CNSide 총청구액 약 $1.55M 예상 공개, 0640U 메디케어 예비 가격 우호적·27.01.01 발효 목표",
+   "link": "https://ir.cerenome.com/news-releases"
+  },
   {
    "date": "2026-09-16",
    "level": "yellow",
@@ -203,34 +299,19 @@
    "link": "https://www.targetedonc.com/view/fda-type-b-meeting-offers-direction-for-rhenium-re-186-obisbemeda-in-lm"
   }
  ],
- "trials_hist": [
-  {
-   "date": "2026-03-02",
-   "lm": 33,
-   "gbm": null
-  },
-  {
-   "date": "2026-03-16",
-   "lm": 36,
-   "gbm": null
-  },
-  {
-   "date": "2026-06-09",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
-   "date": "2026-08-24",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
-   "date": "2026-08-31",
-   "lm": 37,
-   "gbm": 53
-  }
- ],
  "coverage": [
+  {
+   "date": "2026-11-04",
+   "lives_m": 190.0,
+   "title": "Aetna 전국 인네트워크 계약",
+   "link": ""
+  },
+  {
+   "date": "2026-10-08",
+   "lives_m": 164.0,
+   "title": "Florida Blue",
+   "link": ""
+  },
   {
    "date": "2026-08-13",
    "lives_m": 150.0,
@@ -261,5 +342,12 @@
    "title": "Humana",
    "link": ""
   }
- ]
+ ],
+ "disclosed": {
+  "lm_multi_treated": 10,
+  "lm_multi_target": 24,
+  "gbm_treated": 32,
+  "gbm_planned": 34,
+  "_src": "LM 10명: SNO 2026 포스터 CTNI-40 / GBM 32명: 보도자료 26.10.29"
+ }
 }
