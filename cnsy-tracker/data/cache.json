@@ -3,6 +3,13 @@
   "entity": "CERENOME, INC.",
   "list": [
    {
+    "form": "8-K",
+    "filed": "2026-11-16",
+    "items": "8.01,9.01",
+    "acc": "0001193125-26-462116",
+    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526462116/cnsy-20261116.htm"
+   },
+   {
     "form": "10-Q",
     "filed": "2026-11-13",
     "items": "",
@@ -274,13 +281,6 @@
     "items": "5.07",
     "acc": "0001193125-26-227059",
     "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526227059/pstv-20260514.htm"
-   },
-   {
-    "form": "10-Q",
-    "filed": "2026-05-15",
-    "items": "",
-    "acc": "0001193125-26-226978",
-    "url": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526226978/pstv-20260331.htm"
    }
   ]
  },
@@ -453,19 +453,11 @@
   }
  },
  "quote": {
-  "price": 0.9502,
-  "prev": 5.7,
+  "price": 0.7148,
+  "prev": 5.25,
   "high52": 19.0,
   "low52": 0.43,
   "hist": [
-   {
-    "date": "2026-05-14",
-    "close": 5.76
-   },
-   {
-    "date": "2026-05-15",
-    "close": 5.25
-   },
    {
     "date": "2026-05-18",
     "close": 5.84
@@ -969,6 +961,10 @@
    {
     "date": "2026-11-13",
     "close": 0.95
+   },
+   {
+    "date": "2026-11-16",
+    "close": 0.715
    }
   ]
  },
@@ -1170,7 +1166,7 @@
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
-  "checked": "2026-11-16"
+  "checked": "2026-11-17"
  },
  "disclosed": {
   "lm_multi_treated": 10,
@@ -1224,6 +1220,13 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-11-17",
+   "level": "orange",
+   "axis": "자본",
+   "text": "SEC 8-K 제출 (2026-11-16) · Item 8.01,9.01",
+   "link": "https://www.sec.gov/Archives/edgar/data/1095981/000119312526462116/cnsy-20261116.htm"
+  },
   {
    "date": "2026-11-14",
    "level": "yellow",
@@ -1443,7 +1446,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-16 10:54",
+  "updated": "2026-11-17 06:42",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1452,12 +1455,12 @@
    "quote": "ok",
    "trials": "ok",
    "ctgov": "ok",
-   "news": "ok",
+   "news": "fail: 피드 없음 · ir.cerenome.com(plain=False): The read operation timed out | ir.cerenome.com(plain=True): HTTP Error 403: Forbidden | www.stocktitan",
    "cnside": "ok",
    "reddit": "ok",
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 0
+  "new_events": 1
  }
 }
