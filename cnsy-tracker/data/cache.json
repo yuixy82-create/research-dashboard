@@ -972,20 +972,7 @@
    }
   ]
  },
- "trials": {
-  "lm": {
-   "modified": "2026-08-20T03:03:23",
-   "counters": {
-    "Patients Treated to Date": 37
-   }
-  },
-  "gbm": {
-   "modified": "2026-08-19T19:15:56",
-   "counters": {
-    "Patients Treated to Date": 53
-   }
-  }
- },
+ "trials": {},
  "ctgov": [
   {
    "nct": "NCT01906385",
@@ -1033,7 +1020,58 @@
    "primaryCompletion": "2027-07-31"
   }
  ],
- "news": [],
+ "news": [
+  {
+   "title": "Cerenome Reports Third Quarter 2026 Financial Results and Business Highlights Featuring REYOBIQ ReSPECT- LM Data and CNSide Commercial and Reimbursement Progress",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-reports-third-quarter-2026-financial-results-and",
+   "date": "Fri, 13 Nov 2026 17:19:59 -0500"
+  },
+  {
+   "title": "Cerenome to Review REYOBIQ ReSPECT-LM Data Presented at SNO Conference and Provide CNSide Commercial Update on November 16",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-review-reyobiq-respect-lm-data-presented-sno-conference",
+   "date": "Thu, 12 Nov 2026 07:30:35 -0500"
+  },
+  {
+   "title": "Cerenome Appoints Director Ron Andrews as Chief Business Officer",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-appoints-director-ron-andrews-chief-business-officer",
+   "date": "Tue, 10 Nov 2026 07:30:34 -0500"
+  },
+  {
+   "title": "Cerenome Secures National In-Network Agreement with Aetna for CNSide®",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-secures-national-network-agreement-aetna-cnsider",
+   "date": "Wed, 04 Nov 2026 07:30:53 -0500"
+  },
+  {
+   "title": "Cerenome Completes Enrollment in Phase 2 ReSPECT-GBM Trial of REYOBIQ™ in Recurrent Glioblastoma",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-completes-enrollment-phase-2-respect-gbm-trial",
+   "date": "Thu, 29 Oct 2026 07:30:34 -0400"
+  },
+  {
+   "title": "Cerenome to Present Interim Clinical Update on the ReSPECT-LM Trial of Multiple REYOBIQ™ Doses in Leptomeningeal Metastases",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-present-interim-clinical-update-respect-lm-trial",
+   "date": "Tue, 27 Oct 2026 07:30:13 -0400"
+  },
+  {
+   "title": "Cerenome Announces New Dual Mechanism of Action Featuring Lethal DNA Damage and Beneficial Immunomodulation Supporting Lead Investigational Drug REYOBIQ™",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-announces-new-dual-mechanism-action-featuring-lethal",
+   "date": "Wed, 21 Oct 2026 07:30:33 -0400"
+  },
+  {
+   "title": "Cerenome Secures In-Network Agreement with Florida Blue for CNSide® CSF Tumor Cell Enumeration and Molecular Profile Tests",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-secures-network-agreement-florida-blue-cnsider-csf",
+   "date": "Thu, 08 Oct 2026 07:30:33 -0400"
+  },
+  {
+   "title": "Cerenome Launches CNSide® CSF Molecular Profile Tests",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-launches-cnsider-csf-molecular-profile-tests",
+   "date": "Tue, 06 Oct 2026 07:30:13 -0400"
+  },
+  {
+   "title": "Cerenome Expects $1.55 Million in CNSide® Third Quarter Gross Billings",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-expects-155-million-cnsider-third-quarter-gross",
+   "date": "Wed, 30 Sep 2026 07:30:51 -0400"
+  }
+ ],
  "cnside": [
   {
    "title": "Advancing Leptomeningeal Metastases Diagnostics: CNSide® at SNO/ASCO CNS 2026",
@@ -1134,34 +1172,26 @@
   ],
   "checked": "2026-11-16"
  },
- "trials_hist": [
-  {
-   "date": "2026-03-02",
-   "lm": 33,
-   "gbm": null
-  },
-  {
-   "date": "2026-03-16",
-   "lm": 36,
-   "gbm": null
-  },
-  {
-   "date": "2026-06-09",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
-   "date": "2026-08-24",
-   "lm": 37,
-   "gbm": 53
-  },
-  {
-   "date": "2026-11-16",
-   "lm": 37,
-   "gbm": 53
-  }
- ],
+ "disclosed": {
+  "lm_multi_treated": 10,
+  "lm_multi_target": 24,
+  "gbm_treated": 32,
+  "gbm_planned": 34,
+  "_src": "LM 10명: SNO 2026 포스터 CTNI-40 / GBM 32명: 보도자료 26.10.29"
+ },
  "coverage": [
+  {
+   "date": "2026-11-04",
+   "lives_m": 190.0,
+   "title": "Aetna 전국 인네트워크 계약",
+   "link": ""
+  },
+  {
+   "date": "2026-10-08",
+   "lives_m": 164.0,
+   "title": "Florida Blue",
+   "link": ""
+  },
   {
    "date": "2026-08-13",
    "lives_m": 150.0,
@@ -1413,16 +1443,16 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-16 09:44",
+  "updated": "2026-11-16 10:54",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
    "filings": "ok",
    "shares": "ok",
    "quote": "ok",
-   "trials": "fail: 카운터 없음 · ",
+   "trials": "ok",
    "ctgov": "ok",
-   "news": "fail: 피드 없음 · plain=False: The read operation timed out | plain=True: HTTP Error 403: Forbidden | plain=True: HTTP Error 403: Forbidden",
+   "news": "ok",
    "cnside": "ok",
    "reddit": "ok",
    "cms": "ok",
