@@ -244,9 +244,7 @@ def f_trials():
                 _ERR.append("%s: %s" % (slug, e))
         if out:
             break
-    if not out:
-        raise RuntimeError("카운터 없음 · " + " | ".join(_ERR[:4]))
-    return out
+    return out   # (26.11.06) 회사가 카운터를 삭제함. 다시 생기면 자동으로 다시 잡힌다
 
 
 def f_ctgov():
@@ -293,13 +291,19 @@ def f_ctgov():
 def f_news():
     del _ERR[:]
     out = []
-    u = "https://ir.cerenome.com/rss/news-releases.xml"
-    for ua, plain in ((UA_WEB, False), (UA_WEB, True), ("CNSY Tracker yuixy82@gmail.com", True)):
+    tries = (("https://ir.cerenome.com/rss/news-releases.xml", UA_WEB, False),
+             ("https://ir.cerenome.com/rss/news-releases.xml", UA_WEB, True),
+             ("https://www.stocktitan.net/rss/CNSY", UA_WEB, False),
+             ("https://www.stocktitan.net/rss/CNSY", UA_WEB, True))
+    for u, ua, plain in tries:
         try:
-            out += parse_rss(get(u, ua=ua, plain=plain), limit=20)
-            break
+            got = parse_rss(get(u, ua=ua, plain=plain), limit=20)
         except Exception as e:                       # noqa: BLE001
-            _ERR.append("plain=%s: %s" % (plain, e))
+            _ERR.append("%s(plain=%s): %s" % (u.split("/")[2], plain, e))
+            continue
+        if got:
+            out += got
+            break
     if not out:
         raise RuntimeError("피드 없음 · " + " | ".join(_ERR[:3]))
     ded, seen = [], set()
@@ -451,14 +455,6 @@ def diff(prev, cur):
         add(lv, "희석", "발행주식수 %s → %s (%+.2f%%)" % (
             format(po["shares"], ","), format(pn["shares"], ","), pct))
 
-    # 3. 임상 환자 등록 카운터
-    for slug, v in (cur.get("trials") or {}).items():
-        pv = (prev.get("trials") or {}).get(slug, {}).get("counters", {})
-        for k, n in v.get("counters", {}).items():
-            if k in pv and pv[k] != n:
-                add("orange", "임상", "%s %s: %d → %d명" % (slug.upper(), k, pv[k], n),
-                    "https://www.respect-trials.com/%s/" % slug)
-
     # 4. ClinicalTrials.gov
     pm = {s["nct"]: s for s in (prev.get("ctgov") or [])}
     for s in (cur.get("ctgov") or []):
@@ -520,33 +516,8 @@ def main():
     cur["reddit"] = section("reddit", f_reddit, prev.get("reddit"))
     cur["cms"] = section("cms", f_cms, prev.get("cms"))
 
-    # 임상 카운터 시계열 누적: 하루 한 점, 값이 바뀌면 갱신
     seed_all = load(SEED, {})
-    hist, seen_d = [], set()
-    for h in (seed_all.get("trials_hist") or []) + (prev.get("trials_hist") or []):
-        if h.get("date") in seen_d:
-            hist = [x for x in hist if x.get("date") != h.get("date")]
-        seen_d.add(h.get("date"))
-        hist.append(h)
-    t = cur.get("trials") or {}
-
-    def cnt(k):
-        v = (t.get(k) or {}).get("counters") or {}
-        for key in v:
-            if "Patients Treated" in key:
-                return v[key]
-        return None
-
-    lm, gbm = cnt("lm"), cnt("gbm")
-    if lm is not None or gbm is not None:
-        d = today_kst()
-        hist = [h for h in hist if h.get("date") != d]
-        last = hist[-1] if hist else {}
-        if last.get("lm") != lm or last.get("gbm") != gbm or not hist:
-            hist.append({"date": d, "lm": lm, "gbm": gbm})
-        else:
-            hist[-1] = {"date": d, "lm": lm, "gbm": gbm}
-    cur["trials_hist"] = sorted(hist, key=lambda h: h["date"])[-200:]
+    cur["disclosed"] = seed_all.get("disclosed")
 
     cov = section("coverage", lambda: f_coverage(cur.get("news")), []) or []
     merged, seen_c = [], set()
