@@ -2311,6 +2311,52 @@ SEED = {
             ["2026-07-31", 40.0], ["2026-09-30", 68.0]
         ]
     },
+    "cloud_rpo_msft": {
+        "label": "MS 상업 RPO ($B)", "source": "분기 실적 공시",
+        "points": [["2024-09-30", 259], ["2024-12-31", 298], ["2025-03-31", 315], ["2025-06-30", 368],
+                   ["2025-09-30", 392], ["2025-12-31", 625], ["2026-03-31", 627], ["2026-06-30", 678], ["2026-09-30", 677]]
+    },
+    "cloud_rpo_orcl": {
+        "label": "오라클 RPO ($B)", "source": "분기 실적 공시 (회계분기 말: 2·5·8·11월)",
+        "points": [["2024-11-30", 97], ["2025-02-28", 130], ["2025-05-31", 138], ["2025-08-31", 455],
+                   ["2025-11-30", 523], ["2026-02-28", 553], ["2026-05-31", 638], ["2026-08-31", 664]]
+    },
+    "cloud_rpo_googl": {
+        "label": "구글 클라우드 백로그 ($B)", "source": "분기 실적 공시",
+        "points": [["2025-06-30", 106], ["2025-09-30", 155], ["2025-12-31", 240], ["2026-03-31", 462],
+                   ["2026-06-30", 514], ["2026-09-30", 561]]
+    },
+    "cloud_rpo_amzn": {
+        "label": "AWS 백로그 ($B)", "source": "분기 실적 공시",
+        "points": [["2024-03-31", 157.7], ["2024-06-30", 156.6], ["2024-09-30", 164], ["2024-12-31", 177],
+                   ["2025-03-31", 189], ["2025-06-30", 195], ["2025-09-30", 200], ["2025-12-31", 244],
+                   ["2026-03-31", 364], ["2026-06-30", 496], ["2026-09-30", 578]]
+    },
+    "anthropic_commit_min": {
+        "label": "앤스로픽 최소 구매 약정 ($B)", "source": "S-1 (26.10.26)",
+        "points": [["2025-12-31", 55], ["2026-06-30", 265.6]]
+    },
+    "anthropic_compute_serving": {
+        "label": "앤스로픽 서빙 컴퓨트 지출, 반기 ($B)", "source": "S-1 (26.10.26) 매출원가",
+        "points": [["2025-06-30", 1.02], ["2026-06-30", 2.38]]
+    },
+    "anthropic_compute_rd": {
+        "label": "앤스로픽 학습·연구·내부용 컴퓨트 지출, 반기 ($B)", "source": "S-1 (26.10.26), 하한",
+        "points": [["2025-06-30", 1.20], ["2026-06-30", 5.93]]
+    },
+    "anthropic_compute_serving_q": {
+        "label": "앤스로픽 서빙 컴퓨트 지출, 분기 ($B)", "source": "상장 뒤 10-Q 매출원가 (뉴스 수집 작업이 기록)", "points": []
+    },
+    "anthropic_compute_rd_q": {
+        "label": "앤스로픽 학습·연구·내부용 컴퓨트 지출, 분기 ($B)", "source": "상장 뒤 10-Q", "points": []
+    },
+    "anthropic_rev_q": {
+        "label": "앤스로픽 분기 매출 ($B)", "source": "상장 뒤 10-Q", "points": []
+    },
+    "anthropic_rev_half": {
+        "label": "앤스로픽 반기 매출 ($B)", "source": "S-1 (26.10.26)",
+        "points": [["2025-06-30", 1.2], ["2026-06-30", 16.3]]
+    },
     "anthropic_rev_tt": {
         "label": "앤스로픽 ARR 티커트랜드 추정 ($B)",
         "source": "티커트랜드 공개 블로그·X (blog.tickertrends.io)",
@@ -2364,6 +2410,10 @@ SEED = {
             [
                 "2026-06-30",
                 5.0
+            ],
+            [
+                "2026-09-30",
+                10.4
             ]
         ]
     },
@@ -2411,6 +2461,10 @@ SEED = {
             [
                 "2026-06-30",
                 24.9
+            ],
+            [
+                "2026-09-30",
+                23.1
             ]
         ]
     },
@@ -3316,7 +3370,9 @@ def _interp_log(pts, d):
     return pts[-1][1]
 
 
-def svg_line_bars(line, bars, est_from=None, est_months=(), w=680, h=330):
+def svg_line_bars(line, bars, est_from=None, est_months=(), w=680, h=330,
+                  titles=("합산 Gross 런레이트 ($B)", "합산 전월比 증가율 (%)"), xlab_months=("01", "07"),
+                  yfmt1=lambda v: "$%.0fB" % v, tag_fmt=lambda d: d[2:7].replace("-", ".")):
     """위: 합산 런레이트 선 ($B), 아래: 전월比 증가율 막대 (%).
     est_from 이후는 추정(점선·연한 막대). est_months = 그 달에 두 회사 보도가 하나도 없어 보간만 한 달(연한 막대)."""
     if len(line) < 3 or not bars:
@@ -3335,20 +3391,20 @@ def svg_line_bars(line, bars, est_from=None, est_months=(), w=680, h=330):
     Y2 = lambda v: top2 + (1 - max(v, 0) / bmax) * h2
     o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" style="width:100%%;height:auto;font-family:inherit">' % (w, h)]
     # 패널 제목
-    o.append('<text x="%d" y="%d" font-size="10.5" font-weight="700" fill="%s">합산 Gross 런레이트 ($B)</text>' % (ml, mt - 9, T["heading"]))
-    o.append('<text x="%d" y="%d" font-size="10.5" font-weight="700" fill="%s">합산 전월比 증가율 (%%)</text>' % (ml, top2 - 10, T["heading"]))
+    o.append('<text x="%d" y="%d" font-size="10.5" font-weight="700" fill="%s">%s</text>' % (ml, mt - 9, T["heading"], titles[0]))
+    o.append('<text x="%d" y="%d" font-size="10.5" font-weight="700" fill="%s">%s</text>' % (ml, top2 - 10, T["heading"], titles[1]))
     # 격자
     for i in range(4):
         v = vmax * i / 3; yy = Y1(v)
         o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="%s"/>' % (ml, yy, w - mr, yy, T["hair"], 1 if i == 0 else 0.6))
-        o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">$%.0fB</text>' % (ml - 6, yy + 3, T["muted"], v))
+        o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">%s</text>' % (ml - 6, yy + 3, T["muted"], yfmt1(v)))
     for i in range(4):
         v = bmax * i / 3; yy = Y2(v)
         o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="%s"/>' % (ml, yy, w - mr, yy, T["hair"], 1 if i == 0 else 0.6))
         o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">%.0f%%</text>' % (ml - 6, yy + 3, T["muted"], v))
     # x축 라벨 (6개월 간격)
     for d, _ in line:
-        if d[5:7] in ("01", "07"):
+        if d[5:7] in xlab_months:
             o.append('<text x="%.1f" y="%d" text-anchor="middle" font-size="9.5" fill="%s">%s</text>' % (X(d2o(d)), h - 8, T["muted"], d[2:4] + "." + d[5:7]))
     # 선 (확정 실선 / 추정 점선)
     est_o = d2o(est_from) if est_from else None
@@ -3360,8 +3416,8 @@ def svg_line_bars(line, bars, est_from=None, est_months=(), w=680, h=330):
             o.append('<path d="%s" fill="none" stroke="%s" stroke-width="2.8" stroke-linejoin="round"%s/>' % (path, T["primary"], dash))
     ld, lv = line[-1]
     o.append('<circle cx="%.1f" cy="%.1f" r="3.4" fill="%s"/>' % (X(d2o(ld)), Y1(lv), T["primary"]))
-    o.append('<text x="%.1f" y="%.1f" font-size="12" font-weight="700" fill="%s">$%.0fB (%s%s)</text>'
-             % (X(d2o(ld)) + 8, Y1(lv) + 4, T["primary"], lv, ld[2:7].replace("-", "."), " 추정" if est_o and d2o(ld) > est_o else ""))
+    o.append('<text x="%.1f" y="%.1f" font-size="12" font-weight="700" fill="%s">%s (%s%s)</text>'
+             % (X(d2o(ld)) + 8, Y1(lv) + 4, T["primary"], yfmt1(lv), tag_fmt(ld), " 추정" if est_o and d2o(ld) > est_o else ""))
     # 막대
     bw = max(4.0, pw / len(line) * 0.62)
     for d, v in bars:
@@ -3371,7 +3427,44 @@ def svg_line_bars(line, bars, est_from=None, est_months=(), w=680, h=330):
                  % (x, Y2(v), bw, Y2(0) - Y2(v), T["vivid"] if est else T["primary"], ' fill-opacity="0.55"' if est else ""))
     bd, bv = bars[-1]
     o.append('<text x="%.1f" y="%.1f" font-size="12" font-weight="700" fill="%s">%+.1f%% (%s%s)</text>'
-             % (X(d2o(bd)) + bw / 2 + 6, Y2(bv) + 4, T["red"] if bv < bars[-2][1] else T["primary"], bv, bd[2:7].replace("-", "."), " 추정" if est_o and d2o(bd) > est_o else ""))
+             % (X(d2o(bd)) + bw / 2 + 6, Y2(bv) + 4, T["red"] if bv < bars[-2][1] else T["primary"], bv, tag_fmt(bd), " 추정" if est_o and d2o(bd) > est_o else ""))
+    o.append('</svg>')
+    return "".join(o)
+
+
+def svg_half_bars(periods, serving, rd, ratio, w=680, h=300):
+    """앤스로픽 컴퓨트 지출: 서빙(진한 올리브)·학습(연한 올리브) 묶음 막대 + 추론 원가율(빨강 선, 오른쪽 축)."""
+    if not periods:
+        return ""
+    ml, mr, mt, mb = 54, 60, 30, 30
+    pw, ph = w - ml - mr, h - mt - mb
+    n = len(periods)
+    vmax = max(max(serving), max(rd)) * 1.25
+    Y = lambda v: mt + (1 - v / vmax) * ph
+    Yr = lambda r: mt + (1 - r / 100.0) * ph
+    slot = pw / n
+    bw = min(46, slot * 0.28)
+    o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" style="width:100%%;height:auto;font-family:inherit">' % (w, h)]
+    for i in range(4):
+        v = vmax * i / 3; yy = Y(v)
+        o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="%s"/>' % (ml, yy, w - mr, yy, T["hair"], 1 if i == 0 else 0.6))
+        o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">$%.1fB</text>' % (ml - 6, yy + 3, T["muted"], v))
+        o.append('<text x="%d" y="%.1f" text-anchor="start" font-size="9.5" fill="%s">%.0f%%</text>' % (w - mr + 6, Yr(100 * i / 3) + 3, T["red"], 100 * i / 3))
+    pts = []
+    for i, name in enumerate(periods):
+        cx = ml + slot * (i + 0.5)
+        for j, (val, col) in enumerate(((serving[i], T["primary"]), (rd[i], T["vivid"]))):
+            x = cx - bw - 3 + j * (bw + 6)
+            o.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="1.5" fill="%s"/>' % (x, Y(val), bw, Y(0) - Y(val), col))
+            o.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-size="10.5" font-weight="700" fill="%s">%.1f</text>' % (x + bw / 2, Y(val) - 4, col, val))
+        o.append('<text x="%.1f" y="%d" text-anchor="middle" font-size="9.5" fill="%s">%s</text>' % (cx, h - 8, T["muted"], name))
+        pts.append((cx, Yr(ratio[i]), ratio[i]))
+    path = " ".join("%s%.1f,%.1f" % ("M" if i == 0 else "L", x, y) for i, (x, y, _) in enumerate(pts))
+    o.append('<path d="%s" fill="none" stroke="%s" stroke-width="2.4" stroke-dasharray="5 4"/>' % (path, T["red"]))
+    for x, y, r in pts:
+        o.append('<circle cx="%.1f" cy="%.1f" r="3.6" fill="%s"/>' % (x, y, T["red"]))
+        o.append('<text x="%.1f" y="%.1f" text-anchor="start" font-size="11" font-weight="700" fill="%s">원가율 %.0f%%</text>' % (x + bw + 12, y + 4, T["red"], r))
+    o.append('<text x="%d" y="%d" font-size="10.5" font-weight="700" fill="%s">진한 올리브 = 서빙(고객 추론)  연한 올리브 = 학습·연구·내부용  빨강 = 서빙 지출 ÷ 매출</text>' % (ml, mt - 12, T["heading"]))
     o.append('</svg>')
     return "".join(o)
 
@@ -3767,6 +3860,76 @@ def build_html():
     est_months = {m[:7] for m, _ in sum_mom if m[:7] not in _rep_months}
     c_rev_mom = svg_line_bars(sum_rr, sum_mom, est_from=est_from, est_months=est_months)
 
+    # ---- ⑬ 4대 클라우드 백로그 (RPO) ----
+    rpo = {k: seed_series("cloud_rpo_" + k) for k in ("msft", "orcl", "googl", "amzn")}
+    # 합계: 달력 분기 말 기준. 오라클은 회계분기(2·5·8·11월 말)라 직전 분기치를 그 달력 분기에 귀속
+    def _at_or_before(pts, d):
+        c = [v for dd, v in pts if dd <= d]
+        return c[-1] if c else None
+    rpo_sum, rpo_qoq = [], []
+    qends = sorted({d for d, _ in rpo["msft"]} | {d for d, _ in rpo["googl"]} | {d for d, _ in rpo["amzn"]})
+    for q in qends:
+        vals = [_at_or_before(rpo[k], q) for k in ("msft", "orcl", "googl", "amzn")]
+        if all(v is not None for v in vals) and q >= "2025-06-30" and any(d == q for d, _ in rpo["msft"]) \
+                and any(d == q for d, _ in rpo["googl"]) and any(d == q for d, _ in rpo["amzn"]):
+            rpo_sum.append((q, round(sum(vals), 0)))
+    for (dp, vp), (dc, vc) in zip(rpo_sum, rpo_sum[1:]):
+        rpo_qoq.append((dc, round((vc / vp - 1) * 100, 1)))
+    _qfmt = lambda d: "%s.%dQ" % (d[2:4], (int(d[5:7]) + 2) // 3)
+    c_rpo = svg_chart([
+        {"label": "MS", "color": T["primary"], "width": 2.4, "markers": True, "points": rpo["msft"]},
+        {"label": "오라클", "color": T["red"], "width": 2.2, "markers": True, "points": rpo["orcl"]},
+        {"label": "구글", "color": T["teal"], "width": 2.2, "markers": True, "points": rpo["googl"]},
+        {"label": "AWS", "color": T["gold"], "width": 2.2, "markers": True, "points": rpo["amzn"]},
+        {"label": "앤스로픽 최소 약정", "color": T["vivid"], "width": 1.6, "markers": True, "points": seed_series("anthropic_commit_min")},
+    ], h=280, yfmt=lambda v: "$%.0fB" % v, zero_base=True, labels_right=True)
+    c_rpo_sum = svg_line_bars(rpo_sum, rpo_qoq, titles=("4사 합계 ($B)", "합계 전분기比 증가율 (%)"),
+                              xlab_months=("03", "06", "09", "12"), tag_fmt=_qfmt, h=300,
+                              yfmt1=lambda v: "$%s B" % f"{v:,.0f}") if len(rpo_sum) >= 3 else ""
+    rpo_trend = " → ".join("%s %+.0f%%" % (_qfmt(d), v) for d, v in rpo_qoq[-5:])
+
+    # ---- ⑭ 앤스로픽 컴퓨트 지출: 서빙 vs 학습 + 원가율, 토큰당 원가 vs 고객 단가 ----
+    # 분기 공시(10-Q)가 2개 이상 쌓이면 분기 기준으로, 그 전엔 S-1 반기 기준
+    _use_q = len(seed_series("anthropic_compute_serving_q")) >= 2
+    if _use_q:
+        a_srv = seed_series("anthropic_compute_serving_q"); a_rd = seed_series("anthropic_compute_rd_q")
+        a_rev = dict(seed_series("anthropic_rev_q"))
+        _hname = _qfmt
+    else:
+        a_srv = seed_series("anthropic_compute_serving"); a_rd = seed_series("anthropic_compute_rd")
+        a_rev = dict(seed_series("anthropic_rev_half"))
+        _hname = lambda d: "%s년 %s" % (d[2:4], "상반기" if d[5:7] <= "06" else "하반기")
+    half_periods = [d for d, _ in a_srv if d in a_rev and d in dict(a_rd)]
+    a_ratio = [round(dict(a_srv)[d] / a_rev[d] * 100, 1) for d in half_periods]
+    c_ant_split = svg_half_bars([_hname(d) for d in half_periods], [dict(a_srv)[d] for d in half_periods],
+                                [dict(a_rd)[d] for d in half_periods], a_ratio)
+    # 토큰당 원가 지수(추정) = 원가율 변화 × 고객 단가 변화. 고객 단가 = Ramp 앤스로픽 단가의 기간 평균
+    px_ant_daily = hist_series(cache, "RAMP_PX_ANT")
+    def _half_avg(d_end):
+        y = d_end[:4]
+        if _use_q:
+            q = (int(d_end[5:7]) + 2) // 3
+            lo, hi = "%s-%02d-01" % (y, 3 * q - 2), d_end
+        else:
+            lo, hi = (y + "-01-01", y + "-06-30") if d_end[5:7] <= "06" else (y + "-07-01", y + "-12-31")
+        v = [x for dd, x in px_ant_daily if lo <= dd <= hi]
+        return sum(v) / len(v) if v else None
+    px_idx, cost_idx = [], []
+    base_px = _half_avg(half_periods[0]) if half_periods else None
+    if base_px and a_ratio:
+        for d, r in zip(half_periods, a_ratio):
+            pa = _half_avg(d)
+            if pa:
+                px_idx.append((d, round(pa / base_px * 100, 1)))
+                cost_idx.append((d, round((r / a_ratio[0]) * (pa / base_px) * 100, 1)))
+    c_ant_idx = svg_chart([
+        {"label": "고객 단가 (Ramp 앤스로픽)", "color": T["teal"], "width": 2.4, "markers": True, "points": px_idx, "delta": "pct", "delta_suffix": "첫 기간比"},
+        {"label": "토큰당 원가 (추정)", "color": T["red"], "width": 2.4, "markers": True, "points": cost_idx, "delta": "pct", "delta_suffix": "첫 기간比"},
+    ], h=230, yfmt=lambda v: "%.0f" % v, zero_base=True, labels_right=True) if len(px_idx) >= 2 else ""
+    cost_fall = (round(100 / cost_idx[-1][1], 1) if cost_idx and cost_idx[-1][1] else None)
+    px_fall = (round(100 / px_idx[-1][1], 1) if px_idx and px_idx[-1][1] else None)
+
+
     # ---- 토큰 경제 (Ramp 일별 + OpenRouter + 구글 공개치) ----
     def _rebase_at(pts, d0="2026-01-01", base=100.0):
         """d0부터 한 달 평균을 100으로 지수화 (연초 휴일 저점 영향 제거). d0 이전은 버림."""
@@ -3922,6 +4085,26 @@ def build_html():
     ], h=250, yfmt=lambda v: "%.0fbp" % v)
     cds_src = ("Bloomberg 1Y 차트 PDF를 픽셀로 읽은 일별 값 (%s까지). 그 뒤 날짜는 언론 보도치"
                % fmt_kr(cds_asof)) if cds_asof else "언론 보도치 (주요 시점만)"
+    # ⑥ 설명문: 갭(조정영업이익률 − 이자비용/매출)을 데이터에서 계산해 자동 작성
+    _q = lambda d: "%s.%dQ" % (d[2:4], (int(d[5:7]) + 2) // 3)
+    _mi = dict(cw_int)
+    gaps = [(d, round(v - _mi[d], 1)) for d, v in cw_mgn if d in _mi]
+    gap_note = ""
+    if len(gaps) >= 3:
+        # 지금 이어지는 역전 구간의 시작 분기 (마지막으로 갭이 0 이상이던 분기의 다음)
+        _pos = [i for i, (_, g) in enumerate(gaps) if g >= 0]
+        first_neg = gaps[_pos[-1] + 1][0] if _pos and _pos[-1] + 1 < len(gaps) else (gaps[0][0] if not _pos else None)
+        bot_d, bot_g = min(gaps, key=lambda t: t[1])
+        tail = [t for t in gaps if t[0] > bot_d][-3:]
+        parts = (["%s 역전" % _q(first_neg)] if first_neg else []) + ["%s %+.1f%%p 바닥" % (_q(bot_d), bot_g)] \
+            + ["%s%s %+.1f%%p%s" % ("<b>" if i == len(tail) - 1 else "", _q(d), g, "</b>" if i == len(tail) - 1 else "") for i, (d, g) in enumerate(tail)]
+        better = gaps[-1][1] > gaps[-2][1]
+        gap_note = " → ".join(parts) + ". " + (
+            "<b>갭이 좁혀지는 중이고, 재역전(올리브가 빨강 위로) 시점이 이 사이클의 분기점</b>" if better
+            else "<b>갭이 다시 벌어짐: 경고</b>")
+        if gaps[-1][0] == "2026-09-30":
+            gap_note += ("<br>26.3Q (26.11.10 발표): 매출 $3,661M / 조정영익 $379M (10.4%) / 순이자비용 $846M (23.1%). "
+                         "26.4Q는 연간 가이던스 역산으로 조정영익률 약 16%, 이자비용 $1.05~1.15B(약 23%) → 갭 약 -7%p (계산)")
     c_gap = svg_chart([
         {"label": "이자비용/매출", "color": T["red"], "width": 2.4, "markers": True, "points": cw_int},
         {"label": "조정영업이익률", "color": T["primary"], "width": 2.4, "markers": True, "points": cw_mgn},
@@ -4065,7 +4248,7 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <span class="banner">⑥ 버는 값 vs 내는 값 — 코어위브 분기 (%) <span class="u">갭이 좁혀지는지가 관건</span></span>
 """ + c_gap + """
 <div class="note"><span class="key">빨강이 위 = 이자비용이 조정영업이익보다 큼(적자 구조). 좁혀지면 개선, 다시 벌어지면 경고</span><br>
-25.1Q 역전 → 26.1Q -24.8%p 바닥 → 26.2Q -19.9%p → 26.3Q 가이드 약 -19%p. <b>지금은 개선 방향이고, 재역전 시점이 이 사이클의 분기점</b><br>
+""" + gap_note + """<br>
 조정영업이익 = GAAP 영업이익 + SBC·인수비용·무형상각 환입(감가상각은 그대로 반영). 이자비용은 순액. 분기 1회 갱신</div>
 </div>
 
@@ -4128,6 +4311,27 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <b>AI 도입률</b>: Ramp 고객 기업 중 그달 AI 서비스에 결제가 있었던 비중. "쓰는 회사가 느는지"를 보는 지표라 위 지수와 분리해서 봄. 월 1회 갱신""" + ("""<br>
 <b>빨간 선 = 오픈라우터</b>: 여러 AI 모델을 중계하는 개발자용 서비스의 일별 처리 토큰. 매일 수집 (출처 openrouter.ai/rankings, CC BY 4.0)""" if or_idx else """<br>
 오픈라우터(여러 AI 모델을 중계하는 개발자용 서비스) 일별 토큰은 API 키 등록 시 빨간 선으로 추가, 매일 수집""") + """</div>
+</div>
+
+<div class="card-sec">
+<span class="banner">⑬ 4대 클라우드 백로그 — 이미 계약된 임대 수요 ($B) <span class="u">MS · 오라클 · 구글 · AWS 잔여 계약액(RPO) · 연한 올리브 = 앤스로픽 최소 구매 약정</span></span>
+""" + c_rpo + """
+""" + c_rpo_sum + """
+<div class="note">RPO = 고객이 이미 계약했지만 아직 매출로 잡히지 않은 금액. 오픈AI·앤스로픽 둘이 4사 합계의 약 절반 (The Information 26.05.07). GPU 외 일반 클라우드 계약도 섞여 있으나 25년 이후 증가분은 거의 AI<br>
+<span class="key">합계 전분기比 증가율이 학습 투자(임대 수요의 2/3)가 식는지를 보는 가장 빠른 공식 신호. """ + rpo_trend + """</span><br>
+오라클은 회계분기(2·5·8·11월 말)라 합계에는 직전 회계분기 값을 씀. 앤스로픽 최소 약정은 S-1·분기 공시. 분기 실적 발표 때 갱신</div>
+</div>
+
+<div class="card-sec">
+<span class="banner">⑭ 앤스로픽 컴퓨트 지출 — 서빙 vs 학습 ($B) <span class="u">S-1 (26.10.26) 반기 · 분기 공시가 쌓이면 분기로 전환</span></span>
+""" + c_ant_split + """
+<div class="note">서빙 = 고객에게 토큰을 만들어 주는 추론 컴퓨트(매출원가). 학습·연구·내부용은 S-1이 "최소"로 적은 하한. 매출 25년 상반기 $1.2B → 26년 상반기 $16.3B<br>
+<span class="key">추론 원가율(서빙 지출 ÷ 매출) """ + (" → ".join("%.0f%%" % r for r in a_ratio) if a_ratio else "") + """. 임대 수요의 2/3가 학습이고 학습은 토큰 수요가 아니라 조달 자금으로 움직임</span></div>
+""" + (("""<div class="sub">토큰당 원가 vs 고객 단가 <span class="d">첫 기간 = 100</span></div>
+""" + c_ant_idx + """
+<div class="note">청록 = Ramp 가입사가 앤스로픽에 실제로 낸 토큰당 단가의 기간 평균. 빨강 = 추정: 원가율 변화 × 고객 단가 변화 (원가율 = 토큰당 원가 ÷ 토큰당 가격이므로). S-1 매출원가 기준이라 초기 비효율·선납 할인·TPU 우대가격·캐시 비중 변화가 섞여 배수는 과장될 수 있음. 방향만 볼 것<br>
+<span class="key">고객 단가 """ + ("%.1f배" % px_fall if px_fall else "—") + """ 하락 vs 토큰당 원가 """ + ("%.1f배" % cost_fall if cost_fall else "—") + """ 하락 (추정). 원가가 가격보다 빨리 내리고 그 차이가 랩 마진. 임대 수요를 깎는 건 원가 쪽, 매출을 토큰 개수로 바꿀 때 쓰는 건 가격 쪽</span></div>
+""") if c_ant_idx else "") + """
 </div>
 
 <footer>
