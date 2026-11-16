@@ -153,7 +153,7 @@ a{color:var(--brand-heading)}
     <h1 class="page-title">Cerenome (CNSY) 추적</h1>
     <p class="page-sub">진단 CNSide · 치료제 REYOBIQ · 자본구조</p>
     <hr class="title-rule">
-    <div class="stamp">기준일 2026.09.18 · 자동 갱신 <span id="stamp-auto">—</span></div>
+    <div class="stamp">기준일 2026.11.16 · 자동 갱신 <span id="stamp-auto">—</span></div>
   </header>
 
   <p class="lead">
@@ -170,9 +170,9 @@ a{color:var(--brand-heading)}
     <div class="card kpi"><div class="lbl">주가</div><div class="num" id="k-price">—</div><div class="cap" id="k-price-cap">—</div></div>
     <div class="card kpi"><div class="lbl">시가총액</div><div class="num" id="k-mcap">—</div><div class="cap">주가 × 발행주식수</div></div>
     <div class="card kpi"><div class="lbl">발행주식수</div><div class="num" id="k-shares">—</div><div class="cap" id="k-shares-cap">—</div></div>
-    <div class="card kpi"><div class="lbl">현금 · 투자</div><div class="num">8.6</div><div class="cap">$M · 26.06.30 · 분기 소진 6.7</div></div>
-    <div class="card kpi"><div class="lbl">LM 투여</div><div class="num" id="k-lm">—</div><div class="cap">명 · respect-trials</div></div>
-    <div class="card kpi"><div class="lbl">GBM 투여</div><div class="num" id="k-gbm">—</div><div class="cap">명 · respect-trials</div></div>
+    <div class="card kpi"><div class="lbl">현금 · 투자</div><div class="num">4.9</div><div class="cap">$M · 26.09.30 · 분기 후 ATM 3.8 별도</div></div>
+    <div class="card kpi"><div class="lbl">LM 다회투여</div><div class="num" id="k-lm">—</div><div class="cap" id="k-lm-cap">명 · 공개분</div></div>
+    <div class="card kpi"><div class="lbl">GBM 2상</div><div class="num" id="k-gbm">—</div><div class="cap" id="k-gbm-cap">명 치료</div></div>
   </div>
   <div class="note">
     <b>Source</b> — 주가 Yahoo Finance · 발행주식수 SEC XBRL(dei) · 현금 10-Q(26.06.30) · 투여 환자수 respect-trials.com ·
@@ -206,52 +206,114 @@ a{color:var(--brand-heading)}
     <table class="data">
       <thead><tr><th>구분</th><th>내용</th></tr></thead>
       <tbody>
-        <tr><td class="key">시험번호</td><td><a href="https://clinicaltrials.gov/study/NCT07098806" target="_blank" rel="noopener">NCT07098806</a> · 프로토콜 CA-2024-LM-001</td></tr>
-        <tr class="sub"><td class="key">단계</td><td><b>Phase 1 · 용량과 투여간격 최적화 구간</b>. 선행한 단회투여 Phase 1은 29명으로 종료됨 (RP2D 44.1 mCi, MTD 66.14 mCi, mOS 9개월)</td></tr>
+        <tr><td class="key">시험번호</td><td><a href="https://clinicaltrials.gov/study/NCT07098806" target="_blank" rel="noopener">NCT07098806</a> · 프로토콜 CA-2024-LM-001 · 등재 상태 <b id="t-lmm-st">—</b></td></tr>
+        <tr class="sub"><td class="key">단계</td><td><b>Phase 1 · 용량과 투여간격 최적화 구간</b>. 선행한 단회투여 Phase 1(NCT05034497)은 <b>실제 등록 37명으로 (26.10.19) 완료</b> (RP2D 44.1 mCi, MTD 66.14 mCi, mOS 9개월)</td></tr>
         <tr><td class="key">투여</td><td>Ommaya 뇌실내 13.2 mCi × 3회</td></tr>
-        <tr><td class="key">코호트</td><td>1: 56일 간격 → 2: 28일 → 3: 14일, 최대 6회</td></tr>
-        <tr class="sub"><td class="key">현재</td><td><b>Cohort 1a DLT 없이 통과</b> (26.08.13 발표). 회사 표현은 목표의 약 1/3 등록</td></tr>
+        <tr><td class="key">코호트</td><td>1: 56일 간격 → 2: 28일 → 3: 14일, 최대 6회 · 코호트당 3명, DLT 발생 시 6명</td></tr>
+        <tr class="sub"><td class="key">공개된 투여 인원</td><td><b>10명</b> (SNO 2026 포스터, 기준일 26.10.31). 코호트 1a 4명 · 1b 2명 · 2a 4명. 모집 계속 진행 중</td></tr>
         <tr><td class="key">목표 인원</td><td>RP2D 도출 12~18명 · 등재 목표 24명</td></tr>
-        <tr><td class="key">코호트 추정</td><td id="lm-cohort">—</td></tr>
-        <tr><td class="key">다음 관문</td><td>연말까지 RP2D·투여간격 확정 → 개정 프로토콜 FDA 정렬 → pivotal 개시</td></tr>
+        <tr><td class="key">주평가 완료</td><td><b id="t-lmm-pc">—</b> (등재부 기준)</td></tr>
+        <tr><td class="key">다음 관문</td><td>용량 증량 계속 → RP2D 확정 → 2027년 FDA 정렬 2상 용량 무작위배정 시험. <b>톱라인 27년 중반</b></td></tr>
       </tbody>
     </table>
   </div>
   <div class="note">
-    <b>Source</b> — 2분기 실적 보도자료(26.08.14) · SNO/ASCO CNS Metastases 발표(26.08.20) · SNO 2025 초록 CTNI-67 ·
+    <b>Source</b> — SNO 2026 포스터 CTNI-40(26.11.13) · 3분기 보도자료(26.11.13) · ClinicalTrials.gov API, 매일 수집 ·
     <b>Note</b> — 등재 목표 24명과 회사가 말하는 12~18명은 다른 구간을 가리킴: 24명은 시험 전체, 12~18명은 RP2D 도출까지.
   </div>
 
-  <div class="banner">ReSPECT-LM 다회투여 누적 인원 (홈페이지)</div>
-  <div class="chartbox"><svg id="ch-lm" viewBox="0 0 880 250" role="img"
-    aria-label="ReSPECT-LM 다회투여 누적 투여 인원 추이"></svg></div>
+  <div class="banner">다회투여 진척</div>
+  <div class="chartbox"><svg id="ch-lm" viewBox="0 0 880 128" role="img"
+    aria-label="ReSPECT-LM 다회투여 공개 투여 인원과 목표"></svg></div>
   <div class="note">
-    <b>Source</b> — <a href="https://www.respect-trials.com/lm/" target="_blank" rel="noopener">respect-trials.com/lm</a>
-    의 Patients Treated to Date 카운터, 매일 수집 ·
-    <b>Note 1</b> — 카운터는 단회투여 29명을 포함한 ReSPECT-LM 누적치임. 다회투여 인원은 카운터에서 29를 뺀 값으로 산출함
-    (33−29=4, 36−29=7, 37−29=8로 회사 공개분과 일치) ·
-    <b>Note 2</b> — 회사가 직접 관리하는 수치라 실제 투여보다 반영이 늦을 수 있음. 값이 멈춰 있다고 곧바로 등록 정체로 읽지 않음
+    <b>Source</b> — 공개 투여 인원은 회사 보도자료·학회 초록에 수치가 실릴 때만 갱신됨 ·
+    <b>Note</b> — <b>(26.11.06) 회사가 respect-trials.com에서 Patients Treated to Date 카운터를 삭제함.</b>
+    매일 세던 지표가 사라져 지금은 등재부 상태 변화와 회사 공개 수치로 대체함
   </div>
 
+  <div class="banner">SNO 2026 중간 데이터 (26.11.13 포스터 CTNI-40, 기준일 26.10.31)</div>
   <div class="tablewrap">
     <table class="data">
-      <thead><tr><th>확인일</th><th class="num">사이트 카운터</th><th class="num">다회투여</th><th class="num">증감</th></tr></thead>
-      <tbody id="lmbody"><tr><td colspan="4">불러오는 중</td></tr></tbody>
+      <thead><tr><th>용량</th><th>56일 간격</th><th>28일</th><th>14일</th></tr></thead>
+      <tbody>
+        <tr><td class="key">13.2 mCi</td><td>1a · <b>4명</b></td><td>1b · <b>2명</b></td><td>미개시</td></tr>
+        <tr><td class="key">26.4 mCi</td><td>2a · <b>4명</b></td><td>미개시</td><td>미개시</td></tr>
+        <tr class="warn"><td class="key">44.1 mCi</td><td>미개시</td><td>미개시</td><td>미개시</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Source</b> — <a href="https://ir.cerenome.com/static-files/4f81b3f7-8e6e-4207-bdb8-7dff35d270ed" target="_blank" rel="noopener">포스터 원문 PDF</a> ·
+    <b>Note</b> — 3회 투여가 1세트임. 누적 투여량은 최대 79.2 mCi(26.4×3)까지 올라옴: 단회투여 최대허용량 66 mCi는 넘겼으나 목표인 44.1×3 = 132.3 mCi와는 거리가 있음
+  </div>
+
+  <div class="banner">안전성 · 선량측정</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>항목</th><th>결과</th></tr></thead>
+      <tbody>
+        <tr class="sub"><td class="key">DLT</td><td><b>0건</b> · 이상반응으로 인한 중단 0건</td></tr>
+        <tr><td class="key">Grade 3 약물관련</td><td>1건 (구역, 5일 내 회복) · 중대한 이상반응 1건은 약물 무관 판정</td></tr>
+        <tr><td class="key">흔한 이상반응</td><td>구역 60% · 두통 40% · 림프구감소 40% · 백혈구감소 40%. 단회투여에서 최대허용량을 정하게 했던 Grade 4 혈소판감소는 없음</td></tr>
+        <tr class="sub"><td class="key">병변 구획 누적 선량</td><td>최저 용량 3회로 <b>85~137 Gy</b>. 1회당 두개 지주막하 39.1 Gy(13.2 mCi) · 71.7 Gy(26.4 mCi)</td></tr>
+        <tr><td class="key">전신 노출</td><td>적색골수 0.029~0.105 Gy. <b>뇌실 CSF 대 골수 선량비 158~222배</b>: 반복 투여가 가능한 근거</td></tr>
+        <tr><td class="key">재현성</td><td>반복 투여 간 환자 내 변동계수 중앙값 8% (Gy/mCi)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="banner">CSF 종양세포 반응 (기준선 양성 7명)</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>결과</th><th class="num">인원</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr class="sub"><td class="key">0까지 소실</td><td class="num">3</td><td>01-303 · 01-304 · 01-309</td></tr>
+        <tr><td class="key">87% 감소</td><td class="num">1</td><td>01-305: 128 → 17</td></tr>
+        <tr><td class="key">70% 감소</td><td class="num">1</td><td>01-307: 10 → 3</td></tr>
+        <tr><td class="key">변화 없음 또는 증가</td><td class="num">2</td><td>01-301: 29 → 40 · 01-302: 2 → 2</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>Note 1</b> — <b>포스터는 반응률을 산출해 제시하지 않음.</b> 위 분류는 포스터 표의 원자료에서 계산한 것임 ·
+    <b>Note 2</b> — 기준선이 2~13 cells/mL로 낮은 환자가 다수임. 고부하 환자는 128(01-305)과 1,218(01-311)뿐이고 01-311은 결과 대기 중 ·
+    <b>Note 3</b> — 투여 후 샘플이 1~2회뿐인 환자가 섞여 있음
+  </div>
+
+  <div class="banner">생존</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>항목</th><th>결과</th></tr></thead>
+      <tbody>
+        <tr class="sub"><td class="key">mOS · PFS · 반응률</td><td><b>제시되지 않음. 추정도 하지 않음</b></td></tr>
+        <tr><td class="key">LM 진행 (랜드마크)</td><td>3개월·6개월 시점 평가 가능 5명 중 <b>진행 0명</b>. 9개월 시점 4명 중 1명 진행</td></tr>
+        <tr><td class="key">사망</td><td>4명 (1.1 · 3.2 · 5.0 · 10.5개월). 포스터는 원발 질환 진행이 원인이라고 기술. 01-302는 12.5개월째 생존</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note"><b>Note</b> — LM 표준치료 mOS는 2~6개월. 다만 n=10에 용량이 섞여 있어 비교에 쓰기 이름</div>
+
+  <div class="banner">판정</div>
+  <div class="tablewrap">
+    <table class="data">
+      <thead><tr><th>지표</th><th>기준</th><th>결과</th></tr></thead>
+      <tbody>
+        <tr class="sub"><td class="key">안전성</td><td>Grade 3+ 발생 / 1~2등급 위주 / 단회 대비 개선</td><td><b>기대 이상</b>: DLT 0, 중단 0, Grade 3 1건</td></tr>
+        <tr><td class="key">mOS</td><td>9개월 미만 / 9~12 / 12 초과</td><td>판정 불가 · 숫자 없음</td></tr>
+        <tr><td class="key">영상반응률</td><td>50% 미만 / 50~76 / 76 초과</td><td>판정 보류 · 회사가 산출하지 않음</td></tr>
+      </tbody>
     </table>
   </div>
 
   <p>
-    코호트당 3명이고 DLT가 나오면 그 코호트가 6명으로 늘어나는 3+3 설계임.
-    DLT가 없었다는 회사 발표를 그대로 두면 누적 8명은 코호트1 3명, 코호트2 3명을 지나
-    <b>코호트3(14일 간격)의 2번째</b>에 해당함.
-    다만 회사가 (26.08.13) 쓴 표현은 Cohort 1a로, SNO 초록의 1·2·3 체계에 없는 하위 구분임:
-    실제 위치가 한 코호트 뒤일 가능성이 남음.
+    <span class="mark">안전성은 넘겼고 선량 전달도 의도대로 작동하지만, 용량이 목표의 절반도 올라가지 않았음</span>:
+    포스터 결론도 권장 요법과 임상 활성을 정하려면 추가 등록이 필요하다는 것임.
+    1년 넘게 10명, 그것도 하위 3개 칸에 머물러 있음.
   </p>
 
   <p>
-    <b>카운터가 (26.06.09) 37명에서 석 달 넘게 멈춰 있음</b>:
-    다회투여 8명에서 변동 없음. 페이지 본문은 (26.08.20)에 수정되었으나 카운터 반영이 늦을 수 있어
-    등록 정체로 단정하지 않음. 연말 RP2D 확정 목표와 맞물리는 지점이라 매일 확인 대상 1순위로 둠.
+    <b>26년 말 RP2D 확정이라는 당초 목표는 사라졌고, 톱라인은 27년 중반으로 바뀜.</b>
+    LM 다회투여와 GBM 2상이 같은 시점에 몰리게 됨.
   </p>
 
   <div class="grp-h">임상 · ReSPECT-GBM</div>
@@ -260,28 +322,26 @@ a{color:var(--brand-heading)}
     <table class="data">
       <thead><tr><th>구분</th><th>내용</th></tr></thead>
       <tbody>
-        <tr><td class="key">시험번호</td><td><a href="https://clinicaltrials.gov/study/NCT01906385" target="_blank" rel="noopener">NCT01906385</a> Phase 1/2 중 2상 파트</td></tr>
-        <tr class="sub"><td class="key">단계</td><td><b>Phase 2 · 등록 마무리 구간</b>. Phase 1은 1.0~41.5 mCi 용량증량으로 종료 (100Gy 이상 흡수군 mOS 17개월, 미만군 6개월)</td></tr>
+        <tr><td class="key">시험번호</td><td><a href="https://clinicaltrials.gov/study/NCT01906385" target="_blank" rel="noopener">NCT01906385</a> Phase 1/2 중 2상 파트 · 등재 상태 <b id="t-gbm-st">—</b></td></tr>
+        <tr class="sub"><td class="key">단계</td><td><b>Phase 2 · (26.10.29) 등록 완료</b>. 32명 치료, 계획 34명. Phase 1은 1.0~41.5 mCi 용량증량으로 종료</td></tr>
         <tr><td class="key">투여</td><td>CED 종양내 직접 주입 22.3 mCi 단회 · 카테터 최대 4개</td></tr>
-        <tr><td class="key">현재</td><td>2상 등록 <b>31 / 34명</b> (26.06.30) · 활성 사이트 3곳</td></tr>
-        <tr class="sub"><td class="key">다음 관문</td><td>26년 내 완전등록 → <b>데이터 27년 1분기</b> → EOP2 미팅 → 등록임상</td></tr>
+        <tr class="sub"><td class="key">공개된 중간 결과</td><td>2상 15명 <b>mOS 13개월</b>, 표준치료 8개월 대비 63% 개선. 1상 전체는 11개월(n=29), 100Gy 이상 흡수군 17개월 · 미만군 6개월</td></tr>
+        <tr><td class="key">톱라인</td><td><b>2027년 중반</b> (종전 27년 1분기에서 이동) → EOP2 미팅 → 등록임상</td></tr>
         <tr><td class="key">제약</td><td>종양 부피 20 mL 이하 · CED 접근 가능 위치 · 베바시주맙 선행 투여 시 분포 저하</td></tr>
       </tbody>
     </table>
   </div>
-  <div class="note"><b>Source</b> — 중간 업데이트(26.06.30) · 2분기 실적 보도자료(26.08.14) · Nature Communications(25.03.07)</div>
+  <div class="note"><b>Source</b> — 등록 완료 보도자료(26.10.29) · 투자자 발표자료(26.09.30) · Nature Communications(25.03.07) · ClinicalTrials.gov</div>
 
   <div class="banner">ReSPECT-GBM 2상 등록 진척</div>
   <div class="chartbox"><svg id="ch-gbm" viewBox="0 0 880 76" role="img"
-    aria-label="ReSPECT-GBM 2상 등록 진척"></svg></div>
-  <div class="note">
-    <b>Source</b> — 등록 인원은 회사 발표(26.06.30) ·
-    <b>Note</b> — 사이트 카운터는 <b id="gbm-counter">—</b>명으로 1상과 2상을 합한 누적치라 2상 등록 인원과 직접 대응하지 않음. 진척 막대는 2상만 표시함.
-  </div>
+    aria-label="ReSPECT-GBM 2상 치료 인원과 계획 인원"></svg></div>
+  <div class="note"><b>Source</b> — 회사 보도자료(26.10.29) · <b>Note</b> — 계획 34명 대비 32명에서 등록을 닫음. 등재부 상태는 ACTIVE_NOT_RECRUITING으로 전환됨</div>
 
   <p>
-    GBM은 남은 3명이 채워지는 순간부터 데이터까지의 시간표가 고정됨.
-    등록 완료 발표가 나오면 EOP2 미팅 일정이 다음 확인 대상이 됨.
+    등록이 닫혔으므로 남은 변수는 시점과 숫자뿐임.
+    <b>2상 15명 중간치 13개월은 1상 고선량군 17개월에 못 미침</b>: 2상은 고정 용량이라 흡수선량으로 환자를 고르지 않기 때문임.
+    전체 32명 톱라인이 13개월 부근에 머무는지, 17개월 쪽으로 올라가는지가 EOP2 미팅의 내용을 정함.
   </p>
 
   <div class="grp-h">CNSide</div>
@@ -290,17 +350,17 @@ a{color:var(--brand-heading)}
     <table class="data">
       <thead><tr><th>지표</th><th>지금</th><th>판정 기준</th><th>확인 경로</th></tr></thead>
       <tbody>
-        <tr class="sub"><td class="key">0640U 단가</td><td>미정 · Novitas 재량가</td><td><b>$2,000 이상이면 진단부문 밸류 유지, $1,000 미만이면 절반으로</b></td><td>CMS 예비결정 26.09 · 최종 26.11</td></tr>
-        <tr><td class="key">진단 매출 인식</td><td>사실상 0 · 전액 충당금</td><td>첫 인식 자체가 전환점</td><td>분기 10-Q</td></tr>
-        <tr><td class="key">검사 건수</td><td>상반기 232건 · 6월 72건</td><td>12월 월 104건이어야 연 1,250건 런레이트</td><td>분기 실적 보도자료</td></tr>
-        <tr class="sub"><td class="key">커버드 라이프</td><td><b>1.53억명</b> (26.08.13)</td><td>Aetna · Cigna · Kaiser · Centene 급만 유효</td><td>IR 보도자료 제목에서 자동 추출</td></tr>
-        <tr><td class="key">메디케어 커버리지</td><td>미확보 · PTAN만 취득</td><td>Novitas LCD 등재</td><td>Medicare Coverage Database</td></tr>
-        <tr><td class="key">어세이 확장</td><td>NGS 파트너십 1건 · 3종 미출시</td><td>3분기 약속 이행 여부</td><td>IR 보도자료 · CNSide 사이트</td></tr>
+        <tr class="sub"><td class="key">0640U 단가</td><td><b>메디케어 예비 가격이 우호적으로 결정됨</b> (26.09.30 회사 공개). CMS 파일은 (26.10.20) 게시</td><td>최종 단가 수준 · 27.01.01 발효</td><td>CMS 최종 결정 26.11</td></tr>
+        <tr class="sub"><td class="key">총청구액</td><td><b>3분기 약 $1.55M 예상</b> (회사 공개). 미수금이나 인식 매출이 아님</td><td>인식 매출로 전환되는 비율</td><td>3분기 10-Q</td></tr>
+        <tr><td class="key">검사 건수</td><td>상업 TCE 1분기 59 · 2분기 116 · <b>3분기 187건</b> · 누적 362건</td><td>12월 월 104건이어야 연 1,250건 런레이트</td><td>분기 실적 보도자료</td></tr>
+        <tr class="sub"><td class="key">커버드 라이프</td><td><b>약 1.9억명</b> (26.11.04 Aetna 포함)</td><td>Cigna · Kaiser · Centene가 남음</td><td>IR 보도자료</td></tr>
+        <tr><td class="key">채택 기관</td><td>주문 기관 24곳 · 주문 의사 43명 (목표 50명)</td><td>4분기 현장 영업조직 배치 효과</td><td>분기 발표자료</td></tr>
+        <tr><td class="key">어세이 확장</td><td><b>CSF Molecular Profile 검사 (26.10.12) 출시</b></td><td>신규 검사의 청구 코드와 단가</td><td>IR 보도자료</td></tr>
         <tr><td class="key">랩 자격</td><td>CLIA · CAP · 캘리포니아</td><td>뉴욕주 라이선스가 남은 관문</td><td>IR 보도자료</td></tr>
       </tbody>
     </table>
   </div>
-  <div class="note"><b>Note</b> — 0640U는 (26.07.14) CDLT 자문패널에서 0338U 크로스워크로 12표 대 0표 권고됨. 갭필로 인한 1년 지연은 피했으나 준용 단가 수준은 미확인</div>
+  <div class="note"><b>Note</b> — 0640U는 (26.07.14) CDLT 자문패널에서 0338U 크로스워크로 12표 대 0표 권고됨. 회사는 (26.09.30) 예비 가격이 우호적이라고 밝혔으나 금액은 공개하지 않음</div>
 
   <div class="banner">커버드 라이프 · 계약 이력</div>
   <div class="tablewrap">
@@ -316,7 +376,6 @@ a{color:var(--brand-heading)}
     <table class="data">
       <thead><tr><th>페이어</th><th class="num">커버리지</th><th>비고</th></tr></thead>
       <tbody>
-        <tr><td class="key">CVS Health · Aetna</td><td class="num">2,500만+</td><td>약국·진단 인프라 통합. 남은 최대어</td></tr>
         <tr><td class="key">Centene</td><td class="num">2,400~2,800만</td><td>메디케이드 비중 높음</td></tr>
         <tr><td class="key">Cigna</td><td class="num">1,500만</td><td>종양 상환에 비교적 우호적</td></tr>
         <tr><td class="key">Kaiser Permanente</td><td class="num">1,250만</td><td>폐쇄형 8개주 한정</td></tr>
@@ -325,7 +384,7 @@ a{color:var(--brand-heading)}
       </tbody>
     </table>
   </div>
-  <div class="note"><b>Note</b> — 확보분: UnitedHealthcare · Humana · Highmark · Blue Shield of California · Elevance Health · Medical Mutual · HCSC</div>
+  <div class="note"><b>Note</b> — 확보분: UnitedHealthcare · Humana · Highmark · Blue Shield of California · Elevance Health · Medical Mutual · HCSC · Florida Blue(26.10.08) · <b>Aetna(26.11.04)</b></div>
 
 
 
@@ -337,7 +396,9 @@ a{color:var(--brand-heading)}
       <tbody>
         <tr><td class="key">발행주식수</td><td id="d-shares">—</td></tr>
         <tr><td class="key">최근 증감</td><td id="d-delta">—</td></tr>
-        <tr><td class="key">워런트</td><td>1,817,714주 (26.06.30) · 발행주식 대비 약 24%</td></tr>
+        <tr><td class="key">워런트</td><td>1,817,714주 (26.06.30) · 발행주식 대비 약 23%</td></tr>
+        <tr class="warn"><td class="key">자기자본</td><td><b>−$0.92M (26.09.30)</b>. 나스닥 요건은 $2.5M: 최소주가 $1과 함께 두 요건을 동시에 위반 중</td></tr>
+        <tr><td class="key">분기 후 조달</td><td>Equity Distribution Agreement로 $3.8M (3분기 종료 후)</td></tr>
         <tr><td class="key">ATM</td><td>Canaccord Genuity 한도 $17.35M 중 $1.85M 인출 (436,448주, 주당 약 $4.25).
           베이비셸프 산정이 시가총액에 연동되어 실제 사용 가능액은 한도보다 작음</td></tr>
         <tr class="sub"><td class="key">전환사채</td><td><b>3i, LP와 선순위 담보부 전환사채 (26.09.04 계약, 26.09.10 초기 클로징)</b>:
@@ -381,18 +442,23 @@ a{color:var(--brand-heading)}
         <tr><td class="key">주간 +5% 또는 월 +10%</td><td>전환 또는 대량 인출: 조달 조건을 다시 확인함</td></tr>
         <tr class="sub"><td class="key">주식수 증가가 멈춤</td><td><b>회사가 미공개 중요정보를 보유한 구간일 수 있음</b>: ATM은 그 기간 매도가 금지됨</td></tr>
         <tr><td class="key">증가 재개</td><td>발표를 조달 창구로 쓴 것: 발표 직후 구간을 함께 봄</td></tr>
-        <tr><td class="key">주가가 $2.74 아래 유지</td><td>전환 유인 낮음. 다만 전환가는 조정 조항이 있어 하향 가능</td></tr>
+        <tr class="warn"><td class="key">주가가 플로어 $0.50에 근접</td><td>전환가 하향 여지가 커짐: 같은 원금에 신주가 몇 배로 늘어남</td></tr>
+        <tr class="warn"><td class="key">주가 $1 미만 지속</td><td>나스닥 최소주가 요건 재위반: 유예기간과 병합 가능성을 함께 봄</td></tr>
         <tr><td class="key">신규 S-1 또는 424B5</td><td>등록권 계약에 따른 전환주식 재판매 등록: 매물 출회 시점</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    <span class="mark">조달은 ATM이 아니라 CNSide를 담보로 잡은 전환사채로 들어왔음</span>:
-    초기 실수령은 $3.0M이고 나머지 $18M대는 마일스톤 조건임.
-    회사는 주주 희석 최소화와 2028년까지의 런웨이를 내세웠으나,
-    진단 자회사의 자산과 지분이 1순위 담보로 묶이고 매출에 2.5% 로열티가 선순위로 붙은 구조임.
-    주가는 발표 전후로 $3.05에서 $2.03까지 내려 전환가 $2.74 아래에 있음.
+    <b>사업 지표는 전부 올라갔는데 주가만 4분의 1이 됨</b>:
+    같은 기간에 Aetna 계약으로 커버드 라이프가 1.9억으로 늘고, GBM 2상 등록이 끝났고,
+    메디케어 예비 가격이 우호적으로 나왔음. 그 사이 주가는 $3.05에서 $0.7대로 내렸음.
+    전환사채 플로어가 $0.50이고 전환가에 조정 조항이 붙어 있는 구조가 이 괴리의 유력한 설명임.
+  </p>
+
+  <p>
+    주가가 $1 아래에 머무르면 나스닥 최소주가 요건을 다시 어기게 됨.
+    (26.04.02) 1대 25 병합을 이미 한 뒤라 추가 병합은 선택지가 좁음.
   </p>
 
 
@@ -401,10 +467,10 @@ a{color:var(--brand-heading)}
   <hr class="sec-rule">
 
   <p>
-    사업 진척과 재무 체력이 반대로 벌어져 있음.
-    커버드 라이프는 연말 목표 1.5억명을 (26.08.13) 초과 달성했고,
-    수가는 갭필이 아닌 크로스워크로 권고되어 27년 1월 전국단가 경로가 열림.
-    임상은 두 건 모두 독성 없이 진행 중.
+    사업 진척과 주가가 반대로 벌어져 있음.
+    커버드 라이프는 (26.11.04) Aetna 계약으로 약 1.9억명.
+    0640U는 크로스워크로 권고된 뒤 메디케어 예비 가격이 우호적으로 나왔고 27.01.01 발효가 목표임.
+    GBM 2상은 (26.10.29) 등록을 닫았고, LM 다회투여 중간 데이터가 SNO 2026에서 공개됨.
   </p>
 
   <p>
@@ -417,11 +483,17 @@ a{color:var(--brand-heading)}
     (26.09.10) 3i, LP와 선순위 담보부 전환사채로 조달이 들어옴: 초기 실수령 $3.0M,
     원금 총액 $21.28M 중 나머지는 마일스톤 조건.
     조건은 <b>CNSide 자산과 지분에 대한 1순위 담보권, 총매출 2.5% 로열티, 전환가 $2.74에 플로어 $0.50</b>.
-    주가는 $3.05에서 $2.03까지 내렸고 52주 저가는 $2.00임.
   </p>
 
   <p>
-    <span class="star">★</span><span class="mark">조달이 임상 데이터보다 먼저 왔고 대가는 진단 자회사의 담보였음: 남은 판단은 데이터가 그 담보를 풀 만큼 나오는지</span>
+    3분기 기준 현금·투자 $4.9M, 분기 순손실 $8.657M, 분기 매출 $722K.
+    <span class="neg">자기자본이 −$0.92M으로 돌아섬</span>:
+    나스닥 자기자본 $2.5M과 최소주가 $1을 동시에 밑돌고 있음.
+    분기 종료 후 ATM으로 $3.8M을 더 조달함.
+  </p>
+
+  <p>
+    <span class="star">★</span><span class="mark">SNO 중간데이터는 안전성만 답했고 효능은 27년 중반으로 미뤄짐: 그 사이를 버틸 현금과 상장 요건이 먼저 걸림돌이 됨</span>
   </p>
 
 
@@ -535,24 +607,19 @@ a{color:var(--brand-heading)}
     <table class="data">
       <thead><tr><th>시점</th><th>이벤트</th><th>확인할 것</th></tr></thead>
       <tbody>
-        <tr class="sub"><td class="key">26.09 상반기</td><td>CMS CY2027 CLFS 예비 가격결정</td><td><b>0640U 준용 단가</b>. 진단부문 밸류의 절반이 여기서 확정됨</td></tr>
-        <tr><td class="key">26.09.30</td><td>3분기 마감</td><td>추가 CSF 어세이 3종 출시 여부 · 소아 첫 투여</td></tr>
-        <tr><td class="key">26.10 초</td><td>CMS 예비결정 의견수렴 마감</td><td>회사 의견 제출 여부</td></tr>
-        <tr class="sub"><td class="key">26.11 중순</td><td>3분기 실적 · 10-Q</td><td><b>진단 매출 첫 인식 여부</b> · 현금 잔액 · 자기자본 요건</td></tr>
-        <tr><td class="key">26.11</td><td>SNO 연례총회 · CMS 최종 가격결정</td><td>LM 다회투여 추가 데이터 · 확정 단가</td></tr>
-        <tr><td class="key">26.12</td><td>SABCS</td><td>유방암 유래 LM 하위분석</td></tr>
-        <tr class="sub"><td class="key">26년 내</td><td>LM RP2D · 투여간격 확정</td><td>개정 프로토콜에 대한 FDA 정렬 발표</td></tr>
-        <tr><td class="key">27.01.01</td><td>CY2027 CLFS 적용</td><td>실제 청구 · 수납 개시</td></tr>
-        <tr><td class="key">27.1분기</td><td>GBM 2상 데이터</td><td>mOS · 고선량 도달률 → EOP2 미팅</td></tr>
+        <tr class="sub"><td class="key">26.11.14</td><td>SNO 2026 포스터 CTNI-40 · 후원 심포지엄</td><td><b>LM 다회투여 첫 10명의 DLT 유무와 CSF 종양세포 감소 폭</b></td></tr>
+        <tr class="sub"><td class="key">26.11.16</td><td>회사 리뷰 콜</td><td>데이터 해석과 CNSide 상업 수치</td></tr>
+        <tr><td class="key">26.11 중</td><td>CMS CY2027 CLFS 최종 가격결정</td><td><b>0640U 확정 단가</b></td></tr>
+        <tr><td class="key">26.11 중순</td><td>3분기 10-Q</td><td>조달 후 현금 잔액 · 진단 매출 인식 여부 · 나스닥 자기자본</td></tr>
+        <tr><td class="key">26.12</td><td>4분기 영업조직 배치 효과</td><td>월 검사 건수가 104건에 닿는지</td></tr>
+        <tr class="sub"><td class="key">27.01.01</td><td>CY2027 CLFS 적용</td><td>메디케어 실제 청구와 수납 개시</td></tr>
+        <tr><td class="key">27년 중</td><td>LM RP2D·투여간격 확정</td><td>등재부 주평가 완료는 27.07.31로 잡혀 있음</td></tr>
+        <tr><td class="key">27년 중반</td><td>GBM 2상 톱라인 (32명)</td><td>mOS가 중간치 13개월 부근인지 → EOP2 미팅</td></tr>
+        <tr><td class="key">27년</td><td>LM 2상 용량 무작위배정 시험 개시</td><td>FDA 정렬 여부와 가속승인 경로</td></tr>
       </tbody>
     </table>
   </div>
-  <div class="note"><b>Source</b> — CMS 연방관보 공고(26.05.01) · 회사 2026 목표(26.08.14 재확인)</div>
-
-  <p>
-    가장 가까운 것은 <span class="mark">9월 상반기 CMS 예비 가격결정: 0640U 단가가 처음 숫자로 공개되는 자리</span>임.
-    크로스워크 권고로 갭필 지연은 피했으나, 준용 단가 수준은 아직 미확인 상태임.
-  </p>
+  <div class="note"><b>Source</b> — 보도자료(26.10.27 · 26.10.29 · 26.11.12) · 투자자 발표자료(26.09.30) · ClinicalTrials.gov</div>
 
   <div class="sub-h">임상 데이터 판정 기준</div>
   <div class="tablewrap">
@@ -635,26 +702,25 @@ a{color:var(--brand-heading)}
     <table class="data">
       <thead><tr><th>질문</th><th>해소 시점</th></tr></thead>
       <tbody>
-        <tr class="sub"><td class="key">0640U 준용 단가 수준</td><td>CMS 예비결정이 26.09 상반기 예정이었으나 (26.09.18) 현재 미게시. 최종결정은 26.11 예정</td></tr>
-        <tr class="sub"><td class="key">전환사채 후속 트랜치의 마일스톤 조건</td><td>보도자료와 8-K 모두 비공개. 후속 S-1 또는 분기 보고서</td></tr>
+        <tr class="sub"><td class="key">0640U 확정 단가 금액</td><td>회사는 예비 가격이 우호적이라고만 밝히고 금액 비공개. CMS 최종 결정 26.11</td></tr>
+        <tr class="sub"><td class="key">LM 다회투여 중간 데이터의 내용</td><td>SNO 포스터 26.11.14 · 회사 리뷰 콜 26.11.16</td></tr>
         <tr><td class="key">조달 후 현금 잔액과 런웨이</td><td>회사는 2028년까지를 주장. 3분기 10-Q (26.11 중순)</td></tr>
-        <tr><td class="key">LM 다회투여 실제 등록 인원</td><td>회사가 "목표의 약 1/3"만 반복. 3분기 실적 또는 SNO 초록</td></tr>
-        <tr><td class="key">GBM 데이터 시점: 4분기 대 27년 1분기</td><td>보도자료는 27년 1분기로 일관됨. 컨콜 원문 대조 필요</td></tr>
-        <tr><td class="key">7~8월 발행주식 27.9만주 증가분의 출처</td><td>3분기 10-Q</td></tr>
-        <tr><td class="key">나스닥 자기자본 모니터링(26.08.22) 후속</td><td>8-K 또는 3분기 10-Q</td></tr>
-        <tr><td class="key">소아 첫 투여</td><td>3분기 마감 26.09.30</td></tr>
-        <tr><td class="key">추가 CSF 어세이 3종 출시</td><td>3분기 마감 26.09.30</td></tr>
-        <tr><td class="key">진단 매출 첫 인식</td><td>3분기 실적 26.11 중순</td></tr>
+        <tr><td class="key">전환사채 후속 트랜치의 마일스톤 조건</td><td>보도자료와 8-K 모두 비공개. 후속 S-1 또는 분기 보고서</td></tr>
+        <tr><td class="key">전환사채 전환이 이미 일어났는지</td><td>발행주식수가 (26.08.05) 이후 갱신되지 않음. 3분기 10-Q 표지</td></tr>
+        <tr><td class="key">나스닥 최소주가·자기자본 요건 대응</td><td>통지 수령 시 8-K</td></tr>
+        <tr><td class="key">LM RP2D 확정 시점</td><td>회사는 26년 말, 등재부는 27.07.31. 둘 중 어느 쪽인지</td></tr>
+        <tr><td class="key">소아 ReSPECT-PBC 첫 투여</td><td>등재부가 (26.09.11) 모집 중으로 전환됨. 첫 투여 발표는 미확인</td></tr>
+        <tr><td class="key">진단 매출 첫 인식</td><td>3분기 총청구 $1.55M 중 인식분. 3분기 10-Q</td></tr>
+        <tr><td class="key">(26.11.12) 8-K Item 5.02의 내용</td><td>임원 변경. Ron Andrews CBO 선임과 같은 건인지 확인 필요</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    등재 카운터가 <span class="mark">LM 37명 · GBM 53명으로 (26.06.09) 이후 움직이지 않음</span>:
-    페이지 자체는 (26.08.19~20) 수정되었으므로 갱신 누락보다는 실제 정체일 가능성이 있음.
-    연말 RP2D 확정 목표와 배치되는 지점이라 매일 감시 대상에 둠.
+    <span class="mark">respect-trials.com의 투여 인원 카운터가 (26.11.06) 삭제됨</span>:
+    매일 세던 유일한 실시간 환자 지표가 사라짐.
+    지금은 등재부의 상태 변화와 회사가 보도자료·학회 초록에 수치를 실을 때만 갱신됨.
   </p>
-
 
   <!-- ══════════ 7장 ══════════ -->
   <h2 class="sec"><span class="no">7장</span>짚어둘 점</h2>
@@ -765,7 +831,6 @@ a{color:var(--brand-heading)}
   function rows(id, html){ var e=document.getElementById(id); if(e) e.innerHTML = html || '<tr><td colspan="5">자료 없음</td></tr>'; }
 
 
-  var SINGLE_DOSE_LM = 29;    // 단회투여 Phase 1 종료 인원. 다회투여 = 카운터 - 29
   var NOTE_PRINCIPAL = 21276596;   // 3i 전환사채 원금
   var NOTE_PRICE = 2.74, NOTE_FLOOR = 0.50;
   var SPLIT_DATE = '2026-04-02';   // 1대 25 액면병합 발효일
@@ -864,53 +929,45 @@ a{color:var(--brand-heading)}
       if(q.price!=null) put('k-mcap', '$' + (q.price*sh.shares/1e6).toFixed(1) + 'M');
     }
     var t = d.trials || {};
-    function ctr(k){ var v=t[k]; if(!v) return null;
-      var c=v.counters||{}; for(var key in c){ if(/Patients Treated/i.test(key)) return c[key]; }
-      for(var k2 in c) return c[k2]; return null; }
-    var lm = ctr('lm'), gbm = ctr('gbm');
-    if(lm!=null) put('k-lm', lm);
-    if(gbm!=null) put('k-gbm', gbm);
 
-    // 1장 · 임상 카운터
-    var hist = (d.trials_hist||[]).filter(function(h){return h.lm!=null;});
-    lineChart(document.getElementById('ch-lm'),
-      hist.map(function(h){ return {d:h.date, v:Math.max(0, h.lm - SINGLE_DOSE_LM)}; }), '명');
-    progress(document.getElementById('ch-gbm'), [
-      {label:'2상 등록', value:31, max:34, unit:'명'}
+    // 1장 · 임상
+    var D = d.disclosed || {};
+    var lmT = D.lm_multi_treated != null ? D.lm_multi_treated : 10;
+    var lmG = D.lm_multi_target  != null ? D.lm_multi_target  : 24;
+    var gbT = D.gbm_treated      != null ? D.gbm_treated      : 32;
+    var gbP = D.gbm_planned      != null ? D.gbm_planned      : 34;
+
+    put('k-lm', lmT);
+    put('k-lm-cap', '명 · 등재 목표 ' + lmG);
+    put('k-gbm', gbT);
+    put('k-gbm-cap', '명 치료 · 계획 ' + gbP);
+
+    progress(document.getElementById('ch-lm'), [
+      {label:'공개 투여 인원', value:lmT, max:lmG, unit:'명'}
     ]);
-    put('gbm-counter', (gbm!=null? gbm : '—'));
-    var lmLast = hist.length ? hist[hist.length-1] : null;
-    if(lmLast){
-      var md = Math.max(0, lmLast.lm - SINGLE_DOSE_LM);
-      var co = Math.max(1, Math.ceil(md / 3));
-      var seat = md - (co - 1) * 3;
-      var gap = ['56일','28일','14일'][co-1] || '14일';
-      var el = document.getElementById('lm-cohort');
-      if(el) el.innerHTML = md === 0 ? '투여 전'
-        : ('다회투여 ' + md + '명 · 코호트당 3명 기준 <b>코호트 ' + co
-           + '(' + gap + ' 간격)의 ' + seat + '번째</b>로 추정');
-      var s1 = document.getElementById('s-lm');
-      if(s1) s1.innerHTML = '다회투여 <b>' + md + '명 · 코호트 ' + co + '의 ' + seat
-        + '번째 추정</b>, DLT 없음: 연말까지 RP2D·투여간격 확정이 목표';
-    }
+    progress(document.getElementById('ch-gbm'), [
+      {label:'2상 치료 인원', value:gbT, max:gbP, unit:'명'}
+    ]);
+
+    // 등재부 상태를 표에 넣는다
+    var byNct = {};
+    (d.ctgov||[]).forEach(function(x){ byNct[x.nct] = x; });
+    var lmm = byNct['NCT07098806'] || {}, gbm2 = byNct['NCT01906385'] || {};
+    put('t-lmm-st', lmm.status || '—');
+    put('t-lmm-pc', lmm.primaryCompletion || '—');
+    put('t-gbm-st', gbm2.status || '—');
+
+    var s1 = document.getElementById('s-lm');
+    if(s1) s1.innerHTML = 'SNO 중간데이터 <b>' + lmT + '명: DLT 0건, 그러나 최고 용량 44.1 mCi 미개시</b>'
+      + ' · mOS 미제시 · 톱라인 27년 중반';
     var s2 = document.getElementById('s-gbm');
-    if(s2) s2.innerHTML = '2상 등록 <b>31 / 34명</b>, 사이트 누적 투여 '
-      + (gbm!=null?gbm:'—') + '명: 26년 내 완전등록 → 데이터 27년 1분기 → EOP2 미팅';
+    if(s2) s2.innerHTML = '2상 <b>등록 완료 (26.10.29), ' + gbT + ' / ' + gbP
+      + '명 치료</b>: 톱라인 27년 중반 → EOP2 미팅';
     var topCov = (d.coverage||[])[0];
     var s3 = document.getElementById('s-cov');
-    if(s3) s3.innerHTML = '커버드 라이프 <b>' + (topCov? (topCov.lives_m/100).toFixed(1) + '억명 이상' : '—')
-      + '</b>, 진단 매출 인식은 아직 0: 0640U 단가가 26.09 CMS 예비결정에서 처음 공개됨';
-    if(lmLast){
-    }
+    if(s3) s3.innerHTML = '커버드 라이프 <b>' + (topCov? (topCov.lives_m/100).toFixed(2).replace(/0$/,'') + '억명' : '—')
+      + '</b> (Aetna 포함), 3분기 총청구 $1.55M: 0640U 최종 단가가 26.11에 결정됨';
 
-    rows('lmbody', hist.slice().reverse().map(function(h, i, a){
-      var prev = a[i+1] ? a[i+1].lm : null;
-      var dlt = prev==null ? null : h.lm - prev;
-      return '<tr><td class="num">'+esc(h.date)+'</td>'
-           + '<td class="num">'+h.lm+'</td>'
-           + '<td class="num">'+Math.max(0, h.lm - SINGLE_DOSE_LM)+'</td>'
-           + '<td class="num">'+(dlt==null?'—':((dlt>0?'+':'')+dlt))+'</td></tr>';
-    }).join(''));
     rows('covbody', (d.coverage||[]).map(function(c){
       var t = c.link ? '<a href="'+esc(c.link)+'" target="_blank" rel="noopener">'+esc(c.title)+'</a>' : esc(c.title);
       return '<tr><td class="num">'+esc(String(c.date).slice(0,16))+'</td>'
@@ -946,9 +1003,9 @@ a{color:var(--brand-heading)}
              + x.cond + '</td></tr>';
       }).join(''));
       var e2 = document.getElementById('s-dil');
-      if(e2) e2.innerHTML = '발행 <b>' + n(cur.shares) + '주</b>, 전환사채 원금 $21.28M이 전환가 $2.74에 전액 전환되면 '
-        + '<b>주식수 약 2배</b>: 주가 $' + ((d.quote||{}).price!=null ? (d.quote.price).toFixed(2) : '—')
-        + '로 전환가 아래, ATM 인출 여부를 매일 확인함';
+      if(e2) e2.innerHTML = '발행 <b>' + n(cur.shares) + '주</b>, 주가 $'
+        + ((d.quote||{}).price!=null ? (d.quote.price).toFixed(2) : '—')
+        + ': <b>자기자본 −$0.92M으로 나스닥 자기자본·최소주가 두 요건 동시 위반</b>';
     }
 
     rows('logbody', (d.log||[]).slice(0,60).map(function(e){
