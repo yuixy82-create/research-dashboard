@@ -964,7 +964,7 @@
    },
    {
     "date": "2026-11-16",
-    "close": 0.715
+    "close": 0.71
    }
   ]
  },
@@ -1018,6 +1018,11 @@
  ],
  "news": [
   {
+   "title": "Cerenome Reports Interim ReSPECT-LM Data Supporting Repeat Dosing of REYOBIQ™ in Leptomeningeal Metastases at the 2026 SNO Annual Meeting",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-reports-interim-respect-lm-data-supporting-repeat",
+   "date": "Mon, 16 Nov 2026 07:30:13 -0500"
+  },
+  {
    "title": "Cerenome Reports Third Quarter 2026 Financial Results and Business Highlights Featuring REYOBIQ ReSPECT- LM Data and CNSide Commercial and Reimbursement Progress",
    "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-reports-third-quarter-2026-financial-results-and",
    "date": "Fri, 13 Nov 2026 17:19:59 -0500"
@@ -1061,11 +1066,6 @@
    "title": "Cerenome Launches CNSide® CSF Molecular Profile Tests",
    "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-launches-cnsider-csf-molecular-profile-tests",
    "date": "Tue, 06 Oct 2026 07:30:13 -0400"
-  },
-  {
-   "title": "Cerenome Expects $1.55 Million in CNSide® Third Quarter Gross Billings",
-   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-expects-155-million-cnsider-third-quarter-gross",
-   "date": "Wed, 30 Sep 2026 07:30:51 -0400"
   }
  ],
  "cnside": [
@@ -1220,6 +1220,13 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-11-17",
+   "level": "orange",
+   "axis": "뉴스",
+   "text": "Cerenome Reports Interim ReSPECT-LM Data Supporting Repeat Dosing of REYOBIQ™ in Leptomeningeal Metastases at the 2026 SNO Annual Meeting",
+   "link": "https://ir.cerenome.com/news-releases/news-release-details/cerenome-reports-interim-respect-lm-data-supporting-repeat"
+  },
   {
    "date": "2026-11-17",
    "level": "orange",
@@ -1446,7 +1453,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-17 06:42",
+  "updated": "2026-11-17 12:23",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1455,7 +1462,7 @@
    "quote": "ok",
    "trials": "ok",
    "ctgov": "ok",
-   "news": "fail: 피드 없음 · ir.cerenome.com(plain=False): The read operation timed out | ir.cerenome.com(plain=True): HTTP Error 403: Forbidden | www.stocktitan",
+   "news": "ok",
    "cnside": "ok",
    "reddit": "ok",
    "cms": "ok",
