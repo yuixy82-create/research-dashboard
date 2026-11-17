@@ -453,7 +453,7 @@
   }
  },
  "quote": {
-  "price": 0.7148,
+  "price": 0.6361,
   "prev": 5.25,
   "high52": 19.0,
   "low52": 0.43,
@@ -965,6 +965,10 @@
    {
     "date": "2026-11-16",
     "close": 0.71
+   },
+   {
+    "date": "2026-11-17",
+    "close": 0.636
    }
   ]
  },
@@ -1166,7 +1170,7 @@
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
-  "checked": "2026-11-17"
+  "checked": "2026-11-18"
  },
  "disclosed": {
   "lm_multi_treated": 10,
@@ -1453,7 +1457,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-17 12:23",
+  "updated": "2026-11-18 05:31",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1462,12 +1466,12 @@
    "quote": "ok",
    "trials": "ok",
    "ctgov": "ok",
-   "news": "ok",
+   "news": "fail: 피드 없음 · ir.cerenome.com(plain=False): The read operation timed out | ir.cerenome.com(plain=True): HTTP Error 403: Forbidden | www.stocktitan",
    "cnside": "ok",
    "reddit": "ok",
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 1
+  "new_events": 0
  }
 }
