@@ -1,6 +1,24 @@
 {
 "alerts": {},
 "cons_hist": [],
+"consensus": {
+"checked": "2026-11-18",
+"hist": [
+{
+"d": "2026-11-18",
+"ebitda": {
+"2026": 124.0,
+"2027": 264.0,
+"2028": 447.0
+},
+"rev": {
+"2026": 464.0,
+"2027": 696.0,
+"2028": 950.0
+}
+}
+]
+},
 "dy_usd": {
 "2025-01-21": 201.9,
 "2025-07-17": 207.91,
@@ -76,33 +94,38 @@
 },
 "log": {
 "aux": {
-"at": "2026-11-18 12:14",
+"at": "2026-11-18 12:18",
 "msg": "dy_usd 11-18 $206.8, tb_usd 11-18 $857.8",
 "ok": true
 },
+"cons": {
+"at": "2026-11-18 12:18",
+"msg": "팩트셋 27년 매출 696·EBITDA 264",
+"ok": true
+},
 "earn": {
-"at": "2026-11-18 12:14",
+"at": "2026-11-18 12:18",
 "msg": "26.3Q 확인됨(대조), 26.4Q 아직 없음",
 "ok": true
 },
 "fx": {
-"at": "2026-11-18 12:14",
+"at": "2026-11-18 12:18",
 "msg": "frankfurter 34일",
 "ok": true
 },
 "ndpr": {
-"at": "2026-11-18 12:14",
+"at": "2026-11-18 12:18",
 "msg": "2026-11-18 721,500 위안/톤, 가격 블록",
 "ok": true
 },
 "px": {
-"at": "2026-11-18 12:14",
+"at": "2026-11-18 12:18",
 "msg": "야후 65일, 최신 2026-11-17",
 "ok": true
 },
 "trades": {
-"at": "2026-11-18 12:14",
-"msg": "오픈인사이더 17행 (기존과 겹침 17, 신규 0) · SEC 실패: 신고서 목록(data.sec.gov): HTTP Error 403: Forbidden",
+"at": "2026-11-18 12:18",
+"msg": "오픈인사이더 17행 (기존과 겹침 17, 신규 0) · SEC 미사용: 신고서 목록(data.sec.gov): HTTP Error 403: Forbidden",
 "ok": true
 }
 },
@@ -141,123 +164,247 @@
 "2026-11-11": 119.0
 },
 "probe": {
-"bi": {
-"len": 260437,
-"st": 200,
-"x": {
-"nE": 1,
-"s1": "% 0.00 % 0.00 % 0.00 % EPS -0.06 0.34 0.98 1.49 2.14 P/E Ratio -554.50 102.57 35.60 23.44 16.30 EBIT -88 90 259 309 475 EBITDA 124 264 447 486 742 Net Profit 3 105 234 259 401 Net Profit Adjusted 12 89 200 259 434 Pre-Tax Profit -67 101 258 314 492 Pre-Tax Profit Reported -104 33 269 257 344 EPS (Non-GAAP) ex. SOE -0.06 0.34 0.98 1.49 2.14 EPS (GAAP) - - - 1.46 2.16 Gross Income 199 316 549 815 920 Cash Flow from Investing -935 -648 -466 -303 -55 Cash Flow from Operations 50 217 324 393 530 Cash Flow from Financing -90 91 104 -29 -5 Cash Flow per Share 0.09 1.20 1.59 1.68 2.65 Free Cash Flow -503 -318 -42 151 442",
-"s2": "nt Quarter ending 12/31/26 Next Quarter ending 03/31/27 Current Year ending 12/31/26 Next Year ending 12/31/27 Earnings Estimates Average Estimate - -0.052 USD 0.001 USD -0.063 USD 0.340 USD Revenue Estimates Average Estimate - 129 USD 149 USD 464 USD 696 USD * Average Estimates in Million (e.g. Revenue) or per share (e.g. Dividend). Source: FactSet Income Statements in Mio. USD 2025 2024 2023 2022 2021 2020 2019 Sales 275.46 203.86 253.45 527.51 331.95 134.31 73.41 Change of sales in % 35.12 -19.57 -51.95 58.91 14"
-}
-},
-"capedge": {
-"len": 2027,
-"st": 200,
-"x": {
-"n10b5": 0,
-"snip": ""
-}
-},
-"finanzen": {
-"body": " Access Denied Access Denied You don't have permission to access \"http&#58;&#47;&#47;www&#46;finanzen&#46;net&#47;schaetzungen&#47;mp&#95;materials\" on this server. Reference&#32;&#35;18&#46;4ed02e17&#46;1794971679&#46;c4ae7efb https&#58;&#47;&#47;errors&#46;e",
-"st": 403
-},
-"massive": {
-"len": 139272,
-"st": 200,
-"x": {
-"n10b5": 26,
-"snip": "lar value. Open-market trades 19 filings in the last 12 months By insider Filings JSON Insider Role Sold Bought Filings Pre-arranged (10b5-1) Last filed James H. Litinsky Chairman and CEO $137.2M — 7 28% of sales Jun 5, 2026 Ryan Corbett Chief Financial Officer $7.7M $198.5K 5 70% of sales Nov 12, 2026 Michael Stuart Rosenthal Chief Operating Officer — $2.7M 3 — Nov 12, 2026 Randall J. Weisenburger Director — $2.0M 1 — Nov 12, 2026 Elliot Dean Hoops General Counsel and Secretary $1.9M — 3 100% of sales May 8, 2026 Filed Insider Type Shares Avg price Value Held after Source Nov 12, 2026 traded Nov 10, 2026 Randall"
-}
-},
-"nasdaq_ins": {
-"len": 11713,
-"st": 200,
-"x": {
-"first": [
-{
-"insider": "ROSENTHAL MICHAEL STUART",
-"lastDate": "11/11/2026",
-"lastPrice": "$37.30",
-"ownType": "Direct",
-"relation": "Officer",
-"sharesHeld": "1,365,673",
-"sharesTraded": "5,000",
-"transactionType": "Buy",
-"url": "/market-activity/insiders/rosenthal-michael-stuart-1135117"
-},
-{
-"insider": "CORBETT RYAN",
-"lastDate": "11/10/2026",
-"lastPrice": "$35.68",
-"ownType": "Direct",
-"relation": "Officer",
-"sharesHeld": "114,493",
-"sharesTraded": "5,476",
-"transactionType": "Buy",
-"url": "/market-activity/insiders/corbett-ryan-1135115"
-}
+"bi_parsed": {
+"2026": [
+464.0,
+124.0
 ],
-"n": 40,
-"types": [
-"Acquisition (Non Open Market)",
-"Automatic Sell",
-"Buy",
-"Disposition (Non Open Market)",
-"Option Execute",
-"Sell"
+"2027": [
+696.0,
+264.0
+],
+"2028": [
+950.0,
+447.0
+],
+"2029": [
+1105.0,
+486.0
+],
+"2030": [
+1624.0,
+742.0
 ]
-}
 },
-"sec_data_ctrl": {
-"body": " SEC.gov | Your Request Originates from an Undeclared Automated Tool U.S. Securities and Exchange Commission Your Request Originates from an Undeclared Automated Tool To allow for equitable access to all users, SEC reserves the right to limit requests originat",
-"st": 403
-},
-"secform4": {
-"len": 49904,
-"st": 200,
-"x": {
-"n10b5": 0,
-"snip": "Date Reported DateTime Company Symbol Insider Relationship Shares Traded Average Price Total Amount Shares Owned Filing 2026-11-17 Purchase 2026-11-17 8:08 pm MP Materials Corp. MP Corbett Ryan Chief Financial Officer 2,627 $34.86 $91,577 120,620 (Direct) View 2026-11-16 Purchase 2026-11-16 8:10 pm MP Materials Corp. MP Corbett Ryan Chief Financial Officer 3,500 $36.75 $128,625 117,993 (Direct) View 2026-11-10 Purcha"
-}
-},
-"stockanalysis": {
-"len": 159495,
-"st": 200,
-"x": {
-"nE": 0,
-"s1": "Maintains $82 &#8594 $70 +100.80% Nov 9, 2026 More Analyst Ratings Financial Forecast Annual Quarterly Abbr Abbreviated Revenue This Year 466.62M from 275.46M Increased by 69.40% from 275.46M Revenue Next Year 716.35M from 466.62M Increased by 53.52% from 466.62M EPS This Year -0.05 from -0.24 from -0.24 EPS Next Year 0.44 from -0.05 from -0.05 Fiscal Year FY 2021 FY 2022 FY 2023 FY 2024 FY 2025 FY 2026 FY 2027 FY 2028 Period Ending Dec 31, 2021 Dec 31, 2022 Dec 31, 2023 Dec 31, 2024 Dec 31, 2025 Dec 31, 2026 Dec 3"
-}
-},
-"yahoo_trend": {
-"st": 200,
-"x": [
+"bi_text": "ntained Hold $64 neutral 07/17/25 Deutsche Bank Maintained Hold $69 neutral 07/16/25 Capital Depesche Maintained Buy $64 gut 07/11/25 Capital Depesche Maintained Buy $55 gut 07/07/25 Jefferies &amp; Company Inc. Downgraded to Hold $33 neutral 06/17/25 Baird Patrick &amp; Co Maintained Buy $38 gut 06/06/25 Morgan Stanley Upgraded to Buy $34 gut 05/12/25 J.P. Morgan Maintained Hold $18 neutral 05/01/25 J.P. Morgan Maintained Hold $21 neutral 03/20/25 BMO Capital Markets Maintained Buy $29 gut 03/19/25 D.A. Davidson &amp; Co. Maintained Buy $32 gut 01/27/25 BMO Capital Markets Maintained Buy $22 gut MP Materials Estimates* in USD Yearly Quarterly &nbsp; 2026 2027 2028 2029 2030 Revenue 464 696 950 1,105 1,624 Dividend 0.00 0.00 0.00 - 0.00 Dividend Yield (in %) 0.00 % 0.00 % 0.00 % 0.00 % 0.00 % EPS -0.06 0.34 0.98 1.49 2.14 P/E Ratio -554.50 102.57 35.60 23.44 16.30 EBIT -88 90 259 309 475 EBITDA 124 264 447 486 742 Net Profit 3 105 234 259 401 Net Profit Adjusted 12 89 200 259 434 Pre-Tax Profit -67 101 258 314 492 Pre-Tax Profit Reported -104 3",
+"nasdaq_cmp": [
 [
-"0q",
-"2026-12-31",
-121605830,
-6
+"2026-01-07",
+"LITINSKY JAMES",
+"S",
+[
+1
+],
+"없음"
 ],
 [
-"+1q",
-"2027-03-31",
-159531120,
-6
+"2026-01-08",
+"LITINSKY JAMES",
+"S",
+[
+1
+],
+"없음"
 ],
 [
-"0y",
-"2026-12-31",
-466620400,
-12
+"2026-01-20",
+"HOOPS ELLIOT D",
+"S",
+[
+1
+],
+"없음"
 ],
 [
-"+1y",
-"2027-12-31",
-716345300,
-13
+"2026-03-16",
+"HOOPS ELLIOT D",
+"S",
+[
+1
+],
+"없음"
+],
+[
+"2026-03-17",
+"CORBETT RYAN",
+"S",
+[
+1
+],
+"없음"
+],
+[
+"2026-04-17",
+"LITINSKY JAMES",
+"S",
+[
+1
+],
+"없음"
+],
+[
+"2026-04-20",
+"LITINSKY JAMES",
+"S",
+[
+1
+],
+"없음"
+],
+[
+"2026-05-08",
+"CORBETT RYAN",
+"S",
+[
+1
+],
+"없음"
+],
+[
+"2026-05-08",
+"HOOPS ELLIOT D",
+"S",
+[
+1
+],
+"없음"
+],
+[
+"2026-05-12",
+"LITINSKY JAMES",
+"S",
+[
+0
+],
+"없음"
+],
+[
+"2026-05-13",
+"LITINSKY JAMES",
+"S",
+[
+0
+],
+"없음"
+],
+[
+"2026-05-20",
+"ROSENTHAL MICH",
+"P",
+[
+0
+],
+"없음"
+],
+[
+"2026-05-27",
+"LITINSKY JAMES",
+"S",
+[
+0
+],
+"없음"
+],
+[
+"2026-05-28",
+"LITINSKY JAMES",
+"S",
+[
+0
+],
+"없음"
+],
+[
+"2026-05-29",
+"LITINSKY JAMES",
+"S",
+[
+0
+],
+"없음"
+],
+[
+"2026-06-03",
+"LITINSKY JAMES",
+"S",
+[
+0
+],
+"없음"
+],
+[
+"2026-06-09",
+"ROSENTHAL MICH",
+"P",
+[
+0
+],
+"없음"
+],
+[
+"2026-11-10",
+"ROSENTHAL MICH",
+"P",
+[
+0
+],
+[
+0
 ]
+],
+[
+"2026-11-10",
+"CORBETT RYAN",
+"P",
+[
+0
+],
+[
+0
 ]
-}
+],
+[
+"2026-11-10",
+"WEISENBURGER R",
+"P",
+[
+0
+],
+[
+0
+]
+],
+[
+"2026-11-11",
+"ROSENTHAL MICH",
+"P",
+[
+0
+],
+[
+0
+]
+],
+[
+"2026-11-16",
+"CORBETT RYAN",
+"P",
+[
+0
+],
+"없음"
+],
+[
+"2026-11-17",
+"CORBETT RYAN",
+"P",
+[
+0
+],
+"없음"
+]
+],
+"nasdaq_latest": "2026-11-11"
 },
 "px": {
 "2025-11-18": 58.51,
@@ -981,5 +1128,5 @@
 "title": "Chairman and CEO"
 }
 ],
-"updatedAt": "2026-11-18 12:14"
+"updatedAt": "2026-11-18 12:18"
 }
