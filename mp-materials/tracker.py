@@ -512,13 +512,12 @@ def collect_verify(cache, man):
     except Exception as e:
         out["bi_err"] = str(e)[:200]
     try:
-        m = nasdaq_plan_map()
-        cmp_ = []
-        for k in sorted({(norm(t["name"]), t["date"], t["code"]) for t in cache["trades"]}, key=lambda k: k[1]):
-            mine = sorted({t.get("plan", 0) for t in cache["trades"] if (norm(t["name"]), t["date"], t["code"]) == k})
-            cmp_.append([k[1], k[0][:14], k[2], mine, sorted(m[k]) if k in m else "없음"])
-        out["nasdaq_cmp"] = cmp_
-        out["nasdaq_latest"] = max(k[1] for k in m)
+        j = json.loads(http_get(NASDAQ_INS, NASDAQ_HDR, 25))
+        tb = ((j.get("data") or {}).get("transactionTable") or {})
+        rows = (tb.get("table") or {}).get("rows") or []
+        out["nq_n"] = len(rows)
+        out["nq_meta"] = {k: v for k, v in tb.items() if k != "table"}
+        out["nq_rows"] = [[r.get("lastDate"), r.get("insider"), r.get("transactionType"), r.get("ownType"), r.get("sharesTraded"), r.get("lastPrice")] for r in rows]
     except Exception as e:
         out["nasdaq_err"] = str(e)[:200]
     cache["probe"] = out
