@@ -94,37 +94,37 @@
 },
 "log": {
 "aux": {
-"at": "2026-11-18 12:18",
+"at": "2026-11-18 12:20",
 "msg": "dy_usd 11-18 $206.8, tb_usd 11-18 $857.8",
 "ok": true
 },
 "cons": {
-"at": "2026-11-18 12:18",
+"at": "2026-11-18 12:20",
 "msg": "팩트셋 27년 매출 696·EBITDA 264",
 "ok": true
 },
 "earn": {
-"at": "2026-11-18 12:18",
+"at": "2026-11-18 12:20",
 "msg": "26.3Q 확인됨(대조), 26.4Q 아직 없음",
 "ok": true
 },
 "fx": {
-"at": "2026-11-18 12:18",
+"at": "2026-11-18 12:20",
 "msg": "frankfurter 34일",
 "ok": true
 },
 "ndpr": {
-"at": "2026-11-18 12:18",
+"at": "2026-11-18 12:20",
 "msg": "2026-11-18 721,500 위안/톤, 가격 블록",
 "ok": true
 },
 "px": {
-"at": "2026-11-18 12:18",
+"at": "2026-11-18 12:20",
 "msg": "야후 65일, 최신 2026-11-17",
 "ok": true
 },
 "trades": {
-"at": "2026-11-18 12:18",
+"at": "2026-11-18 12:20",
 "msg": "오픈인사이더 17행 (기존과 겹침 17, 신규 0) · SEC 미사용: 신고서 목록(data.sec.gov): HTTP Error 403: Forbidden",
 "ok": true
 }
@@ -187,224 +187,812 @@
 ]
 },
 "bi_text": "ntained Hold $64 neutral 07/17/25 Deutsche Bank Maintained Hold $69 neutral 07/16/25 Capital Depesche Maintained Buy $64 gut 07/11/25 Capital Depesche Maintained Buy $55 gut 07/07/25 Jefferies &amp; Company Inc. Downgraded to Hold $33 neutral 06/17/25 Baird Patrick &amp; Co Maintained Buy $38 gut 06/06/25 Morgan Stanley Upgraded to Buy $34 gut 05/12/25 J.P. Morgan Maintained Hold $18 neutral 05/01/25 J.P. Morgan Maintained Hold $21 neutral 03/20/25 BMO Capital Markets Maintained Buy $29 gut 03/19/25 D.A. Davidson &amp; Co. Maintained Buy $32 gut 01/27/25 BMO Capital Markets Maintained Buy $22 gut MP Materials Estimates* in USD Yearly Quarterly &nbsp; 2026 2027 2028 2029 2030 Revenue 464 696 950 1,105 1,624 Dividend 0.00 0.00 0.00 - 0.00 Dividend Yield (in %) 0.00 % 0.00 % 0.00 % 0.00 % 0.00 % EPS -0.06 0.34 0.98 1.49 2.14 P/E Ratio -554.50 102.57 35.60 23.44 16.30 EBIT -88 90 259 309 475 EBITDA 124 264 447 486 742 Net Profit 3 105 234 259 401 Net Profit Adjusted 12 89 200 259 434 Pre-Tax Profit -67 101 258 314 492 Pre-Tax Profit Reported -104 3",
-"nasdaq_cmp": [
+"nq_meta": {
+"totalRecords": "111"
+},
+"nq_n": 100,
+"nq_rows": [
 [
-"2026-01-07",
-"LITINSKY JAMES",
-"S",
-[
-1
-],
-"없음"
-],
-[
-"2026-01-08",
-"LITINSKY JAMES",
-"S",
-[
-1
-],
-"없음"
-],
-[
-"2026-01-20",
-"HOOPS ELLIOT D",
-"S",
-[
-1
-],
-"없음"
-],
-[
-"2026-03-16",
-"HOOPS ELLIOT D",
-"S",
-[
-1
-],
-"없음"
-],
-[
-"2026-03-17",
+"11/16/2026",
 "CORBETT RYAN",
-"S",
-[
-1
-],
-"없음"
-],
-[
-"2026-04-17",
-"LITINSKY JAMES",
-"S",
-[
-1
-],
-"없음"
+"Buy",
+"Direct",
+"3,500",
+"$36.75"
 ],
 [
-"2026-04-20",
-"LITINSKY JAMES",
-"S",
-[
-1
+"11/11/2026",
+"ROSENTHAL MICHAEL STUART",
+"Buy",
+"Direct",
+"5,000",
+"$37.30"
 ],
-"없음"
-],
 [
-"2026-05-08",
+"11/10/2026",
 "CORBETT RYAN",
-"S",
-[
-1
-],
-"없음"
-],
-[
-"2026-05-08",
-"HOOPS ELLIOT D",
-"S",
-[
-1
-],
-"없음"
+"Buy",
+"Direct",
+"5,476",
+"$35.68"
 ],
 [
-"2026-05-12",
-"LITINSKY JAMES",
-"S",
-[
-0
-],
-"없음"
-],
-[
-"2026-05-13",
-"LITINSKY JAMES",
-"S",
-[
-0
-],
-"없음"
+"11/10/2026",
+"WEISENBURGER RANDALL J",
+"Buy",
+"Direct",
+"55,000",
+"$36.00"
 ],
 [
-"2026-05-20",
-"ROSENTHAL MICH",
-"P",
-[
-0
-],
-"없음"
-],
-[
-"2026-05-27",
-"LITINSKY JAMES",
-"S",
-[
-0
-],
-"없음"
+"11/10/2026",
+"ROSENTHAL MICHAEL STUART",
+"Buy",
+"Direct",
+"27,000",
+"$36.27"
 ],
 [
-"2026-05-28",
-"LITINSKY JAMES",
-"S",
-[
-0
-],
-"없음"
-],
-[
-"2026-05-29",
-"LITINSKY JAMES",
-"S",
-[
-0
-],
-"없음"
+"10/13/2026",
+"INFUSO DAVID GREGORY",
+"Disposition (Non Open Market)",
+"Direct",
+"338",
+"$42.43"
 ],
 [
-"2026-06-03",
-"LITINSKY JAMES",
-"S",
-[
-0
-],
-"없음"
-],
-[
-"2026-06-09",
-"ROSENTHAL MICH",
-"P",
-[
-0
-],
-"없음"
+"9/30/2026",
+"DUCKWORTH CONNIE K",
+"Acquisition (Non Open Market)",
+"Direct",
+"740",
+"$0.00"
 ],
 [
-"2026-11-10",
-"ROSENTHAL MICH",
-"P",
-[
-0
+"6/30/2026",
+"DUCKWORTH CONNIE K",
+"Acquisition (Non Open Market)",
+"Direct",
+"624",
+"$0.00"
 ],
 [
-0
-]
+"6/15/2026",
+"MYERS RICHARD B",
+"Option Execute",
+"Direct",
+"3,998",
+""
 ],
 [
-"2026-11-10",
+"6/15/2026",
+"LAVAN MARYANNE",
+"Option Execute",
+"Direct",
+"3,998",
+""
+],
+[
+"6/15/2026",
+"WEISENBURGER RANDALL J",
+"Option Execute",
+"Direct",
+"3,998",
+""
+],
+[
+"6/15/2026",
+"DUCKWORTH CONNIE K",
+"Option Execute",
+"Direct",
+"3,998",
+""
+],
+[
+"6/09/2026",
+"ROSENTHAL MICHAEL STUART",
+"Buy",
+"Indirect",
+"10,000",
+"$54.30"
+],
+[
+"6/03/2026",
+"LITINSKY JAMES H.",
+"Sell",
+"Indirect",
+"185,167",
+"$68.65"
+],
+[
+"5/29/2026",
+"LITINSKY JAMES H.",
+"Sell",
+"Indirect",
+"50,000",
+"$64.56"
+],
+[
+"5/28/2026",
+"LITINSKY JAMES H.",
+"Sell",
+"Indirect",
+"234,651",
+"$64.67"
+],
+[
+"5/27/2026",
+"LITINSKY JAMES H.",
+"Sell",
+"Indirect",
+"115,349",
+"$65.20"
+],
+[
+"5/20/2026",
+"ROSENTHAL MICHAEL STUART",
+"Buy",
+"Direct",
+"17,000",
+"$56.62"
+],
+[
+"5/13/2026",
+"LITINSKY JAMES H.",
+"Sell",
+"Indirect",
+"177,188",
+"$64.93"
+],
+[
+"5/12/2026",
+"LITINSKY JAMES H.",
+"Sell",
+"Indirect",
+"122,812",
+"$65.67"
+],
+[
+"5/08/2026",
 "CORBETT RYAN",
-"P",
-[
-0
+"Automatic Sell",
+"Direct",
+"20,000",
+"$75.00"
 ],
 [
-0
-]
+"5/08/2026",
+"HOOPS ELLIOT DEAN",
+"Automatic Sell",
+"Direct",
+"6,958",
+"$75.00"
 ],
 [
-"2026-11-10",
-"WEISENBURGER R",
-"P",
-[
-0
+"4/20/2026",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"259,179",
+"$64.03"
 ],
 [
-0
-]
+"4/17/2026",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"40,821",
+"$64.05"
 ],
 [
-"2026-11-11",
-"ROSENTHAL MICH",
-"P",
-[
-0
+"4/01/2026",
+"INFUSO DAVID GREGORY",
+"Disposition (Non Open Market)",
+"Direct",
+"804",
+"$48.41"
 ],
 [
-0
-]
+"3/31/2026",
+"DUCKWORTH CONNIE K",
+"Acquisition (Non Open Market)",
+"Direct",
+"725",
+"$0.00"
 ],
 [
-"2026-11-16",
+"3/17/2026",
 "CORBETT RYAN",
-"P",
-[
-0
+"Automatic Sell",
+"Direct",
+"46,000",
+"$60.00"
 ],
-"없음"
+[
+"3/16/2026",
+"HOOPS ELLIOT DEAN",
+"Automatic Sell",
+"Direct",
+"13,914",
+"$60.01"
 ],
 [
-"2026-11-17",
+"1/22/2026",
+"INFUSO DAVID GREGORY",
+"Disposition (Non Open Market)",
+"Direct",
+"1,198",
+"$68.37"
+],
+[
+"1/20/2026",
+"HOOPS ELLIOT DEAN",
+"Automatic Sell",
+"Direct",
+"7,823",
+"$68.21"
+],
+[
+"1/14/2026",
 "CORBETT RYAN",
-"P",
+"Disposition (Non Open Market)",
+"Direct",
+"3,511",
+"$69.30"
+],
 [
-0
+"1/14/2026",
+"INFUSO DAVID GREGORY",
+"Disposition (Non Open Market)",
+"Direct",
+"444",
+"$69.30"
 ],
-"없음"
+[
+"1/14/2026",
+"HOOPS ELLIOT DEAN",
+"Disposition (Non Open Market)",
+"Direct",
+"1,300",
+"$69.30"
+],
+[
+"1/13/2026",
+"LITINSKY JAMES H.",
+"Disposition (Non Open Market)",
+"Direct",
+"35,053",
+"$63.82"
+],
+[
+"1/13/2026",
+"ROSENTHAL MICHAEL STUART",
+"Disposition (Non Open Market)",
+"Direct",
+"9,083",
+"$63.82"
+],
+[
+"1/13/2026",
+"CORBETT RYAN",
+"Disposition (Non Open Market)",
+"Direct",
+"5,948",
+"$63.82"
+],
+[
+"1/13/2026",
+"INFUSO DAVID GREGORY",
+"Disposition (Non Open Market)",
+"Direct",
+"1,820",
+"$63.82"
+],
+[
+"1/13/2026",
+"HOOPS ELLIOT DEAN",
+"Disposition (Non Open Market)",
+"Direct",
+"3,769",
+"$63.82"
+],
+[
+"1/12/2026",
+"LITINSKY JAMES H.",
+"Acquisition (Non Open Market)",
+"Direct",
+"103,660",
+"$0.00"
+],
+[
+"1/12/2026",
+"LITINSKY JAMES H.",
+"Disposition (Non Open Market)",
+"Direct",
+"64,554",
+"$65.34"
+],
+[
+"1/12/2026",
+"ROSENTHAL MICHAEL STUART",
+"Acquisition (Non Open Market)",
+"Direct",
+"51,966",
+"$0.00"
+],
+[
+"1/12/2026",
+"ROSENTHAL MICHAEL STUART",
+"Disposition (Non Open Market)",
+"Direct",
+"10,619",
+"$65.34"
+],
+[
+"1/12/2026",
+"CORBETT RYAN",
+"Acquisition (Non Open Market)",
+"Direct",
+"47,163",
+"$0.00"
+],
+[
+"1/12/2026",
+"CORBETT RYAN",
+"Disposition (Non Open Market)",
+"Direct",
+"19,353",
+"$65.34"
+],
+[
+"1/12/2026",
+"INFUSO DAVID GREGORY",
+"Acquisition (Non Open Market)",
+"Direct",
+"5,195",
+"$0.00"
+],
+[
+"1/12/2026",
+"INFUSO DAVID GREGORY",
+"Disposition (Non Open Market)",
+"Direct",
+"581",
+"$65.34"
+],
+[
+"1/12/2026",
+"HOOPS ELLIOT DEAN",
+"Acquisition (Non Open Market)",
+"Direct",
+"31,664",
+"$0.00"
+],
+[
+"1/12/2026",
+"HOOPS ELLIOT DEAN",
+"Disposition (Non Open Market)",
+"Direct",
+"13,554",
+"$65.34"
+],
+[
+"1/08/2026",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"272,600",
+"$64.17"
+],
+[
+"1/07/2026",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"27,400",
+"$64.01"
+],
+[
+"12/31/2025",
+"LAVAN MARYANNE",
+"Acquisition (Non Open Market)",
+"Direct",
+"556",
+"$0.00"
+],
+[
+"12/31/2025",
+"DUCKWORTH CONNIE K",
+"Acquisition (Non Open Market)",
+"Direct",
+"593",
+"$0.00"
+],
+[
+"12/09/2025",
+"CORBETT RYAN",
+"Sell",
+"Direct",
+"38,146",
+"$60.00"
+],
+[
+"12/05/2025",
+"LITINSKY JAMES H.",
+"Sell",
+"Indirect",
+"385,000",
+"$62.79"
+],
+[
+"11/20/2025",
+"LITINSKY JAMES H.",
+"Sell",
+"Indirect",
+"248,411",
+"$63.72"
+],
+[
+"11/18/2025",
+"LITINSKY JAMES H.",
+"Disposition (Non Open Market)",
+"Direct",
+"78,700",
+"$58.51"
+],
+[
+"11/17/2025",
+"CORBETT RYAN",
+"Automatic Sell",
+"Direct",
+"20,000",
+"$57.72"
+],
+[
+"10/13/2025",
+"INFUSO DAVID GREGORY",
+"Acquisition (Non Open Market)",
+"Direct",
+"3,427",
+"$0.00"
+],
+[
+"9/30/2025",
+"LAVAN MARYANNE",
+"Acquisition (Non Open Market)",
+"Direct",
+"419",
+"$0.00"
+],
+[
+"9/30/2025",
+"DUCKWORTH CONNIE K",
+"Acquisition (Non Open Market)",
+"Direct",
+"447",
+"$0.00"
+],
+[
+"9/12/2025",
+"LITINSKY JAMES H.",
+"Disposition (Non Open Market)",
+"Indirect",
+"25,000",
+"$0.00"
+],
+[
+"8/29/2025",
+"ROSENTHAL MICHAEL STUART",
+"Sell",
+"Direct",
+"150,000",
+"$71.48"
+],
+[
+"8/01/2025",
+"HOOPS ELLIOT DEAN",
+"Automatic Sell",
+"Indirect",
+"6,337",
+"$60.22"
+],
+[
+"7/01/2025",
+"HOOPS ELLIOT DEAN",
+"Automatic Sell",
+"Indirect",
+"6,338",
+"$31.46"
+],
+[
+"6/30/2025",
+"DUCKWORTH CONNIE K",
+"Acquisition (Non Open Market)",
+"Direct",
+"901",
+"$0.00"
+],
+[
+"6/30/2025",
+"LAVAN MARYANNE",
+"Acquisition (Non Open Market)",
+"Direct",
+"845",
+"$0.00"
+],
+[
+"6/26/2025",
+"HOOPS ELLIOT DEAN",
+"Automatic Sell",
+"Direct",
+"5,523",
+"$36.37"
+],
+[
+"6/13/2025",
+"HOOPS ELLIOT DEAN",
+"Automatic Sell",
+"Indirect",
+"5,538",
+"$29.96"
+],
+[
+"6/12/2025",
+"HOOPS ELLIOT DEAN",
+"Automatic Sell",
+"Indirect",
+"800",
+"$29.95"
+],
+[
+"5/17/2025",
+"HOOPS ELLIOT DEAN",
+"Disposition (Non Open Market)",
+"Direct",
+"3,584",
+"$21.31"
+],
+[
+"4/14/2025",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"199,180",
+"$27.08"
+],
+[
+"3/31/2025",
+"LAVAN MARYANNE",
+"Acquisition (Non Open Market)",
+"Direct",
+"1,152",
+"$0.00"
+],
+[
+"3/31/2025",
+"DUCKWORTH CONNIE K",
+"Acquisition (Non Open Market)",
+"Direct",
+"1,229",
+"$0.00"
+],
+[
+"3/26/2025",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"18,519",
+"$27.00"
+],
+[
+"3/25/2025",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"396,293",
+"$27.03"
+],
+[
+"3/20/2025",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"95,621",
+"$27.04"
+],
+[
+"3/19/2025",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"161,175",
+"$26.94"
+],
+[
+"3/18/2025",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"639,294",
+"$26.71"
+],
+[
+"3/17/2025",
+"CORBETT RYAN",
+"Automatic Sell",
+"Direct",
+"15,000",
+"$27.00"
+],
+[
+"3/17/2025",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"489,918",
+"$26.77"
+],
+[
+"3/16/2025",
+"ROSENTHAL MICHAEL STUART",
+"Disposition (Non Open Market)",
+"Direct",
+"384",
+"$26.83"
+],
+[
+"3/16/2025",
+"CORBETT RYAN",
+"Disposition (Non Open Market)",
+"Direct",
+"288",
+"$26.83"
+],
+[
+"3/14/2025",
+"CORBETT RYAN",
+"Automatic Sell",
+"Direct",
+"60,000",
+"$25.00"
+],
+[
+"2/13/2025",
+"HOOPS ELLIOT DEAN",
+"Disposition (Non Open Market)",
+"Direct",
+"10,899",
+"$0.00"
+],
+[
+"2/13/2025",
+"HOOPS ELLIOT DEAN",
+"Acquisition (Non Open Market)",
+"Indirect",
+"10,899",
+"$0.00"
+],
+[
+"2/04/2025",
+"LITINSKY JAMES H.",
+"Automatic Sell",
+"Indirect",
+"386,223",
+"$24.01"
+],
+[
+"1/14/2025",
+"HOOPS ELLIOT DEAN",
+"Disposition (Non Open Market)",
+"Direct",
+"1,299",
+"$19.39"
+],
+[
+"1/14/2025",
+"CORBETT RYAN",
+"Disposition (Non Open Market)",
+"Direct",
+"3,778",
+"$19.39"
+],
+[
+"1/13/2025",
+"HOOPS ELLIOT DEAN",
+"Disposition (Non Open Market)",
+"Direct",
+"1,249",
+"$19.53"
+],
+[
+"1/13/2025",
+"HOOPS ELLIOT DEAN",
+"Acquisition (Non Open Market)",
+"Direct",
+"25,601",
+"$0.00"
+],
+[
+"1/13/2025",
+"CORBETT RYAN",
+"Disposition (Non Open Market)",
+"Direct",
+"1,793",
+"$19.53"
+],
+[
+"1/13/2025",
+"CORBETT RYAN",
+"Acquisition (Non Open Market)",
+"Direct",
+"43,522",
+"$0.00"
+],
+[
+"1/13/2025",
+"ROSENTHAL MICHAEL STUART",
+"Disposition (Non Open Market)",
+"Direct",
+"2,560",
+"$19.53"
+],
+[
+"1/13/2025",
+"ROSENTHAL MICHAEL STUART",
+"Acquisition (Non Open Market)",
+"Direct",
+"47,363",
+"$0.00"
+],
+[
+"1/13/2025",
+"LITINSKY JAMES H.",
+"Disposition (Non Open Market)",
+"Direct",
+"5,291",
+"$19.53"
+],
+[
+"1/13/2025",
+"LITINSKY JAMES H.",
+"Acquisition (Non Open Market)",
+"Direct",
+"119,047",
+"$0.00"
+],
+[
+"1/12/2025",
+"HOOPS ELLIOT DEAN",
+"Disposition (Non Open Market)",
+"Direct",
+"4,526",
+"$19.75"
+],
+[
+"1/12/2025",
+"CORBETT RYAN",
+"Disposition (Non Open Market)",
+"Direct",
+"7,872",
+"$19.75"
+],
+[
+"1/12/2025",
+"ROSENTHAL MICHAEL STUART",
+"Disposition (Non Open Market)",
+"Direct",
+"10,601",
+"$19.75"
+],
+[
+"1/12/2025",
+"LITINSKY JAMES H.",
+"Disposition (Non Open Market)",
+"Direct",
+"26,316",
+"$19.75"
 ]
-],
-"nasdaq_latest": "2026-11-11"
+]
 },
 "px": {
 "2025-11-18": 58.51,
@@ -1128,5 +1716,5 @@
 "title": "Chairman and CEO"
 }
 ],
-"updatedAt": "2026-11-18 12:18"
+"updatedAt": "2026-11-18 12:20"
 }
