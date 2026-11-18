@@ -399,6 +399,96 @@ def collect_trades(cache):
         return collect_openinsider(cache) + " · SEC 실패: %s" % str(e)[:80]
 
 
+def collect_probe(cache):
+    """임시: 공개 대체 출처가 러너에서 정상 응답하는지 확인 (결과는 cache["probe"]). 차단된 곳을 우회하지 않음."""
+    import urllib.error
+    out = {}
+    BR = {"User-Agent": UA, "Accept": "text/html,application/json,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.9",
+          "Accept-Encoding": "gzip"}
+
+    def txt(t):
+        return re.sub(r"\s+", " ", re.sub(r"<script.*?</script>|<style.*?</style>|<[^>]+>", " ", t, flags=re.S))
+
+    def around(t, pat, n=500, skip=0):
+        ms = list(re.finditer(pat, t))
+        if len(ms) <= skip:
+            return ""
+        i = ms[skip].start()
+        return t[max(0, i - 120):i + n]
+
+    def run(name, url, hdr, fn=None, timeout=25):
+        try:
+            t = http_get(url, hdr, timeout)
+            r = {"st": 200, "len": len(t)}
+            if fn:
+                try:
+                    r["x"] = fn(t)
+                except Exception as e:
+                    r["x"] = "parse err: %s" % e
+            out[name] = r
+            return t
+        except urllib.error.HTTPError as e:
+            try:
+                b = e.read()
+                if e.headers.get("Content-Encoding", "").lower() == "gzip":
+                    b = gzip.decompress(b)
+                b = txt(b.decode("utf-8", "replace"))[:260]
+            except Exception:
+                b = ""
+            out[name] = {"st": e.code, "body": b}
+        except Exception as e:
+            out[name] = {"st": "err", "body": str(e)[:200]}
+        return None
+
+    sub = "https://data.sec.gov/submissions/CIK%s.json" % CIK.zfill(10)
+    def f4n(t):
+        j = json.loads(t)
+        r = j["filings"]["recent"]
+        return "form4 %d, latest %s" % (sum(1 for f in r["form"] if f == "4"), next((d for f, d in zip(r["form"], r["filingDate"]) if f == "4"), ""))
+    run("sec_data_ctrl", sub, {"User-Agent": SEC_UA, "Accept": "application/json, text/xml, */*", "Accept-Encoding": "gzip, deflate"}, f4n)
+
+    NQ = {"User-Agent": UA, "Accept": "application/json, text/plain, */*", "Origin": "https://www.nasdaq.com",
+          "Referer": "https://www.nasdaq.com/", "Accept-Language": "en-US,en;q=0.9", "Accept-Encoding": "gzip"}
+    def nq(t):
+        j = json.loads(t)
+        rows = (((j.get("data") or {}).get("transactionTable") or {}).get("table") or {}).get("rows") or []
+        return {"n": len(rows), "types": sorted({r.get("transactionType", "") for r in rows}), "first": rows[:2]}
+    run("nasdaq_ins", "https://api.nasdaq.com/api/company/MP/insider-trades?limit=40&type=ALL&sortColumn=lastDate&sortOrder=DESC", NQ, nq)
+    run("massive", "https://massive.com/quote/mp/insider-trading", BR,
+        lambda t: {"n10b5": t.count("10b5-1"), "snip": around(txt(t), r"Pre-arranged", 500, 1)})
+    run("capedge", "https://capedge.com/person/1831686/ryan-corbett", BR,
+        lambda t: {"n10b5": t.count("10b5-1"), "snip": around(txt(t), r"10b5-1", 500)})
+    run("secform4", "https://www.secform4.com/insider-trading/%s.htm" % CIK, BR,
+        lambda t: {"n10b5": t.count("10b5"), "snip": around(txt(t), r"2026-11-1\d", 300)})
+
+    run("bi", "https://markets.businessinsider.com/stocks/mp-stock", BR,
+        lambda t: {"nE": t.count("EBITDA"), "s1": around(txt(t), r"EBITDA", 500), "s2": around(txt(t), r"Estimates", 400, 1)})
+    run("finanzen", "https://www.finanzen.net/schaetzungen/mp_materials", BR,
+        lambda t: {"nE": t.count("EBITDA"), "s1": around(txt(t), r"EBITDA", 500), "s2": around(txt(t), r"Umsatzerl", 400)})
+    run("stockanalysis", "https://stockanalysis.com/stocks/mp/forecast/", BR,
+        lambda t: {"nE": t.lower().count("ebitda"), "s1": around(txt(t), r"Revenue This Year|Revenue Forecast", 400)})
+    # 야후 earningsTrend (매출 추정만 있음)
+    try:
+        import http.cookiejar
+        cj = http.cookiejar.CookieJar()
+        op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+        op.addheaders = [("User-Agent", UA), ("Accept", "*/*")]
+        try:
+            op.open("https://fc.yahoo.com", timeout=20).read()
+        except Exception:
+            pass
+        crumb = op.open("https://query2.finance.yahoo.com/v1/test/getcrumb", timeout=20).read().decode()
+        j = json.loads(op.open("https://query2.finance.yahoo.com/v10/finance/quoteSummary/MP?modules=earningsTrend&crumb=" + urllib.parse.quote(crumb), timeout=20).read().decode())
+        tr = j["quoteSummary"]["result"][0]["earningsTrend"]["trend"]
+        out["yahoo_trend"] = {"st": 200, "x": [(x.get("period"), x.get("endDate"), (x.get("revenueEstimate") or {}).get("avg", {}).get("raw"),
+                                                  (x.get("revenueEstimate") or {}).get("numberOfAnalysts", {}).get("raw")) for x in tr]}
+    except Exception as e:
+        out["yahoo_trend"] = {"st": "err", "body": str(e)[:200]}
+    cache["probe"] = out
+    return "probe %d건" % len(out)
+
+
+
 def collect_all(cache, man):
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
     for name, fn in (("ndpr", collect_smm), ("fx", collect_fx), ("px", collect_px), ("trades", collect_trades),
@@ -411,6 +501,10 @@ def collect_all(cache, man):
             prev = cache["log"].get(name, {})
             cache["log"][name] = {"ok": False, "at": now, "msg": str(e)[:300], "lastOk": prev.get("at") if prev.get("ok") else prev.get("lastOk")}
             print("  [fail] %-7s %s" % (name, e))
+    try:
+        print("  [probe] " + collect_probe(cache))
+    except Exception as e:
+        cache["probe"] = {"error": str(e)[:300]}
 
 
 # ============================================================
