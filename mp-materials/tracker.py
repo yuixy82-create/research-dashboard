@@ -5,16 +5,18 @@
   cache.json   자동 수집 누적 (NdPr 시세·환율·주가·내부자 거래)
   index.html   이 스크립트가 매번 새로 씀
 
-자동 수집 4종
+자동 수집 7종
   ndpr   SMM(metal.com) Pr-Nd 산화물 일간 평균가, 위안/톤(부가세 13% 포함, 중국 도착도)
   fx     달러/위안 (frankfurter → 야후 CNY=X)
   px     MP 종가 (야후 → 나스닥)
-  trades SEC EDGAR Form 4 (내부자 매수 P·매도 S). SEC가 막으면 오픈인사이더로 대신 받음
+  trades SEC EDGAR Form 4 (내부자 매수 P·매도 S). SEC가 막으면 오픈인사이더로 대신 받고,
+         사전계획(10b5-1) 여부는 나스닥 내부자 표(Automatic Sell/Buy)로 채움
   dy_usd·tb_usd  SMM 달러 호가(부가세 제외), 최신 한 점씩
   earn   다음 분기 실적 보도자료가 올라왔는지 확인 → 화면 맨 위 알림
+  cons   컨센 매출·EBITDA (팩트셋 집계, 비즈니스인사이더 마켓 화면). 값이 바뀐 날만 cache["consensus"]["hist"]에 추가
 
-분기 실적·미중 타임라인·케파 표·추정치(컨센·바바리안)는 manual.json을 손으로 고침.
-컨센 출처 마켓스크리너는 깃허브 러너를 막아 자동 수집 불가(26.11.18 실측).
+분기 실적·미중 타임라인·케파 표·바바리안 추정은 manual.json을 손으로 고침.
+마켓스크리너(S&P 집계)는 깃허브 러너를 막아 쓰지 않음(26.11.18 실측).
 수집 실패, 며칠째 갱신 안 됨, 새 실적 발표, 날짜 지난 일정은 화면 맨 위 빨간 줄로 표시됨
 
 실행:  python mp-materials/tracker.py            수집 후 빌드
@@ -294,7 +296,7 @@ def collect_openinsider(cache, since="2026-01-01"):
                            "name": cells[idx - 2], "title": cells[idx - 1],
                            "shares": abs(int(cells[idx + 2].replace(",", "").replace("+", ""))),
                            "price": float(cells[idx + 1].replace("$", "").replace(",", "")),
-                           "owned": int(cells[idx + 3].replace(",", "") or 0), "di": "", "plan": 0, "src": "oi"})
+                           "owned": int(cells[idx + 3].replace(",", "") or 0), "di": "", "plan": 0, "pq": 1, "src": "oi"})
         except ValueError:
             continue
     if not parsed:
@@ -392,107 +394,141 @@ def collect_earnings(cache, man):
     return "%s 확인됨(대조), %s 아직 없음" % (last, nxt)
 
 
+NASDAQ_HDR = {"User-Agent": UA, "Accept": "application/json, text/plain, */*", "Origin": "https://www.nasdaq.com",
+              "Referer": "https://www.nasdaq.com/", "Accept-Language": "en-US,en;q=0.9", "Accept-Encoding": "gzip"}
+NASDAQ_INS = "https://api.nasdaq.com/api/company/MP/insider-trades?limit=100&type=ALL&sortColumn=lastDate&sortOrder=DESC"
+
+
+def nasdaq_plan_map():
+    """나스닥 내부자 거래 표: (이름, 거래일, 방향) → 사전계획 여부. 'Automatic Sell/Buy'가 10b5-1 계획 거래."""
+    j = json.loads(http_get(NASDAQ_INS, NASDAQ_HDR, 25))
+    rows = (((j.get("data") or {}).get("transactionTable") or {}).get("table") or {}).get("rows") or []
+    m = {}
+    for r in rows:
+        ty = r.get("transactionType", "")
+        code = "S" if ty.endswith("Sell") else "P" if ty.endswith("Buy") else None
+        mm = re.match(r"(\d{2})/(\d{2})/(\d{4})", r.get("lastDate", ""))
+        if not code or not mm:
+            continue
+        k = (norm(r.get("insider", "")), "%s-%s-%s" % (mm.group(3), mm.group(1), mm.group(2)), code)
+        m.setdefault(k, set()).add(1 if ty.startswith("Automatic") else 0)
+    if not m:
+        raise RuntimeError("나스닥 내부자 표가 비어 있음")
+    return m
+
+
+def enrich_plan(cache):
+    """SEC 신고서를 직접 못 읽은 거래(pq=1)의 사전계획 여부를 나스닥 표로 채움."""
+    pend = [t for t in cache["trades"] if t.get("pq")]
+    if not pend:
+        return ""
+    m = nasdaq_plan_map()
+    done = 0
+    for t in pend:
+        v = m.get((norm(t["name"]), t["date"], t["code"]))
+        if v and len(v) == 1:               # 같은 날 계획·비계획이 섞여 있으면 판단하지 않음
+            t["plan"] = v.pop()
+            t["psrc"] = "nasdaq"
+            t.pop("pq", None)
+            done += 1
+    return "사전계획 여부 확인 %d건, 대기 %d건(나스닥)" % (done, len(pend) - done)
+
+
 def collect_trades(cache):
     try:
-        return "SEC " + collect_form4(cache)
+        msg = "SEC " + collect_form4(cache)
     except Exception as e:
-        return collect_openinsider(cache) + " · SEC 실패: %s" % str(e)[:80]
-
-
-def collect_probe(cache):
-    """임시: 공개 대체 출처가 러너에서 정상 응답하는지 확인 (결과는 cache["probe"]). 차단된 곳을 우회하지 않음."""
-    import urllib.error
-    out = {}
-    BR = {"User-Agent": UA, "Accept": "text/html,application/json,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.9",
-          "Accept-Encoding": "gzip"}
-
-    def txt(t):
-        return re.sub(r"\s+", " ", re.sub(r"<script.*?</script>|<style.*?</style>|<[^>]+>", " ", t, flags=re.S))
-
-    def around(t, pat, n=500, skip=0):
-        ms = list(re.finditer(pat, t))
-        if len(ms) <= skip:
-            return ""
-        i = ms[skip].start()
-        return t[max(0, i - 120):i + n]
-
-    def run(name, url, hdr, fn=None, timeout=25):
-        try:
-            t = http_get(url, hdr, timeout)
-            r = {"st": 200, "len": len(t)}
-            if fn:
-                try:
-                    r["x"] = fn(t)
-                except Exception as e:
-                    r["x"] = "parse err: %s" % e
-            out[name] = r
-            return t
-        except urllib.error.HTTPError as e:
-            try:
-                b = e.read()
-                if e.headers.get("Content-Encoding", "").lower() == "gzip":
-                    b = gzip.decompress(b)
-                b = txt(b.decode("utf-8", "replace"))[:260]
-            except Exception:
-                b = ""
-            out[name] = {"st": e.code, "body": b}
-        except Exception as e:
-            out[name] = {"st": "err", "body": str(e)[:200]}
-        return None
-
-    sub = "https://data.sec.gov/submissions/CIK%s.json" % CIK.zfill(10)
-    def f4n(t):
-        j = json.loads(t)
-        r = j["filings"]["recent"]
-        return "form4 %d, latest %s" % (sum(1 for f in r["form"] if f == "4"), next((d for f, d in zip(r["form"], r["filingDate"]) if f == "4"), ""))
-    run("sec_data_ctrl", sub, {"User-Agent": SEC_UA, "Accept": "application/json, text/xml, */*", "Accept-Encoding": "gzip, deflate"}, f4n)
-
-    NQ = {"User-Agent": UA, "Accept": "application/json, text/plain, */*", "Origin": "https://www.nasdaq.com",
-          "Referer": "https://www.nasdaq.com/", "Accept-Language": "en-US,en;q=0.9", "Accept-Encoding": "gzip"}
-    def nq(t):
-        j = json.loads(t)
-        rows = (((j.get("data") or {}).get("transactionTable") or {}).get("table") or {}).get("rows") or []
-        return {"n": len(rows), "types": sorted({r.get("transactionType", "") for r in rows}), "first": rows[:2]}
-    run("nasdaq_ins", "https://api.nasdaq.com/api/company/MP/insider-trades?limit=40&type=ALL&sortColumn=lastDate&sortOrder=DESC", NQ, nq)
-    run("massive", "https://massive.com/quote/mp/insider-trading", BR,
-        lambda t: {"n10b5": t.count("10b5-1"), "snip": around(txt(t), r"Pre-arranged", 500, 1)})
-    run("capedge", "https://capedge.com/person/1831686/ryan-corbett", BR,
-        lambda t: {"n10b5": t.count("10b5-1"), "snip": around(txt(t), r"10b5-1", 500)})
-    run("secform4", "https://www.secform4.com/insider-trading/%s.htm" % CIK, BR,
-        lambda t: {"n10b5": t.count("10b5"), "snip": around(txt(t), r"2026-11-1\d", 300)})
-
-    run("bi", "https://markets.businessinsider.com/stocks/mp-stock", BR,
-        lambda t: {"nE": t.count("EBITDA"), "s1": around(txt(t), r"EBITDA", 500), "s2": around(txt(t), r"Estimates", 400, 1)})
-    run("finanzen", "https://www.finanzen.net/schaetzungen/mp_materials", BR,
-        lambda t: {"nE": t.count("EBITDA"), "s1": around(txt(t), r"EBITDA", 500), "s2": around(txt(t), r"Umsatzerl", 400)})
-    run("stockanalysis", "https://stockanalysis.com/stocks/mp/forecast/", BR,
-        lambda t: {"nE": t.lower().count("ebitda"), "s1": around(txt(t), r"Revenue This Year|Revenue Forecast", 400)})
-    # 야후 earningsTrend (매출 추정만 있음)
+        msg = collect_openinsider(cache) + " · SEC 미사용: %s" % str(e)[:60]
     try:
-        import http.cookiejar
-        cj = http.cookiejar.CookieJar()
-        op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
-        op.addheaders = [("User-Agent", UA), ("Accept", "*/*")]
-        try:
-            op.open("https://fc.yahoo.com", timeout=20).read()
-        except Exception:
-            pass
-        crumb = op.open("https://query2.finance.yahoo.com/v1/test/getcrumb", timeout=20).read().decode()
-        j = json.loads(op.open("https://query2.finance.yahoo.com/v10/finance/quoteSummary/MP?modules=earningsTrend&crumb=" + urllib.parse.quote(crumb), timeout=20).read().decode())
-        tr = j["quoteSummary"]["result"][0]["earningsTrend"]["trend"]
-        out["yahoo_trend"] = {"st": 200, "x": [(x.get("period"), x.get("endDate"), (x.get("revenueEstimate") or {}).get("avg", {}).get("raw"),
-                                                  (x.get("revenueEstimate") or {}).get("numberOfAnalysts", {}).get("raw")) for x in tr]}
+        x = enrich_plan(cache)
+        if x:
+            msg += " · " + x
     except Exception as e:
-        out["yahoo_trend"] = {"st": "err", "body": str(e)[:200]}
-    cache["probe"] = out
-    return "probe %d건" % len(out)
+        msg += " · 사전계획 확인 실패: %s" % str(e)[:60]
+    return msg
 
+
+BI_URL = "https://markets.businessinsider.com/stocks/mp-stock"
+_NUM = r"(?:-?\d[\d,]*(?:\.\d+)?|-)"
+
+
+def _plain(t):
+    return re.sub(r"\s+", " ", re.sub(r"<script.*?</script>|<style.*?</style>|<[^>]+>", " ", t, flags=re.S))
+
+
+def parse_bi(t):
+    """비즈니스인사이더 마켓 종목 화면의 추정치 표(팩트셋 집계, 백만 달러)에서 연도별 매출·EBITDA를 읽음."""
+    x = _plain(t)
+    m = re.search(r"(?<![A-Za-z])EBITDA((?:\s+%s){3,7})(?=\s+[A-Za-z(])" % _NUM, x)
+    if not m:
+        raise RuntimeError("추정치 표의 EBITDA 줄을 못 찾음")
+    eb = m.group(1).split()
+    n = len(eb)
+    head = x[max(0, m.start() - 2500):m.start()]
+    rv = list(re.finditer(r"(?<![A-Za-z])Revenue((?:\s+%s){%d})(?=\s+[A-Za-z(])" % (_NUM, n), head))
+    ys = list(re.finditer(r"((?:20\d\d\s+){%d}20\d\d)(?!\d)" % (n - 1), head[:rv[-1].start()] if rv else head))
+    if not rv or not ys:
+        raise RuntimeError("추정치 표의 매출 줄 또는 연도 줄을 못 찾음")
+    years = ys[-1].group(1).split()
+    if [int(y) for y in years] != list(range(int(years[0]), int(years[0]) + n)):
+        raise RuntimeError("연도 줄이 이상함: %s" % " ".join(years))
+    f = lambda v: None if v == "-" else float(v.replace(",", ""))
+    rev = {y: f(v) for y, v in zip(years, rv[-1].group(1).split())}
+    ebd = {y: f(v) for y, v in zip(years, eb)}
+    return {y: (rev[y], ebd[y]) for y in years if rev[y] is not None and ebd[y] is not None}
+
+
+def collect_consensus(cache, man):
+    """⑥ 컨센 자동 수집. 값이 바뀐 날만 hist에 한 줄 추가하고, 확인한 날짜는 checked에 남김."""
+    need = ["2026", "2027", "2028"]
+    got = parse_bi(http_get(BI_URL, {"User-Agent": UA, "Accept": "text/html,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.9",
+                                     "Accept-Encoding": "gzip"}, 30))
+    if any(y not in got for y in need):
+        raise RuntimeError("추정치 표에 %s 중 빠진 연도가 있음: %s" % ("·".join(need), sorted(got)))
+    cur = {"rev": {y: got[y][0] for y in need}, "ebitda": {y: got[y][1] for y in need}}
+    cc = cache.setdefault("consensus", {"hist": []})
+    last = cc["hist"][-1] if cc["hist"] else next((e for e in man["estimates"] if e["id"] == "consensus"), None)
+    if last:                                 # 표를 잘못 읽었을 때 그대로 싣지 않도록: 직전 값 대비 매출 ±40% 넘으면 보류
+        for y in need:
+            if not 0.6 <= cur["rev"][y] / last["rev"][y] <= 1.4 or cur["ebitda"][y] <= 0 or cur["ebitda"][y] >= cur["rev"][y]:
+                raise RuntimeError("값이 직전과 크게 다름(%s년 매출 %s, EBITDA %s): 확인 필요" % (y, cur["rev"][y], cur["ebitda"][y]))
+    today = today_kst().isoformat()
+    changed = not cc["hist"] or any(abs(cc["hist"][-1][k][y] - cur[k][y]) >= 0.5 for k in ("rev", "ebitda") for y in need)
+    if changed:
+        cc["hist"].append({"d": today, "rev": cur["rev"], "ebitda": cur["ebitda"]})
+    cc["checked"] = today
+    return "팩트셋 27년 매출 %.0f·EBITDA %.0f%s" % (cur["rev"]["2027"], cur["ebitda"]["2027"], " (변경)" if changed and len(cc["hist"]) > 1 else "")
+
+
+def collect_verify(cache, man):
+    """임시: 새 수집기 검증용 기록 (다음 커밋에서 삭제)."""
+    out = {}
+    try:
+        t = http_get(BI_URL, {"User-Agent": UA, "Accept": "text/html,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.9", "Accept-Encoding": "gzip"}, 30)
+        x = _plain(t)
+        i = x.find(" EBITDA ")
+        out["bi_text"] = x[max(0, i - 900):i + 160]
+        out["bi_parsed"] = parse_bi(t)
+    except Exception as e:
+        out["bi_err"] = str(e)[:200]
+    try:
+        m = nasdaq_plan_map()
+        cmp_ = []
+        for k in sorted({(norm(t["name"]), t["date"], t["code"]) for t in cache["trades"]}, key=lambda k: k[1]):
+            mine = sorted({t.get("plan", 0) for t in cache["trades"] if (norm(t["name"]), t["date"], t["code"]) == k})
+            cmp_.append([k[1], k[0][:14], k[2], mine, sorted(m[k]) if k in m else "없음"])
+        out["nasdaq_cmp"] = cmp_
+        out["nasdaq_latest"] = max(k[1] for k in m)
+    except Exception as e:
+        out["nasdaq_err"] = str(e)[:200]
+    cache["probe"] = out
 
 
 def collect_all(cache, man):
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
     for name, fn in (("ndpr", collect_smm), ("fx", collect_fx), ("px", collect_px), ("trades", collect_trades),
-                     ("aux", collect_smm_aux), ("earn", lambda c: collect_earnings(c, man))):
+                     ("aux", collect_smm_aux), ("earn", lambda c: collect_earnings(c, man)),
+                     ("cons", lambda c: collect_consensus(c, man))):
         try:
             msg = fn(cache)
             cache["log"][name] = {"ok": True, "at": now, "msg": msg}
@@ -502,7 +538,7 @@ def collect_all(cache, man):
             cache["log"][name] = {"ok": False, "at": now, "msg": str(e)[:300], "lastOk": prev.get("at") if prev.get("ok") else prev.get("lastOk")}
             print("  [fail] %-7s %s" % (name, e))
     try:
-        print("  [probe] " + collect_probe(cache))
+        collect_verify(cache, man)
     except Exception as e:
         cache["probe"] = {"error": str(e)[:300]}
 
@@ -728,11 +764,12 @@ def group_trades(trades):
     for t in trades:
         k = (t["date"], norm(t["name"]), t["code"])
         x = g.setdefault(k, {"date": t["date"], "name": t["name"], "title": t["title"], "code": t["code"],
-                             "shares": 0, "amt": 0.0, "owned": t["owned"], "plan": 0, "filed": t["filed"]})
+                             "shares": 0, "amt": 0.0, "owned": t["owned"], "plan": 0, "pq": 0, "filed": t["filed"]})
         x["shares"] += t["shares"]
         x["amt"] += t["shares"] * t["price"]
         x["owned"] = max(x["owned"], t["owned"]) if t["code"] == "P" else min(x["owned"], t["owned"])
         x["plan"] = max(x["plan"], t.get("plan", 0))
+        x["pq"] = max(x["pq"], t.get("pq", 0))
         x["filed"] = max(x["filed"], t["filed"])
     return sorted(g.values(), key=lambda x: (x["date"], x["filed"]), reverse=True)
 
@@ -925,7 +962,8 @@ def build_html(cache, man):
         return ('<tr><td style="white-space:nowrap">%s</td><td>%s</td><td><span class="tag %s">%s</span>%s</td>'
                 '<td class="num">%s</td><td class="num">$%.2f</td><td class="num">%s</td><td class="num">%s</td></tr>'
                 % (kd(g["date"]), nm(g["name"]), "buy" if g["code"] == "P" else "sell", "매수" if g["code"] == "P" else "매도",
-                   '<span class="tag plan">사전계획</span>' if g["plan"] else "", format(g["shares"], ","), g["amt"] / g["shares"],
+                   '<span class="tag plan">사전계획</span>' if g["plan"] else ('<span class="tag plan">계획 여부 확인 중</span>' if g["pq"] and g["code"] == "S" else ""),
+                   format(g["shares"], ","), g["amt"] / g["shares"],
                    money(g["amt"]), format(g["owned"], ",")))
     thead = '<thead><tr><th>거래일</th><th>이름</th><th>구분</th><th class="num">주식 수</th><th class="num">평균 단가</th><th class="num">금액</th><th class="num">거래 후 보유</th></tr></thead>'
     trs = "".join(trow(g) for g in gt[:12])
@@ -938,10 +976,15 @@ def build_html(cache, man):
     ests = [dict(e) for e in man["estimates"]]
     years = ["2026", "2027", "2028"]
     cons_note = ""
+    cc = cache.get("consensus") or {}
+    if cc.get("hist"):                     # 자동 수집한 컨센이 있으면 manual.json 값 대신 사용
+        for e in ests:
+            if e["id"] == "consensus":
+                e.update(name="컨센 (팩트셋)", url=BI_URL, hist=cc["hist"], checked=cc.get("checked"))
     for e in ests:
-        ch_ = e.get("hist") or []          # 추정치가 바뀔 때마다 manual.json에 {d, rev, ebitda}를 한 줄씩 추가
+        ch_ = e.get("hist") or []          # 수동 추정치는 바뀔 때마다 manual.json에 {d, rev, ebitda}를 한 줄씩 추가
         if ch_:
-            e.update(rev=ch_[-1]["rev"], ebitda=ch_[-1]["ebitda"], asOf=ch_[-1]["d"])
+            e.update(rev=ch_[-1]["rev"], ebitda=ch_[-1]["ebitda"], asOf=e.get("checked") or ch_[-1]["d"])
             if len(ch_) >= 2 and (today - date.fromisoformat(ch_[-1]["d"])).days <= 45:
                 a_, b_ = ch_[-2], ch_[-1]
                 cons_note = "%s 변경 (%s): " % (e["name"].split(" (")[0], kd(b_["d"])) + ", ".join(
@@ -1034,7 +1077,7 @@ def build_html(cache, man):
         % (mcap / 100, ev / 100, ev / cons["ebitda"]["2027"], ev / barb["ebitda"]["2027"]),
     ]
     log = cache.get("log", {})
-    lab = {"ndpr": "NdPr 시세", "fx": "환율", "px": "주가", "trades": "내부자 거래", "aux": "Dy·Tb", "earn": "실적 발표 감지"}
+    lab = {"ndpr": "NdPr 시세", "fx": "환율", "px": "주가", "trades": "내부자 거래", "aux": "Dy·Tb", "earn": "실적 발표 감지", "cons": "컨센"}
     warn = []
     er = (cache.get("alerts") or {}).get("earnings")
     if er and er["q"] not in [q["q"] for q in qs]:
@@ -1222,7 +1265,7 @@ def main():
     if "--no-fetch" not in sys.argv:
         print("수집 시작")
         collect_all(cache, man)
-        cache["log"] = {k: v for k, v in cache["log"].items() if k in ("ndpr", "fx", "px", "trades", "aux", "earn")}
+        cache["log"] = {k: v for k, v in cache["log"].items() if k in ("ndpr", "fx", "px", "trades", "aux", "earn", "cons")}
         cache["updatedAt"] = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
         save(CACHE, cache)
     with open(OUT, "w", encoding="utf-8") as f:
