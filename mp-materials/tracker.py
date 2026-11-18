@@ -34,7 +34,8 @@ MANUAL = os.path.join(ROOT, "manual.json")
 KST = timezone(timedelta(hours=9))
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36")
-SEC_UA = "research-dashboard yuixy82-create@users.noreply.github.com"
+# SEC는 연락처를 밝히지 않은 자동 요청을 403으로 막음. 저장소 시크릿 SEC_UA("이름 이메일" 형식)가 있으면 그것을 씀
+SEC_UA = os.environ.get("SEC_UA") or "research-dashboard mp-tracker (github.com/yuixy82-create/research-dashboard)"
 CIK = "1801368"
 SMM_URL = "https://www.metal.com/rare-earth-oxides/201102250162"
 READER = "https://r.jina.ai/"
@@ -186,8 +187,11 @@ def trade_key(t):
 
 
 def collect_form4(cache, since="2026-01-01"):
-    hdr = {"User-Agent": SEC_UA, "Accept-Encoding": "gzip"}
-    j = json.loads(http_get("https://data.sec.gov/submissions/CIK%s.json" % CIK.zfill(10), hdr))
+    hdr = {"User-Agent": SEC_UA, "Accept": "application/json, text/xml, */*", "Accept-Encoding": "gzip"}
+    try:
+        j = json.loads(http_get("https://data.sec.gov/submissions/CIK%s.json" % CIK.zfill(10), hdr))
+    except Exception as e:
+        raise RuntimeError("신고서 목록(data.sec.gov): %s" % e)
     rec = j["filings"]["recent"]
     seen = set(cache.get("f4_seen", []))
     keys = {trade_key(t) for t in cache["trades"]}
