@@ -500,6 +500,33 @@ def collect_consensus(cache, man):
     return "팩트셋 27년 매출 %.0f·EBITDA %.0f%s" % (cur["rev"]["2027"], cur["ebitda"]["2027"], " (변경)" if changed and len(cc["hist"]) > 1 else "")
 
 
+def _rows(html):
+    """HTML → 줄 단위 글. 표의 행은 한 줄, 칸은 ' | '로 구분."""
+    t = re.sub(r"<script.*?</script>|<style.*?</style>", " ", html, flags=re.S | re.I)
+    t = re.sub(r"</tr>|<br\s*/?>|</p>|</h\d>|</li>|</div>", "\n", t, flags=re.I)
+    t = re.sub(r"</t[dh]>", " | ", t, flags=re.I)
+    t = H.unescape(re.sub(r"<[^>]+>", "", t)).replace("\xa0", " ")
+    return "\n".join(x for x in (re.sub(r"[ \t\r\f\v]+", " ", ln).strip() for ln in t.split("\n")) if x and x.strip("| "))
+
+
+def collect_dump(cache, man):
+    """임시: 실적 보도자료 원문을 받아 둠 (표 읽는 코드 개발용, 다음 커밋에서 삭제)."""
+    out = {}
+    for q in man["quarters"]:
+        url = _er(q["q"])[0]
+        try:
+            t = http_get(url, {"User-Agent": UA, "Accept": "text/html,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.9", "Accept-Encoding": "gzip"}, 30)
+            out[q["q"]] = {"via": "direct", "len": len(t), "text": _rows(t)[:150000]}
+        except Exception as e:
+            try:
+                t = http_get(READER + url, {"Accept": "text/plain"}, 60)
+                out[q["q"]] = {"via": "reader", "err": str(e)[:80], "len": len(t), "text": t[:150000]}
+            except Exception as e2:
+                out[q["q"]] = {"via": "fail", "err": (str(e) + " / " + str(e2))[:160]}
+        time.sleep(1)
+    cache["probe"] = out
+
+
 def collect_all(cache, man):
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
     for name, fn in (("ndpr", collect_smm), ("fx", collect_fx), ("px", collect_px), ("trades", collect_trades),
@@ -513,6 +540,10 @@ def collect_all(cache, man):
             prev = cache["log"].get(name, {})
             cache["log"][name] = {"ok": False, "at": now, "msg": str(e)[:300], "lastOk": prev.get("at") if prev.get("ok") else prev.get("lastOk")}
             print("  [fail] %-7s %s" % (name, e))
+    try:
+        collect_dump(cache, man)
+    except Exception as e:
+        cache["probe"] = {"error": str(e)[:300]}
 
 
 # ============================================================
@@ -1238,7 +1269,6 @@ def main():
         print("수집 시작")
         collect_all(cache, man)
         cache["log"] = {k: v for k, v in cache["log"].items() if k in ("ndpr", "fx", "px", "trades", "aux", "earn", "cons")}
-        cache.pop("probe", None)
         cache["updatedAt"] = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
         save(CACHE, cache)
     with open(OUT, "w", encoding="utf-8") as f:
