@@ -630,6 +630,8 @@ table.data td a{color:inherit}
 .note{font-size:11px;color:var(--faint);margin-top:8px;line-height:1.6;border-top:1px solid #EFEFEF;padding-top:7px}
 .note a,.lk a{color:var(--muted)}
 .lk{font-size:11px;color:var(--faint);margin-top:3px}
+ul.pts{font-size:13.5px;line-height:1.75;margin:0 0 12px;padding-left:18px}
+ul.pts li{margin-bottom:4px}
 .tl{border-left:2px solid var(--fill);margin:4px 0 0 4px;padding:0 0 0 16px}
 .tl .it{margin-bottom:16px;position:relative}
 .tl .it:before{content:"";position:absolute;left:-22px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--primary)}
@@ -876,9 +878,10 @@ def build_html(cache, man):
 <div class="card-sec">
 %(ch1)s
 <div class="legend"><i style="background:#4A5228"></i>중간값 (MP 판매가 근사)<i style="background:#B5B5B5"></i>SMM 시세 달러 환산 (부가세 13%% 포함)<i style="background:#2E97A7"></i>부가세 제외<i style="background:#fff;border:2px solid #D9A62E"></i>MP 분기 실현가 (분기 말 위치)</div>
-<p class="ana" style="margin-top:12px"><span class="star">★</span><span class="mark">110불과 비교할 선은 중간값: SMM 시세가 약 %(need)s 위안/톤을 넘어야 MP가 110불보다 많이 받음</span><br>
-%(rnote)s<br>
-회사가 컨콜에서 말하는 시장가(26.2Q 컨콜의 약 110불)는 부가세 포함 환산가이고, SMM이 직접 내는 달러 호가는 부가세 제외 기준</p>
+<p class="ana" style="margin-top:12px"><span class="star">★</span><span class="mark">110불과 비교할 선은 중간값: SMM 시세가 약 %(need)s 위안/톤을 넘어야 MP가 110불보다 많이 받음</span></p>
+<div class="sub">%(rtitle)s</div>
+<ul class="pts">%(ritems)s</ul>
+<p class="ana">회사가 컨콜에서 말하는 시장가(26.2Q 컨콜의 약 110불)는 부가세 포함 환산가이고, SMM이 직접 내는 달러 호가는 부가세 제외 기준</p>
 %(exch)s
 <div class="note">SMM Pr-Nd 산화물 평균가(위안/톤, 중국 도착도, 부가세 포함)를 그날 달러/위안 환율로 나눈 값. 중간값은 부가세 포함가와 제외가의 평균.
 %(ld0)s 이전은 주요 시점의 SMM 공개 수치만 이은 선이고, 그 뒤로 매일 한 점씩 쌓임. 점에 마우스를 올리면 날짜와 값 표시.<br>
@@ -991,7 +994,9 @@ Source: <a href="https://www.metal.com/rare-earth-oxides/201102250247" target="_
 개인 리서치 기록이며 투자 권유가 아님</footer>
 </div></body></html>""" % {
         "css": CSS, "today": kd(today.isoformat()), "kp": kp, "now": "".join("<li>%s</li>" % x for x in now),
-        "need": format(round(need, -3), ",.0f"), "rnote": man["realization_note"], "exch": exch,
+        "need": format(round(need, -3), ",.0f"), "rtitle": man["realization"]["title"],
+        "ritems": "".join('<li>%s <span class="lk">%s</span></li>' % (i["text"], links([i["src"]])) for i in man["realization"]["items"]),
+        "exch": exch,
         "ch1": ch1, "ld0": kd(man["ndpr_seed_until"]), "smm": SMM_URL, "sens": sens, "cap": format(man["capacity_ndpr_t"], ","),
         "ch2a": ch2a, "ch2b": ch2b, "qnote": man["quarter_note"], "qrows": qrows,
         "ctl": ctl, "up": up, "tl": tl, "tlv": man["timeline_view"], "tlvl": links(man["timeline_view_links"]),

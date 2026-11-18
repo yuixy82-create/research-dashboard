@@ -469,5 +469,23 @@
    "https://www.sec.gov/Archives/edgar/data/1801368/000180136826000007/mpmcq42025er.htm"
   ]
  ],
- "realization_note": "MP의 실제 판매가는 부가세 포함 환산가와 제외 환산가의 중간쯤에서 형성 (경영진 설명, 23.4Q 컨콜). 계약이 과거 평균가에 연동돼 시세는 1~1.5개 분기 늦게 반영 (25.4Q 컨콜)"
+ "realization": {
+  "title": "MP 실제 판매가는 부가세 포함가와 제외가의 중간쯤",
+  "items": [
+   {
+    "text": "경영진이 23.4Q 컨콜에서 실현가를 현물 환산가와 중국 부가세를 뺀 가격의 중간 정도로 본다고 밝힘",
+    "src": [
+     "23.4Q 컨콜",
+     "https://finance.yahoo.com/news/mp-materials-corp-nyse-mp-171057973.html"
+    ]
+   },
+   {
+    "text": "계약이 과거 평균가에 연동돼 시세가 1~1.5개 분기 늦게 실적에 반영됨",
+    "src": [
+     "25.4Q 컨콜 요약",
+     "https://www.datainsightsmarket.com/companies/MP"
+    ]
+   }
+  ]
+ }
 }
