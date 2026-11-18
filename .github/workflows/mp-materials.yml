@@ -1,0 +1,74 @@
+name: MP Materials tracker (daily)
+
+on:
+  schedule:
+    - cron: "35 22 * * *"   # 07:35 KST: 미국 종가·전일 SMM 반영
+    - cron: "40 9 * * *"    # 18:40 KST: 당일 SMM 시세 반영
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  # 수집·커밋은 Pages 배포 대기열과 분리 (gpu-cloud와 같은 구조)
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: mp-materials-collect
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: collect and build
+        run: python mp-materials/tracker.py
+
+      - name: commit changes
+        run: |
+          git config user.name "tracker-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mp-materials/cache.json mp-materials/index.html
+          if git diff --cached --quiet; then
+            echo "변경 없음: 커밋 생략"
+            exit 0
+          fi
+          git commit -m "mp-materials: daily update"
+          # 다른 트래커 봇이 동시에 커밋하면 push가 거부됨: rebase 후 재시도
+          for i in 1 2 3 4 5; do
+            if git push; then
+              echo "push 성공 (시도 $i)"
+              exit 0
+            fi
+            echo "push 거부: 원격 반영 후 재시도 ($i/5)"
+            sleep $((i * 5))
+            git pull --rebase --autostash origin main || exit 1
+          done
+          echo "ERROR: 5회 재시도 후에도 push 실패"
+          exit 1
+
+  # GITHUB_TOKEN 커밋은 다른 워크플로를 깨우지 않으므로 같은 워크플로 안에서 배포
+  deploy:
+    needs: collect
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v5
