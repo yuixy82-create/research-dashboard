@@ -75,38 +75,32 @@
 },
 "log": {
 "aux": {
-"at": "2026-11-18 12:00",
+"at": "2026-11-18 12:02",
 "msg": "dy_usd 11-17 $206.8, tb_usd 11-17 $858.0",
 "ok": true
 },
-"cons": {
-"at": "2026-11-18 12:00",
-"lastOk": null,
-"msg": "direct: HTTP Error 403: Forbidden; reader: HTTP Error 401: Unauthorized; reader: HTTP Error 401: Unauthorized",
-"ok": false
-},
 "earn": {
-"at": "2026-11-18 12:00",
+"at": "2026-11-18 12:02",
 "msg": "26.3Q 확인됨(대조), 26.4Q 아직 없음",
 "ok": true
 },
 "fx": {
-"at": "2026-11-18 12:00",
+"at": "2026-11-18 12:02",
 "msg": "frankfurter 34일",
 "ok": true
 },
 "ndpr": {
-"at": "2026-11-18 12:00",
+"at": "2026-11-18 12:02",
 "msg": "2026-11-17 718,000 위안/톤, 요약 문장, 대조 일치",
 "ok": true
 },
 "px": {
-"at": "2026-11-18 12:00",
+"at": "2026-11-18 12:02",
 "msg": "야후 65일, 최신 2026-11-17",
 "ok": true
 },
 "trades": {
-"at": "2026-11-18 12:00",
+"at": "2026-11-18 12:02",
 "msg": "오픈인사이더 17행 (기존과 겹침 17, 신규 0) · SEC 실패: 신고서 목록(data.sec.gov): HTTP Error 403: Forbidden",
 "ok": true
 }
@@ -865,5 +859,5 @@
 "title": "Chairman and CEO"
 }
 ],
-"updatedAt": "2026-11-18 12:00"
+"updatedAt": "2026-11-18 12:02"
 }
