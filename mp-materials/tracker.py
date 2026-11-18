@@ -624,6 +624,9 @@ table.data td{padding:6px 9px;border-bottom:1px solid #EFEFEF;vertical-align:top
 table.data td.num,table.data th.num{text-align:right;white-space:nowrap}
 table.data tr.hl td{background:var(--fill);font-weight:700}
 table.data td a{color:inherit}
+table.data.eq{table-layout:fixed}
+table.data.eq thead th{white-space:normal;vertical-align:bottom}
+table.data.eq th:first-child{width:9%}
 .tw{overflow-x:auto}
 .pos{color:var(--teal);font-weight:700}.neg{color:var(--red);font-weight:700}
 .note{font-size:11px;color:var(--faint);margin-top:8px;line-height:1.6;border-top:1px solid #EFEFEF;padding-top:7px}
@@ -876,9 +879,7 @@ Source: <a href="%(smm)s" target="_blank" rel="noopener">SMM</a>, 야후 파이�
 <div class="sub">하한선 정산 방식</div>
 <p class="ana"><span class="mark">국방부는 MP의 NdPr 가격이 kg당 110불에 못 미치면 차액을 분기마다 현금으로 보전 (25.10.01부터 10년)</span><br>
 110불을 넘는 분기에는 초과분의 30%%를 MP가 국방부에 지급. 단 10X 공장(텍사스 제2 자석 공장, 28년 말 시운전)이 목표 케파에 도달한 뒤부터 적용</p>
-<div class="tw"><table class="data"><thead><tr><th class="num">NdPr 가격</th><th class="num">MP 수취가<br>(10X 풀가동 전)</th><th class="num">110불 대비 연 매출 증가</th><th class="num">MP 수취가<br>(10X 풀가동 후)</th><th class="num">110불 대비 연 매출 증가</th></tr></thead><tbody>%(sens)s</tbody></table></div>
-<div class="note">연 매출 증가 = (수취가 − 110불) × 마운틴패스 NdPr 목표 케파 %(cap)s톤. 계산치.<br>
-Source: <a href="https://www.sec.gov/Archives/edgar/data/1801368/000119312525157310/d43796dex106.htm" target="_blank" rel="noopener">가격보전계약(PPA) 원문</a>, <a href="https://s25.q4cdn.com/570172628/files/doc_events/2025/Jul/10/FINAL-Transformational-Public-Private-Partnership-7-9-25-440pm.pdf" target="_blank" rel="noopener">국방부 파트너십 발표자료(25.07.10)</a></div>
+<div class="note">Source: <a href="https://www.sec.gov/Archives/edgar/data/1801368/000119312525157310/d43796dex106.htm" target="_blank" rel="noopener">가격보전계약(PPA) 원문</a>, <a href="https://s25.q4cdn.com/570172628/files/doc_events/2025/Jul/10/FINAL-Transformational-Public-Private-Partnership-7-9-25-440pm.pdf" target="_blank" rel="noopener">국방부 파트너십 발표자료(25.07.10)</a></div>
 </div>
 
 <span class="banner">② 분기 실현가와 국방부 보전금<span class="u">분기 · 실적 발표 때 갱신</span></span>
@@ -888,7 +889,7 @@ Source: <a href="https://www.sec.gov/Archives/edgar/data/1801368/000119312525157
 <div class="sub">국방부 보전금 (PPA 수익) <span style="font-weight:400;font-size:12px;color:#9B9B9B">백만불</span></div>
 %(ch2b)s
 <p class="ana">%(qnote)s</p>
-<div class="tw"><table class="data" style="max-width:640px"><thead><tr><th>분기</th><th class="num">NdPr 판매(톤)</th><th class="num">NdPr 매출</th><th class="num">실현가</th><th class="num">PPA 수익</th></tr></thead><tbody>%(qrows)s</tbody></table></div>
+<div class="tw"><table class="data eq" style="max-width:640px"><thead><tr><th style="width:16%%">분기</th><th class="num">NdPr 판매(톤)</th><th class="num">NdPr 매출</th><th class="num">실현가</th><th class="num">PPA 수익</th></tr></thead><tbody>%(qrows)s</tbody></table></div>
 <div class="note">금액 단위 백만불. 실현가는 금속 가공분과 자석 부문 내부 판매를 포함한 매출을 판매량으로 나눈 근사치.
 PPA 수익은 25.4Q~26.1Q에 재고로 쌓은 정광 속 NdPr 몫까지 포함돼 컸고, 26.2Q부터는 대부분 외부 판매분.<br>
 Source: MP 분기 실적 발표자료(8-K), <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001801368&type=8-K" target="_blank" rel="noopener">SEC EDGAR</a></div>
@@ -911,7 +912,7 @@ Source: MP 분기 실적 발표자료(8-K), <a href="https://www.sec.gov/cgi-bin
 %(ch4)s
 <div class="legend"><i style="background:#2E97A7"></i>매수<i style="background:#B7332B"></i>매도 · 원 크기는 거래 금액, 높이는 평균 단가. 원에 마우스를 올리면 상세 표시</div>
 <div class="sub">%(yr)s년 누적</div>
-<div class="tw"><table class="data"><thead><tr><th>이름</th><th class="num">매수</th><th class="num">매도</th><th class="num">순매수</th></tr></thead><tbody>%(prow)s</tbody></table></div>
+<div class="tw"><table class="data eq" style="max-width:640px"><thead><tr><th style="width:40%%">이름</th><th class="num">매수</th><th class="num">매도</th><th class="num">순매수</th></tr></thead><tbody>%(prow)s</tbody></table></div>
 <div class="sub">거래 내역</div>
 <div class="tw"><table class="data">%(thead)s<tbody>%(trs)s</tbody></table></div>
 %(more)s
@@ -943,7 +944,7 @@ Source: MP 분기 실적 발표자료(8-K)</div>
 <span class="banner">⑦ 부문별 매출과 조정 EBITDA<span class="u">백만불 · 분기</span></span>
 <div class="card-sec">
 %(ch7)s
-<div class="tw"><table class="data"><thead><tr><th>분기</th><th class="num">소재 매출</th><th class="num">자석 매출</th><th class="num">국방부 보전금</th><th class="num">매출 + 보전금</th><th class="num">소재 EBITDA</th><th class="num">자석 EBITDA</th><th class="num">전사 조정 EBITDA</th><th class="num">이익률</th></tr></thead><tbody>%(srow)s</tbody></table></div>
+<div class="tw"><table class="data eq"><thead><tr><th>분기</th><th class="num">소재 매출</th><th class="num">자석 매출</th><th class="num">국방부 보전금</th><th class="num">매출 + 보전금</th><th class="num">소재 EBITDA</th><th class="num">자석 EBITDA</th><th class="num">전사 조정 EBITDA</th><th class="num">이익률</th></tr></thead><tbody>%(srow)s</tbody></table></div>
 <div class="note">막대 위 숫자는 회사가 발표하는 매출 + 국방부 보전금(PPA 수익) 합계로, 부문 간 내부거래를 뺀 값. 이익률은 전사 조정 EBITDA ÷ 그 합계.
 소재 부문은 마운틴패스(광산·분리정제), 자석 부문은 인디펜던스 공장. 전사 조정 EBITDA는 본사 비용 차감 후. 25.3Q부터 중국향 정광 판매 중단.<br>
 Source: MP 분기 실적 발표자료(8-K)</div>
@@ -952,7 +953,7 @@ Source: MP 분기 실적 발표자료(8-K)</div>
 <span class="banner">⑧ 현금·차입금·주식 수<span class="u">백만불 · 분기 말</span></span>
 <div class="card-sec">
 %(ch8)s
-<div class="tw"><table class="data"><thead><tr><th>기준</th><th class="num">현금·단기투자</th><th class="num">차입금</th><th class="num">순현금</th><th class="num">발행주식 (백만주)</th><th class="num">설비투자</th></tr></thead><tbody>%(crow8)s</tbody></table></div>
+<div class="tw"><table class="data eq"><thead><tr><th>기준</th><th class="num">현금·단기투자</th><th class="num">차입금</th><th class="num">순현금</th><th class="num">발행주식 (백만주)</th><th class="num">설비투자</th></tr></thead><tbody>%(crow8)s</tbody></table></div>
 <p class="ana" style="margin-top:10px">%(cnote)s</p>
 <div class="note">차입금은 장부가. 분기 설비투자는 누계 차이로 계산.<br>Source: MP 실적 발표자료(8-K)의 재무상태표·현금흐름표</div>
 </div>
@@ -993,6 +994,17 @@ Source: <a href="https://www.metal.com/rare-earth-oxides/201102250247" target="_
         "capsrc": links(man["capacity_src"]),
         "bal": kd(b["asOf"]), "sh": b["shares"], "refsrc": man["multiple_refs_src"], "stat": stat,
     }
+    # 섹션 순서는 manual.json의 section_order(템플릿에 적힌 순서 기준 인덱스)로 바꾸고 번호를 다시 매김
+    order = man.get("section_order")
+    if order:
+        head, rest = html.split('<span class="banner">', 1)
+        body, foot = ('<span class="banner">' + rest).split("<footer>", 1)
+        secs = [x for x in re.split(r'(?=<span class="banner">)', body) if x.strip()]
+        if sorted(order) == list(range(len(secs))):
+            nums = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫"
+            body = "".join(re.sub(r'(<span class="banner">)[①-⑳]', lambda m_, n=n: m_.group(1) + nums[n], secs[i], count=1)
+                           for n, i in enumerate(order))
+            html = head + body + "<footer>" + foot
     return html
 
 
