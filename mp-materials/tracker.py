@@ -12,10 +12,11 @@
   trades SEC EDGAR Form 4 (내부자 매수 P·매도 S). SEC가 막으면 오픈인사이더로 대신 받고,
          사전계획(10b5-1) 여부는 나스닥 내부자 표(Automatic Sell/Buy)로 채움
   dy_usd·tb_usd  SMM 달러 호가(부가세 제외), 최신 한 점씩
-  earn   다음 분기 실적 보도자료가 올라왔는지 확인 → 화면 맨 위 알림
+  earn   다음 분기 실적 보도자료가 올라오면 표의 숫자를 읽어 ②④⑤⑧에 자동 반영 (cache["quarters_auto"]) + 화면 맨 위 알림.
+         매번 직전 분기 보도자료를 다시 읽어 manual.json 값과 같은지 대조(표 구조가 바뀌면 실패로 표시)
   cons   컨센 매출·EBITDA (팩트셋 집계, 비즈니스인사이더 마켓 화면). 값이 바뀐 날만 cache["consensus"]["hist"]에 추가
 
-분기 실적·미중 타임라인·케파 표·바바리안 추정은 manual.json을 손으로 고침.
+미중 타임라인·케파 표·바바리안 추정·분기 설명 문구는 manual.json을 손으로 고침.
 마켓스크리너(S&P 집계)는 깃허브 러너를 막아 쓰지 않음(26.11.18 실측).
 수집 실패, 며칠째 갱신 안 됨, 새 실적 발표, 날짜 지난 일정은 화면 맨 위 빨간 줄로 표시됨
 
@@ -368,30 +369,170 @@ def _er(q):
     return "https://mpmaterials.com/news/mp-materials-reports-" + QSLUG[n][0] % y + "/", QSLUG[n][1] % y
 
 
-def collect_earnings(cache, man):
-    """다음 분기 실적 보도자료가 올라왔는지 확인. 올라오면 화면 맨 위에 갱신 필요 알림을 띄움.
-    분기 숫자 자체는 manual.json을 손으로 고쳐야 함."""
-    last = man["quarters"][-1]["q"]
-    y, n = int(last[:2]), int(last[3])
-    nxt = "%02d.%dQ" % ((y, n + 1) if n < 4 else (y + 1, 1))
+QEND = {1: "03-31", 2: "06-30", 3: "09-30", 4: "12-31"}
+ER_KEYS = ("rev", "ppa", "ebitda", "mat", "mag", "mat_e", "mag_e", "ndpr_rev")
 
-    def has(q):
+
+def _cell(tok):
+    tok = tok.strip()
+    if tok in ("—", "-", "–"):
+        return 0.0
+    m = re.match(r"^(\()?\$?\s*([\d,]+(?:\.\d+)?)\)?$", tok)
+    if not m:
+        return None
+    v = float(m.group(2).replace(",", ""))
+    return -v if m.group(1) else v
+
+
+def _first_val(lines, pat, start=0):
+    """pat에 맞는 항목 줄 바로 아래의 첫 숫자 칸(= 당분기 값). 값 없는 제목 줄이면 다음 같은 이름 줄로 넘어감."""
+    rx = re.compile(pat)
+    for i in range(start, len(lines)):
+        if rx.match(lines[i]):
+            for j in range(i + 1, min(i + 13, len(lines))):
+                if not lines[j].startswith("|"):
+                    break
+                v = _cell(lines[j].lstrip("| "))
+                if v is not None:
+                    return v
+    return None
+
+
+def _find(lines, pat, start=0):
+    rx = re.compile(pat)
+    return next((i for i in range(start, len(lines)) if rx.match(lines[i])), None)
+
+
+def er_quarter(q, text):
+    """실적 보도자료(_rows로 편 글) → manual.json quarters와 같은 모양(백만불·톤). 못 읽거나 값이 이상하면 예외.
+    25.1Q~26.3Q 일곱 분기 보도자료로 manual.json 값과 전부 일치하는 것을 확인(26.11.18)."""
+    L = text.split("\n")
+    r = {}
+    fm = _find(L, r"^Financial Measures:?$") or 0
+    r["rev"] = _first_val(L, r"^Revenue$", fm)
+    r["ppa"] = _first_val(L, r"^Price protection agreement income$")
+    if r["ppa"] is None and q < "25.4Q":
+        r["ppa"] = 0.0                        # 보전 계약(25.10.01 시작) 이전 분기에는 줄이 없음
+    r["ebitda"] = _first_val(L, r"^Adjusted EBITDA\s*\(?\d*\)?$", fm)
+    sf = _find(L, r"^Segment Financials:?$")
+    if sf is not None:
+        r["mat"] = _first_val(L, r"^Materials Segment$", sf)
+        r["mag"] = _first_val(L, r"^Magnetics Segment$", sf)
+        se = _find(L, r"^Segment Adjusted EBITDA\s*\(?\d*\)?$", sf)
+        if se is not None:
+            r["mat_e"] = _first_val(L, r"^Materials Segment$", se)
+            r["mag_e"] = _first_val(L, r"^Magnetics Segment$", se)
+    r["ndpr_rev"] = _first_val(L, r"^NdPr oxide and metal$")
+    prod = _first_val(L, r"^NdPr Production Volume \(MTs\)$")
+    sales = _first_val(L, r"^NdPr Sales Volume \(MTs\)$")
+    miss = [k for k in ER_KEYS if r.get(k) is None] + [n for n, v in (("prod", prod), ("sales", sales)) if v is None]
+    if miss:
+        raise RuntimeError("표에서 못 읽은 항목: " + ", ".join(miss))
+    y, n = 2000 + int(q[:2]), int(q[3])
+    out = {"q": q, "end": "%d-%s" % (y, QEND[n]), "prod": int(prod), "sales": int(sales)}
+    for k in ER_KEYS:
+        out[k] = round(r[k] / 1000, 3)
+    price = out["ndpr_rev"] * 1000 / max(out["sales"], 1)
+    if not (30 <= price <= 300 and 100 <= out["prod"] <= 6000 and 100 <= out["sales"] <= 6000
+            and out["rev"] > 0 and abs(out["mat"] + out["mag"] - out["rev"]) <= 0.2 * out["rev"]):
+        raise RuntimeError("읽은 값이 이상함: 실현가 %.0f불, 생산 %d톤, 매출 %.1f" % (price, out["prod"], out["rev"]))
+    cash = _first_val(L, r"^Total cash, cash equivalents and short-term investments$")
+    d1 = _first_val(L, r"^Current portion of long-term debt$")
+    d2 = _first_val(L, r"^Long-term debt, net of current portion$")
+    m = re.search(r"([\d,]{9,}) and [\d,]{9,} shares outstanding", text)
+    if cash and d2 and m:
+        out["bal"] = {"cash": round(cash / 1000, 1), "debt": round(((d1 or 0) + d2) / 1000, 1),
+                      "shares": round(float(m.group(1).replace(",", "")) / 1e6, 3)}
+    cx = _first_val(L, r"^(Additions to|Purchases of) property, plant and equipment$")
+    if cx is not None:
+        out["capex_ytd"] = round(abs(cx) / 1000, 1)
+    return out
+
+
+def _qnext(q):
+    y, n = int(q[:2]), int(q[3])
+    return "%02d.%dQ" % ((y, n + 1) if n < 4 else (y + 1, 1))
+
+
+def collect_earnings(cache, man):
+    """다음 분기 실적 보도자료가 올라오면 표의 숫자(생산·판매량, 매출, EBITDA, 부문, 보전금, 현금·차입금·주식 수)를
+    cache["quarters_auto"]에 넣어 화면에 바로 반영. manual.json에 그 분기를 적으면 자동분은 빠짐.
+    설명 문구(quarter_note 등)·케파 표·회사 제시는 사람이 고쳐야 함."""
+    qm = man["quarters"]
+    last_m = qm[-1]["q"]
+    auto = cache.setdefault("quarters_auto", {})
+    for q in [q for q in auto if q in {x["q"] for x in qm}]:
+        auto.pop(q)
+    last = max([last_m] + list(auto))
+    nxt = _qnext(last)
+
+    def page(q):
         url, phrase = _er(q)
         try:
             t = get_or_reader(url)
         except Exception:
-            return False
-        return phrase.lower() in t.lower() and "NdPr" in t
+            return None
+        return t if phrase.lower() in t.lower() and "NdPr" in t else None
 
-    if not has(last):
-        raise RuntimeError("대조용 %s 보도자료를 못 읽어 새 실적 감지 불가" % last)
+    t0 = page(last_m)
+    if t0 is None:
+        raise RuntimeError("대조용 %s 보도자료를 못 읽어 새 실적 감지 불가" % last_m)
+    ctrl = "표 대조 생략"
+    if "</t" in t0:                           # 리더 경유 글이면 표 모양이 달라 대조하지 않음
+        chk = er_quarter(last_m, _rows(t0))
+        bad = [k for k in ER_KEYS + ("prod", "sales") if abs(chk[k] - qm[-1][k]) > 0.002]
+        if bad:
+            raise RuntimeError("%s 보도자료 표 읽기가 기존 값과 다름(%s): 다음 실적 자동 반영 전에 점검 필요" % (last_m, ", ".join(bad)))
+        cache["er_ctrl"] = {"q": last_m, "capex_ytd": chk.get("capex_ytd")}
+        ctrl = "표 대조 일치"
     al = cache.setdefault("alerts", {})
-    if has(nxt):
-        prev = al.get("earnings") or {}
-        al["earnings"] = {"q": nxt, "url": _er(nxt)[0], "seen": prev.get("seen") if prev.get("q") == nxt else today_kst().isoformat()}
-        return "%s 실적 발표 감지" % nxt
-    al.pop("earnings", None)
-    return "%s 확인됨(대조), %s 아직 없음" % (last, nxt)
+    t1 = page(nxt)
+    if t1 is None:
+        al.pop("earnings", None)
+        return "%s 확인됨(%s), %s 아직 없음" % (last_m, ctrl, nxt)
+    prev = al.get("earnings") or {}
+    al["earnings"] = {"q": nxt, "url": _er(nxt)[0], "seen": prev.get("seen") if prev.get("q") == nxt else today_kst().isoformat()}
+    try:
+        a = er_quarter(nxt, _rows(t1))
+        a.update(url=_er(nxt)[0], seen=al["earnings"]["seen"])
+        auto[nxt] = a
+        return "%s 실적 발표 감지, 표 자동 반영 (매출 %.1f, 조정 EBITDA %.1f)" % (nxt, a["rev"], a["ebitda"])
+    except Exception as e:
+        al["earnings"]["err"] = str(e)[:120]
+        return "%s 실적 발표 감지, 자동 반영 실패: %s" % (nxt, str(e)[:80])
+
+
+def merged(man, cache):
+    """manual.json에 아직 없는 분기를 자동 수집분으로 채운 사본. (사본, 자동 반영된 분기 목록)"""
+    auto = cache.get("quarters_auto") or {}
+    have = {q["q"] for q in man["quarters"]}
+    add = [auto[k] for k in sorted(auto) if k not in have]
+    if not add:
+        return man, []
+    m = dict(man)
+    m["quarters"] = man["quarters"] + [{k: a[k] for k in ("q", "end", "prod", "sales") + ER_KEYS} for a in add]
+    bal, ct = list(man["balance"]), list(man["cash_table"])
+    ctrl = cache.get("er_ctrl") or {}
+    prev = {ctrl.get("q"): ctrl.get("capex_ytd")}
+    for a in add:
+        b, n, ytd = a.get("bal"), int(a["q"][3]), a.get("capex_ytd")
+        if b and a["end"] not in {x["asOf"] for x in bal}:
+            bal.append(dict(b, asOf=a["end"]))
+            pq = "%s.%dQ" % (a["q"][:2], n - 1)
+            if ytd is None:
+                cap = ""
+            elif n == 4:
+                cap = "%.1f (%s년 연간)" % (ytd, a["q"][:2])
+            elif n == 1:
+                cap = "%.1f (%s)" % (ytd, a["q"])
+            elif prev.get(pq) is not None:
+                cap = "%.1f (%s)" % (ytd - prev[pq], a["q"])
+            else:
+                cap = "누계 %.1f" % ytd
+            ct.append(dict(b, p="%s.%s" % (a["end"][2:4], a["end"][5:7]), capex=cap))
+        prev[a["q"]] = ytd
+    m["balance"], m["cash_table"] = bal, ct
+    return m, [a["q"] for a in add]
 
 
 NASDAQ_HDR = {"User-Agent": UA, "Accept": "application/json, text/plain, */*", "Origin": "https://www.nasdaq.com",
@@ -509,24 +650,6 @@ def _rows(html):
     return "\n".join(x for x in (re.sub(r"[ \t\r\f\v]+", " ", ln).strip() for ln in t.split("\n")) if x and x.strip("| "))
 
 
-def collect_dump(cache, man):
-    """임시: 실적 보도자료 원문을 받아 둠 (표 읽는 코드 개발용, 다음 커밋에서 삭제)."""
-    out = {}
-    for q in man["quarters"]:
-        url = _er(q["q"])[0]
-        try:
-            t = http_get(url, {"User-Agent": UA, "Accept": "text/html,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.9", "Accept-Encoding": "gzip"}, 30)
-            out[q["q"]] = {"via": "direct", "len": len(t), "text": _rows(t)[:150000]}
-        except Exception as e:
-            try:
-                t = http_get(READER + url, {"Accept": "text/plain"}, 60)
-                out[q["q"]] = {"via": "reader", "err": str(e)[:80], "len": len(t), "text": t[:150000]}
-            except Exception as e2:
-                out[q["q"]] = {"via": "fail", "err": (str(e) + " / " + str(e2))[:160]}
-        time.sleep(1)
-    cache["probe"] = out
-
-
 def collect_all(cache, man):
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
     for name, fn in (("ndpr", collect_smm), ("fx", collect_fx), ("px", collect_px), ("trades", collect_trades),
@@ -540,10 +663,6 @@ def collect_all(cache, man):
             prev = cache["log"].get(name, {})
             cache["log"][name] = {"ok": False, "at": now, "msg": str(e)[:300], "lastOk": prev.get("at") if prev.get("ok") else prev.get("lastOk")}
             print("  [fail] %-7s %s" % (name, e))
-    try:
-        collect_dump(cache, man)
-    except Exception as e:
-        cache["probe"] = {"error": str(e)[:300]}
 
 
 # ============================================================
@@ -866,6 +985,7 @@ def links(lst):
 
 
 def build_html(cache, man):
+    man, autoq = merged(man, cache)
     today = today_kst()
     floor, vat = man["floor"], man["vat"]
     nd, fx, px = cache["ndpr"], cache["fx"], cache["px"]
@@ -1084,7 +1204,10 @@ def build_html(cache, man):
     warn = []
     er = (cache.get("alerts") or {}).get("earnings")
     if er and er["q"] not in [q["q"] for q in qs]:
-        warn.append('<b>%s 실적 발표됨</b> (%s 확인): ②④⑤⑧ 표는 아직 %s 기준 <a href="%s" target="_blank" rel="noopener">보도자료</a>' % (er["q"], kd(er["seen"]), lq["q"], er["url"]))
+        warn.append('<b>%s 실적 발표됨</b> (%s 확인): 표 자동 반영 실패, ②④⑤⑧은 아직 %s 기준 <a href="%s" target="_blank" rel="noopener">보도자료</a>' % (er["q"], kd(er["seen"]), lq["q"], er["url"]))
+    for q_ in autoq:
+        a_ = cache["quarters_auto"][q_]
+        warn.append('<b>%s 실적 자동 반영</b> (%s 확인, <a href="%s" target="_blank" rel="noopener">보도자료</a> 표): ②④⑤⑧ 숫자는 새 분기, 설명 문구·⑩ 케파·회사 제시는 이전 분기 기준' % (q_, kd(a_["seen"]), a_["url"]))
     if overdue:
         warn.append("③ 추후 일정 중 날짜가 지난 것 %d건: 결과 반영 필요" % len(overdue))
     for k, v in log.items():
@@ -1269,6 +1392,7 @@ def main():
         print("수집 시작")
         collect_all(cache, man)
         cache["log"] = {k: v for k, v in cache["log"].items() if k in ("ndpr", "fx", "px", "trades", "aux", "earn", "cons")}
+        cache.pop("probe", None)
         cache["updatedAt"] = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
         save(CACHE, cache)
     with open(OUT, "w", encoding="utf-8") as f:
