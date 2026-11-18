@@ -10,7 +10,7 @@
   fx     달러/위안 (frankfurter → 야후 CNY=X)
   px     MP 종가 (야후 → 나스닥)
   trades SEC EDGAR Form 4 (내부자 매수 P·매도 S). SEC가 막으면 오픈인사이더로 대신 받음
-  dy_usd·tb_usd·ndpr_fob·ndpr_cif  SMM 달러 호가(부가세 제외), 최신 한 점씩
+  dy_usd·tb_usd  SMM 달러 호가(부가세 제외), 최신 한 점씩
 
 실행:  python mp-materials/tracker.py            수집 후 빌드
        python mp-materials/tracker.py --no-fetch  빌드만
@@ -117,8 +117,7 @@ def collect_smm(cache):
     return "%s %s 위안/톤" % (d, format(v, ","))
 
 
-SMM_AUX = {"dy_usd": ("201102250247", 50, 1500), "tb_usd": ("201102250488", 200, 5000),
-           "ndpr_fob": ("202604010010", 30, 400), "ndpr_cif": ("202604010011", 30, 400)}
+SMM_AUX = {"dy_usd": ("201102250247", 50, 1500), "tb_usd": ("201102250488", 200, 5000)}
 
 
 def smm_hist(pid):
@@ -141,7 +140,7 @@ def smm_hist(pid):
 
 
 def collect_smm_aux(cache):
-    """Dy·Tb 산화물과 NdPr 중국 FOB·로테르담 CIF의 달러 호가(부가세 제외).
+    """Dy·Tb 산화물의 달러 호가(부가세 제외).
     로그인 없이 받는 과거 행은 값이 맞지 않아(26.11.18 확인) 최신 행 하나만 쌓음."""
     got, errs = [], []
     for key, (pid, lo, hi) in SMM_AUX.items():
@@ -630,8 +629,6 @@ table.data td a{color:inherit}
 .note{font-size:11px;color:var(--faint);margin-top:8px;line-height:1.6;border-top:1px solid #EFEFEF;padding-top:7px}
 .note a,.lk a{color:var(--muted)}
 .lk{font-size:11px;color:var(--faint);margin-top:3px}
-ul.pts{font-size:13.5px;line-height:1.75;margin:0 0 12px;padding-left:18px}
-ul.pts li{margin-bottom:4px}
 .tl{border-left:2px solid var(--fill);margin:4px 0 0 4px;padding:0 0 0 16px}
 .tl .it{margin-bottom:16px;position:relative}
 .tl .it:before{content:"";position:absolute;left:-22px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--primary)}
@@ -691,26 +688,15 @@ def build_html(cache, man):
         sens += ('<tr><td class="num">$%d</td><td class="num">$%d</td><td class="num">%s</td><td class="num">$%.0f</td><td class="num">%s</td></tr>'
                  % (p, a, "+%.0f백만불" % ga if ga else "0", b, "+%.0f백만불" % gb if gb else "0"))
 
-    fob, cif = cache.get("ndpr_fob") or {}, cache.get("ndpr_cif") or {}
-    exch = ""
-    if fob or cif:
-        r_ = ""
-        for lab, dm in (("중국 FOB (수출 가격)", fob), ("로테르담 CIF (유럽 도착 가격)", cif)):
-            if dm:
-                r_ += '<tr><td>%s</td><td class="num">$%.1f</td><td class="num">%s</td></tr>' % (lab, dm[max(dm)], kd(max(dm)))
-        exch = ('<div class="sub">중국 밖 호가 <span style="font-weight:400;font-size:12px;color:#9B9B9B">SMM 주간 평가 · 달러/kg · 참고용</span></div>'
-                '<div class="tw"><table class="data" style="max-width:520px"><thead><tr><th>기준</th><th class="num">NdPr 산화물</th><th class="num">평가일</th></tr></thead><tbody>%s</tbody></table></div>' % r_)
-
     # ---------- ② 분기 ----------
     qc = [q["q"] for q in qs]
     ch2a = svg_bars(qc, [q["real"] for q in qs], T["primary"], lambda v: "$%.1f" % v, hline=(floor, "국방부 하한선 $%d" % floor), ymax=130)
     ch2b = svg_bars(qc, [q["ppa"] for q in qs], T["teal"], lambda v: "%.1f" % v if v else "0", h=190)
     qrows = ""
     for q in reversed(qs):
-        qrows += ('<tr%s><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%.1f</td><td class="num">$%.1f</td>'
-                  '<td class="num">%s</td><td class="num">%.1f</td><td class="num %s">%.1f</td></tr>'
-                  % (' class="hl"' if q is qs[-1] else "", q["q"], format(q["prod"], ","), format(q["sales"], ","), q["ndpr_rev"], q["real"],
-                     ("%.1f" % q["ppa"]) if q["ppa"] else "0", q["rev"], "pos" if q["ebitda"] > 0 else "neg", q["ebitda"]))
+        qrows += ('<tr%s><td>%s</td><td class="num">%s</td><td class="num">%.1f</td><td class="num">$%.1f</td><td class="num">%s</td></tr>'
+                  % (' class="hl"' if q is qs[-1] else "", q["q"], format(q["sales"], ","), q["ndpr_rev"], q["real"],
+                     ("%.1f" % q["ppa"]) if q["ppa"] else "0"))
     lq = qs[-1]
     ppa_first = next(q for q in qs if q["ppa"])
 
@@ -859,7 +845,7 @@ def build_html(cache, man):
         % (mcap / 100, ev / 100, ev / cons["ebitda"]["2027"], ev / barb["ebitda"]["2027"]),
     ]
     log = cache.get("log", {})
-    lab = {"ndpr": "NdPr 시세", "fx": "환율", "px": "주가", "trades": "내부자 거래", "aux": "Dy·Tb·중국 밖 호가"}
+    lab = {"ndpr": "NdPr 시세", "fx": "환율", "px": "주가", "trades": "내부자 거래", "aux": "Dy·Tb"}
     stat = " · ".join("%s %s" % (lab[k], ("정상 " + v["at"][5:]) if v.get("ok") else ("실패 " + v["at"][5:]))
                       for k, v in log.items() if k in lab) or "첫 자동 수집 전"
 
@@ -880,16 +866,15 @@ def build_html(cache, man):
 <div class="legend"><i style="background:#4A5228"></i>중간값 (MP 판매가 근사)<i style="background:#B5B5B5"></i>SMM 시세 달러 환산 (부가세 13%% 포함)<i style="background:#2E97A7"></i>부가세 제외<i style="background:#fff;border:2px solid #D9A62E"></i>MP 분기 실현가 (분기 말 위치)</div>
 <p class="ana" style="margin-top:12px"><span class="star">★</span><span class="mark">110불과 비교할 선은 중간값: SMM 시세가 약 %(need)s 위안/톤을 넘어야 MP가 110불보다 많이 받음</span></p>
 <div class="sub">%(rtitle)s</div>
-<ul class="pts">%(ritems)s</ul>
-<p class="ana">회사가 컨콜에서 말하는 시장가(26.2Q 컨콜의 약 110불)는 부가세 포함 환산가이고, SMM이 직접 내는 달러 호가는 부가세 제외 기준</p>
-%(exch)s
+<p class="ana">%(rlines)s</p>
+<div class="sub">%(iotitle)s</div>
+<p class="ana">%(iolines)s</p>
 <div class="note">SMM Pr-Nd 산화물 평균가(위안/톤, 중국 도착도, 부가세 포함)를 그날 달러/위안 환율로 나눈 값. 중간값은 부가세 포함가와 제외가의 평균.
 %(ld0)s 이전은 주요 시점의 SMM 공개 수치만 이은 선이고, 그 뒤로 매일 한 점씩 쌓임. 점에 마우스를 올리면 날짜와 값 표시.<br>
-Source: <a href="%(smm)s" target="_blank" rel="noopener">SMM</a>, 야후 파이낸스(환율), MP 실적 발표자료</div>
+Source: <a href="%(smm)s" target="_blank" rel="noopener">SMM</a>, 야후 파이낸스(환율), MP 실적 발표자료 · %(psrc)s</div>
 
 <div class="sub">하한선 정산 방식</div>
 <p class="ana"><span class="mark">국방부는 MP의 NdPr 가격이 kg당 110불에 못 미치면 차액을 분기마다 현금으로 보전 (25.10.01부터 10년)</span><br>
-외부에 판 물량은 MP의 실제 판매가 기준, 재고로 쌓거나 자석 부문이 쓴 물량은 아시안메탈의 중국 EXW(공장 인도) NdPr 산화물 시세 기준으로 정산<br>
 110불을 넘는 분기에는 초과분의 30%%를 MP가 국방부에 지급. 단 10X 공장(텍사스 제2 자석 공장, 28년 말 시운전)이 목표 케파에 도달한 뒤부터 적용</p>
 <div class="tw"><table class="data"><thead><tr><th class="num">NdPr 가격</th><th class="num">MP 수취가<br>(10X 풀가동 전)</th><th class="num">110불 대비 연 매출 증가</th><th class="num">MP 수취가<br>(10X 풀가동 후)</th><th class="num">110불 대비 연 매출 증가</th></tr></thead><tbody>%(sens)s</tbody></table></div>
 <div class="note">연 매출 증가 = (수취가 − 110불) × 마운틴패스 NdPr 목표 케파 %(cap)s톤. 계산치.<br>
@@ -903,7 +888,7 @@ Source: <a href="https://www.sec.gov/Archives/edgar/data/1801368/000119312525157
 <div class="sub">국방부 보전금 (PPA 수익) <span style="font-weight:400;font-size:12px;color:#9B9B9B">백만불</span></div>
 %(ch2b)s
 <p class="ana">%(qnote)s</p>
-<div class="tw"><table class="data"><thead><tr><th>분기</th><th class="num">NdPr 생산(톤)</th><th class="num">NdPr 판매(톤)</th><th class="num">NdPr 매출</th><th class="num">실현가</th><th class="num">PPA 수익</th><th class="num">전체 매출</th><th class="num">조정 EBITDA</th></tr></thead><tbody>%(qrows)s</tbody></table></div>
+<div class="tw"><table class="data" style="max-width:640px"><thead><tr><th>분기</th><th class="num">NdPr 판매(톤)</th><th class="num">NdPr 매출</th><th class="num">실현가</th><th class="num">PPA 수익</th></tr></thead><tbody>%(qrows)s</tbody></table></div>
 <div class="note">금액 단위 백만불. 실현가는 금속 가공분과 자석 부문 내부 판매를 포함한 매출을 판매량으로 나눈 근사치.
 PPA 수익은 25.4Q~26.1Q에 재고로 쌓은 정광 속 NdPr 몫까지 포함돼 컸고, 26.2Q부터는 대부분 외부 판매분.<br>
 Source: MP 분기 실적 발표자료(8-K), <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001801368&type=8-K" target="_blank" rel="noopener">SEC EDGAR</a></div>
@@ -994,9 +979,8 @@ Source: <a href="https://www.metal.com/rare-earth-oxides/201102250247" target="_
 개인 리서치 기록이며 투자 권유가 아님</footer>
 </div></body></html>""" % {
         "css": CSS, "today": kd(today.isoformat()), "kp": kp, "now": "".join("<li>%s</li>" % x for x in now),
-        "need": format(round(need, -3), ",.0f"), "rtitle": man["realization"]["title"],
-        "ritems": "".join('<li>%s <span class="lk">%s</span></li>' % (i["text"], links([i["src"]])) for i in man["realization"]["items"]),
-        "exch": exch,
+        "need": format(round(need, -3), ",.0f"), "rtitle": man["realization"]["title"], "rlines": "<br>\n".join(man["realization"]["lines"]),
+        "iotitle": man["inout"]["title"], "iolines": "<br>\n".join(man["inout"]["lines"]), "psrc": links(man["price_src"]),
         "ch1": ch1, "ld0": kd(man["ndpr_seed_until"]), "smm": SMM_URL, "sens": sens, "cap": format(man["capacity_ndpr_t"], ","),
         "ch2a": ch2a, "ch2b": ch2b, "qnote": man["quarter_note"], "qrows": qrows,
         "ctl": ctl, "up": up, "tl": tl, "tlv": man["timeline_view"], "tlvl": links(man["timeline_view_links"]),

@@ -471,21 +471,31 @@
  ],
  "realization": {
   "title": "MP 실제 판매가는 부가세 포함가와 제외가의 중간쯤",
-  "items": [
-   {
-    "text": "경영진이 23.4Q 컨콜에서 실현가를 현물 환산가와 중국 부가세를 뺀 가격의 중간 정도로 본다고 밝힘",
-    "src": [
-     "23.4Q 컨콜",
-     "https://finance.yahoo.com/news/mp-materials-corp-nyse-mp-171057973.html"
-    ]
-   },
-   {
-    "text": "계약이 과거 평균가에 연동돼 시세가 1~1.5개 분기 늦게 실적에 반영됨",
-    "src": [
-     "25.4Q 컨콜 요약",
-     "https://www.datainsightsmarket.com/companies/MP"
-    ]
-   }
+  "lines": [
+   "경영진이 23.4Q 컨콜에서 실현가를 현물 환산가와 중국 부가세를 뺀 가격의 중간 정도로 본다고 밝힘",
+   "계약이 과거 평균가에 연동돼 시세가 1~1.5개 분기 늦게 실적에 반영됨",
+   "회사가 컨콜에서 말하는 시장가(26.2Q 컨콜의 약 110불)는 부가세 포함 환산가이고, SMM이 직접 내는 달러 호가는 부가세 제외 기준"
   ]
- }
+ },
+ "inout": {
+  "title": "중국 안팎 가격",
+  "lines": [
+   "NdPr은 중국 밖 공급이 넉넉해 중국 밖 가격이 중국 내 가격보다 낮음 (26.08 벤치마크: 중국 밖 95불, 중국 내 107.5불)",
+   "Dy·Tb는 반대: 중국 수출허가에 막혀 중국 밖 가격이 중국 내의 몇 배"
+  ]
+ },
+ "price_src": [
+  [
+   "23.4Q 컨콜",
+   "https://finance.yahoo.com/news/mp-materials-corp-nyse-mp-171057973.html"
+  ],
+  [
+   "25.4Q 컨콜 요약",
+   "https://www.datainsightsmarket.com/companies/MP"
+  ],
+  [
+   "벤치마크(26.08.21)",
+   "https://source.benchmarkminerals.com/article/ex-china-ndpr-prices-slip-below-110-kg-price-floor-as-oversupply-builds"
+  ]
+ ]
 }
