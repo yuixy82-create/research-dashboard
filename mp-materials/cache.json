@@ -60,24 +60,24 @@
 },
 "log": {
 "fx": {
-"at": "2026-11-18 10:40",
+"at": "2026-11-18 10:43",
 "msg": "frankfurter 34일",
 "ok": true
 },
 "ndpr": {
-"at": "2026-11-18 10:40",
+"at": "2026-11-18 10:43",
 "msg": "2026-11-17 718,000 위안/톤",
 "ok": true
 },
 "px": {
-"at": "2026-11-18 10:40",
+"at": "2026-11-18 10:43",
 "msg": "야후 64일, 최신 2026-11-16",
 "ok": true
 },
 "trades": {
-"at": "2026-11-18 10:40",
+"at": "2026-11-18 10:43",
 "lastOk": null,
-"msg": "HTTP Error 403: Forbidden",
+"msg": "신고서 목록(data.sec.gov): HTTP Error 403: Forbidden",
 "ok": false
 }
 },
@@ -783,5 +783,5 @@
 "title": "Chairman and CEO"
 }
 ],
-"updatedAt": "2026-11-18 10:40"
+"updatedAt": "2026-11-18 10:43"
 }
