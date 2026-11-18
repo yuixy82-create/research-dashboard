@@ -11,10 +11,10 @@
   px     MP 종가 (야후 → 나스닥)
   trades SEC EDGAR Form 4 (내부자 매수 P·매도 S). SEC가 막으면 오픈인사이더로 대신 받음
   dy_usd·tb_usd  SMM 달러 호가(부가세 제외), 최신 한 점씩
-  cons   마켓스크리너 컨센(매출·EBITDA). 바뀐 날만 cons_hist에 기록
   earn   다음 분기 실적 보도자료가 올라왔는지 확인 → 화면 맨 위 알림
 
-분기 실적·미중 타임라인·케파 표·바바리안 추정은 manual.json을 손으로 고침.
+분기 실적·미중 타임라인·케파 표·추정치(컨센·바바리안)는 manual.json을 손으로 고침.
+컨센 출처 마켓스크리너는 깃허브 러너를 막아 자동 수집 불가(26.11.18 실측).
 수집 실패, 며칠째 갱신 안 됨, 새 실적 발표, 날짜 지난 일정은 화면 맨 위 빨간 줄로 표시됨
 
 실행:  python mp-materials/tracker.py            수집 후 빌드
@@ -355,47 +355,6 @@ def collect_form4(cache, since="2026-01-01"):
     return "신규 거래 %d건, 확인한 신고서 %d건" % (new, len(seen))
 
 
-MS_URL = "https://www.marketscreener.com/quote/stock/MP-MATERIALS-CORP-119080593/valuation/"
-
-
-def _after_anchor(text, label, anchor, n=3):
-    """표의 한 행에서 기준값(확정 연도 실적) 바로 뒤 n개 숫자를 뽑음."""
-    for m in re.finditer(r"[>|]\s*%s\s*[<|]" % re.escape(label), text):
-        seg = re.sub(r"<[^>]+>", " | ", text[m.start():m.start() + 4000])
-        nums = [float(x.replace(",", "")) for x in re.findall(r"(?<![\w.])-?\d[\d,]*\.?\d*(?![\w%])", seg)][:14]
-        for i, v in enumerate(nums):
-            if abs(v - anchor) <= max(0.06, abs(anchor) * 0.003) and len(nums) >= i + 1 + n:
-                return nums[i + 1:i + 1 + n]
-    return None
-
-
-def collect_consensus(cache, man):
-    """마켓스크리너 컨센(매출·EBITDA). 값이 바뀐 날만 cons_hist에 새 줄을 붙임."""
-    a = man["consensus_anchor"]                      # 확정 연도 실적: 표에서 위치를 찾는 기준
-    t = get_or_reader(MS_URL)
-    rev = _after_anchor(t, "Net sales", a["rev"])
-    eb = _after_anchor(t, "EBITDA", a["ebitda"])
-    if not rev or not eb:
-        raise RuntimeError("컨센 표에서 기준값(%s년 매출 %s·EBITDA %s)을 못 찾음" % (a["year"], a["rev"], a["ebitda"]))
-    years = [str(a["year"] + k) for k in (1, 2, 3)]
-    new = {"rev": dict(zip(years, rev)), "ebitda": dict(zip(years, eb))}
-    hist = cache.setdefault("cons_hist", [])
-    today = today_kst().isoformat()
-    if hist:
-        last = hist[-1]
-        for k in ("rev", "ebitda"):
-            for y in years:
-                o, v = last[k].get(y), new[k][y]
-                if o and (v <= 0 or not 0.4 <= v / o <= 2.5):
-                    raise RuntimeError("컨센 값 급변으로 반영 보류: %s %s %s → %s" % (k, y, o, v))
-        if all(abs(last[k].get(y, 0) - new[k][y]) < 0.05 for k in ("rev", "ebitda") for y in years):
-            cache["cons_checked"] = today
-            return "변동 없음 (27년 EBITDA %.1f)" % new["ebitda"][years[1]]
-    hist.append(dict(new, d=today))
-    cache["cons_checked"] = today
-    return "변경 반영: 27년 매출 %.1f, EBITDA %.1f" % (new["rev"][years[1]], new["ebitda"][years[1]])
-
-
 QSLUG = {1: ("first-quarter-%d-results", "First Quarter %d"), 2: ("second-quarter-%d-results", "Second Quarter %d"),
          3: ("third-quarter-%d-results", "Third Quarter %d"),
          4: ("fourth-quarter-and-full-year-%d-results", "Fourth Quarter and Full Year %d")}
@@ -443,8 +402,7 @@ def collect_trades(cache):
 def collect_all(cache, man):
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
     for name, fn in (("ndpr", collect_smm), ("fx", collect_fx), ("px", collect_px), ("trades", collect_trades),
-                     ("aux", collect_smm_aux), ("cons", lambda c: collect_consensus(c, man)),
-                     ("earn", lambda c: collect_earnings(c, man))):
+                     ("aux", collect_smm_aux), ("earn", lambda c: collect_earnings(c, man))):
         try:
             msg = fn(cache)
             cache["log"][name] = {"ok": True, "at": now, "msg": msg}
@@ -885,14 +843,14 @@ def build_html(cache, man):
     b = bal_at(man, lpd)
     ests = [dict(e) for e in man["estimates"]]
     years = ["2026", "2027", "2028"]
-    ch_ = cache.get("cons_hist") or []
     cons_note = ""
     for e in ests:
-        if e["id"] == "consensus" and ch_:
-            e.update(rev=ch_[-1]["rev"], ebitda=ch_[-1]["ebitda"], asOf=cache.get("cons_checked") or ch_[-1]["d"], hist=ch_)
+        ch_ = e.get("hist") or []          # 추정치가 바뀔 때마다 manual.json에 {d, rev, ebitda}를 한 줄씩 추가
+        if ch_:
+            e.update(rev=ch_[-1]["rev"], ebitda=ch_[-1]["ebitda"], asOf=ch_[-1]["d"])
             if len(ch_) >= 2 and (today - date.fromisoformat(ch_[-1]["d"])).days <= 45:
                 a_, b_ = ch_[-2], ch_[-1]
-                cons_note = "컨센 변경 (%s): " % kd(b_["d"]) + ", ".join(
+                cons_note = "%s 변경 (%s): " % (e["name"].split(" (")[0], kd(b_["d"])) + ", ".join(
                     "%s년 EBITDA %.0f → %.0f" % (y[2:], a_["ebitda"][y], b_["ebitda"][y]) for y in years if abs(a_["ebitda"].get(y, 0) - b_["ebitda"][y]) >= 0.5)
     erow = ""
     for e in ests:
@@ -982,7 +940,7 @@ def build_html(cache, man):
         % (mcap / 100, ev / 100, ev / cons["ebitda"]["2027"], ev / barb["ebitda"]["2027"]),
     ]
     log = cache.get("log", {})
-    lab = {"ndpr": "NdPr 시세", "fx": "환율", "px": "주가", "trades": "내부자 거래", "aux": "Dy·Tb", "cons": "컨센", "earn": "실적 발표 감지"}
+    lab = {"ndpr": "NdPr 시세", "fx": "환율", "px": "주가", "trades": "내부자 거래", "aux": "Dy·Tb", "earn": "실적 발표 감지"}
     warn = []
     er = (cache.get("alerts") or {}).get("earnings")
     if er and er["q"] not in [q["q"] for q in qs]:
@@ -995,6 +953,9 @@ def build_html(cache, man):
     for name, dm, lim in (("NdPr 시세", nd, 6), ("주가", px, 5)):
         if (today - date.fromisoformat(max(dm))).days > lim:
             warn.append("%s가 %s 이후 갱신되지 않음" % (name, kd(max(dm))))
+    for e in ests:
+        if e["id"] == "consensus" and (today - date.fromisoformat(e["asOf"])).days > 45:
+            warn.append("⑥ 컨센 추정치 기준일이 %s: 45일 넘게 갱신되지 않음" % kd(e["asOf"]))
     warnbox = ('<div class="alert">%s</div>' % "<br>".join(warn)) if warn else ""
     stat = " · ".join("%s %s" % (lab[k], ("정상 " + v["at"][5:]) if v.get("ok") else ("실패 " + v["at"][5:]))
                       for k, v in log.items() if k in lab) or "첫 자동 수집 전"
@@ -1158,8 +1119,7 @@ Source: <a href="https://www.metal.com/rare-earth-oxides/201102250247" target="_
 
 def main():
     cache = load(CACHE, {})
-    for k, v in (("ndpr", {}), ("fx", {}), ("px", {}), ("trades", []), ("f4_seen", []), ("log", {}),
-                 ("cons_hist", []), ("alerts", {})):
+    for k, v in (("ndpr", {}), ("fx", {}), ("px", {}), ("trades", []), ("f4_seen", []), ("log", {}), ("alerts", {})):
         cache.setdefault(k, v)
     man = load(MANUAL, None)
     if man is None:
@@ -1168,6 +1128,7 @@ def main():
     if "--no-fetch" not in sys.argv:
         print("수집 시작")
         collect_all(cache, man)
+        cache["log"] = {k: v for k, v in cache["log"].items() if k in ("ndpr", "fx", "px", "trades", "aux", "earn")}
         cache["updatedAt"] = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
         save(CACHE, cache)
     with open(OUT, "w", encoding="utf-8") as f:
