@@ -11,6 +11,11 @@
   px     MP 종가 (야후 → 나스닥)
   trades SEC EDGAR Form 4 (내부자 매수 P·매도 S). SEC가 막으면 오픈인사이더로 대신 받음
   dy_usd·tb_usd  SMM 달러 호가(부가세 제외), 최신 한 점씩
+  cons   마켓스크리너 컨센(매출·EBITDA). 바뀐 날만 cons_hist에 기록
+  earn   다음 분기 실적 보도자료가 올라왔는지 확인 → 화면 맨 위 알림
+
+분기 실적·미중 타임라인·케파 표·바바리안 추정은 manual.json을 손으로 고침.
+수집 실패, 며칠째 갱신 안 됨, 새 실적 발표, 날짜 지난 일정은 화면 맨 위 빨간 줄로 표시됨
 
 실행:  python mp-materials/tracker.py            수집 후 빌드
        python mp-materials/tracker.py --no-fetch  빌드만
@@ -93,50 +98,76 @@ def get_or_reader(url, timeout=30):
     raise RuntimeError("; ".join(errs))
 
 
+def _hist_from(t):
+    """SMM 품목 페이지 서버 HTML에 박힌 initialProductHistory 블록을 읽음."""
+    i = t.find("initialProductHistory")
+    if i < 0:
+        raise RuntimeError("가격 블록 없음")
+    s_ = t[i:i + 80000].replace('\\"', '"')
+    st = s_.find("{")
+    depth = 0
+    for k in range(st, len(s_)):
+        if s_[k] == "{":
+            depth += 1
+        elif s_[k] == "}":
+            depth -= 1
+            if depth == 0:
+                return json.loads(s_[st:k + 1])
+    raise RuntimeError("가격 블록 파싱 실패")
+
+
 def collect_smm(cache):
-    """SMM 페이지의 '... the average price of Pr-Nd oxide was 718,000 yuan/mt' 문장에서 평균가를 읽음."""
+    """SMM Pr-Nd 산화물 평균가(위안/톤). 요약 문장과 가격 블록 두 군데서 읽어 서로 대조함.
+    요약 문장: '... the average price of Pr-Nd oxide was 718,000 yuan/mt'
+    가격 블록: 최신 행의 달러 호가(부가세 제외) × (1 + 부가세율) × 환율 → 500위안 단위 반올림"""
     t = get_or_reader(SMM_URL)
-    m = re.search(r"average price[^\d]{0,60}?([\d,]{6,10})\s*yuan/mt", t)
-    if not m:
-        raise RuntimeError("평균가 문장을 못 찾음 (페이지 구조 변경 가능)")
-    v = int(m.group(1).replace(",", ""))
-    if not 200_000 <= v <= 2_500_000:
-        raise RuntimeError("값 범위 이상: %s" % v)
-    d = None
-    m2 = re.search(r'renew_date\\?"\s*:\s*\\?"(\d{4}-\d{2}-\d{2})', t)
-    if m2:
-        d = m2.group(1)
-    else:
-        ctx = t[max(0, m.start() - 200):m.start()]
-        m3 = re.search(r"On ([A-Z][a-z]+) (\d{1,2}), (\d{4})", ctx)
-        if m3 and m3.group(1) in MON:
-            d = "%s-%02d-%02d" % (m3.group(3), MON[m3.group(1)], int(m3.group(2)))
-    if not d:
-        raise RuntimeError("날짜를 못 찾음")
+    cands = []
+    i = t.find("collection_summary")
+    seg = t[i:i + 900] if i >= 0 else t
+    j = seg.find("initialProductHistory")
+    if j > 0:
+        seg = seg[:j]
+    # 반드시 Pr-Nd oxide를 가리키는 문장만 (같은 페이지의 합금·다른 품목 문장 배제)
+    m = (re.search(r"average price of Pr-Nd oxide[^\d]{0,20}([\d,]{6,10})\s*yuan/mt", seg)
+         or re.search(r"Pr-Nd oxide[^.]{0,120}?average price[^\d]{0,30}([\d,]{6,10})\s*yuan/mt", seg))
+    if m:
+        v = int(m.group(1).replace(",", ""))
+        d = None
+        m2 = re.search(r'renew_date\\?"\s*:\s*\\?"(\d{4}-\d{2}-\d{2})', t)
+        if m2:
+            d = m2.group(1)
+        else:
+            m3 = re.search(r"On ([A-Z][a-z]+) (\d{1,2}), (\d{4})", seg[max(0, m.start() - 200):m.start()])
+            if m3 and m3.group(1) in MON:
+                d = "%s-%02d-%02d" % (m3.group(3), MON[m3.group(1)], int(m3.group(2)))
+        if d and 200_000 <= v <= 2_500_000:
+            cands.append((d, 1, v, "요약 문장"))
+    try:
+        o = _hist_from(t)
+        row = o["prices"][0]
+        rate = float(o.get("exchange_rate") or 0)
+        if o.get("unit") == "USD/tonne" and rate:
+            v = round(float(row["average"]) * (1 + float(row.get("vat_rate") or 0.13)) * rate / 500) * 500
+            if 200_000 <= v <= 2_500_000:
+                cands.append((row["renew_date"], 0, v, "가격 블록"))
+    except Exception:
+        pass
+    if not cands:
+        raise RuntimeError("평균가를 못 읽음 (페이지 구조 변경 가능)")
+    d, _, v, src = max(cands)                 # 날짜가 늦은 쪽, 같으면 요약 문장
+    note = ""
+    other = [c for c in cands if c[3] != src and c[0] == d]
+    if other and abs(other[0][2] - v) / v > 0.015:
+        note = " (두 값 불일치: %s %s)" % (other[0][3], format(other[0][2], ","))
     cache["ndpr"][d] = v
-    return "%s %s 위안/톤" % (d, format(v, ","))
+    return "%s %s 위안/톤, %s%s%s" % (d, format(v, ","), src, ", 대조 일치" if other and not note else "", note)
 
 
 SMM_AUX = {"dy_usd": ("201102250247", 50, 1500), "tb_usd": ("201102250488", 200, 5000)}
 
 
 def smm_hist(pid):
-    """SMM 품목 페이지 서버 HTML에 박힌 initialProductHistory 블록을 읽음."""
-    t = get_or_reader("https://www.metal.com/rare-earth-oxides/%s" % pid)
-    i = t.find("initialProductHistory")
-    if i < 0:
-        raise RuntimeError("가격 블록 없음")
-    s = t[i:i + 80000].replace('\\"', '"')
-    st = s.find("{")
-    depth = 0
-    for k in range(st, len(s)):
-        if s[k] == "{":
-            depth += 1
-        elif s[k] == "}":
-            depth -= 1
-            if depth == 0:
-                return json.loads(s[st:k + 1])
-    raise RuntimeError("가격 블록 파싱 실패")
+    return _hist_from(get_or_reader("https://www.metal.com/rare-earth-oxides/%s" % pid))
 
 
 def collect_smm_aux(cache):
@@ -185,6 +216,10 @@ def _yahoo_px(text):
         if c is not None:
             d = (datetime.fromtimestamp(ts, timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d")
             out[d] = round(c, 2)
+    meta = res.get("meta") or {}
+    if meta.get("regularMarketPrice") and meta.get("regularMarketTime"):
+        d = (datetime.fromtimestamp(meta["regularMarketTime"], timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d")
+        out.setdefault(d, round(meta["regularMarketPrice"], 2))
     return out
 
 
@@ -320,6 +355,84 @@ def collect_form4(cache, since="2026-01-01"):
     return "신규 거래 %d건, 확인한 신고서 %d건" % (new, len(seen))
 
 
+MS_URL = "https://www.marketscreener.com/quote/stock/MP-MATERIALS-CORP-119080593/valuation/"
+
+
+def _after_anchor(text, label, anchor, n=3):
+    """표의 한 행에서 기준값(확정 연도 실적) 바로 뒤 n개 숫자를 뽑음."""
+    for m in re.finditer(r"[>|]\s*%s\s*[<|]" % re.escape(label), text):
+        seg = re.sub(r"<[^>]+>", " | ", text[m.start():m.start() + 4000])
+        nums = [float(x.replace(",", "")) for x in re.findall(r"(?<![\w.])-?\d[\d,]*\.?\d*(?![\w%])", seg)][:14]
+        for i, v in enumerate(nums):
+            if abs(v - anchor) <= max(0.06, abs(anchor) * 0.003) and len(nums) >= i + 1 + n:
+                return nums[i + 1:i + 1 + n]
+    return None
+
+
+def collect_consensus(cache, man):
+    """마켓스크리너 컨센(매출·EBITDA). 값이 바뀐 날만 cons_hist에 새 줄을 붙임."""
+    a = man["consensus_anchor"]                      # 확정 연도 실적: 표에서 위치를 찾는 기준
+    t = get_or_reader(MS_URL)
+    rev = _after_anchor(t, "Net sales", a["rev"])
+    eb = _after_anchor(t, "EBITDA", a["ebitda"])
+    if not rev or not eb:
+        raise RuntimeError("컨센 표에서 기준값(%s년 매출 %s·EBITDA %s)을 못 찾음" % (a["year"], a["rev"], a["ebitda"]))
+    years = [str(a["year"] + k) for k in (1, 2, 3)]
+    new = {"rev": dict(zip(years, rev)), "ebitda": dict(zip(years, eb))}
+    hist = cache.setdefault("cons_hist", [])
+    today = today_kst().isoformat()
+    if hist:
+        last = hist[-1]
+        for k in ("rev", "ebitda"):
+            for y in years:
+                o, v = last[k].get(y), new[k][y]
+                if o and (v <= 0 or not 0.4 <= v / o <= 2.5):
+                    raise RuntimeError("컨센 값 급변으로 반영 보류: %s %s %s → %s" % (k, y, o, v))
+        if all(abs(last[k].get(y, 0) - new[k][y]) < 0.05 for k in ("rev", "ebitda") for y in years):
+            cache["cons_checked"] = today
+            return "변동 없음 (27년 EBITDA %.1f)" % new["ebitda"][years[1]]
+    hist.append(dict(new, d=today))
+    cache["cons_checked"] = today
+    return "변경 반영: 27년 매출 %.1f, EBITDA %.1f" % (new["rev"][years[1]], new["ebitda"][years[1]])
+
+
+QSLUG = {1: ("first-quarter-%d-results", "First Quarter %d"), 2: ("second-quarter-%d-results", "Second Quarter %d"),
+         3: ("third-quarter-%d-results", "Third Quarter %d"),
+         4: ("fourth-quarter-and-full-year-%d-results", "Fourth Quarter and Full Year %d")}
+
+
+def _er(q):
+    """'26.3Q' → (회사 보도자료 주소, 본문에 있어야 할 문구)"""
+    y, n = 2000 + int(q[:2]), int(q[3])
+    return "https://mpmaterials.com/news/mp-materials-reports-" + QSLUG[n][0] % y + "/", QSLUG[n][1] % y
+
+
+def collect_earnings(cache, man):
+    """다음 분기 실적 보도자료가 올라왔는지 확인. 올라오면 화면 맨 위에 갱신 필요 알림을 띄움.
+    분기 숫자 자체는 manual.json을 손으로 고쳐야 함."""
+    last = man["quarters"][-1]["q"]
+    y, n = int(last[:2]), int(last[3])
+    nxt = "%02d.%dQ" % ((y, n + 1) if n < 4 else (y + 1, 1))
+
+    def has(q):
+        url, phrase = _er(q)
+        try:
+            t = get_or_reader(url)
+        except Exception:
+            return False
+        return phrase.lower() in t.lower() and "NdPr" in t
+
+    if not has(last):
+        raise RuntimeError("대조용 %s 보도자료를 못 읽어 새 실적 감지 불가" % last)
+    al = cache.setdefault("alerts", {})
+    if has(nxt):
+        prev = al.get("earnings") or {}
+        al["earnings"] = {"q": nxt, "url": _er(nxt)[0], "seen": prev.get("seen") if prev.get("q") == nxt else today_kst().isoformat()}
+        return "%s 실적 발표 감지" % nxt
+    al.pop("earnings", None)
+    return "%s 확인됨(대조), %s 아직 없음" % (last, nxt)
+
+
 def collect_trades(cache):
     try:
         return "SEC " + collect_form4(cache)
@@ -327,10 +440,11 @@ def collect_trades(cache):
         return collect_openinsider(cache) + " · SEC 실패: %s" % str(e)[:80]
 
 
-def collect_all(cache):
+def collect_all(cache, man):
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
     for name, fn in (("ndpr", collect_smm), ("fx", collect_fx), ("px", collect_px), ("trades", collect_trades),
-                     ("aux", collect_smm_aux)):
+                     ("aux", collect_smm_aux), ("cons", lambda c: collect_consensus(c, man)),
+                     ("earn", lambda c: collect_earnings(c, man))):
         try:
             msg = fn(cache)
             cache["log"][name] = {"ok": True, "at": now, "msg": msg}
@@ -604,6 +718,8 @@ header.hero{background:var(--primary);color:#fff;padding:30px 0 22px;margin-bott
 .kpi-num{font-size:21px;font-weight:800;color:var(--heading);margin:1px 0}
 .kpi-unit{font-size:11px;color:var(--faint);font-weight:600;margin-left:2px}
 .kpi-sub{font-size:10px;color:var(--faint)}
+.alert{background:#FBEDEA;border-left:5px solid var(--red);padding:11px 16px;margin:0 0 14px;font-size:13px;line-height:1.7}
+.alert a{color:var(--red)}
 .thesis{background:var(--tint);border-left:5px solid var(--primary);padding:20px 24px;margin:0 0 26px}
 .thesis-title{font-weight:800;color:var(--primary);font-size:21px;margin-bottom:12px;letter-spacing:-.02em}
 .thesis ul{margin:0;padding-left:16px;list-style:disc}
@@ -707,9 +823,11 @@ def build_html(cache, man):
     end = date.fromisoformat(man["truce_end"])
     dleft = (end - today).days
     ctl = "".join('<tr><td><b>%s</b></td><td>%s</td><td>%s<div class="lk">%s</div></td></tr>' % (c["name"], c["items"], c["status"], links(c["links"])) for c in man["controls"])
-    up = "".join('<tr%s><td style="white-space:nowrap"><b>%s</b></td><td>%s</td><td>%s</td></tr>'
-                 % (' class="hl"' if u["date"] == man["truce_end"] else "", u["when"], u["event"], u["check"])
-                 for u in man["upcoming"] if u["date"] >= today.isoformat())
+    overdue = [u for u in man["upcoming"] if u["date"] < today.isoformat()]
+    up = "".join('<tr%s><td style="white-space:nowrap"><b>%s</b></td><td>%s%s</td><td>%s</td></tr>'
+                 % (' class="hl"' if u["date"] == man["truce_end"] else "", u["when"], u["event"],
+                    ' <span class="tag sell">지남: 결과 반영 필요</span>' if u in overdue else "", u["check"])
+                 for u in man["upcoming"])
     tl = ""
     for e in man["timeline"]:
         title = ('<span class="star">★</span><span class="mark">%s</span>' % e["title"]) if e.get("star") else e["title"]
@@ -765,8 +883,17 @@ def build_html(cache, man):
     # ---------- ⑤ 밸류 ----------
     mcap, ev = ev_at(man, lpd, lpx)
     b = bal_at(man, lpd)
-    ests = man["estimates"]
+    ests = [dict(e) for e in man["estimates"]]
     years = ["2026", "2027", "2028"]
+    ch_ = cache.get("cons_hist") or []
+    cons_note = ""
+    for e in ests:
+        if e["id"] == "consensus" and ch_:
+            e.update(rev=ch_[-1]["rev"], ebitda=ch_[-1]["ebitda"], asOf=cache.get("cons_checked") or ch_[-1]["d"], hist=ch_)
+            if len(ch_) >= 2 and (today - date.fromisoformat(ch_[-1]["d"])).days <= 45:
+                a_, b_ = ch_[-2], ch_[-1]
+                cons_note = "컨센 변경 (%s): " % kd(b_["d"]) + ", ".join(
+                    "%s년 EBITDA %.0f → %.0f" % (y[2:], a_["ebitda"][y], b_["ebitda"][y]) for y in years if abs(a_["ebitda"].get(y, 0) - b_["ebitda"][y]) >= 0.5)
     erow = ""
     for e in ests:
         nmx = '<a href="%s" target="_blank" rel="noopener">%s</a>' % (e["url"], e["name"]) if e.get("url") else e["name"]
@@ -779,7 +906,14 @@ def build_html(cache, man):
     vline = [p for p in pxs if p[0] >= (today - timedelta(days=365)).isoformat()]
     vs = []
     for e in ests:
-        pts = [(d, ev_at(man, d, p)[1] / e["ebitda"]["2027"]) for d, p in vline]
+        hs = e.get("hist")
+
+        def eb27(d, e=e, hs=hs):
+            if not hs:
+                return e["ebitda"]["2027"]
+            prior = [h for h in hs if h["d"] <= d]
+            return (prior[-1] if prior else hs[0])["ebitda"]["2027"]
+        pts = [(d, ev_at(man, d, p)[1] / eb27(d)) for d, p in vline]
         vs.append({"label": e["name"].split(" (")[0], "color": T[e.get("color", "primary")], "points": pts, "width": 2.0})
     ch5 = svg_line(vs, hlines=[(r["x"], r["label"], T["faint"]) for r in man["multiple_refs"]],
                    yfmt=lambda v: "%.1f배" % v, tfmt=lambda v: "%.0f배" % v, ymin=10, mr=215)
@@ -848,7 +982,20 @@ def build_html(cache, man):
         % (mcap / 100, ev / 100, ev / cons["ebitda"]["2027"], ev / barb["ebitda"]["2027"]),
     ]
     log = cache.get("log", {})
-    lab = {"ndpr": "NdPr 시세", "fx": "환율", "px": "주가", "trades": "내부자 거래", "aux": "Dy·Tb"}
+    lab = {"ndpr": "NdPr 시세", "fx": "환율", "px": "주가", "trades": "내부자 거래", "aux": "Dy·Tb", "cons": "컨센", "earn": "실적 발표 감지"}
+    warn = []
+    er = (cache.get("alerts") or {}).get("earnings")
+    if er and er["q"] not in [q["q"] for q in qs]:
+        warn.append('<b>%s 실적 발표됨</b> (%s 확인): ②④⑤⑧ 표는 아직 %s 기준 <a href="%s" target="_blank" rel="noopener">보도자료</a>' % (er["q"], kd(er["seen"]), lq["q"], er["url"]))
+    if overdue:
+        warn.append("③ 추후 일정 중 날짜가 지난 것 %d건: 결과 반영 필요" % len(overdue))
+    for k, v in log.items():
+        if k in lab and not v.get("ok"):
+            warn.append("%s 자동 수집 실패 (%s)" % (lab[k], v["at"][5:]))
+    for name, dm, lim in (("NdPr 시세", nd, 6), ("주가", px, 5)):
+        if (today - date.fromisoformat(max(dm))).days > lim:
+            warn.append("%s가 %s 이후 갱신되지 않음" % (name, kd(max(dm))))
+    warnbox = ('<div class="alert">%s</div>' % "<br>".join(warn)) if warn else ""
     stat = " · ".join("%s %s" % (lab[k], ("정상 " + v["at"][5:]) if v.get("ok") else ("실패 " + v["at"][5:]))
                       for k, v in log.items() if k in lab) or "첫 자동 수집 전"
 
@@ -860,7 +1007,7 @@ def build_html(cache, man):
 <div><h1>MP 머티리얼즈 트래커</h1><div class="sub">미국 희토류(NYSE: MP) · NdPr 가격과 국방부 하한선, 미중 규제 유예, 내부자 매매, 밸류 · 케파·실적 · 기준 %(today)s · 매일 07:35 / 18:40 KST 자동 수집</div></div>
 </div></header>
 <div class="wrap">
-<div class="kpi-row">%(kp)s</div>
+%(warnbox)s<div class="kpi-row">%(kp)s</div>
 <div class="thesis"><div class="thesis-title">지금 상태</div><ul>%(now)s</ul></div>
 
 <span class="banner">① NdPr 가격 vs 국방부 하한선 110불<span class="u">달러/kg · 일간</span></span>
@@ -926,7 +1073,7 @@ Source: <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=
 <div class="sub">추정치와 현재 배수 <span style="font-weight:400;font-size:12px;color:#9B9B9B">백만불 · %(lpd)s 종가 $%(lpx).2f 기준</span></div>
 <div class="tw"><table class="data"><thead><tr><th rowspan="2">출처</th><th rowspan="2">기준일</th><th colspan="3" class="num" style="text-align:center">매출</th><th colspan="3" class="num" style="text-align:center">조정 EBITDA</th><th colspan="3" class="num" style="text-align:center">EV/EBITDA</th></tr>
 <tr><th class="num">26E</th><th class="num">27E</th><th class="num">28E</th><th class="num">26E</th><th class="num">27E</th><th class="num">28E</th><th class="num">26E</th><th class="num">27E</th><th class="num">28E</th></tr></thead><tbody>%(erow)s%(crow)s</tbody></table></div>
-<div class="sub">EV/EBITDA 추이 <span style="font-weight:400;font-size:12px;color:#9B9B9B">27년 추정 EBITDA 기준 · 최근 1년</span></div>
+%(consnote)s<div class="sub">EV/EBITDA 추이 <span style="font-weight:400;font-size:12px;color:#9B9B9B">27년 추정 EBITDA 기준 · 최근 1년</span></div>
 %(ch5)s
 <div class="note">EV = 시총 + 차입금 − 현금·단기투자 = %(mcap)s + %(debt)s − %(cash)s = %(ev)s백만불 (재무제표 %(bal)s 기준). 시총은 발행주식 %(sh).1f백만주 기준으로, 국방부 전환우선주와 워런트는 미포함.<br>
 추이 선은 추정치를 현재 값으로 고정하고 주가와 순현금만 날짜별로 반영. 추정치가 바뀌면 그날부터 새 값 적용. %(refsrc)s.<br>
@@ -979,7 +1126,7 @@ Source: <a href="https://www.metal.com/rare-earth-oxides/201102250247" target="_
 데이터: SMM(NdPr 시세) · 야후 파이낸스(주가·환율) · SEC EDGAR(Form 4·8-K·10-Q) · MP 실적 발표자료 · 중국 상무부·USTR·미 연방관보(규제)<br>
 개인 리서치 기록이며 투자 권유가 아님</footer>
 </div></body></html>""" % {
-        "css": CSS, "today": kd(today.isoformat()), "kp": kp, "now": "".join("<li>%s</li>" % x for x in now),
+        "css": CSS, "today": kd(today.isoformat()), "warnbox": warnbox, "kp": kp, "now": "".join("<li>%s</li>" % x for x in now),
         "need": format(round(need, -3), ",.0f"), "rtitle": man["realization"]["title"], "rlines": "<br>\n".join(man["realization"]["lines"]),
         "iotitle": man["inout"]["title"], "iolines": "<br>\n".join(man["inout"]["lines"]), "psrc": links(man["price_src"]),
         "ch1": ch1, "ld0": kd(man["ndpr_seed_until"]), "smm": SMM_URL, "sens": sens, "cap": format(man["capacity_ndpr_t"], ","),
@@ -988,6 +1135,7 @@ Source: <a href="https://www.metal.com/rare-earth-oxides/201102250247" target="_
         "ch4": ch4, "yr": yr[2:], "prow": prow, "thead": thead, "trs": trs,
         "more": ('<details class="more"><summary>이전 거래 %d건 더 보기</summary><div class="tw"><table class="data">%s<tbody>%s</tbody></table></div></details>' % (len(gt) - 12, thead, trs_more)) if trs_more else "",
         "lpd": kd(lpd), "lpx": lpx, "erow": erow, "crow": crow, "ch5": ch5,
+        "consnote": ('<p class="ana" style="margin-top:8px"><span class="mark">%s</span></p>' % cons_note) if cons_note and not cons_note.endswith(": ") else "",
         "mcap": format(mcap, ",.0f"), "debt": format(b["debt"], ",.0f"), "cash": format(b["cash"], ",.0f"), "ev": format(ev, ",.0f"),
         "ch6": ch6, "lq": lq["q"], "util": util, "vnote": man["volume_note"], "ch7": ch7, "srow": srow,
         "ch8": ch8, "crow8": crow8, "cnote": man["cash_note"], "ch9a": ch9a, "ch9b": ch9b, "caprow": caprow,
@@ -1010,7 +1158,8 @@ Source: <a href="https://www.metal.com/rare-earth-oxides/201102250247" target="_
 
 def main():
     cache = load(CACHE, {})
-    for k, v in (("ndpr", {}), ("fx", {}), ("px", {}), ("trades", []), ("f4_seen", []), ("log", {})):
+    for k, v in (("ndpr", {}), ("fx", {}), ("px", {}), ("trades", []), ("f4_seen", []), ("log", {}),
+                 ("cons_hist", []), ("alerts", {})):
         cache.setdefault(k, v)
     man = load(MANUAL, None)
     if man is None:
@@ -1018,7 +1167,7 @@ def main():
         return 1
     if "--no-fetch" not in sys.argv:
         print("수집 시작")
-        collect_all(cache)
+        collect_all(cache, man)
         cache["updatedAt"] = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
         save(CACHE, cache)
     with open(OUT, "w", encoding="utf-8") as f:
