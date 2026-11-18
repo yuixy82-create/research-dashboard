@@ -407,10 +407,10 @@ def nasdaq_plan_map():
     for r in rows:
         ty = r.get("transactionType", "")
         code = "S" if ty.endswith("Sell") else "P" if ty.endswith("Buy") else None
-        mm = re.match(r"(\d{2})/(\d{2})/(\d{4})", r.get("lastDate", ""))
+        mm = re.match(r"(\d{1,2})/(\d{1,2})/(\d{4})", r.get("lastDate", ""))
         if not code or not mm:
             continue
-        k = (norm(r.get("insider", "")), "%s-%s-%s" % (mm.group(3), mm.group(1), mm.group(2)), code)
+        k = (norm(r.get("insider", "")), "%s-%02d-%02d" % (mm.group(3), int(mm.group(1)), int(mm.group(2))), code)
         m.setdefault(k, set()).add(1 if ty.startswith("Automatic") else 0)
     if not m:
         raise RuntimeError("나스닥 내부자 표가 비어 있음")
@@ -427,7 +427,7 @@ def enrich_plan(cache):
     for t in pend:
         v = m.get((norm(t["name"]), t["date"], t["code"]))
         if v and len(v) == 1:               # 같은 날 계획·비계획이 섞여 있으면 판단하지 않음
-            t["plan"] = v.pop()
+            t["plan"] = next(iter(v))
             t["psrc"] = "nasdaq"
             t.pop("pq", None)
             done += 1
@@ -500,29 +500,6 @@ def collect_consensus(cache, man):
     return "팩트셋 27년 매출 %.0f·EBITDA %.0f%s" % (cur["rev"]["2027"], cur["ebitda"]["2027"], " (변경)" if changed and len(cc["hist"]) > 1 else "")
 
 
-def collect_verify(cache, man):
-    """임시: 새 수집기 검증용 기록 (다음 커밋에서 삭제)."""
-    out = {}
-    try:
-        t = http_get(BI_URL, {"User-Agent": UA, "Accept": "text/html,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.9", "Accept-Encoding": "gzip"}, 30)
-        x = _plain(t)
-        i = x.find(" EBITDA ")
-        out["bi_text"] = x[max(0, i - 900):i + 160]
-        out["bi_parsed"] = parse_bi(t)
-    except Exception as e:
-        out["bi_err"] = str(e)[:200]
-    try:
-        j = json.loads(http_get(NASDAQ_INS, NASDAQ_HDR, 25))
-        tb = ((j.get("data") or {}).get("transactionTable") or {})
-        rows = (tb.get("table") or {}).get("rows") or []
-        out["nq_n"] = len(rows)
-        out["nq_meta"] = {k: v for k, v in tb.items() if k != "table"}
-        out["nq_rows"] = [[r.get("lastDate"), r.get("insider"), r.get("transactionType"), r.get("ownType"), r.get("sharesTraded"), r.get("lastPrice")] for r in rows]
-    except Exception as e:
-        out["nasdaq_err"] = str(e)[:200]
-    cache["probe"] = out
-
-
 def collect_all(cache, man):
     now = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
     for name, fn in (("ndpr", collect_smm), ("fx", collect_fx), ("px", collect_px), ("trades", collect_trades),
@@ -536,10 +513,6 @@ def collect_all(cache, man):
             prev = cache["log"].get(name, {})
             cache["log"][name] = {"ok": False, "at": now, "msg": str(e)[:300], "lastOk": prev.get("at") if prev.get("ok") else prev.get("lastOk")}
             print("  [fail] %-7s %s" % (name, e))
-    try:
-        collect_verify(cache, man)
-    except Exception as e:
-        cache["probe"] = {"error": str(e)[:300]}
 
 
 # ============================================================
@@ -1220,7 +1193,7 @@ Source: <a href="https://www.metal.com/rare-earth-oxides/201102250247" target="_
 </div>
 
 <footer>자동 수집 상태: %(stat)s<br>
-데이터: SMM(NdPr 시세) · 야후 파이낸스(주가·환율) · SEC EDGAR(Form 4·8-K·10-Q) · MP 실적 발표자료 · 중국 상무부·USTR·미 연방관보(규제)<br>
+데이터: SMM(NdPr 시세) · 야후 파이낸스(주가·환율) · SEC EDGAR·오픈인사이더·나스닥(내부자 거래) · 팩트셋(컨센) · MP 10-Q·8-K · MP 실적 발표자료 · 중국 상무부·USTR·미 연방관보(규제)<br>
 개인 리서치 기록이며 투자 권유가 아님</footer>
 </div></body></html>""" % {
         "css": CSS, "today": kd(today.isoformat()), "warnbox": warnbox, "kp": kp, "now": "".join("<li>%s</li>" % x for x in now),
@@ -1265,6 +1238,7 @@ def main():
         print("수집 시작")
         collect_all(cache, man)
         cache["log"] = {k: v for k, v in cache["log"].items() if k in ("ndpr", "fx", "px", "trades", "aux", "earn", "cons")}
+        cache.pop("probe", None)
         cache["updatedAt"] = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
         save(CACHE, cache)
     with open(OUT, "w", encoding="utf-8") as f:
