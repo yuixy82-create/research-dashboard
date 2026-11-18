@@ -1,4 +1,17 @@
 {
+"dy_usd": {
+"2025-01-21": 201.9,
+"2025-07-17": 207.91,
+"2025-11-27": 184.21,
+"2025-12-24": 167.59,
+"2026-02-12": 187.87,
+"2026-08-20": 184.07,
+"2026-09-17": 190.12,
+"2026-09-24": 188.81,
+"2026-10-15": 186.49,
+"2026-10-22": 186.95,
+"2026-11-17": 206.84
+},
 "f4_seen": [],
 "fx": {
 "2024-12-31": 7.298,
@@ -107,6 +120,12 @@
 "2026-11-06": 712000,
 "2026-11-13": 719000,
 "2026-11-17": 718000
+},
+"ndpr_cif": {
+"2026-11-11": 113.0
+},
+"ndpr_fob": {
+"2026-11-11": 119.0
 },
 "px": {
 "2025-11-18": 58.51,
@@ -361,6 +380,17 @@
 "2026-11-16": 36.09,
 "2026-11-17": 34.86
 },
+"tb_usd": {
+"2025-01-21": 720.28,
+"2025-07-17": 885.94,
+"2025-11-27": 812.77,
+"2025-12-24": 755.39,
+"2026-09-17": 871.67,
+"2026-09-24": 865.09,
+"2026-10-15": 843.82,
+"2026-10-22": 841.96,
+"2026-11-17": 857.97
+},
 "trades": [
 {
 "code": "P",
@@ -372,6 +402,7 @@
 "plan": 0,
 "price": 34.86,
 "shares": 2627,
+"src": "edgar",
 "title": "Chief Financial Officer"
 },
 {
@@ -384,6 +415,7 @@
 "plan": 0,
 "price": 36.75,
 "shares": 3500,
+"src": "edgar",
 "title": "Chief Financial Officer"
 },
 {
@@ -396,6 +428,7 @@
 "plan": 0,
 "price": 36.27,
 "shares": 17000,
+"src": "edgar",
 "title": "Chief Operating Officer"
 },
 {
@@ -408,6 +441,7 @@
 "plan": 0,
 "price": 37.2,
 "shares": 10000,
+"src": "edgar",
 "title": "Chief Operating Officer"
 },
 {
@@ -420,6 +454,7 @@
 "plan": 0,
 "price": 37.3,
 "shares": 5000,
+"src": "edgar",
 "title": "Chief Operating Officer"
 },
 {
@@ -432,6 +467,7 @@
 "plan": 0,
 "price": 36.0,
 "shares": 55000,
+"src": "edgar",
 "title": "Director"
 },
 {
@@ -444,6 +480,7 @@
 "plan": 0,
 "price": 36.84,
 "shares": 2700,
+"src": "edgar",
 "title": "Chief Financial Officer"
 },
 {
@@ -456,6 +493,7 @@
 "plan": 0,
 "price": 35.68,
 "shares": 2776,
+"src": "edgar",
 "title": "Chief Financial Officer"
 },
 {
@@ -468,6 +506,7 @@
 "plan": 0,
 "price": 54.3,
 "shares": 10000,
+"src": "edgar",
 "title": "Chief Operating Officer"
 },
 {
@@ -480,6 +519,7 @@
 "plan": 0,
 "price": 71.31,
 "shares": 11740,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -492,6 +532,7 @@
 "plan": 0,
 "price": 70.23,
 "shares": 37286,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -504,6 +545,7 @@
 "plan": 0,
 "price": 68.65,
 "shares": 136141,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -516,6 +558,7 @@
 "plan": 0,
 "price": 66.06,
 "shares": 23113,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -528,6 +571,7 @@
 "plan": 0,
 "price": 65.2,
 "shares": 92236,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -540,6 +584,7 @@
 "plan": 0,
 "price": 68.18,
 "shares": 6710,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -552,6 +597,7 @@
 "plan": 0,
 "price": 67.78,
 "shares": 39445,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -564,6 +610,7 @@
 "plan": 0,
 "price": 66.52,
 "shares": 49265,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -576,6 +623,7 @@
 "plan": 0,
 "price": 65.65,
 "shares": 44117,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -588,6 +636,7 @@
 "plan": 0,
 "price": 64.67,
 "shares": 95114,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -600,6 +649,7 @@
 "plan": 0,
 "price": 65.13,
 "shares": 1950,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -612,6 +662,7 @@
 "plan": 0,
 "price": 64.56,
 "shares": 48050,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -624,6 +675,7 @@
 "plan": 0,
 "price": 56.62,
 "shares": 17000,
+"src": "edgar",
 "title": "Chief Operating Officer"
 },
 {
@@ -636,6 +688,7 @@
 "plan": 0,
 "price": 67.12,
 "shares": 19844,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -648,6 +701,7 @@
 "plan": 0,
 "price": 65.67,
 "shares": 102968,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -660,6 +714,7 @@
 "plan": 0,
 "price": 65.31,
 "shares": 93959,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -672,6 +727,7 @@
 "plan": 0,
 "price": 64.93,
 "shares": 83229,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -684,6 +740,7 @@
 "plan": 1,
 "price": 75.0,
 "shares": 6958,
+"src": "edgar",
 "title": "General Counsel and Secretary"
 },
 {
@@ -696,6 +753,7 @@
 "plan": 1,
 "price": 75.0,
 "shares": 20000,
+"src": "edgar",
 "title": "Chief Financial Officer"
 },
 {
@@ -708,6 +766,7 @@
 "plan": 1,
 "price": 64.05,
 "shares": 40821,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -720,6 +779,7 @@
 "plan": 1,
 "price": 64.03,
 "shares": 259179,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -732,6 +792,7 @@
 "plan": 1,
 "price": 60.01,
 "shares": 13914,
+"src": "edgar",
 "title": "General Counsel and Secretary"
 },
 {
@@ -744,6 +805,7 @@
 "plan": 1,
 "price": 60.0,
 "shares": 46000,
+"src": "edgar",
 "title": "Chief Financial Officer"
 },
 {
@@ -756,6 +818,7 @@
 "plan": 1,
 "price": 68.21,
 "shares": 7823,
+"src": "edgar",
 "title": "General Counsel and Secretary"
 },
 {
@@ -768,6 +831,7 @@
 "plan": 1,
 "price": 64.01,
 "shares": 27400,
+"src": "edgar",
 "title": "Chairman and CEO"
 },
 {
@@ -780,6 +844,7 @@
 "plan": 1,
 "price": 64.17,
 "shares": 272600,
+"src": "edgar",
 "title": "Chairman and CEO"
 }
 ],
