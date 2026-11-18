@@ -26,6 +26,8 @@ jobs:
           python-version: "3.12"
 
       - name: collect and build
+        env:
+          SEC_UA: ${{ secrets.SEC_UA }}   # SEC EDGAR 요청에 쓰는 연락처 문자열 (없으면 기본값)
         run: python mp-materials/tracker.py
 
       - name: commit changes
