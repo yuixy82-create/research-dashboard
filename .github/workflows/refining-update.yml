@@ -11,71 +11,68 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  fetch:
-    # 형 메인컴(DESKTOP-THUP7M4)에서 실행. 깃허브 러너 IP는 야후가 429로 막음(26.09.02 실측)
-    runs-on: self-hosted
-    timeout-minutes: 20
+  # 깃허브 러너에서 실행 (26.11.19 전환). 야후 선물·EIA·관세청은 깃허브 러너에서도 정상 수집됨(같은 날 실측).
+  # Group III 기유(fetch_lube.py)만 깃허브 러너에서 막혀서 refining-lube.yml(형 메인컴)로 분리함.
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: refining-collect
+      cancel-in-progress: false
     env:
-      PYTHONUTF8: "1"          # 윈도우 콘솔 코드페이지와 무관하게 한글 출력
+      PYTHONUTF8: "1"
       PYTHONIOENCODING: "utf-8"
-      # 러너 서비스(NETWORK SERVICE)는 사용자 PATH를 못 보므로 파이썬 경로를 직접 지정
-      PY: C:\Users\user\AppData\Local\Programs\Python\Python312\python.exe
     steps:
       - uses: actions/checkout@v4
-      # setup-python은 시스템 레지스트리 쓰기가 필요해 서비스 계정에서 실패함.
-      # 컴퓨터에 깔린 파이썬을 그대로 씀 (폴더에 NETWORK SERVICE 읽기 권한 부여 필요)
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
       # 선물 — 매 영업일. 크랙 2종. 장중이면 잠정치, 정산 뒤 실행에서 확정치로 덮임
       - name: Fetch futures
-        run: "& $env:PY refining/scripts/fetch_futures.py"
+        run: python refining/scripts/fetch_futures.py
         continue-on-error: true
 
       # EIA — 주간 재고만
       - name: Fetch EIA
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
-        run: "& $env:PY refining/scripts/fetch_eia.py"
+        run: python refining/scripts/fetch_eia.py
         continue-on-error: true
 
       # 관세청 — 월간. PX 수출단가 − 나프타 수입단가. 매 실행 재계산(호출 2건)
       - name: Fetch customs
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY || secrets.DATA_GO_KR_KE }}
-        run: "& $env:PY refining/scripts/fetch_customs.py"
+        run: python refining/scripts/fetch_customs.py
         continue-on-error: true
 
-      # Group III 기유 — 주간(월·화 리포트). 4cSt FOB Asia 중간값과 Brent 대비 스프레드
-      - name: Fetch lube
-        run: "& $env:PY refining/scripts/fetch_lube.py"
-        continue-on-error: true
-
-      # 러너 서비스 계정엔 git이 없어 GitHub API로 커밋(값이 바뀐 파일만)
+      # GitHub API로 커밋(값이 바뀐 파일만). 최신 HEAD 위에 올리므로 다른 봇과 겹쳐도 안전
       - name: Commit if changed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: "& $env:PY refining/scripts/ci_commit.py"
+        run: python refining/scripts/ci_commit.py
 
       - name: Report status
-        run: "& $env:PY refining/scripts/ci_report.py"
+        run: python refining/scripts/ci_report.py
         continue-on-error: true
 
-  # 배포는 깃허브 러너에서. upload-pages-artifact가 bash·tar를 요구해 윈도우 서비스 계정에선 안 돎.
   # GITHUB_TOKEN 커밋은 다른 워크플로를 깨우지 않으므로 같은 워크플로 안에서 이어서 배포한다
   deploy:
-    needs: fetch
+    needs: collect
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main            # fetch 잡이 방금 올린 커밋을 받도록
+          ref: main            # collect 잡이 방금 올린 커밋을 받도록
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

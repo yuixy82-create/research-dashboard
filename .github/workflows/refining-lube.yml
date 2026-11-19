@@ -1,0 +1,65 @@
+name: refining-lube
+
+# Group III 기유 주간 가격만 따로 수집. 형 메인컴(self-hosted)에서 실행.
+# 깃허브 러너에서는 원 사이트(클라우드플레어 403)와 리더(r.jina.ai 401, 익명 요청 차단) 둘 다 막힘(26.11.19 실측).
+# 메인컴이 꺼져 있으면 켜질 때까지 대기하고, 그동안에도 나머지 지표는 refining-update.yml이 갱신한다.
+on:
+  schedule:
+    - cron: "50 22 * * *"   # 07:50 KST. 리포트는 주 1회(월·화)라 하루 한 번이면 충분
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  fetch:
+    runs-on: self-hosted
+    timeout-minutes: 20
+    concurrency:
+      group: refining-lube
+      cancel-in-progress: false
+    env:
+      PYTHONUTF8: "1"          # 윈도우 콘솔 코드페이지와 무관하게 한글 출력
+      PYTHONIOENCODING: "utf-8"
+      # 러너 서비스(NETWORK SERVICE)는 사용자 PATH를 못 보므로 파이썬 경로를 직접 지정
+      PY: C:\Users\user\AppData\Local\Programs\Python\Python312\python.exe
+    steps:
+      - uses: actions/checkout@v4
+
+      # Group III 기유 — 주간(월·화 리포트). 4cSt FOB Asia 중간값과 Brent 대비 스프레드
+      - name: Fetch lube
+        run: "& $env:PY refining/scripts/fetch_lube.py"
+        continue-on-error: true
+
+      # 러너 서비스 계정엔 git이 없어 GitHub API로 커밋(값이 바뀐 파일만)
+      - name: Commit if changed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "& $env:PY refining/scripts/ci_commit.py"
+
+      - name: Report status
+        run: "& $env:PY refining/scripts/ci_report.py"
+        continue-on-error: true
+
+  deploy:
+    needs: fetch
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v4
