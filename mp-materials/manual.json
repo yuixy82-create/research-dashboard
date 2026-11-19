@@ -242,12 +242,6 @@
  "truce_end": "2027-01-10",
  "upcoming": [
   {
-   "when": "26.11.18~19",
-   "date": "2026-11-19",
-   "event": "선전 APEC 미중 정상 회동",
-   "check": "유예 재연장 여부, 4월 허가 대상 품목의 출하 약속"
-  },
-  {
    "when": "27.01.01",
    "date": "2027-01-01",
    "event": "미 국방 조달 규정(DFARS)의 중국산 자석 조달 제한이 원료 단계까지 확대",
@@ -267,6 +261,21 @@
   }
  ],
  "timeline": [
+  {
+   "when": "26.11.19",
+   "title": "선전 APEC 미중 정상 회동",
+   "body": "양측은 전략적 안정 관계 구축을 위한 행동계획 마련에 합의<br>중국 외교부 발표문에 희토류·수출통제 언급 없음<br>유예 재연장 발표 없음: 만료일 27.01.10 유지",
+   "links": [
+    [
+     "중국 외교부",
+     "https://www.fmprc.gov.cn/eng/xw/zyxw/202611/t20261119_12063139.html"
+    ],
+    [
+     "Yahoo Finance",
+     "https://finance.yahoo.com/markets/article/stalemates-over-semiconductors-and-rare-earth-minerals-appear-little-changed-as-trump-heads-home-from-china-121555352.html"
+    ]
+   ]
+  },
   {
    "when": "26.11.06~09",
    "title": "미국의 출하 요구 → 중국의 공식 연장",
