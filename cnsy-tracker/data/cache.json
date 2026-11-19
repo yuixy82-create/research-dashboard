@@ -453,15 +453,11 @@
   }
  },
  "quote": {
-  "price": 0.7207,
+  "price": 0.7068,
   "prev": 5.84,
   "high52": 19.0,
   "low52": 0.43,
   "hist": [
-   {
-    "date": "2026-05-18",
-    "close": 5.84
-   },
    {
     "date": "2026-05-19",
     "close": 5.83
@@ -969,10 +965,6 @@
    {
     "date": "2026-11-17",
     "close": 0.63
-   },
-   {
-    "date": "2026-11-18",
-    "close": 0.721
    }
   ]
  },
@@ -1090,6 +1082,12 @@
    "modified": "2026-10-07"
   },
   {
+   "title": "CNSide Expands U.S. Coverage with Blue Shield of California Agreement for CNS Cancer Diagnostics",
+   "link": "https://cnside-dx.com/cnside-expands-u-s-coverage-with-blue-shield-of-california-agreement-for-cns-cancer-diagnostics/",
+   "date": "2026-04-28",
+   "modified": "2026-11-19"
+  },
+  {
    "title": "Honoring the Team Behind Advancing CNS Cancer Diagnostics",
    "link": "https://cnside-dx.com/honoring-the-team-behind-advancing-cns-cancer-diagnostics/",
    "date": "2026-04-27",
@@ -1160,12 +1158,6 @@
    "link": "https://cnside-dx.com/cnsides-expert-team-behind-advanced-csf-testing/",
    "date": "2026-03-06",
    "modified": "2026-05-21"
-  },
-  {
-   "title": "International Day of Women and Girls in Science 2026",
-   "link": "https://cnside-dx.com/international-day-of-women-and-girls-in-science-2026/",
-   "date": "2026-02-12",
-   "modified": "2026-05-11"
   }
  ],
  "reddit": [],
@@ -1228,6 +1220,13 @@
   }
  ],
  "log": [
+  {
+   "date": "2026-11-19",
+   "level": "yellow",
+   "axis": "진단",
+   "text": "CNSide: CNSide Expands U.S. Coverage with Blue Shield of California Agreement for CNS Cancer Diagnostics",
+   "link": "https://cnside-dx.com/cnside-expands-u-s-coverage-with-blue-shield-of-california-agreement-for-cns-cancer-diagnostics/"
+  },
   {
    "date": "2026-11-17",
    "level": "orange",
@@ -1461,7 +1460,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-19 05:02",
+  "updated": "2026-11-19 11:16",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1476,6 +1475,6 @@
    "cms": "ok",
    "coverage": "ok"
   },
-  "new_events": 0
+  "new_events": 1
  }
 }
