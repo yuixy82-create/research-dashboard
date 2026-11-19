@@ -579,7 +579,14 @@ def collect_trades(cache):
     try:
         msg = "SEC " + collect_form4(cache)
     except Exception as e:
-        msg = collect_openinsider(cache) + " · SEC 미사용: %s" % str(e)[:60]
+        for n in range(3):                   # 오픈인사이더가 가끔 표 없는 화면을 돌려줌(26.11.20 07:12 한 차례) → 잠깐 쉬고 다시
+            try:
+                msg = collect_openinsider(cache) + " · SEC 미사용: %s" % str(e)[:60]
+                break
+            except Exception:
+                if n == 2:
+                    raise
+                time.sleep(8)
     try:
         x = enrich_plan(cache)
         if x:
