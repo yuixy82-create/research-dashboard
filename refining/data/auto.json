@@ -1,6 +1,6 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-11-19T03:47:16+00:00",
+  "updatedAt": "2026-11-19T03:50:18+00:00",
   "status": "ok",
   "indicators": {
     "diesel_crack_1_1": {
@@ -40,7 +40,7 @@
       "value": 3680,
       "unit": "$/t",
       "asOf": "2026-10-26",
-      "note": "4cSt FOB Asia 범위 3,660~3,700",
+      "note": "4cSt FOB Asia 범위 3,660~3,700 · 이후 리포트 3건 미수집(구독자 전용)",
       "source": "Lubes'n'Greases 주간 리포트",
       "mode": "auto"
     },
@@ -48,7 +48,7 @@
       "value": 2845,
       "unit": "$/t",
       "asOf": "2026-10-26",
-      "note": "Group III 3,680 − Brent 113.88 × 7.33",
+      "note": "Group III 3,680 − Brent 113.88 × 7.33 · 이후 리포트 3건 미수집(구독자 전용)",
       "source": "Lubes'n'Greases · NYMEX Brent 선물",
       "mode": "auto"
     }
