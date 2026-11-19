@@ -195,10 +195,21 @@ def main():
     pts = sorted(raw.values(), key=lambda p: p["d"])
     last = save_series("group3_price", "Group III 4cSt FOB Asia", "$/t", pts,
                        {"seen": sorted(seen)[-400:], "note": "주간 평가 범위의 중간값. lo·hi는 범위"})
+    # 마지막 점보다 뒤에 나온 리포트가 있는데 가격을 못 읽었으면 화면 설명에 그대로 드러낸다.
+    # 26.11.19 확인: 26.11.02·11.09·11.16 리포트는 구독자 전용 화면(로그인 요구)으로 내려와 가격 구절이 없었음
+    stale = ""
+    if last and items:
+        d0 = datetime.strptime(last["d"], "%Y-%m-%d").date()
+        newer = [lm for u, lm in items if "price-report" in u
+                 and (datetime.strptime(lm[:10], "%Y-%m-%d").date() - d0).days >= 3]
+        if newer and (datetime.now(timezone.utc).date() - d0).days > 9:
+            stale = f" · 이후 리포트 {len(newer)}건 미수집(구독자 전용)"
+            print(f"경고: 마지막 점 {last['d']} 이후 리포트 {len(newer)}건의 가격을 읽지 못함")
+
     ind = {}
     if last:
         ind["group3_price"] = {"value": last["v"], "unit": "$/t", "asOf": last["d"],
-                               "note": f"4cSt FOB Asia 범위 {last['lo']:,}~{last['hi']:,}",
+                               "note": f"4cSt FOB Asia 범위 {last['lo']:,}~{last['hi']:,}" + stale,
                                "source": "Lubes'n'Greases 주간 리포트", "mode": "auto"}
 
     # 스프레드: 리포트 날짜 이하 가장 최근 Brent 종가
@@ -216,7 +227,7 @@ def main():
                               {"delta": "abs", "note": "4cSt FOB Asia 중간값 − Brent 근월물 × 7.33 bbl/t"})
         if last_sp:
             ind["group3_spread"] = {"value": last_sp["v"], "unit": "$/t", "asOf": last_sp["d"],
-                                    "note": f"Group III {last['v']:,} − Brent {last_sp['brent']} × 7.33",
+                                    "note": f"Group III {last['v']:,} − Brent {last_sp['brent']} × 7.33" + stale,
                                     "source": "Lubes'n'Greases · NYMEX Brent 선물", "mode": "auto"}
     except Exception as e:
         errors.append(f"lube: brent: {e}")
