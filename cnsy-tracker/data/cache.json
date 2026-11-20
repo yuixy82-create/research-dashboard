@@ -453,8 +453,8 @@
   }
  },
  "quote": {
-  "price": 0.7024,
-  "prev": 5.83,
+  "price": 0.6521,
+  "prev": 6.43,
   "high52": 19.0,
   "low52": 0.43,
   "hist": [
@@ -965,6 +965,14 @@
    {
     "date": "2026-11-18",
     "close": 0.71
+   },
+   {
+    "date": "2026-11-19",
+    "close": 0.7
+   },
+   {
+    "date": "2026-11-20",
+    "close": 0.652
    }
   ]
  },
@@ -1166,7 +1174,7 @@
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
-  "checked": "2026-11-20"
+  "checked": "2026-11-21"
  },
  "disclosed": {
   "lm_multi_treated": 10,
@@ -1460,7 +1468,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-20 11:02",
+  "updated": "2026-11-21 04:40",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
