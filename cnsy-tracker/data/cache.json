@@ -453,15 +453,11 @@
   }
  },
  "quote": {
-  "price": 0.6878,
+  "price": 0.7024,
   "prev": 5.83,
   "high52": 19.0,
   "low52": 0.43,
   "hist": [
-   {
-    "date": "2026-05-19",
-    "close": 5.83
-   },
    {
     "date": "2026-05-20",
     "close": 6.43
@@ -969,10 +965,6 @@
    {
     "date": "2026-11-18",
     "close": 0.71
-   },
-   {
-    "date": "2026-11-19",
-    "close": 0.688
    }
   ]
  },
@@ -1468,7 +1460,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-20 04:58",
+  "updated": "2026-11-20 11:02",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
@@ -1477,7 +1469,7 @@
    "quote": "ok",
    "trials": "ok",
    "ctgov": "ok",
-   "news": "ok",
+   "news": "fail: 피드 없음 · ir.cerenome.com(plain=False): The read operation timed out | ir.cerenome.com(plain=True): HTTP Error 403: Forbidden | www.stocktitan",
    "cnside": "ok",
    "reddit": "ok",
    "cms": "ok",
