@@ -52,7 +52,7 @@ window.__cent = null;
   products.sort((x, y) => (x.overall || 1e9) - (y.overall || 1e9));
   // 출력 창이 짧아 뷰티 전체 2만 위 안쪽만 행으로 남기고 나머지는 개수만 센다
   const short = c => c.replace('Facial ', '').replace(' & Astringents', '').slice(0, 24);
-  const top = products.filter(p => p.overall && p.overall <= 20000).slice(0, 12).map(p => {
+  const top = products.filter(p => p.overall && p.overall <= 20000).slice(0, 10).map(p => {
     const s = p.subs[0] || {};
     return [p.asin, p.overall, s.rank || null, short(s.cat || ''), p.title.replace(/CENTELLIAN ?24/i, '').trim().slice(0, 34)];
   });
