@@ -119,13 +119,13 @@ def cat_ko(c):
 
 
 def line_for(l, prev):
-    s = f"- {l['label']}: 뷰티 #{l['overall']:,}"
+    s = f"- {l['label']}: 뷰티 {l['overall']:,}위"
     if l.get("sub"):
-        s += f" / {cat_ko(l['cat'])} #{l['sub']:,}"
+        s += f" / {cat_ko(l['cat'])} {l['sub']:,}위"
     if prev:
         p = find(prev, key_of(l))
         if p and p["overall"]:
-            s += f" (직전 #{p['overall']:,})"
+            s += f" (직전 {p['overall']:,}위)"
     return s
 
 
@@ -274,7 +274,7 @@ def chart(h):
             g.append(f'<circle cx="{X(t):.1f}" cy="{Y(r):.1f}" r="4" fill="{c}" stroke="#fff" stroke-width="2"/>')
             pts_js.append([round(X(t), 1), round(Y(r), 1), name, fmt_k(t), r])
         t, r = ps[-1]
-        ends.append([Y(r) + 4, min(X(t) + 10, W - R + 6), f"{html.escape(name)} #{r:,}"])
+        ends.append([Y(r) + 4, min(X(t) + 10, W - R + 6), f"{html.escape(name)} {r:,}위"])
     ends.sort()
     for j in range(1, len(ends)):   # 끝 라벨이 겹치지 않게 아래로 민다
         ends[j][0] = max(ends[j][0], ends[j - 1][0] + 15)
@@ -289,7 +289,7 @@ def chart(h):
             "sv.addEventListener('mousemove',e=>{const b=sv.getBoundingClientRect(),k=960/b.width,x=(e.clientX-b.left)*k,y=(e.clientY-b.top)*k;"
             "let best=null,bd=1e9;for(const p of P){const d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;best=p}}"
             "if(best&&bd<40){tp.style.display='block';tp.style.left=(best[0]/k)+'px';tp.style.top=(best[1]/k)+'px';"
-            "tp.innerHTML='<b>'+best[2]+'</b><br>'+best[3]+' KST · 뷰티 #'+best[4].toLocaleString()}else tp.style.display='none'});"
+            "tp.innerHTML='<b>'+best[2]+'</b><br>'+best[3]+' KST · 뷰티 '+best[4].toLocaleString()+'위'}else tp.style.display='none'});"
             "sv.addEventListener('mouseleave',()=>tp.style.display='none');</script>")
 
 
@@ -308,8 +308,8 @@ def table(h):
                 ch = "–" if dlt == 0 else (f'<span class="up">▲{dlt:,}</span>' if dlt > 0 else f'<span class="dn">▼{-dlt:,}</span>')
         links = " ".join(f'<a href="https://www.amazon.com/dp/{a}">{a}</a>' for a in l["ids"])
         hot = ' class="hot"' if l["overall"] and l["overall"] <= TOP else ""
-        sub = f"{cat_ko(l['cat'])} #{l['sub']:,}" if l.get("sub") else "-"
-        rows.append(f"<tr{hot}><td>{html.escape(l['label'])}</td><td class='n'>#{l['overall']:,}</td>"
+        sub = f"{cat_ko(l['cat'])} {l['sub']:,}위" if l.get("sub") else "-"
+        rows.append(f"<tr{hot}><td>{html.escape(l['label'])}</td><td class='n'>{l['overall']:,}위</td>"
                     f"<td>{html.escape(sub)}</td><td class='n'>{ch}</td><td class='asin'>{links}</td></tr>")
     rest = last.get("rest") or 0
     note = f"<p class='muted'>뷰티 전체 2만 위 밖이거나 순위가 없는 센텔리안24 상품 {rest}개는 표에서 뺌</p>" if rest else ""
@@ -327,8 +327,8 @@ def log_rows(h):
             continue
         f = find(s, FLAG)
         rows.append(f"<tr><td>{t}</td><td class='n'>{s['top100']}개</td>"
-                    f"<td class='n'>{('#' + format(f['overall'], ',')) if f else '-'}</td>"
-                    f"<td class='n'>{('#' + format(f['sub'], ',')) if f and f.get('sub') else '-'}</td></tr>")
+                    f"<td class='n'>{(format(f['overall'], ',') + '위') if f else '-'}</td>"
+                    f"<td class='n'>{(format(f['sub'], ',') + '위') if f and f.get('sub') else '-'}</td></tr>")
     return ("<table><thead><tr><th>수집 시각 (KST)</th><th class='n'>뷰티 100위 안</th>"
             "<th class='n'>단품 뷰티 전체</th><th class='n'>단품 페이스 보습제</th></tr></thead><tbody>"
             + "".join(rows) + "</tbody></table>")
@@ -343,8 +343,8 @@ def build(h):
     lastfail = h["snapshots"][-1].get("fail") if h["snapshots"] else None
     kpis = [
         ("뷰티 전체 100위 안", f"{n}<span class='u'>개</span>", "확인 지점: 2~3개"),
-        ("단품 · 뷰티 전체", f"#{f['overall']:,}" if f else "-", "마데카크림 타임리버스"),
-        ("단품 · 페이스 보습제", f"#{f['sub']:,}" if f and f.get("sub") else "-", "세부 카테고리 순위"),
+        ("단품 · 뷰티 전체", f"{f['overall']:,}<span class='u'>위</span>" if f else "-", "마데카크림 타임리버스"),
+        ("단품 · 페이스 보습제", f"{f['sub']:,}<span class='u'>위</span>" if f and f.get("sub") else "-", "세부 카테고리 순위"),
         ("마지막 수집", upd, "KST" + (" · 실패" if lastfail else "")),
     ]
     kpi_html = "".join(f"<div class='kpi'><div class='kl'>{a}</div><div class='kn'>{b}</div><div class='ks'>{c}</div></div>" for a, b, c in kpis)
