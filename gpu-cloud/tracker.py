@@ -3995,6 +3995,11 @@ def build_html():
 
     # ---- ⑩ 아래: 티커트랜드 기준 ARR 누적 막대 + 합산 증가율 ----
     tt_rows = sorted(tuple(p) for p in SEED.get("tt_combo", {}).get("points", []) if len(p) >= 3)
+    # 한 달에 점이 여럿이면 가장 늦은 점만 남김 (월중 추정치는 월말 값이 나오면 자동으로 빠짐)
+    _tt_last = {}
+    for r in tt_rows:
+        _tt_last[r[0][:7]] = r
+    tt_rows = [_tt_last[m] for m in sorted(_tt_last)]
     c_tt_combo = svg_stack_growth(tt_rows)
     tt_note = ""
     if len(tt_rows) >= 2:
