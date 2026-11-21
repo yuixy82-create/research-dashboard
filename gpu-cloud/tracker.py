@@ -2270,7 +2270,10 @@ SEED = {
                 "2026-07-31",
                 65.0
             ],
-            ["2026-08-15", 67.2]
+            [
+                "2026-08-15",
+                68.0
+            ]
         ]
     },
     "openai_agent_wau": {
@@ -2356,6 +2359,16 @@ SEED = {
     "anthropic_rev_half": {
         "label": "앤스로픽 반기 매출 ($B)", "source": "S-1 (26.10.26)",
         "points": [["2025-06-30", 1.2], ["2026-06-30", 16.3]]
+    },
+    "tt_combo": {
+        "label": "티커트랜드 기준 ARR: [날짜, 오픈AI $B, 앤스로픽 $B, 오픈AI 추정·보간(1), 앤스로픽 추정·보간(1)]",
+        "source": "TickerTrends 추정 + 회사 공개치를 월별로 모은 집계 (사용자 제공 그래프 26.11.18). 26.10.31 앤스로픽 $81.0B는 회사 공개",
+        "points": [
+            ["2026-01-31", 21.4, 10.2, 0, 0], ["2026-02-28", 25.0, 19.0, 0, 0], ["2026-03-31", 26.0, 27.3, 1, 1],
+            ["2026-04-30", 27.0, 35.6, 1, 0], ["2026-05-31", 33.0, 47.0, 0, 0], ["2026-06-30", 37.3, 69.6, 0, 0],
+            ["2026-07-31", 42.6, 74.1, 0, 0], ["2026-08-31", 44.5, 75.4, 0, 0], ["2026-09-30", 50.44, 76.8, 0, 0],
+            ["2026-10-31", 55.6, 81.0, 1, 0], ["2026-11-18", 55.8, 83.6, 1, 1]
+        ]
     },
     "anthropic_rev_tt": {
         "label": "앤스로픽 ARR 티커트랜드 추정 ($B)",
@@ -3207,16 +3220,61 @@ def collect_etf_credit_proxy(existing):
 #   표본 = Ramp 토큰 지출 관리 상품 가입사 → 수준·증가율은 표본 확대 효과 포함. 단가·비중은 그 영향 없음
 # ------------------------------------------------------------
 RAMP_URL = "https://ramp.com/data/ai-index/chart-data/tokenPrices"
+RAMP_VOL_URL = "https://ramp.com/data/ai-index/chart-data/tokenVolumes"
 
 
 def collect_ramp_tokens():
+    """Ramp AI Index 토큰 데이터.
+    26.11 Ramp가 공개 형식을 바꿈: tokenPrices = 일별 단가(price_per_million, series_key=blend/anthropic/openai),
+    tokenVolumes = 주간 지출·사용량 지수(모델별 metric_value, metric_key=token_spend/token_volume).
+    Ramp가 과거치도 수시로 고치므로 새 형식이 잡히면 캐시를 통째로 교체한다("_replace")."""
     out = {}
+    hdr = {"Accept": "application/json", "Referer": "https://ramp.com/data/ai-index"}
     try:
-        raw = http_get(RAMP_URL, headers={"Accept": "application/json", "Referer": "https://ramp.com/data/ai-index"})
-        rows = json.loads(raw)
+        rows = json.loads(http_get(RAMP_URL, headers=hdr))
     except Exception as e:
-        print("  Ramp 수집 실패:", e)
+        print("  Ramp 단가 수집 실패:", e)
+        rows = []
+    if any("price_per_million" in r for r in rows[:50]):
+        px, px_a, px_o = {}, {}, {}
+        for r in rows:
+            if r.get("token_type") != "all_tokens" or r.get("price_per_million") is None or not r.get("usage_date"):
+                continue
+            tgt = {"blend": px, "anthropic": px_a, "openai": px_o}.get(r.get("series_key"))
+            if tgt is not None:
+                tgt[r["usage_date"]] = round(float(r["price_per_million"]), 4)
+        if px:
+            out.update({"RAMP_PX_ALL": px, "RAMP_PX_ANT": px_a, "RAMP_PX_OAI": px_o, "_replace": True})
+            print("  Ramp 단가: %d일 (%s ~ %s), 최근 $%.3f/M" % (len(px), min(px), max(px), px[max(px)]))
+        try:
+            vrows = json.loads(http_get(RAMP_VOL_URL, headers=hdr, timeout=60))
+        except Exception as e:
+            print("  Ramp 지출·사용량 수집 실패:", e)
+            vrows = []
+        agg = {}
+        for r in vrows:
+            d, mk, v = r.get("period_end"), r.get("model_maker"), r.get("metric_value")
+            kind = {"token_spend": "s", "token_volume": "v"}.get(r.get("metric_key"))
+            if not d or kind is None or v is None:
+                continue
+            a = agg.setdefault(d, {"s": 0.0, "v": 0.0, "s_ant": 0.0, "v_ant": 0.0, "s_oai": 0.0, "v_oai": 0.0})
+            a[kind] += float(v)
+            if mk == "anthropic":
+                a[kind + "_ant"] += float(v)
+            elif mk == "openai":
+                a[kind + "_oai"] += float(v)
+        if agg:
+            for key, f in (("RAMP_SPEND", "s"), ("RAMP_VOL", "v"), ("RAMP_SPEND_ANT", "s_ant"), ("RAMP_VOL_ANT", "v_ant"),
+                           ("RAMP_SPEND_OAI", "s_oai"), ("RAMP_VOL_OAI", "v_oai")):
+                out[key] = {d: round(a[f], 4) for d, a in agg.items() if a[f] > 0}
+            out["_replace"] = True
+            last = max(agg)
+            print("  Ramp 지출·사용량: %d주 (%s ~ %s), 최근 주 지출 비중 앤스로픽 %.1f%% · 오픈AI %.1f%%"
+                  % (len(agg), min(agg), last, agg[last]["s_ant"] / agg[last]["s"] * 100, agg[last]["s_oai"] / agg[last]["s"] * 100))
+        else:
+            print("  [warn] Ramp 지출·사용량: 0건 — 형식이 또 바뀌었는지 확인 필요")
         return out
+    # ---- 옛 형식 (26.10까지): 일별 7일 합산 달러·토큰 수 ----
     agg = {}
     for r in rows:
         if r.get("token_type") != "all_tokens":
@@ -3235,9 +3293,9 @@ def collect_ramp_tokens():
             a["oai_c"] += c; a["oai_n"] += n
     sp, vol, px, px_a, px_o, sp_a, sp_o, vol_a, vol_o = {}, {}, {}, {}, {}, {}, {}, {}, {}
     for d, a in agg.items():
-        sp[d] = round(a["c"] / 1e6, 4)            # $M (7일 합산)
-        vol[d] = round(a["n"] / 1e12, 4)          # 조 토큰 (7일 합산)
-        px[d] = round(a["c"] / a["n"] * 1e6, 4)   # $/백만 토큰
+        sp[d] = round(a["c"] / 1e6, 4)
+        vol[d] = round(a["n"] / 1e12, 4)
+        px[d] = round(a["c"] / a["n"] * 1e6, 4)
         if a["ant_n"] > 0:
             px_a[d] = round(a["ant_c"] / a["ant_n"] * 1e6, 4)
             sp_a[d] = round(a["ant_c"] / 1e6, 4)
@@ -3252,6 +3310,8 @@ def collect_ramp_tokens():
     if sp:
         last = max(sp)
         print("  Ramp: %d일 (%s ~ %s), 최근 단가 $%.3f/M" % (len(sp), min(sp), last, px[last]))
+    else:
+        print("  [warn] Ramp: 0건 — 수집은 됐지만 읽을 수 있는 행이 없음 (형식 변경 의심)")
     return out
 
 
@@ -3465,6 +3525,74 @@ def svg_half_bars(periods, serving, rd, ratio, w=680, h=300):
         o.append('<circle cx="%.1f" cy="%.1f" r="3.6" fill="%s"/>' % (x, y, T["red"]))
         o.append('<text x="%.1f" y="%.1f" text-anchor="start" font-size="11" font-weight="700" fill="%s">원가율 %.0f%%</text>' % (x + bw + 12, y + 4, T["red"], r))
     o.append('<text x="%d" y="%d" font-size="10.5" font-weight="700" fill="%s">진한 올리브 = 서빙(고객 추론)  연한 올리브 = 학습·연구·내부용  빨강 = 서빙 지출 ÷ 매출</text>' % (ml, mt - 12, T["heading"]))
+    o.append('</svg>')
+    return "".join(o)
+
+
+def svg_stack_growth(rows, w=680, h=430):
+    """rows: [(날짜, 오픈AI, 앤스로픽, 오픈AI추정?, 앤스로픽추정?)].
+    위: 누적 막대(아래 오픈AI·위 앤스로픽, 추정·보간은 빗금). 아래: 직전 관측 대비 합산 증가율 선."""
+    rows = sorted(rows)
+    if len(rows) < 2:
+        return ""
+    ml, mr, mt, gap, mb = 46, 20, 30, 34, 28
+    h2 = 96
+    ph = h - mt - gap - mb - h2
+    pw = w - ml - mr
+    n = len(rows)
+    tot = [r[1] + r[2] for r in rows]
+    vmax = max(tot) * 1.12
+    gr = [None] + [round((tot[i] / tot[i - 1] - 1) * 100, 1) for i in range(1, n)]
+    gmax = max(10.0, max(g for g in gr if g is not None) * 1.3)
+    Y = lambda v: mt + (1 - v / vmax) * ph
+    top2 = mt + ph + gap
+    Yg = lambda g: top2 + (1 - max(g, 0) / gmax) * h2
+    slot = pw / n
+    bw = slot * 0.64
+    c_o, c_a, c_g = T["teal"], T["primary"], T["red"]
+    o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" style="width:100%%;height:auto;font-family:inherit">' % (w, h)]
+    o.append('<defs>'
+             '<pattern id="hx_o" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="%s"/><line x1="0" y1="0" x2="0" y2="6" stroke="#fff" stroke-width="1.6" stroke-opacity="0.5"/></pattern>'
+             '<pattern id="hx_a" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="%s"/><line x1="0" y1="0" x2="0" y2="6" stroke="#fff" stroke-width="1.6" stroke-opacity="0.5"/></pattern>'
+             '</defs>' % (c_o, c_a))
+    for i in range(5):
+        v = vmax * i / 4; yy = Y(v)
+        o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="%s"/>' % (ml, yy, w - mr, yy, T["hair"], 1 if i == 0 else 0.6))
+        o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">$%.0fB</text>' % (ml - 6, yy + 3, T["muted"], v))
+    for i in range(3):
+        g = gmax * i / 2; yy = Yg(g)
+        o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="%s"/>' % (ml, yy, w - mr, yy, T["hair"], 1 if i == 0 else 0.6))
+        o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">%.0f%%</text>' % (ml - 6, yy + 3, T["muted"], g))
+    lx = ml
+    for lab, fill in (("오픈AI", c_o), ("앤스로픽", c_a), ("추정·보간", "url(#hx_a)")):
+        o.append('<rect x="%d" y="%d" width="11" height="11" rx="2" fill="%s"/><text x="%d" y="%d" font-size="10.5" fill="%s">%s</text>' % (lx, mt - 24, fill, lx + 15, mt - 14, T["text"], lab))
+        lx += 26 + len(lab) * 11
+    o.append('<text x="%d" y="%.1f" font-size="10.5" font-weight="700" fill="%s">합산 증가율 (직전 관측 대비, %%)</text>' % (ml, top2 - 10, T["heading"]))
+    pts = []
+    for i, r in enumerate(rows):
+        d, vo, va = r[0], r[1], r[2]
+        eo = bool(r[3]) if len(r) > 3 else False
+        ea = bool(r[4]) if len(r) > 4 else False
+        cx = ml + slot * (i + 0.5); x = cx - bw / 2
+        o.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="%s"/>' % (x, Y(vo), bw, Y(0) - Y(vo), "url(#hx_o)" if eo else c_o))
+        o.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="%s"/>' % (x, Y(vo + va), bw, Y(vo) - Y(vo + va), "url(#hx_a)" if ea else c_a))
+        for mid, val, hh, col in (((Y(0) + Y(vo)) / 2, vo, Y(0) - Y(vo), c_o), ((Y(vo) + Y(vo + va)) / 2, va, Y(vo) - Y(vo + va), c_a)):
+            if hh > 14:
+                o.append('<rect x="%.1f" y="%.1f" width="30" height="13" rx="3" fill="%s"/>' % (cx - 15, mid - 6.5, col))
+                o.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-size="9.5" font-weight="700" fill="#fff">%.1f</text>' % (cx, mid + 3.5, val))
+        o.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-size="10.5" font-weight="700" fill="%s">%.1f</text>' % (cx, Y(vo + va) - 5, T["text"], vo + va))
+        lab = d[2:4] + "." + d[5:7] if d[8:10] >= "28" else d[2:4] + "." + d[5:7] + "." + d[8:10]
+        o.append('<text x="%.1f" y="%d" text-anchor="middle" font-size="9.5" fill="%s">%s</text>' % (cx, h - 9, T["muted"], lab))
+        if gr[i] is not None:
+            pts.append((cx, Yg(gr[i]), gr[i], i))
+    if pts:
+        o.append('<path d="%s" fill="none" stroke="%s" stroke-width="2.2" stroke-linejoin="round"/>'
+                 % (" ".join("%s%.1f,%.1f" % ("M" if k == 0 else "L", x, y) for k, (x, y, _, _) in enumerate(pts)), c_g))
+        for x, y, g, i in pts:
+            days = d2o(rows[i][0]) - d2o(rows[i - 1][0])
+            txt = "%+.1f%%" % g + (" (%d일)" % days if days < 25 else "")
+            o.append('<circle cx="%.1f" cy="%.1f" r="3.4" fill="#fff" stroke="%s" stroke-width="2"/>' % (x, y, c_g))
+            o.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-size="9.5" font-weight="700" fill="%s">%s</text>' % (x, y - 8, c_g, txt))
     o.append('</svg>')
     return "".join(o)
 
@@ -3860,6 +3988,21 @@ def build_html():
     est_months = {m[:7] for m, _ in sum_mom if m[:7] not in _rep_months}
     c_rev_mom = svg_line_bars(sum_rr, sum_mom, est_from=est_from, est_months=est_months)
 
+    # ---- ⑩ 아래: 티커트랜드 기준 ARR 누적 막대 + 합산 증가율 ----
+    tt_rows = sorted(tuple(p) for p in SEED.get("tt_combo", {}).get("points", []) if len(p) >= 3)
+    c_tt_combo = svg_stack_growth(tt_rows)
+    tt_note = ""
+    if len(tt_rows) >= 2:
+        _l, _p = tt_rows[-1], tt_rows[-2]
+        _days = d2o(_l[0]) - d2o(_p[0])
+        tt_note = "%s 기준 오픈AI $%.1fB + 앤스로픽 $%.1fB = <b>합산 $%.1fB</b>, 직전 관측(%s $%.1fB) 대비 %+.1f%% (%d일간)" % (
+            fmt_kr(_l[0]), _l[1], _l[2], _l[1] + _l[2], fmt_kr(_p[0]), _p[1] + _p[2],
+            ((_l[1] + _l[2]) / (_p[1] + _p[2]) - 1) * 100, _days)
+    ant_last_txt = fmt_kr(ant_last)[:5] if ant_last else "—"
+    ant_last_note = ("%s 연환산 $%.0fB" % (fmt_kr(ant_rev[-1][0]), ant_rev[-1][1])) if ant_rev else "—"
+    if ant_rev and ant_rev[-1][0] == "2026-10-31":
+        ant_last_note += " (회사 발표 26.11.10: 한 달 새 +$10B)"
+
     # ---- ⑬ 4대 클라우드 백로그 (RPO) ----
     rpo = {k: seed_series("cloud_rpo_" + k) for k in ("msft", "orcl", "googl", "amzn")}
     # 합계: 달력 분기 말 기준. 오라클은 회계분기(2·5·8·11월 말)라 직전 분기치를 그 달력 분기에 귀속
@@ -3943,6 +4086,8 @@ def build_html():
         """일별 7일 합산 계열을 마지막 날 기준 7일 간격으로 솎음 (전주比 비교가 되게)."""
         if not pts:
             return []
+        if len(pts) >= 3 and (d2o(pts[-1][0]) - d2o(pts[-3][0])) >= 10:
+            return list(pts)                    # 이미 주간 계열(26.11~ Ramp 지출·사용량)
         last = d2o(pts[-1][0])
         return [(d, v) for d, v in pts if (last - d2o(d)) % 7 == 0]
     ramp_vol = _rebase_at(_weekly(hist_series(cache, "RAMP_VOL")))
@@ -4130,7 +4275,7 @@ def build_html():
     # ---- ⑫ 토큰 경제 차트 ----
     idx_fmt = lambda v: "%.0f" % v
     tok_vol_series = [
-        {"label": "합산", "color": T["primary"], "width": 2.6, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "전체", "color": T["primary"], "width": 2.6, "points": ramp_vol, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": ramp_vol_a, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_vol_o, "delta": "pct", "delta_suffix": "전주比"},
     ]
@@ -4138,14 +4283,14 @@ def build_html():
         tok_vol_series.append({"label": "오픈라우터", "color": T["red"], "width": 1.5, "points": or_idx, "delta": "pct", "delta_suffix": "전주比"})
     c_tok_vol = svg_chart(tok_vol_series, h=230, yfmt=idx_fmt, zero_base=True, labels_right=True)
     c_tok_spend = svg_chart([
-        {"label": "합산", "color": T["primary"], "width": 2.6, "points": ramp_sp, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "전체", "color": T["primary"], "width": 2.6, "points": ramp_sp, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": ramp_sp_a, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_sp_o, "delta": "pct", "delta_suffix": "전주比"},
     ], h=230, yfmt=idx_fmt, zero_base=True, labels_right=True)
     c_tok_px = svg_chart([
         {"label": "앤스로픽", "color": T["vivid"], "width": 1.5, "points": ramp_px_a, "delta": "pct", "delta_suffix": "전주比"},
         {"label": "오픈AI", "color": T["teal"], "width": 1.5, "points": ramp_px_o, "delta": "pct", "delta_suffix": "전주比"},
-        {"label": "합산", "color": T["primary"], "width": 2.6, "points": ramp_px, "delta": "pct", "delta_suffix": "전주比"},
+        {"label": "전체", "color": T["primary"], "width": 2.6, "points": ramp_px, "delta": "pct", "delta_suffix": "전주比"},
     ], h=230, yfmt=lambda v: "$%.2f" % v, zero_base=True, labels_right=True)
     c_tok_adopt = svg_chart([
         {"label": "전체", "color": T["primary"], "width": 2.6, "points": adopt, "end_tag": (fmt_kr(adopt[-1][0])[:5] if adopt else None), "delta": "pp", "delta_suffix": "전월比"},
@@ -4165,6 +4310,16 @@ def build_html():
             yrs = (d2o(d1) - d2o(d0)) / 365.0
             goog_yoy = " (연 %.1f배)" % ((v1 / v0) ** (1 / yrs))
     ramp_last = fmt_kr(ramp_px[-1][0]) if ramp_px else "—"
+    ramp_wk_last = fmt_kr(ramp_sp[-1][0]) if ramp_sp else "—"
+    _rs, _rsa, _rso = hist_series(cache, "RAMP_SPEND"), dict(hist_series(cache, "RAMP_SPEND_ANT")), dict(hist_series(cache, "RAMP_SPEND_OAI"))
+    ramp_share = "—"
+    if _rs and _rs[-1][1] and _rs[-1][0] in _rsa and _rs[-1][0] in _rso:
+        _d, _t = _rs[-1]
+        ramp_share = "앤스로픽 %.1f%% · 오픈AI %.1f%%" % (_rsa[_d] / _t * 100, _rso[_d] / _t * 100)
+        _prev = [(d, v) for d, v in _rs if d2o(_d) - d2o(d) >= 84]
+        if _prev and _prev[-1][0] in _rsa and _prev[-1][0] in _rso:
+            _d0, _t0 = _prev[-1]
+            ramp_share += " (12주 전 %.1f%% · %.1f%%)" % (_rsa[_d0] / _t0 * 100, _rso[_d0] / _t0 * 100)
     ramp_gain = ""
     if ramp_vol and ramp_sp:
         ramp_gain = "26.01 대비 사용량 %.0f배 · 지출 %.0f배 · 단가 %+.0f%%" % (
@@ -4209,7 +4364,7 @@ def build_html():
 <b>SDH100RT</b> = Silicon Data 공식 지수(네오클라우드 95%·하이퍼스케일러 100% 관측, 사양·계약조건 표준화). 블룸버그 티커와 같은 값을 무료 페이지에서 매일 자동 수집.
 26.08.19 이전은 PDF 판독분(오차 ±1%), 이후는 자동수집분<br>
 빨강(1년 계약가)이 실제 체결에 가장 가까움. SemiAnalysis 무료 공개분이 26.04까지라 최근 구간은 비어 있음<br>
-26.10.05 CME에 이 지수 선물이 상장되면 거래소 정산가로 대체 예정</div>
+CME가 이 지수 선물을 26.10.05 상장 예정으로 발표(26.08.11)했으나 실제 상장·정산가 공개는 확인되지 않아 지수만 사용</div>
 
 </div>
 
@@ -4241,7 +4396,9 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <div class="note">국채금리+신용스프레드가 합산된 실제 발행금리(ICE BofA 유효수익률). 당일 점은 HYG·LQD 가격 기반 추정치이며 다음 날 공식치로 자동 교체. <b>빨강이 올리브에서 벌어지면 등급별 조달 분화</b><br>
 <span class="key">26.08.10 코어위브 DDTL 5.5 $26억: SOFR+425~450bp 제시 → 최종 SOFR+550bp(+100bp), DSCR 1.35배 커버넌트</span><br>
 대출 5년 vs 계약 3년 — <b>재계약가·잔존가치 리스크를 대주가 처음으로 직접 떠안은 딜.</b> 100bp가 그 대가임<br>
-회사가 강조한 "조달금리 300bp 하락"은 IG 담보부(DDTL 4.0 SOFR+225bp) 기준이고, 비IG 트랜치는 반대로 벌어지는 중</div>
+회사가 강조한 "조달금리 300bp 하락"은 IG 담보부(DDTL 4.0 SOFR+225bp) 기준이고, 비IG 트랜치는 반대로 벌어지는 중<br>
+<span class="key">26.11.10 코어위브 3분기 컨콜: 가중평균 조달금리 7.9%(전년比 -250bp), 다음 DDTL은 IG 등급·7~7.5% 예상, 현 수익률에서는 무담보 채권 시장을 쓰지 않겠다고 밝힘</span><br>
+26.11.11 무담보 9.625% 2032년물 수익률 14.2%(FINRA 체결가 82.5) vs 담보부 IG 7%대: 같은 회사 안에서 조달금리가 두 배로 갈림. $4B 이상 IG 대출 추진 보도(Bloomberg 26.11.11)</div>
 </div>
 
 <div class="card-sec">
@@ -4264,8 +4421,8 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 """ + c_rev_gross + """
 <div class="note">클라우드 가격을 떠받치는 최종 수요. 연환산(run-rate) = 해당 시점 월매출 × 12이며 연간 실적이 아님<br>
 <span class="key">Gross = CSP 수익배분 차감 전 매출. 앤스로픽은 이 기준으로 발표하고, 오픈AI는 투자자 자료로만 공개함 (26.07 $40B, 26.09 $68B)</span><br>
-앤스로픽 마지막 점 = 26.10.14 투자자 행사에서 공개한 3분기(7~9월) 실매출 $16.8B × 4. 7~9월 평균이라 분기 한가운데에 찍음<br>
-<b>전분기 대비 +45%로 2분기 +149%에서 크게 둔화.</b> 9월 말 연환산은 공개되지 않았음 (보도된 $110B은 연말 전망치라 제외)<br>
+앤스로픽 마지막 점 = """ + ant_last_note + """<br>
+26.08.15 점 = 3분기(7~9월) 실매출 $17.0B × 4 (수정 S-1). 7~9월 평균이라 분기 한가운데에 찍음. <b>3분기 매출은 전분기 대비 +47%로 2분기 +145%에서 둔화했으나, 10월 한 달에 약 $71B → $81B로 다시 빨라짐</b> (연말 전망치 $110B은 전망이라 제외)<br>
 연한 올리브 = 티커트랜드 앤스로픽 추정. 발표가 느려 최근 흐름 참고용이나 금액은 발표치보다 높게 잡힘 (26.07 +14%)<br>
 속 빈 점 = 추정. 오픈AI는 Net ÷ 0.73으로 역산 (실측 Net/Gross 비율 26.07 0.75, 26.09 0.74). 25년 이전은 비율 확인 불가라 비워 둠<br>
 26.10.08 FT 보도의 "오픈AI ARR $70B 미달"은 기준 차이: 시장이 보던 $70B은 Gross 기대치, 실제 Gross $68B / Net $50B</div>
@@ -4277,6 +4434,7 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <div class="note">Net = CSP를 통해 판 API 매출에서 CSP 몫(인프라 비용 차감 후 20~30%)을 뺀 매출. 오픈AI는 26년 초부터 이 기준으로 발표<br>
 <span class="key">앤스로픽은 Net을 발표하지 않음. 올리브 선 두 개는 ⑧의 값 × 0.73으로 역산한 환산치이며 회사 발표치가 아님</span><br>
 오픈AI: 25.12 $20B → 26.02~04 $25B → 2분기 평균 $26.8B (분기 실매출 $6.7B × 4, WSJ) → 26.07 $30B → 26.08 $38B → <b>26.09 $50B</b><br>
+3분기 실매출은 약 $10B로 처음 $10B을 넘김 (Bloomberg 26.11.11, 2분기 $6.7B 대비 약 +50%). 10월 이후 연환산은 새 보도 없음<br>
 26.02~04 정체는 실제 보도치 (The Information 26.03, 오픈AI "월 $2B" 언급). 같은 기간 앤스로픽은 $14B → $47B로 급성장</div>
 </div>
 
@@ -4284,8 +4442,13 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <span class="banner">⑩ 합산 Gross 런레이트 · 전월比 증가율 ($B, %) <span class="u">앤스로픽 발표 + 오픈AI Gross(Net ÷ 0.73) · 월말 기준</span></span>
 """ + c_rev_mom + """
 <div class="note">월말 값 = 그 달까지 나온 두 회사 보도치. 보도 사이는 일정 증가율로 보간하므로 막대는 그 구간의 평균 증가율이고, 한 달 막대 하나로 읽지 말고 3개월을 묶어 볼 것<br>
-<span class="key">진한 막대 = 그 달에 보도가 있던 달 · 연한 막대 = 보도 없이 보간만 한 달, 또는 앤스로픽 마지막 발표(26.08) 이후 티커트랜드 추세를 발표치 수준에 맞춰 이은 달(추정)</span><br>
-오픈AI는 Net ÷ 0.73 (실측 Gross 26.07 $40B·26.09 $68B는 그 값). 새 보도가 들어오면 해당 달 막대가 자동으로 바뀜</div>
+<span class="key">진한 막대 = 그 달에 보도가 있던 달 · 연한 막대 = 보도 없이 보간만 한 달, 또는 앤스로픽 마지막 발표(""" + ant_last_txt + """) 이후 티커트랜드 추세를 발표치 수준에 맞춰 이은 달(추정)</span><br>
+오픈AI는 Net ÷ 0.73 (실측 Gross 26.07 $40B·26.09 $68B는 그 값). 두 회사 보도가 모두 있는 달까지만 그려지며, 새 보도가 들어오면 해당 달 막대가 자동으로 바뀜</div>
+<div class="sub">티커트랜드 기준 ARR · 합산 증가율 <span class="d">($B, 오픈AI + 앤스로픽)</span></div>
+""" + c_tt_combo + """
+<div class="note">""" + tt_note + """<br>
+<span class="key">위 차트와 기준이 다름: 이쪽은 오픈AI를 Net 그대로 더한 값(위는 ÷ 0.73으로 Gross 환산)이고, 발표가 없는 달은 티커트랜드 추정·보간으로 채움. 그래서 금액은 위보다 작고 최근 달까지 이어짐</span><br>
+빗금 = 추정·보간. 증가율은 직전 관측 대비라 마지막 막대처럼 한 달이 안 되는 구간은 월간 증가율이 아님. 26.10.31 앤스로픽 $81.0B는 회사 공개치. 출처: TickerTrends 추정을 모은 집계 그래프(26.11.18), 새 추정이 나오면 뉴스 수집 작업이 점을 추가</div>
 </div>
 
 <div class="card-sec">
@@ -4297,17 +4460,18 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 
 
 <div class="card-sec">
-<span class="banner">⑫ 토큰 경제 — 사용량 · 지출 · 단가 · 도입률 <span class="u">Ramp 원본 데이터 (오픈AI+앤스로픽)</span></span>
-<div class="sub">토큰 사용량 <span class="d">(7일 합산 토큰 수, 26.01 = 100)</span>""" + ("<span class='r'>굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI · 빨강 = 오픈라우터</span>" if or_idx else "<span class='r'>굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span>") + """</div>
+<span class="banner">⑫ 토큰 경제 — 사용량 · 지출 · 단가 · 도입률 <span class="u">Ramp 원본 데이터 (전체 = 전 업체 합)</span></span>
+<div class="sub">토큰 사용량 <span class="d">(주간, Ramp 지수, 26.01 = 100)</span>""" + ("<span class='r'>굵은 올리브 = 전체 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI · 빨강 = 오픈라우터</span>" if or_idx else "<span class='r'>굵은 올리브 = 전체 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span>") + """</div>
 """ + c_tok_vol + """
-<div class="sub">토큰 지출 <span class="d">(7일 합산 달러, 26.01 = 100)</span><span class="r">굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
+<div class="sub">토큰 지출 <span class="d">(주간, Ramp 지수, 26.01 = 100)</span><span class="r">굵은 올리브 = 전체 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
 """ + c_tok_spend + """
-<div class="sub">토큰 단가 <span class="d">($/백만 토큰, 입력·출력·캐시 가중 평균)</span><span class="r">굵은 올리브 = 합산 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
+<div class="sub">토큰 단가 <span class="d">($/백만 토큰, 입력·출력·캐시 가중 평균)</span><span class="r">굵은 올리브 = 전체 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
 """ + c_tok_px + """
 <div class="sub">AI 도입률 <span class="d">(AI에 돈을 내는 미국 기업 비중, 월간)</span><span class="r">굵은 올리브 = 전체 · 연한 올리브 = 앤스로픽 · 청록 = 오픈AI</span></div>
 """ + c_tok_adopt + """
-<div class="note"><b>올리브·청록 선 = Ramp(램프)</b>: 미국 기업용 법인카드·결제 회사. 가입 기업이 오픈AI·앤스로픽에 실제로 낸 돈과 토큰 수. <span class="key">중소·중견기업 위주 표본</span>. 매일 수집, Ramp 갱신은 월 1회 · 데이터 기준 """ + ramp_last + """<br>
-<span class="key">사용량·지출 지수는 Ramp 토큰 관리 상품을 켜는 회사가 늘면 같이 늘어 수준은 믿지 말고 방향만 볼 것. 단가(지출 ÷ 토큰 수)와 두 회사 비중은 신뢰 가능</span><br>
+<div class="note"><b>올리브·청록 선 = Ramp(램프)</b>: 미국 기업용 법인카드·결제 회사. AI 지출 관리 상품을 쓰는 가입 기업이 모델 업체에 실제로 낸 돈과 토큰 수. <span class="key">중소·중견기업 위주 표본</span>. 매일 수집 · 사용량·지출은 주간(""" + ramp_wk_last + """ 주까지), 단가는 일별(""" + ramp_last + """까지)<br>
+<span class="key">26.11 Ramp가 공개 형식을 바꿔 과거 값까지 새 기준(주간 지수)으로 전부 교체함. 새 고객이 연결되면 Ramp가 과거치를 고치므로 수준보다 방향을 볼 것. 단가와 업체별 비중은 신뢰 가능</span><br>
+최근 주 지출 비중: """ + ramp_share + """<br>
 <b>AI 도입률</b>: Ramp 고객 기업 중 그달 AI 서비스에 결제가 있었던 비중. "쓰는 회사가 느는지"를 보는 지표라 위 지수와 분리해서 봄. 월 1회 갱신""" + ("""<br>
 <b>빨간 선 = 오픈라우터</b>: 여러 AI 모델을 중계하는 개발자용 서비스의 일별 처리 토큰. 매일 수집 (출처 openrouter.ai/rankings, CC BY 4.0)""" if or_idx else """<br>
 오픈라우터(여러 AI 모델을 중계하는 개발자용 서비스) 일별 토큰은 API 키 등록 시 빨간 선으로 추가, 매일 수집""") + """</div>
@@ -4337,7 +4501,7 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <footer>
 Source: Silicon Data 공식 지수(SDH100RT·SDB200RT 등, 무료 공개 페이지 자동수집), SemiAnalysis 1년 계약가 범위(자동수집), Price of Compute 공개 API(블랙웰 중위가),
 코어위브·네비우스·크루소·람다·투게더·베르다 등 공식 가격 페이지 + 오라클 OCI 공개 가격 API(자동수집), FRED(금리·신용스프레드),
-CRWV·ORCL CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도), 코어위브 분기 실적(SEC 공시), Ramp AI Index 토큰 데이터(ramp.com/data/ai-index 공개 차트 원본), 구글 토큰 공개치.<br>
+CRWV·ORCL CDS(사용자 제공 PDF 차트 픽셀 판독), 앤스로픽·오픈AI 매출(언론 보도), 코어위브 분기 실적(SEC 공시), Ramp AI Index 토큰 데이터(ramp.com/data/ai-index 공개 차트 원본), TickerTrends ARR 추정.<br>
 Note: 지수의 26.08.19 이전 구간은 PDF 차트 판독값(<b>오차 약 ±1%</b>)이고 이후는 자동수집값이라 이어붙인 계열임.
 오라클 CDS·프론티어 랩 매출은 보도 시점만 있는 이산 데이터라 점 사이는 직선 연결.<br>
 정보 제공 목적이며 투자 권유가 아닙니다. Generated automatically via GitHub Actions.
@@ -4394,8 +4558,13 @@ def main():
         cache["series"].setdefault(k, {}).update(s)
 
     print("[+] Ramp 토큰 경제 (지출·사용량·단가)")
-    for k, s in collect_ramp_tokens().items():
-        cache["series"].setdefault(k, {}).update(s)
+    _ramp = collect_ramp_tokens()
+    _ramp_replace = _ramp.pop("_replace", False)
+    for k, s in _ramp.items():
+        if _ramp_replace and len(s) >= 40:
+            cache["series"][k] = dict(s)        # 새 형식: 단위가 달라 옛 값과 섞지 않고 통째로 교체
+        else:
+            cache["series"].setdefault(k, {}).update(s)
 
     print("[+] Ramp AI 도입률 (월별)")
     for k, s in collect_ramp_adoption().items():
