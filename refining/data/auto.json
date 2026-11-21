@@ -1,6 +1,6 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-11-21T03:24:09+00:00",
+  "updatedAt": "2026-11-21T03:32:30+00:00",
   "status": "partial",
   "indicators": {
     "diesel_crack_1_1": {
@@ -54,6 +54,6 @@
     }
   },
   "errors": [
-    "lube: sitemap: 사이트맵 항목 0건 (len=944): Title: wpenginepowered.com | 504: Gateway time-out URL Source: https://www.lubesngreases.com/bor-asia-sitemap.xml Warning: Target URL returned error 504: Gateway Timeout Markdown Content: ## Gateway time-out Error code 504 Visit [cloudflare.com](https://www.cloudflare.com/5xx-error-landing?utm_s"
+    "lube: sitemap: 사이트맵 항목 0건 (len=500): Title: Just a moment... URL Source: https://www.lubesngreases.com/bor-asia-sitemap.xml Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page. Markdown Content: ![Image 1: Icon for www.lubesngreases.com](https://www.lubesngreases.com/favicon.ico) ## w"
   ]
 }
