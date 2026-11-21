@@ -2360,16 +2360,6 @@ SEED = {
         "label": "앤스로픽 반기 매출 ($B)", "source": "S-1 (26.10.26)",
         "points": [["2025-06-30", 1.2], ["2026-06-30", 16.3]]
     },
-    "tt_combo": {
-        "label": "티커트랜드 기준 ARR: [날짜, 오픈AI $B, 앤스로픽 $B, 오픈AI 추정·보간(1), 앤스로픽 추정·보간(1)]",
-        "source": "TickerTrends 추정 + 회사 공개치를 월별로 모은 집계 (사용자 제공 그래프 26.11.18). 26.10.31 앤스로픽 $81.0B는 회사 공개",
-        "points": [
-            ["2026-01-31", 21.4, 10.2, 0, 0], ["2026-02-28", 25.0, 19.0, 0, 0], ["2026-03-31", 26.0, 27.3, 1, 1],
-            ["2026-04-30", 27.0, 35.6, 1, 0], ["2026-05-31", 33.0, 47.0, 0, 0], ["2026-06-30", 37.3, 69.6, 0, 0],
-            ["2026-07-31", 42.6, 74.1, 0, 0], ["2026-08-31", 44.5, 75.4, 0, 0], ["2026-09-30", 50.44, 76.8, 0, 0],
-            ["2026-10-31", 55.6, 81.0, 1, 0], ["2026-11-18", 55.8, 83.6, 1, 1]
-        ]
-    },
     "anthropic_rev_tt": {
         "label": "앤스로픽 ARR 티커트랜드 추정 ($B)",
         "source": "티커트랜드 공개 블로그·X (blog.tickertrends.io)",
@@ -3529,74 +3519,6 @@ def svg_half_bars(periods, serving, rd, ratio, w=680, h=300):
     return "".join(o)
 
 
-def svg_stack_growth(rows, w=680, h=430):
-    """rows: [(날짜, 오픈AI, 앤스로픽, 오픈AI추정?, 앤스로픽추정?)].
-    위: 누적 막대(아래 오픈AI·위 앤스로픽, 추정·보간은 빗금). 아래: 직전 관측 대비 합산 증가율 선."""
-    rows = sorted(rows)
-    if len(rows) < 2:
-        return ""
-    ml, mr, mt, gap, mb = 46, 20, 30, 34, 28
-    h2 = 96
-    ph = h - mt - gap - mb - h2
-    pw = w - ml - mr
-    n = len(rows)
-    tot = [r[1] + r[2] for r in rows]
-    vmax = max(tot) * 1.12
-    gr = [None] + [round((tot[i] / tot[i - 1] - 1) * 100, 1) for i in range(1, n)]
-    gmax = max(10.0, max(g for g in gr if g is not None) * 1.3)
-    Y = lambda v: mt + (1 - v / vmax) * ph
-    top2 = mt + ph + gap
-    Yg = lambda g: top2 + (1 - max(g, 0) / gmax) * h2
-    slot = pw / n
-    bw = slot * 0.64
-    c_o, c_a, c_g = T["teal"], T["primary"], T["red"]
-    o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" style="width:100%%;height:auto;font-family:inherit">' % (w, h)]
-    o.append('<defs>'
-             '<pattern id="hx_o" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="%s"/><line x1="0" y1="0" x2="0" y2="6" stroke="#fff" stroke-width="1.6" stroke-opacity="0.5"/></pattern>'
-             '<pattern id="hx_a" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="%s"/><line x1="0" y1="0" x2="0" y2="6" stroke="#fff" stroke-width="1.6" stroke-opacity="0.5"/></pattern>'
-             '</defs>' % (c_o, c_a))
-    for i in range(5):
-        v = vmax * i / 4; yy = Y(v)
-        o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="%s"/>' % (ml, yy, w - mr, yy, T["hair"], 1 if i == 0 else 0.6))
-        o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">$%.0fB</text>' % (ml - 6, yy + 3, T["muted"], v))
-    for i in range(3):
-        g = gmax * i / 2; yy = Yg(g)
-        o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="%s"/>' % (ml, yy, w - mr, yy, T["hair"], 1 if i == 0 else 0.6))
-        o.append('<text x="%d" y="%.1f" text-anchor="end" font-size="9.5" fill="%s">%.0f%%</text>' % (ml - 6, yy + 3, T["muted"], g))
-    lx = ml
-    for lab, fill in (("오픈AI", c_o), ("앤스로픽", c_a), ("추정·보간", "url(#hx_a)")):
-        o.append('<rect x="%d" y="%d" width="11" height="11" rx="2" fill="%s"/><text x="%d" y="%d" font-size="10.5" fill="%s">%s</text>' % (lx, mt - 24, fill, lx + 15, mt - 14, T["text"], lab))
-        lx += 26 + len(lab) * 11
-    o.append('<text x="%d" y="%.1f" font-size="10.5" font-weight="700" fill="%s">합산 증가율 (직전 관측 대비, %%)</text>' % (ml, top2 - 10, T["heading"]))
-    pts = []
-    for i, r in enumerate(rows):
-        d, vo, va = r[0], r[1], r[2]
-        eo = bool(r[3]) if len(r) > 3 else False
-        ea = bool(r[4]) if len(r) > 4 else False
-        cx = ml + slot * (i + 0.5); x = cx - bw / 2
-        o.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="%s"/>' % (x, Y(vo), bw, Y(0) - Y(vo), "url(#hx_o)" if eo else c_o))
-        o.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="%s"/>' % (x, Y(vo + va), bw, Y(vo) - Y(vo + va), "url(#hx_a)" if ea else c_a))
-        for mid, val, hh, col in (((Y(0) + Y(vo)) / 2, vo, Y(0) - Y(vo), c_o), ((Y(vo) + Y(vo + va)) / 2, va, Y(vo) - Y(vo + va), c_a)):
-            if hh > 14:
-                o.append('<rect x="%.1f" y="%.1f" width="30" height="13" rx="3" fill="%s"/>' % (cx - 15, mid - 6.5, col))
-                o.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-size="9.5" font-weight="700" fill="#fff">%.1f</text>' % (cx, mid + 3.5, val))
-        o.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-size="10.5" font-weight="700" fill="%s">%.1f</text>' % (cx, Y(vo + va) - 5, T["text"], vo + va))
-        lab = d[2:4] + "." + d[5:7] if d[8:10] >= "28" else d[2:4] + "." + d[5:7] + "." + d[8:10]
-        o.append('<text x="%.1f" y="%d" text-anchor="middle" font-size="9.5" fill="%s">%s</text>' % (cx, h - 9, T["muted"], lab))
-        if gr[i] is not None:
-            pts.append((cx, Yg(gr[i]), gr[i], i))
-    if pts:
-        o.append('<path d="%s" fill="none" stroke="%s" stroke-width="2.2" stroke-linejoin="round"/>'
-                 % (" ".join("%s%.1f,%.1f" % ("M" if k == 0 else "L", x, y) for k, (x, y, _, _) in enumerate(pts)), c_g))
-        for x, y, g, i in pts:
-            days = d2o(rows[i][0]) - d2o(rows[i - 1][0])
-            txt = "%+.1f%%" % g + (" (%d일)" % days if days < 25 else "")
-            o.append('<circle cx="%.1f" cy="%.1f" r="3.4" fill="#fff" stroke="%s" stroke-width="2"/>' % (x, y, c_g))
-            o.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-size="9.5" font-weight="700" fill="%s">%s</text>' % (x, y - 8, c_g, txt))
-    o.append('</svg>')
-    return "".join(o)
-
-
 def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=False):
     """series: [{label,color,points:[(날짜,값)],dash,width,markers}]"""
     yfmt = yfmt or (lambda v: f"${v:,.2f}")
@@ -3993,21 +3915,6 @@ def build_html():
     est_months = {m[:7] for m, _ in sum_mom if m[:7] not in _rep_months}
     c_rev_mom = svg_line_bars(sum_rr, sum_mom, est_from=est_from, est_months=est_months)
 
-    # ---- ⑩ 아래: 티커트랜드 기준 ARR 누적 막대 + 합산 증가율 ----
-    tt_rows = sorted(tuple(p) for p in SEED.get("tt_combo", {}).get("points", []) if len(p) >= 3)
-    # 한 달에 점이 여럿이면 가장 늦은 점만 남김 (월중 추정치는 월말 값이 나오면 자동으로 빠짐)
-    _tt_last = {}
-    for r in tt_rows:
-        _tt_last[r[0][:7]] = r
-    tt_rows = [_tt_last[m] for m in sorted(_tt_last)]
-    c_tt_combo = svg_stack_growth(tt_rows)
-    tt_note = ""
-    if len(tt_rows) >= 2:
-        _l, _p = tt_rows[-1], tt_rows[-2]
-        _days = d2o(_l[0]) - d2o(_p[0])
-        tt_note = "%s 기준 오픈AI $%.1fB + 앤스로픽 $%.1fB = <b>합산 $%.1fB</b>, 직전 관측(%s $%.1fB) 대비 %+.1f%% (%d일간)" % (
-            fmt_kr(_l[0]), _l[1], _l[2], _l[1] + _l[2], fmt_kr(_p[0]), _p[1] + _p[2],
-            ((_l[1] + _l[2]) / (_p[1] + _p[2]) - 1) * 100, _days)
     ant_last_txt = fmt_kr(ant_last)[:5] if ant_last else "—"
     ant_last_note = ("%s 연환산 $%.0fB" % (fmt_kr(ant_rev[-1][0]), ant_rev[-1][1])) if ant_rev else "—"
     if ant_rev and ant_rev[-1][0] == "2026-10-31":
@@ -4454,11 +4361,6 @@ GB300은 시간당 정가를 공개하는 곳이 베르다 한 곳뿐임(오라�
 <div class="note">월말 값 = 그 달까지 나온 두 회사 보도치. 보도 사이는 일정 증가율로 보간하므로 막대는 그 구간의 평균 증가율이고, 한 달 막대 하나로 읽지 말고 3개월을 묶어 볼 것<br>
 <span class="key">진한 막대 = 그 달에 보도가 있던 달 · 연한 막대 = 보도 없이 보간만 한 달, 또는 앤스로픽 마지막 발표(""" + ant_last_txt + """) 이후 티커트랜드 추세를 발표치 수준에 맞춰 이은 달(추정)</span><br>
 오픈AI는 Net ÷ 0.73 (실측 Gross 26.07 $40B·26.09 $68B는 그 값). 두 회사 보도가 모두 있는 달까지만 그려지며, 새 보도가 들어오면 해당 달 막대가 자동으로 바뀜</div>
-<div class="sub">티커트랜드 기준 ARR · 합산 증가율 <span class="d">($B, 오픈AI + 앤스로픽)</span></div>
-""" + c_tt_combo + """
-<div class="note">""" + tt_note + """<br>
-<span class="key">위 차트와 기준이 다름: 이쪽은 오픈AI를 Net 그대로 더한 값(위는 ÷ 0.73으로 Gross 환산)이고, 발표가 없는 달은 티커트랜드 추정·보간으로 채움. 그래서 금액은 위보다 작고 최근 달까지 이어짐</span><br>
-빗금 = 추정·보간. 증가율은 직전 관측 대비라 마지막 막대처럼 한 달이 안 되는 구간은 월간 증가율이 아님. 26.10.31 앤스로픽 $81.0B는 회사 공개치. 출처: TickerTrends 추정을 모은 집계 그래프(26.11.18), 새 추정이 나오면 뉴스 수집 작업이 점을 추가</div>
 </div>
 
 <div class="card-sec">
