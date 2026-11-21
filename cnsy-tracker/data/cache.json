@@ -965,6 +965,10 @@
    {
     "date": "2026-11-19",
     "close": 0.7
+   },
+   {
+    "date": "2026-11-20",
+    "close": 0.63
    }
   ]
  },
@@ -1166,7 +1170,7 @@
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
-  "checked": "2026-11-21"
+  "checked": "2026-11-22"
  },
  "disclosed": {
   "lm_multi_treated": 10,
@@ -1460,7 +1464,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-21 10:59",
+  "updated": "2026-11-22 03:45",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
