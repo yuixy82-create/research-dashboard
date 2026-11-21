@@ -3694,6 +3694,11 @@ def svg_chart(series, w=680, h=270, yfmt=None, zero_base=False, labels_right=Fal
     for i in range(1, len(ends)):
         if ends[i][1] - ends[i - 1][1] < gap:
             ends[i][1] = ends[i - 1][1] + gap
+    if ends and ends[-1][1] > h - 24:          # 아래 끝에 몰리면 위로 밀어 올려 겹치지 않게
+        ends[-1][1] = h - 24
+        for i in range(len(ends) - 2, -1, -1):
+            if ends[i + 1][1] - ends[i][1] < gap:
+                ends[i][1] = ends[i + 1][1] - gap
     for ex, ey, col, txt, dtxt in ends:
         yy = min(ey, h - 24)
         o.append('<text x="%.1f" y="%.1f" font-size="10" font-weight="700" fill="%s">%s</text>'
