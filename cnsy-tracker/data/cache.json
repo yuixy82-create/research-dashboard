@@ -1170,7 +1170,7 @@
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-new-tests.zip",
    "https://www.cms.gov/files/zip/cy-2027-preliminary-determinations-tests-no-pp-data.zip"
   ],
-  "checked": "2026-11-22"
+  "checked": "2026-11-23"
  },
  "disclosed": {
   "lm_multi_treated": 10,
@@ -1464,7 +1464,7 @@
   }
  ],
  "meta": {
-  "updated": "2026-11-22 09:57",
+  "updated": "2026-11-23 04:06",
   "ticker": "CNSY",
   "cik": "0001095981",
   "status": {
