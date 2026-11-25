@@ -1,20 +1,20 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-11-25T04:59:50+00:00",
+  "updatedAt": "2026-11-25T22:04:29+00:00",
   "status": "partial",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 70.89,
+      "value": 68.82,
       "unit": "$/bbl",
-      "asOf": "2026-11-24",
+      "asOf": "2026-11-25",
       "note": null,
       "source": "NYMEX ULSD · WTI F27물 종가 기반 산출",
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 37.17,
+      "value": 34.61,
       "unit": "$/bbl",
-      "asOf": "2026-11-24",
+      "asOf": "2026-11-25",
       "note": null,
       "source": "NYMEX F27물 종가 기반 산출",
       "mode": "auto"
@@ -54,6 +54,7 @@
     }
   },
   "errors": [
-    "lube: sitemap: 사이트맵 항목 0건 (len=500): Title: Just a moment... URL Source: https://www.lubesngreases.com/bor-asia-sitemap.xml Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page. Markdown Content: ![Image 1: Icon for www.lubesngreases.com](https://www.lubesngreases.com/favicon.ico) ## w"
+    "lube: sitemap: 사이트맵 항목 0건 (len=500): Title: Just a moment... URL Source: https://www.lubesngreases.com/bor-asia-sitemap.xml Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page. Markdown Content: ![Image 1: Icon for www.lubesngreases.com](https://www.lubesngreases.com/favicon.ico) ## w",
+    "eia: WDISTUS1: The read operation timed out"
   ]
 }
