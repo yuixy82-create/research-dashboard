@@ -4,6 +4,10 @@
 사용:
   python3 tracker.py --ingest snap.json   수집 결과를 history.json에 넣고 index.html·alert.txt 갱신
   python3 tracker.py --fail "사유"         수집 실패를 기록 (알림은 하루 한 번만)
+  python3 tracker.py --need                매일 수집 회차(22시 본 실행·재시도)가 이미 성공했는지 확인
+                                           → "need" 또는 "done ..." 한 줄 출력
+  --daily  매일 수집 작업(22:17 본 실행, 01:17·09:17 재시도)에서 --ingest·--fail에 붙인다.
+           하루 회차는 22:00 KST에 시작해 다음 날 22:00 전까지. 블프 하루 요약도 이 회차가 맡는다.
   python3 tracker.py                      history.json으로 index.html만 다시 만듦
 
 alert.txt가 생기면 그 내용을 텔레그램으로 보낸다. 보낼 것이 없으면 alert.txt는 지워진다.
@@ -25,7 +29,8 @@ KST = dt.timezone(dt.timedelta(hours=9))
 TOP = 100            # 알림 기준: 뷰티 전체 100위
 GOAL = 2             # 확인 지점: 100위 안 2~3개
 BF_START, BF_END = dt.date(2026, 11, 24), dt.date(2026, 12, 1)   # 블프 주간 (KST)
-SUMMARY_HOUR = 21    # 블프 주간 하루 요약을 보내는 실행 (KST 21시 이후 첫 실행)
+SLOT_HOUR = 22       # 매일 수집 회차 시작 (KST). 22:17 본 실행 → 01:17·09:17 재시도
+FINAL_FROM = 6       # 이 시각(KST) 이후의 재시도가 마지막 재시도
 
 # ASIN → 한글 이름. 옵션으로 묶인 상품은 순위가 같아 하나로 합쳐진다
 LABELS = {
@@ -99,6 +104,26 @@ def validate(s):
     kst(s["ts"])
 
 
+def slot_start(t):
+    """t(KST)가 속한 매일 수집 회차의 시작 시각 (가장 최근 22:00 KST)."""
+    s = t.replace(hour=SLOT_HOUR, minute=0, second=0, microsecond=0)
+    return s if t >= s else s - dt.timedelta(days=1)
+
+
+def slot_day(t):
+    return slot_start(t).strftime("%Y-%m-%d")
+
+
+def need():
+    now = dt.datetime.now(KST)
+    st = slot_start(now)
+    done = [x for x in oks(load()) if kst(x["ts"]) >= st]
+    if done:
+        print(f"done {fmt_k(kst(done[-1]['ts']))} KST 수집 성공 (회차 {st.strftime('%y.%m.%d')} 22시)")
+    else:
+        print("need")
+
+
 def oks(h):
     return [x for x in h["snapshots"] if not x.get("fail")]
 
@@ -136,7 +161,8 @@ def message(snap, prev, kind):
     head = {
         "start": f"동국제약 아마존 순위 추적 시작 ({fmt_k(t)} KST)",
         "change": f"🚨 동국제약 아마존 뷰티 100위 안 제품 수 변화: {pn} → {n}개 ({fmt_k(t)} KST)",
-        "summary": f"동국제약 아마존 순위 ({t.strftime('%y.%m.%d')} 블프 주간 요약)",
+        "summary": f"동국제약 아마존 순위 ({slot_day(t)[2:].replace('-', '.')} 블프 주간 요약)"
+                   + ("" if t.hour >= SLOT_HOUR else f" · 재시도 {t.strftime('%H:%M')} 수집"),
     }[kind]
     lines = [head, ""]
     lines.append(f"뷰티 전체 {TOP}위 안 센텔리안24: {n}개" + (f" (직전 {pn}개)" if pn is not None and kind != "change" else ""))
@@ -152,13 +178,13 @@ def message(snap, prev, kind):
     return "\n".join(lines)
 
 
-def ingest(path):
+def ingest(path, daily=False):
     with open(path, encoding="utf-8") as f:
         s = json.load(f)
     validate(s)
     h = load()
     if s.get("blocked") or not s.get("ok"):
-        return fail(h, "아마존 차단(캡차)" if s.get("blocked") else "상품 페이지를 하나도 읽지 못함", s["ts"])
+        return fail(h, "아마존 차단(캡차)" if s.get("blocked") else "상품 페이지를 하나도 읽지 못함", s["ts"], daily)
     if any(x["ts"] == s["ts"] for x in h["snapshots"]):
         print("이미 들어간 수집 결과 (ts 중복): 건너뜀")
         write_alert(None)
@@ -176,29 +202,44 @@ def ingest(path):
         kind = "start"
     elif snap["top100"] != prev["top100"]:
         kind = "change"
-    elif BF_START <= t.date() <= BF_END and t.hour >= SUMMARY_HOUR and h.get("last_summary") != t.strftime("%Y-%m-%d"):
+    sday = dt.date.fromisoformat(slot_day(t))
+    bf_daily = daily and BF_START <= sday <= BF_END
+    if kind is None and bf_daily and h.get("last_summary") != sday.isoformat():
         kind = "summary"
-    if kind and BF_START <= t.date() <= BF_END and t.hour >= SUMMARY_HOUR:
-        h["last_summary"] = t.strftime("%Y-%m-%d")   # 변화 알림이 그날 요약을 겸함
+    if kind and bf_daily:
+        h["last_summary"] = sday.isoformat()   # 변화 알림이 그날 요약을 겸함
     write_alert(message(snap, prev, kind) if kind else None)
     save(h)
     build(h)
     print(f"수집 {fmt_k(t)} KST · 100위 안 {snap['top100']}개 · 알림: {kind or '없음'}")
 
 
-def fail(h, reason, ts=None):
+def fail(h, reason, ts=None, daily=False):
     ts = ts or dt.datetime.now(dt.timezone.utc).isoformat()
     t = kst(ts)
     h["snapshots"].append({"ts": ts, "fail": reason})
-    day = t.strftime("%Y-%m-%d")
     msg = None
-    if h.get("last_fail_alert") != day:
-        h["last_fail_alert"] = day
-        msg = f"동국제약 아마존 순위 수집 실패 ({fmt_k(t)} KST): {reason}\n다음 실행에서 다시 시도함\n\n{URL}"
+    if daily:
+        # 매일 회차: 첫 실패에 한 번, 마지막 재시도(09:17)까지 실패하면 한 번 더
+        sd = slot_day(t)
+        final = FINAL_FROM <= t.hour < SLOT_HOUR
+        if final and h.get("last_daily_final") != sd:
+            h["last_daily_final"] = sd
+            msg = (f"동국제약 아마존 순위 {sd[2:].replace('-', '.')} 몫 수집 못함 ({fmt_k(t)} KST): {reason}\n"
+                   f"22:17 본 실행과 재시도 모두 실패. 오늘 22:17에 다시 시도함\n\n{URL}")
+        elif not final and h.get("last_daily_fail") != sd:
+            h["last_daily_fail"] = sd
+            msg = (f"동국제약 아마존 순위 수집 실패 ({fmt_k(t)} KST): {reason}\n"
+                   f"01:17·09:17에 다시 시도함 (성공하면 그날 몫으로 들어감)\n\n{URL}")
+    else:
+        day = t.strftime("%Y-%m-%d")
+        if h.get("last_fail_alert") != day:
+            h["last_fail_alert"] = day
+            msg = f"동국제약 아마존 순위 수집 실패 ({fmt_k(t)} KST): {reason}\n다음 실행에서 다시 시도함\n\n{URL}"
     write_alert(msg)
     save(h)
     build(h)
-    print(f"실패 기록: {reason} · 알림: {'보냄' if msg else '오늘 이미 보냄'}")
+    print(f"실패 기록: {reason} · 알림: {'보냄' if msg else '이번 회차 이미 보냄'}")
 
 
 def write_alert(msg):
@@ -421,11 +462,15 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ingest")
     ap.add_argument("--fail")
+    ap.add_argument("--need", action="store_true")
+    ap.add_argument("--daily", action="store_true")
     a = ap.parse_args()
-    if a.ingest:
-        ingest(a.ingest)
+    if a.need:
+        need()
+    elif a.ingest:
+        ingest(a.ingest, a.daily)
     elif a.fail:
-        fail(load(), a.fail)
+        fail(load(), a.fail, daily=a.daily)
     else:
         build(load())
         write_alert(None)
