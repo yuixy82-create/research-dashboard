@@ -52,7 +52,7 @@ jobs:
       cancel-in-progress: false
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -62,4 +62,13 @@ jobs:
         with:
           path: '.'
       - id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      # 방금 올린 배포 묶음이 아직 조회되지 않아 실패하는 경우(26.11.26 실측) 30초 뒤 한 번 더 시도
+      - name: Wait before retry
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 30
+      - name: Retry deploy
+        id: deployment_retry
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
