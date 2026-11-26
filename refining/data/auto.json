@@ -1,10 +1,10 @@
 {
   "_comment": "GitHub Actions가 덮어쓰는 파일. 손으로 고치지 말 것. manual.json의 같은 key를 덮어씀.",
-  "updatedAt": "2026-11-25T22:10:23+00:00",
+  "updatedAt": "2026-11-26T00:21:59+00:00",
   "status": "partial",
   "indicators": {
     "diesel_crack_1_1": {
-      "value": 68.84,
+      "value": 69.21,
       "unit": "$/bbl",
       "asOf": "2026-11-25",
       "note": null,
@@ -12,7 +12,7 @@
       "mode": "auto"
     },
     "crack_3_2_1": {
-      "value": 34.6,
+      "value": 34.83,
       "unit": "$/bbl",
       "asOf": "2026-11-25",
       "note": null,
@@ -20,9 +20,9 @@
       "mode": "auto"
     },
     "us_distillate_stock": {
-      "value": 104.9,
+      "value": 105.6,
       "unit": "mb",
-      "asOf": "2026-11-13",
+      "asOf": "2026-11-20",
       "note": null,
       "source": "EIA Weekly",
       "mode": "auto"
@@ -54,7 +54,6 @@
     }
   },
   "errors": [
-    "lube: sitemap: 사이트맵 항목 0건 (len=500): Title: Just a moment... URL Source: https://www.lubesngreases.com/bor-asia-sitemap.xml Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page. Markdown Content: ![Image 1: Icon for www.lubesngreases.com](https://www.lubesngreases.com/favicon.ico) ## w",
-    "eia: WDISTUS1: The read operation timed out"
+    "lube: sitemap: 사이트맵 항목 0건 (len=500): Title: Just a moment... URL Source: https://www.lubesngreases.com/bor-asia-sitemap.xml Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page. Markdown Content: ![Image 1: Icon for www.lubesngreases.com](https://www.lubesngreases.com/favicon.ico) ## w"
   ]
 }
