@@ -359,9 +359,74 @@
   {
    "ts": "2026-11-26T01:18:14.162634+00:00",
    "fail": "PC 꺼짐 또는 크롬 미연결"
+  },
+  {
+   "ts": "2026-11-26T02:19:51.252Z",
+   "found": 46,
+   "ok": 46,
+   "rest": 38,
+   "listings": [
+    {
+     "ids": [
+      "B0DJ8FQDYL",
+      "B0DFY92NDB"
+     ],
+     "overall": 54,
+     "sub": 7,
+     "cat": "Face Moisturizers",
+     "label": "타임리버스 2개입 · PDRN 듀오"
+    },
+    {
+     "ids": [
+      "B0G48T5CM2"
+     ],
+     "overall": 497,
+     "sub": 3,
+     "cat": "Eye Treatment Creams",
+     "label": "360샷 PDRN 아이크림"
+    },
+    {
+     "ids": [
+      "B0FS7QVSVC"
+     ],
+     "overall": 605,
+     "sub": 30,
+     "cat": "Face Moisturizers",
+     "label": "마데카크림 액티브리뉴 PDRN"
+    },
+    {
+     "ids": [
+      "B0H79K9743"
+     ],
+     "overall": 1735,
+     "sub": 74,
+     "cat": "Face Moisturizers",
+     "label": "타임리버스 2개입 · PDRN 듀오"
+    },
+    {
+     "ids": [
+      "B0FVY91T1Q",
+      "B0GYWML5FQ"
+     ],
+     "overall": 3581,
+     "sub": 125,
+     "cat": "Face Moisturizers",
+     "label": "마데카크림 타임리버스 제로"
+    },
+    {
+     "ids": [
+      "B0H627CCBF"
+     ],
+     "overall": 14934,
+     "sub": 131,
+     "cat": "Toners",
+     "label": "타임리버스 부스팅 토너"
+    }
+   ],
+   "top100": 1
   }
  ],
- "last_summary": "",
+ "last_summary": "2026-11-25",
  "last_fail_alert": "2026-11-26",
  "last_daily_final": "2026-11-25"
 }
