@@ -254,6 +254,12 @@
    "check": "재연장, 민수 출하 개선 협상"
   },
   {
+   "when": "27.01.25",
+   "date": "2027-01-25",
+   "event": "미 USTR 301조 대중 추가 관세안 공청회",
+   "check": "최종 세율(최대 20%, 대안 40%)과 발효일"
+  },
+  {
    "when": "27.02 하순 (예상)",
    "date": "2027-02-26",
    "event": "MP 4Q26 실적 발표",
@@ -261,6 +267,21 @@
   }
  ],
  "timeline": [
+  {
+   "when": "26.11.25",
+   "title": "미 USTR: 중국산에 301조 추가 관세 제안",
+   "body": "과잉생산 301조 조사 결과: 중국산에 최대 20% 추가 관세 제안, 협의 미흡 시 최대 40%<br>확정 전: 의견 접수 27.01.05까지, 공청회 27.01.25, 발효일 미정<br>중국 상무부 26.11.26: 단호히 반대, 필요한 조치를 취할 권리 유보. 희토류 언급 없음",
+   "links": [
+    [
+     "USTR",
+     "https://ustr.gov/about/policy-offices/press-office/press-releases/2026/november/ustr-makes-determinations-and-proposes-actions-14-section-301-investigations-relating-structural"
+    ],
+    [
+     "신화재경 (상무부 브리핑)",
+     "https://www.cnfin.com/hg-lb/detail/20261126/4500774_1.html"
+    ]
+   ]
+  },
   {
    "when": "26.11.24",
    "title": "중국: 갈륨·게르마늄·안티몬 대미 수출 금지 유예 연장",
